@@ -45,7 +45,8 @@ def main(APP_NAME, SSH_IP):
     cast("sudo iptables -t nat -A OUTPUT -p all -d %(MY_POD_IP)s -j DNAT --to-destination 127.0.0.1" % {"MY_POD_IP": MY_POD_IP})
     print "In the 'Node' menu, click 'Connect Node'" 
     print "Enter: %(APP_NAME)s@%(MY_POD_IP)s" % {"APP_NAME": APP_NAME, "MY_POD_IP": MY_POD_IP}
-    cmd = "erl -name observer@%(MY_POD_IP)s -setcookie %(ERLANG_COOKIE)s -hidden -run observer" % {"MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
+    # cmd = "erl -name observer@%(MY_POD_IP)s -setcookie %(ERLANG_COOKIE)s -hidden -run observer" % {"MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
+    cmd = "iex --name observer@%(MY_POD_IP)s --cookie %(ERLANG_COOKIE)s --hidden -e ':observer.start()'" % {"MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
     cast(cmd)
   except:
     print "Unexpected error:", sys.exc_info()[0]
