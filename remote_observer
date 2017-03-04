@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+import subprocess
+import sys
+import re
+
+def call(cmd):
+  return subprocess.check_output(cmd.split()).strip()
+
+def cast(cmd):
+  return subprocess.check_call(cmd.split())
+
+def clean_up(MY_POD_IP, EPMD_PORT, APP_PORT):
+  cast("sudo iptables -t nat -D OUTPUT -p all -d %(MY_POD_IP)s -j DNAT --to-destination 127.0.0.1" % {"MY_POD_IP": MY_POD_IP})
+  # cast("sudo iptables -t nat -L OUTPUT")
+  pid = call("lsof -wni tcp:%(APP_PORT)s -t" % {"APP_PORT": APP_PORT})
+  cast("kill -9 %s" % pid)
+
+def main(APP_NAME, SSH_IP):
+  try:
+    ERLANG_COOKIE = call(" ".join(["ssh", "root@%s" % SSH_IP, "--", "cat", "/observer/ERLANG_COOKIE"]))
+    MY_POD_IP = call("ssh root@%s cat /observer/MY_POD_IP" % SSH_IP)
+    # cast("sudo iptables -t nat -L OUTPUT")
+    output = call("ssh root@%s -- epmd -names" % SSH_IP)
+    EPMD_PORT = None
+    APP_PORT = None
+    for line in output.splitlines():
+      match = re.match("^epmd: up and running on port (\d+) with data:$", line)
+      if match:
+        EPMD_PORT = match.groups()[0]
+      match = re.match("^name %s at port (\d+)$" % APP_NAME, line)
+      if match:
+        APP_PORT = match.groups()[0]
+    if EPMD_PORT == None:
+      raise Exception("EPMD_PORT not found.")
+    if APP_PORT == None:
+      raise Exception("APP_PORT not found.")
+  except:
+    print "Unexpected error:", sys.exc_info()[0]
+    # TODO: rollbar
+    raise
+
+  try:
+    cmd = "".join(["ssh -L %s" % APP_PORT, ":localhost:", "%s -L %s" % (APP_PORT, EPMD_PORT), ":localhost:", "%s root@%s -f -N" % (EPMD_PORT, SSH_IP)])
+    cast(cmd)
+    cast("sudo iptables -t nat -A OUTPUT -p all -d %(MY_POD_IP)s -j DNAT --to-destination 127.0.0.1" % {"MY_POD_IP": MY_POD_IP})
+    print "In the 'Node' menu, click 'Connect Node'" 
+    print "Enter: %(APP_NAME)s@%(MY_POD_IP)s" % {"APP_NAME": APP_NAME, "MY_POD_IP": MY_POD_IP}
+    cmd = "erl -name observer@%(MY_POD_IP)s -setcookie %(ERLANG_COOKIE)s -hidden -run observer" % {"MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
+    cast(cmd)
+  except:
+    print "Unexpected error:", sys.exc_info()[0]
+    # TODO: rollbar
+    raise
+  finally:
+    clean_up(MY_POD_IP, EPMD_PORT, APP_PORT)
+
+def usage():
+  print "Usage: %s app_name ssh_ip" % sys.argv[0]
+  print "  app_name: your gigalixir app name"
+  print "  ssh_ip: your gigalixir app's ssh ip"
+
+if __name__ == "__main__":
+  try:
+    [_, APP_NAME, SSH_IP] = sys.argv
+  except ValueError:
+    usage()
+  else:
+    main(APP_NAME, SSH_IP)
