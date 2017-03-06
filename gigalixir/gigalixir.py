@@ -29,8 +29,10 @@ rdr pass on lo0 inet proto tcp from any to 10.244.7.124 port 36606 -> 127.0.0.1 
 """), stdout=subprocess.PIPE)
         subprocess.call(('sudo', 'pfctl', '-ef', '-'), stdin=ps.stdout)
         ps.wait()
+        cast("sudo ifconfig lo0 10.244.7.124 netmask 255.255.255.255 alias")
         
     def unroute_to_localhost(self, ip):
+        cast("sudo ifconfig lo0 10.244.7.124 netmask 255.255.255.255 -alias")
         subprocess.call("sudo pfctl -ef /etc/pf.conf".split())
 
 @click.group()
