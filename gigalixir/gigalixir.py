@@ -3,8 +3,10 @@ import subprocess
 import sys
 import re
 import uuid
+import rollbar
 
-ROLLBAR_POST_CLIENT_ITEM = "2326b83e4a2d4e789dbf981f956a07d5"
+ROLLBAR_POST_CLIENT_ITEM = "6fb30e5647474decb3fc8f3175e1dfca"
+rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production')
 
 @click.group()
 def cli():
@@ -53,7 +55,7 @@ def observer(app_name, ssh_ip):
             raise Exception("APP_PORT not found.")
     except:
         click.echo("Unexpected error:", sys.exc_info()[0])
-        # TODO: rollbar
+        rollbar.report_exc_info()
         raise
 
     try:
@@ -71,7 +73,7 @@ def observer(app_name, ssh_ip):
         cast(cmd)
     except:
         click.echo("Unexpected error: %s" % sys.exc_info()[0])
-        # TODO: rollbar
+        rollbar.report_exc_info()
         raise
     finally:
         clean_up(MY_POD_IP, EPMD_PORT, APP_PORT)
