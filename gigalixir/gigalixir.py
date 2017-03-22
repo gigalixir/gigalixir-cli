@@ -12,6 +12,9 @@ import json
 import netrc
 import os
 
+# TODO: replace localhost:4000 with api.gigalixir.com
+# TODO: remove localhost from .netrc file
+
 class LinuxRouter(object):
     def route_to_localhost(self, ip):
         # cast("sudo iptables -t nat -L OUTPUT")
@@ -60,9 +63,11 @@ def cli(ctx):
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
 
+# if you care about the cmd output use call
 def call(cmd):
     return subprocess.check_output(cmd.split()).strip()
 
+# if you only care that the cmd succeeded, call this
 def cast(cmd):
     return subprocess.check_call(cmd.split())
 
@@ -96,11 +101,41 @@ def login(email, password, yes):
                 # TODO: support netrc files in locations other than ~/.netrc
                 netrc_file = netrc.netrc()
                 netrc_file.hosts['git.gigalixir.com'] = (email.encode('utf8'), None, key.encode('utf8'))
+                netrc_file.hosts['localhost'] = (email.encode('utf8'), None, key.encode('utf8'))
+                netrc_file.hosts['api.gigalixir.com'] = (email.encode('utf8'), None, key.encode('utf8'))
                 file = os.path.join(os.environ['HOME'], ".netrc")
                 with open(file, 'w') as fp:
                     fp.write(netrc_repr(netrc_file))
             else:
                 logging.info('Your api key is %s' % key)
+    except:
+        click.echo("Unexpected error: %s" % sys.exc_info()[0])
+        rollbar.report_exc_info()
+        raise
+
+@create.command()
+@click.argument('unique_name')
+def app(unique_name):
+    try:
+        # check for git folder
+        with open(os.devnull, 'w') as FNULL:
+            subprocess.check_call('git rev-parse --is-inside-git-dir'.split(), stdout=FNULL, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError:
+        logging.error("You must call this from inside a git repository.")
+        sys.exit(1)
+
+    try:
+        unique_name = unique_name.lower()
+        r = requests.post('http://localhost:4000/api/apps', headers = {
+            'Content-Type': 'application/json',
+        }, json = {
+            "unique_name": unique_name,
+        })
+        if r.status_code != 201:
+            raise Exception(r.text)
+        else:
+            # create the git remote
+            cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % unique_name)
     except:
         click.echo("Unexpected error: %s" % sys.exc_info()[0])
         rollbar.report_exc_info()
