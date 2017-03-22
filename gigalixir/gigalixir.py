@@ -1,10 +1,16 @@
 import click
+import requests
+import getpass
+import stripe
 import subprocess
 import sys
 import re
 import uuid
 import rollbar
-
+import logging
+import json
+import netrc
+import os
 
 class LinuxRouter(object):
     def route_to_localhost(self, ip):
@@ -39,8 +45,13 @@ rdr pass on lo0 inet proto tcp from any to 10.244.7.124 port 36606 -> 127.0.0.1 
 @click.pass_context
 def cli(ctx):
     ctx.obj = {}
+    logging.basicConfig(format='%(message)s', level = logging.INFO)
     ROLLBAR_POST_CLIENT_ITEM = "6fb30e5647474decb3fc8f3175e1dfca"
     rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production')
+
+    stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
+    # stripe.api_key = 'pk_live_45dmSl66k4xLy4X4yfF3RVpd'
+
     PLATFORM = call("uname -s").lower() # linux or darwin
     if PLATFORM == "linux":
         ctx.obj['router'] = LinuxRouter()
@@ -61,6 +72,79 @@ def clean_up(router, MY_POD_IP, EPMD_PORT, APP_PORT):
     click.echo("Cleaning up SSH tunnel")
     pid = call("lsof -wni tcp:%(APP_PORT)s -t" % {"APP_PORT": APP_PORT})
     cast("kill -9 %s" % pid)
+
+@cli.group()
+def create():
+    pass
+
+@cli.command()
+@click.argument('email')
+@click.option('-p', '--password', default=None)
+@click.option('-y', '--yes', is_flag=True)
+def login(email, password, yes):
+    try:
+        while password == None or password == '':
+            password = getpass.getpass()
+        r = requests.get('http://localhost:4000/api/login', auth = (email, password))
+        if r.status_code == 401:
+            logging.error("Unauthorized")
+        elif r.status_code != 200:
+            raise Exception(r.text)
+        else:
+            key = json.loads(r.text)["key"]
+            if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?'):
+                # TODO: support netrc files in locations other than ~/.netrc
+                netrc_file = netrc.netrc()
+                netrc_file.hosts['git.gigalixir.com'] = (email.encode('utf8'), None, key.encode('utf8'))
+                file = os.path.join(os.environ['HOME'], ".netrc")
+                with open(file, 'w') as fp:
+                    fp.write(repr(netrc_file))
+            else:
+                logging.info('Your api key is %s' % key)
+    except:
+        click.echo("Unexpected error: %s" % sys.exc_info()[0])
+        rollbar.report_exc_info()
+        raise
+
+@create.command()
+@click.argument('email')
+@click.argument('card_number')
+@click.argument('card_exp_month')
+@click.argument('card_exp_year')
+@click.argument('card_cvc')
+@click.option('-p', '--password', default=None)
+@click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
+def account(email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
+    if not accept_terms_of_service_and_privacy_policy:
+        logging.info("GIGALIXIR Terms of Service: FPO")
+        logging.info("GIGALIXIR Privacy Policy: FPO")
+        if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
+            logging.error("Sorry, you must accept the Terms of Service and Privacy Policy to continue.")
+            sys.exit(1)
+    try:
+        while password == None or password == '':
+            password = getpass.getpass()
+        token = stripe.Token.create(
+            card={
+                "number": card_number,
+                "exp_month": card_exp_month,
+                "exp_year": card_exp_year,
+                "cvc": card_cvc,
+            },
+        )
+        r = requests.post('http://localhost:4000/api/users', headers = {
+            'Content-Type': 'application/json',
+        }, json = {
+            'email': email,
+            'password': password,
+            'stripe_token': token["id"],
+        })
+        if r.status_code != 200:
+            raise Exception(r.text)
+    except:
+        click.echo("Unexpected error: %s" % sys.exc_info()[0])
+        rollbar.report_exc_info()
+        raise
 
 @cli.command()
 @click.argument('app_name')
