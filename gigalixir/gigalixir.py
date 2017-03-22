@@ -98,7 +98,7 @@ def login(email, password, yes):
                 netrc_file.hosts['git.gigalixir.com'] = (email.encode('utf8'), None, key.encode('utf8'))
                 file = os.path.join(os.environ['HOME'], ".netrc")
                 with open(file, 'w') as fp:
-                    fp.write(repr(netrc_file))
+                    fp.write(netrc_repr(netrc_file))
             else:
                 logging.info('Your api key is %s' % key)
     except:
@@ -198,3 +198,21 @@ def observer(ctx, app_name, ssh_ip):
     finally:
         clean_up(ctx.obj['router'], MY_POD_IP, EPMD_PORT, APP_PORT)
 
+# Copied from https://github.com/enthought/Python-2.7.3/blob/master/Lib/netrc.py#L105
+# but uses str() instead of repr(). If the .netrc file uses quotes, repr will treat the quotes
+# as part of the value and wrap it in another quote resulting in double quotes. I need to dig
+# into this deeper, but this works for now.
+def netrc_repr(netrc):
+    rep = ""
+    for host in netrc.hosts.keys():
+        attrs = netrc.hosts[host]
+        rep = rep + "machine "+ host + "\n\tlogin " + str(attrs[0]) + "\n"
+        if attrs[1]:
+            rep = rep + "account " + str(attrs[1])
+        rep = rep + "\tpassword " + str(attrs[2]) + "\n"
+    for macro in netrc.macros.keys():
+        rep = rep + "macdef " + macro + "\n"
+        for line in netrc.macros[macro]:
+            rep = rep + line
+        rep = rep + "\n"
+    return rep
