@@ -15,4 +15,10 @@ setup(
         [console_scripts]
         gigalixir=gigalixir.gigalixir:cli
     ''',
+    setup_requires=[
+        'pytest-runner',
+    ],
+    tests_require=[
+        'pytest',
+    ],
 )

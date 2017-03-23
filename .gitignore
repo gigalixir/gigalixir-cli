@@ -2,3 +2,5 @@ erl_crash.dump
 venv
 *.egg-info
 *.pyc
+.cache
+.eggs
