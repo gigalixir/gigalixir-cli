@@ -1,4 +1,5 @@
 import os
+import subprocess
 from gigalixir import gigalixir
 import click
 from click.testing import CliRunner
@@ -17,9 +18,9 @@ def test_login():
     httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/login', body='{"key": "fake-api-key"}', content_type='application/json')
     runner = CliRunner()
 
+    # Make sure this test does not modify the user's netrc file.
     with runner.isolated_filesystem():
         os.environ['HOME'] = '.'
-        # Make sure this test does not modify the user's netrc file.
         result = runner.invoke(gigalixir.cli, ['login', 'foo@gigalixir.com'], input="password\ny\n")
         assert result.exit_code == 0
         with open('.netrc') as f:
@@ -33,3 +34,17 @@ machine localhost
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
 """
+
+@httpretty.activate
+def test_create_app():
+    httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/apps', body='{}', content_type='application/json', status=201)
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        subprocess.check_call(['git', 'init'])
+        result = runner.invoke(gigalixir.cli, ['create', 'app', 'fake-app-name'])
+        remotes = subprocess.check_output(['git', 'remote', '-v'])
+        assert remotes == """gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (fetch)
+gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
+"""
+        assert result.exit_code == 0
+
