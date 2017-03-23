@@ -82,6 +82,34 @@ def clean_up(router, MY_POD_IP, EPMD_PORT, APP_PORT):
 def create():
     pass
 
+@cli.group()
+def edit():
+    pass
+
+@edit.command()
+@click.argument('email')
+@click.option('-p', '--current_password', default=None)
+@click.option('-n', '--new_password', default=None)
+def user(email, current_password, new_password):
+    try:
+        while current_password == None or current_password == '':
+            current_password = getpass.getpass('Current Password: ')
+        while new_password == None or new_password == '':
+            new_password = getpass.getpass('New Password: ')
+        r = requests.patch('http://localhost:4000/api/users', auth = (email, current_password), json = {
+            "new_password": new_password
+        })
+        if r.status_code == 401:
+            logging.error("Unauthorized")
+
+        # TODO: might make sense to catch 422 and report errors more nicely than throwing up a stacktrace
+        elif r.status_code != 200:
+            raise Exception(r.text)
+    except:
+        click.echo("Unexpected error: %s" % sys.exc_info()[0])
+        rollbar.report_exc_info()
+        raise
+
 @cli.command()
 @click.argument('email')
 @click.option('-p', '--password', default=None)
