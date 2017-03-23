@@ -100,7 +100,7 @@ def user(email, current_password, new_password):
             "new_password": new_password
         })
         if r.status_code == 401:
-            logging.error("Unauthorized")
+            raise Exception("Unauthorized")
 
         # TODO: might make sense to catch 422 and report errors more nicely than throwing up a stacktrace
         elif r.status_code != 200:
@@ -112,22 +112,29 @@ def user(email, current_password, new_password):
 
 @cli.command()
 @click.argument('email')
-@click.option('-p', '--password', default=None)
+@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--yes', is_flag=True)
 def login(email, password, yes):
     try:
-        while password == None or password == '':
-            password = getpass.getpass()
         r = requests.get('http://localhost:4000/api/login', auth = (email, password))
         if r.status_code == 401:
-            logging.error("Unauthorized")
+            raise Exception("Unauthorized")
         elif r.status_code != 200:
             raise Exception(r.text)
         else:
             key = json.loads(r.text)["key"]
             if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?'):
                 # TODO: support netrc files in locations other than ~/.netrc
-                netrc_file = netrc.netrc()
+                try:
+                    netrc_file = netrc.netrc()
+                except IOError:
+                    # if netrc does not exist, touch it
+                    # from: http://stackoverflow.com/questions/1158076/implement-touch-using-python
+                    fname = os.path.join(os.environ['HOME'], ".netrc")
+                    with open(fname, 'a'):
+                            os.utime(fname, None)
+                    netrc_file = netrc.netrc()
+
                 netrc_file.hosts['git.gigalixir.com'] = (email.encode('utf8'), None, key.encode('utf8'))
                 netrc_file.hosts['localhost'] = (email.encode('utf8'), None, key.encode('utf8'))
                 netrc_file.hosts['api.gigalixir.com'] = (email.encode('utf8'), None, key.encode('utf8'))
