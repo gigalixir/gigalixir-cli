@@ -17,6 +17,7 @@ setup(
     ''',
     setup_requires=[
         'pytest-runner',
+        'HTTPretty',
     ],
     tests_require=[
         'pytest',

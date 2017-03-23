@@ -175,7 +175,7 @@ def app(unique_name):
 @click.argument('card_exp_month')
 @click.argument('card_exp_year')
 @click.argument('card_cvc')
-@click.option('-p', '--password', default=None)
+@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
 def account(email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
     if not accept_terms_of_service_and_privacy_policy:
@@ -185,8 +185,6 @@ def account(email, card_number, card_exp_month, card_exp_year, card_cvc, passwor
             logging.error("Sorry, you must accept the Terms of Service and Privacy Policy to continue.")
             sys.exit(1)
     try:
-        while password == None or password == '':
-            password = getpass.getpass()
         token = stripe.Token.create(
             card={
                 "number": card_number,
