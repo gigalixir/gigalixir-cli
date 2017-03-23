@@ -88,14 +88,10 @@ def edit():
 
 @edit.command()
 @click.argument('email')
-@click.option('-p', '--current_password', default=None)
-@click.option('-n', '--new_password', default=None)
+@click.option('-p', '--current_password', prompt=True, hide_input=True, confirmation_prompt=False)
+@click.option('-n', '--new_password', prompt=True, hide_input=True, confirmation_prompt=False)
 def user(email, current_password, new_password):
     try:
-        while current_password == None or current_password == '':
-            current_password = getpass.getpass('Current Password: ')
-        while new_password == None or new_password == '':
-            new_password = getpass.getpass('New Password: ')
         r = requests.patch('http://localhost:4000/api/users', auth = (email, current_password), json = {
             "new_password": new_password
         })
@@ -184,7 +180,7 @@ def app(unique_name):
 @click.argument('card_cvc')
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
-def account(email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
+def user(email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
     if not accept_terms_of_service_and_privacy_policy:
         logging.info("GIGALIXIR Terms of Service: FPO")
         logging.info("GIGALIXIR Privacy Policy: FPO")

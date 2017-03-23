@@ -6,11 +6,11 @@ from click.testing import CliRunner
 import httpretty
 
 @httpretty.activate
-def test_create_account():
+def test_create_user():
     httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
     httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/users', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['create', 'account', 'foo@gigalixir.com', '4111111111111111', '12', '34', '123', '-y'], input="password\n")
+    result = runner.invoke(gigalixir.cli, ['create', 'user', 'foo@gigalixir.com', '4111111111111111', '12', '34', '123', '-y'], input="password\n")
     assert result.exit_code == 0
 
 @httpretty.activate
@@ -48,3 +48,9 @@ gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 """
         assert result.exit_code == 0
 
+@httpretty.activate
+def test_edit_user():
+    httpretty.register_uri(httpretty.PATCH, 'http://localhost:4000/api/users', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['edit', 'user', 'foo@gigalixir.com'], input="current_password\nnew_password\n")
+    assert result.exit_code == 0
