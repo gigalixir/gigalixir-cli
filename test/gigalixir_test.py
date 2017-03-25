@@ -55,8 +55,40 @@ def test_edit_user():
     result = runner.invoke(gigalixir.cli, ['edit', 'user', 'foo@gigalixir.com'], input="current_password\nnew_password\n")
     assert result.exit_code == 0
 
-def test_ps():
-    pass
+@httpretty.activate
+def test_get_apps():
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps', body='[{"unique_name":"one","size_m":500,"replicas":1},{"unique_name":"two","size_m":500,"replicas":1},{"unique_name":"three","size_m":500,"replicas":1},{"unique_name":"four","size_m":500,"replicas":1},{"unique_name":"five","size_m":500,"replicas":1}]', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'apps'])
+    assert result.output == """[
+  {
+    "name": "one", 
+    "replicas": 1, 
+    "size": 0.5
+  }, 
+  {
+    "name": "two", 
+    "replicas": 1, 
+    "size": 0.5
+  }, 
+  {
+    "name": "three", 
+    "replicas": 1, 
+    "size": 0.5
+  }, 
+  {
+    "name": "four", 
+    "replicas": 1, 
+    "size": 0.5
+  }, 
+  {
+    "name": "five", 
+    "replicas": 1, 
+    "size": 0.5
+  }
+]
+"""
+    assert result.exit_code == 0
 
 def test_scale():
     pass

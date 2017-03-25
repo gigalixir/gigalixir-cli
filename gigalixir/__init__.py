@@ -40,6 +40,12 @@ def cli(ctx):
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
 
+@cli.group()
+def get():
+    """
+    get users, apps, etc
+    """
+    pass
 
 @cli.group()
 def create():
@@ -54,6 +60,7 @@ def edit():
     edit users, apps, etc
     """
     pass
+
 
 @edit.command()
 @click.argument('email')
@@ -80,6 +87,18 @@ def login(email, password, yes):
     """
     try:
         gigalixir_user.login(email, password, yes)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@get.command()
+def apps():
+    """
+    get apps
+    """
+    try:
+        gigalixir_app.get()
     except:
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()

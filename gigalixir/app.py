@@ -1,7 +1,24 @@
 import os
+import json
 import subprocess
 import requests
+import click
 from .shell import cast, call
+
+def get():
+    r = requests.get('http://localhost:4000/api/apps', headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)
+        data = [{
+            "name": datum["unique_name"],
+            "size": datum["size_m"] / 1000.0,
+            "replicas": datum["replicas"],
+        } for datum in data]
+        click.echo(json.dumps(data, indent=2, sort_keys=True))
 
 def create(unique_name):
     try:
