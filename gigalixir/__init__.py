@@ -43,24 +43,39 @@ def cli(ctx):
 @cli.group()
 def get():
     """
-    get users, apps, etc
+    Get users, apps, etc.
     """
     pass
 
 @cli.group()
 def create():
     """
-    create users, apps, etc
+    Create users, apps, etc.
     """
     pass
 
 @cli.group()
 def edit():
     """
-    edit users, apps, etc
+    Edit users, apps, etc.
     """
     pass
 
+
+@cli.command()
+@click.argument('app_name')
+@click.option('-r', '--replicas', type=int, default=None, help='Number of replicas to run.')
+@click.option('-s', '--size', type=float, default=None, help='Size of each replica between 0.5 and 128 in increments of 0.1.')
+def scale(app_name, replicas, size):
+    """
+    Scale app.
+    """
+    try:
+        gigalixir_app.scale(app_name, replicas, size)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
 
 @edit.command()
 @click.argument('email')
@@ -68,7 +83,7 @@ def edit():
 @click.option('-n', '--new_password', prompt=True, hide_input=True, confirmation_prompt=False)
 def user(email, current_password, new_password):
     """
-    edit user. currently only password is editable
+    Edit user. Currently only password is editable.
     """
     try:
         gigalixir_user.change_password(email, current_password, new_password)
@@ -83,7 +98,7 @@ def user(email, current_password, new_password):
 @click.option('-y', '--yes', is_flag=True)
 def login(email, password, yes):
     """
-    login and receive an api key
+    Login and receive an api key.
     """
     try:
         gigalixir_user.login(email, password, yes)
@@ -95,7 +110,7 @@ def login(email, password, yes):
 @get.command()
 def apps():
     """
-    get apps
+    Get apps.
     """
     try:
         gigalixir_app.get()
@@ -108,7 +123,7 @@ def apps():
 @click.argument('unique_name')
 def app(unique_name):
     """
-    create a new app
+    Create a new app.
     """
     try:
         gigalixir_app.create(unique_name)
@@ -127,7 +142,7 @@ def app(unique_name):
 @click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
 def user(email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
     """
-    create a new user
+    Create a new user.
     """
     try:
         gigalixir_user.create(email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy)
@@ -142,6 +157,6 @@ def user(email, card_number, card_exp_month, card_exp_year, card_cvc, password, 
 @click.pass_context
 def observer(ctx, app_name, ssh_ip):
     """
-    launch remote production observer 
+    Launch remote production observer.
     """
     gigalixir_observer.observer(ctx, app_name, ssh_ip)

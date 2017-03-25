@@ -39,3 +39,14 @@ def create(unique_name):
     else:
         # create the git remote
         cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % unique_name)
+
+def scale(app_name, replicas, size):
+    r = requests.put('http://localhost:4000/api/apps/%s/scale' % app_name, headers = {
+        'Content-Type': 'application/json',
+    }, json = {
+        "replicas": replicas,
+        "size": int(size * 1000)
+    })
+    if r.status_code != 200:
+        raise Exception(r.text)
+

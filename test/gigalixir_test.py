@@ -1,4 +1,5 @@
 import os
+from sure import expect
 import subprocess
 import gigalixir
 import click
@@ -12,6 +13,7 @@ def test_create_user():
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['create', 'user', '--email=foo@gigalixir.com', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=123', '-y'], input="password\n")
     assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
 @httpretty.activate
 def test_login():
@@ -34,6 +36,7 @@ machine localhost
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
 """
+    expect(httpretty.has_request()).to.be.true
 
 @httpretty.activate
 def test_create_app():
@@ -47,6 +50,7 @@ def test_create_app():
 gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 """
         assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
 @httpretty.activate
 def test_edit_user():
@@ -54,6 +58,7 @@ def test_edit_user():
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['edit', 'user', 'foo@gigalixir.com'], input="current_password\nnew_password\n")
     assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
 @httpretty.activate
 def test_get_apps():
@@ -89,9 +94,16 @@ def test_get_apps():
 ]
 """
     assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
+@httpretty.activate
 def test_scale():
-    pass
+    httpretty.register_uri(httpretty.PUT, 'http://localhost:4000/api/apps/fake-app-name/scale', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['scale', 'fake-app-name', '--replicas=100', '--size=0.5'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
 def test_restart():
     pass
