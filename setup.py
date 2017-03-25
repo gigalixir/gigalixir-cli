@@ -13,7 +13,7 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        gigalixir=gigalixir.gigalixir:cli
+        gigalixir=gigalixir:cli
     ''',
     setup_requires=[
         'pytest-runner',
