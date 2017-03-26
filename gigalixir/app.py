@@ -50,3 +50,10 @@ def scale(app_name, replicas, size):
     if r.status_code != 200:
         raise Exception(r.text)
 
+def restart(app_name):
+    r = requests.put('http://localhost:4000/api/apps/%s/restart' % app_name, headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        raise Exception(r.text)
+

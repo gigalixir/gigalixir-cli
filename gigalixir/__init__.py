@@ -77,6 +77,20 @@ def scale(app_name, replicas, size):
         rollbar.report_exc_info()
         sys.exit(1)
 
+@cli.command()
+@click.argument('app_name')
+def restart(app_name):
+    """
+    Restart app.
+    """
+    try:
+        gigalixir_app.restart(app_name)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+
 @edit.command()
 @click.argument('email')
 @click.option('-p', '--current_password', prompt=True, hide_input=True, confirmation_prompt=False)

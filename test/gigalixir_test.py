@@ -105,9 +105,16 @@ def test_scale():
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
+@httpretty.activate
 def test_restart():
-    pass
+    httpretty.register_uri(httpretty.PUT, 'http://localhost:4000/api/apps/fake-app-name/restart', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['restart', 'fake-app-name'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
+@httpretty.activate
 def test_rollback():
     pass
 
