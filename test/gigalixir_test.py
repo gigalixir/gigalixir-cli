@@ -130,8 +130,17 @@ def test_run():
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"function": "migrate", "module": "Elixir.Tasks"}')
 
+@httpretty.activate
 def test_get_configs():
-    pass
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/configs', body='{"DATABASE_URL":"ecto://user:pass@host:5432/db"}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'configs', 'fake-app-name'])
+    assert result.output == """{
+  "DATABASE_URL": "ecto://user:pass@host:5432/db"
+}
+"""
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
 def test_create_config():
     pass

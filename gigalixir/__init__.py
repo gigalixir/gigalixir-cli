@@ -4,6 +4,7 @@ from .routers.darwin import DarwinRouter
 from . import observer as gigalixir_observer
 from . import user as gigalixir_user
 from . import app as gigalixir_app
+from . import config as gigalixir_config
 import click
 import requests
 import getpass
@@ -144,6 +145,19 @@ def apps():
     """
     try:
         gigalixir_app.get()
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@get.command()
+@click.argument('app_name')
+def configs(app_name):
+    """
+    Get app configuration/environment variables.
+    """
+    try:
+        gigalixir_config.get(app_name)
     except:
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()
