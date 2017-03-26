@@ -14,6 +14,8 @@ def test_create_user():
     result = runner.invoke(gigalixir.cli, ['create', 'user', '--email=foo@gigalixir.com', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=123', '-y'], input="password\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
+    expect(httpretty.httpretty.latest_requests[0].body).to.equal('card%5Bnumber%5D=4111111111111111&card%5Bexp_year%5D=34&card%5Bcvc%5D=123&card%5Bexp_month%5D=12')
+    expect(httpretty.httpretty.latest_requests[1].body).to.equal('{"stripe_token": "fake-stripe-token", "password": "password", "email": "foo@gigalixir.com"}')
 
 @httpretty.activate
 def test_login():
@@ -37,6 +39,7 @@ machine localhost
 \tpassword fake-api-key
 """
     expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vQGdpZ2FsaXhpci5jb206cGFzc3dvcmQ=\r\n')
 
 @httpretty.activate
 def test_create_app():
@@ -51,6 +54,7 @@ gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 """
         assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"unique_name": "fake-app-name"}')
 
 @httpretty.activate
 def test_edit_user():
@@ -59,6 +63,7 @@ def test_edit_user():
     result = runner.invoke(gigalixir.cli, ['edit', 'user', 'foo@gigalixir.com'], input="current_password\nnew_password\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"new_password": "new_password"}')
 
 @httpretty.activate
 def test_get_apps():
@@ -104,6 +109,7 @@ def test_scale():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"size": 500, "replicas": 100}')
 
 @httpretty.activate
 def test_restart():
@@ -115,11 +121,14 @@ def test_restart():
     expect(httpretty.has_request()).to.be.true
 
 @httpretty.activate
-def test_rollback():
-    pass
-
 def test_run():
-    pass
+    httpretty.register_uri(httpretty.PUT, 'http://localhost:4000/api/apps/fake-app-name/run', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['run', 'fake-app-name', 'Elixir.Tasks', 'migrate'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"function": "migrate", "module": "Elixir.Tasks"}')
 
 def test_get_configs():
     pass
@@ -143,6 +152,10 @@ def test_create_api_key():
     pass
 
 def test_get_releases():
+    pass
+
+@httpretty.activate
+def test_rollback():
     pass
 
 def test_logs():

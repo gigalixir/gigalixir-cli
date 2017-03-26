@@ -91,6 +91,22 @@ def restart(app_name):
         sys.exit(1)
 
 
+@cli.command()
+@click.argument('app_name')
+@click.argument('module')
+@click.argument('function')
+def run(app_name, module, function):
+    """
+    Run arbitrary function e.g. Elixir.Tasks.migrate/0.
+    """
+    try:
+        gigalixir_app.run(app_name, module, function)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+
 @edit.command()
 @click.argument('email')
 @click.option('-p', '--current_password', prompt=True, hide_input=True, confirmation_prompt=False)

@@ -57,3 +57,13 @@ def restart(app_name):
     if r.status_code != 200:
         raise Exception(r.text)
 
+def run(app_name, module, function):
+    r = requests.put('http://localhost:4000/api/apps/%s/run' % app_name, headers = {
+        'Content-Type': 'application/json',
+    }, json = {
+        "module": module,
+        "function": function
+    })
+    if r.status_code != 200:
+        raise Exception(r.text)
+
