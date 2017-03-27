@@ -49,7 +49,7 @@ def login(email, password, yes):
     elif r.status_code != 200:
         raise Exception(r.text)
     else:
-        key = json.loads(r.text)["key"]
+        key = json.loads(r.text)["data"]["key"]
         if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?'):
             # TODO: support netrc files in locations other than ~/.netrc
             try:

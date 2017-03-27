@@ -12,7 +12,7 @@ def get():
     if r.status_code != 200:
         raise Exception(r.text)
     else:
-        data = json.loads(r.text)
+        data = json.loads(r.text)["data"]
         data = [{
             "name": datum["unique_name"],
             "size": datum["size_m"] / 1000.0,

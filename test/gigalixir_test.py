@@ -19,7 +19,7 @@ def test_create_user():
 
 @httpretty.activate
 def test_login():
-    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/login', body='{"key": "fake-api-key"}', content_type='application/json')
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/login', body='{"data":{"key": "fake-api-key"}}', content_type='application/json')
     runner = CliRunner()
 
     # Make sure this test does not modify the user's netrc file.
@@ -67,7 +67,7 @@ def test_edit_user():
 
 @httpretty.activate
 def test_get_apps():
-    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps', body='[{"unique_name":"one","size_m":500,"replicas":1},{"unique_name":"two","size_m":500,"replicas":1},{"unique_name":"three","size_m":500,"replicas":1},{"unique_name":"four","size_m":500,"replicas":1},{"unique_name":"five","size_m":500,"replicas":1}]', content_type='application/json')
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps', body='{"data":[{"unique_name":"one","size_m":500,"replicas":1},{"unique_name":"two","size_m":500,"replicas":1},{"unique_name":"three","size_m":500,"replicas":1},{"unique_name":"four","size_m":500,"replicas":1},{"unique_name":"five","size_m":500,"replicas":1}]}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['get', 'apps'])
     assert result.output == """[
@@ -132,7 +132,7 @@ def test_run():
 
 @httpretty.activate
 def test_get_configs():
-    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/configs', body='{"DATABASE_URL":"ecto://user:pass@host:5432/db"}', content_type='application/json')
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/configs', body='{"data":{"DATABASE_URL":"ecto://user:pass@host:5432/db"}}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['get', 'configs', 'fake-app-name'])
     assert result.output == """{
