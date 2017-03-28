@@ -62,6 +62,12 @@ def edit():
     """
     pass
 
+@cli.group()
+def delete():
+    """
+    Delete configs, etc
+    """
+    pass
 
 @cli.command()
 @click.argument('app_name')
@@ -173,6 +179,20 @@ def configs(app_name):
     """
     try:
         gigalixir_config.get(app_name)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@delete.command()
+@click.argument('app_name')
+@click.argument('key')
+def config(app_name, key):
+    """
+    Delete app configuration/environment variables.
+    """
+    try:
+        gigalixir_config.delete(app_name, key)
     except:
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()

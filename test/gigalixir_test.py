@@ -151,8 +151,13 @@ def test_create_config():
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"value": "bar", "key": "FOO"}')
 
+@httpretty.activate
 def test_delete_config():
-    pass
+    httpretty.register_uri(httpretty.DELETE, 'http://localhost:4000/api/apps/fake-app-name/configs/FOO', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['delete', 'config', 'fake-app-name', 'FOO'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
 def test_get_permissions():
     pass
