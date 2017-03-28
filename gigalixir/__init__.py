@@ -5,6 +5,7 @@ from . import observer as gigalixir_observer
 from . import user as gigalixir_user
 from . import app as gigalixir_app
 from . import config as gigalixir_config
+from . import permission as gigalixir_permission
 import click
 import requests
 import getpass
@@ -156,6 +157,19 @@ def apps():
         rollbar.report_exc_info()
         sys.exit(1)
 
+@get.command()
+@click.argument('app_name')
+def permissions(app_name):
+    """
+    Get permissions for app.
+    """
+    try:
+        gigalixir_permission.get(app_name)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
 @create.command()
 @click.argument('app_name')
 @click.argument('key')
@@ -186,6 +200,20 @@ def configs(app_name):
 
 @delete.command()
 @click.argument('app_name')
+@click.argument('email')
+def permission(app_name, email):
+    """
+    Denies user access to app.
+    """
+    try:
+        gigalixir_permission.delete(app_name, email)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@delete.command()
+@click.argument('app_name')
 @click.argument('key')
 def config(app_name, key):
     """
@@ -197,6 +225,21 @@ def config(app_name, key):
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
+
+@create.command()
+@click.argument('unique_name')
+@click.argument('email')
+def permission(unique_name, email):
+    """
+    Grants another user permission to collaborate on an app.
+    """
+    try:
+        gigalixir_permission.create(unique_name, email)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
 
 @create.command()
 @click.argument('unique_name')

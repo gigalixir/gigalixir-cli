@@ -153,20 +153,38 @@ def test_create_config():
 
 @httpretty.activate
 def test_delete_config():
-    httpretty.register_uri(httpretty.DELETE, 'http://localhost:4000/api/apps/fake-app-name/configs/FOO', body='{}', content_type='application/json')
+    httpretty.register_uri(httpretty.DELETE, 'http://localhost:4000/api/apps/fake-app-name/configs', body='{}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['delete', 'config', 'fake-app-name', 'FOO'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"key": "FOO"}')
 
+@httpretty.activate
 def test_get_permissions():
-    pass
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/permissions', body='{"data":["foo@gigalixir.com"]}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'permissions', 'fake-app-name'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
+@httpretty.activate
 def test_create_permission():
-    pass
+    httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/apps/fake-app-name/permissions', body='{}', content_type='application/json', status=201)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['create', 'permission', 'fake-app-name', 'foo@gigalixir.com'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
 
+@httpretty.activate
 def test_delete_permission():
-    pass
+    httpretty.register_uri(httpretty.DELETE, 'http://localhost:4000/api/apps/fake-app-name/permissions', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['delete', 'permission', 'fake-app-name', 'foo@gigalixir.com'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
 
 def test_create_api_key():
     pass
