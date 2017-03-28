@@ -1,4 +1,5 @@
 import os
+import urllib
 import json
 import subprocess
 import requests
@@ -41,7 +42,7 @@ def create(unique_name):
         cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % unique_name)
 
 def scale(app_name, replicas, size):
-    r = requests.put('http://localhost:4000/api/apps/%s/scale' % app_name, headers = {
+    r = requests.put('http://localhost:4000/api/apps/%s/scale' % urllib.quote(app_name.encode('utf-8')), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "replicas": replicas,
@@ -51,14 +52,14 @@ def scale(app_name, replicas, size):
         raise Exception(r.text)
 
 def restart(app_name):
-    r = requests.put('http://localhost:4000/api/apps/%s/restart' % app_name, headers = {
+    r = requests.put('http://localhost:4000/api/apps/%s/restart' % urllib.quote(app_name.encode('utf-8')), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
         raise Exception(r.text)
 
 def run(app_name, module, function):
-    r = requests.put('http://localhost:4000/api/apps/%s/run' % app_name, headers = {
+    r = requests.put('http://localhost:4000/api/apps/%s/run' % urllib.quote(app_name.encode('utf-8')), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "module": module,
