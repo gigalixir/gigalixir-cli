@@ -150,6 +150,21 @@ def apps():
         rollbar.report_exc_info()
         sys.exit(1)
 
+@create.command()
+@click.argument('app_name')
+@click.argument('key')
+@click.argument('value')
+def config(app_name, key, value):
+    """
+    Create app configuration/environment variable.
+    """
+    try:
+        gigalixir_config.create(app_name, key, value)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
 @get.command()
 @click.argument('app_name')
 def configs(app_name):
