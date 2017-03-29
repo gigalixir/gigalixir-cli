@@ -6,6 +6,7 @@ from . import user as gigalixir_user
 from . import app as gigalixir_app
 from . import config as gigalixir_config
 from . import permission as gigalixir_permission
+from . import api_key as gigalixir_api_key
 import click
 import requests
 import getpass
@@ -57,9 +58,9 @@ def create():
     pass
 
 @cli.group()
-def edit():
+def update():
     """
-    Edit users, apps, etc.
+    Update users, apps, etc.
     """
     pass
 
@@ -115,7 +116,7 @@ def run(app_name, module, function):
         sys.exit(1)
 
 
-@edit.command()
+@update.command()
 @click.argument('email')
 @click.option('-p', '--current_password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-n', '--new_password', prompt=True, hide_input=True, confirmation_prompt=False)
@@ -129,6 +130,22 @@ def user(email, current_password, new_password):
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
+
+@update.command()
+@click.argument('email')
+@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
+@click.option('-y', '--yes', is_flag=True)
+def api_key(email, password, yes):
+    """
+    Regenerate a new api key to replace the old one.
+    """
+    try:
+        gigalixir_api_key.regenerate(email, password, yes)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
 
 @cli.command()
 @click.argument('email')

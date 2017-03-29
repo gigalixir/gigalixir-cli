@@ -60,7 +60,7 @@ gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 def test_edit_user():
     httpretty.register_uri(httpretty.PATCH, 'http://localhost:4000/api/users', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['edit', 'user', 'foo@gigalixir.com'], input="current_password\nnew_password\n")
+    result = runner.invoke(gigalixir.cli, ['update', 'user', 'foo@gigalixir.com'], input="current_password\nnew_password\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"new_password": "new_password"}')
@@ -186,8 +186,28 @@ def test_delete_permission():
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
 
+@httpretty.activate
 def test_create_api_key():
-    pass
+    httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/api_keys', body='{"data":{"key":"another-fake-api-key","expires_at":"2017-04-28T16:47:09"}}', content_type='application/json', status=201)
+    runner = CliRunner()
+    # Make sure this test does not modify the user's netrc file.
+    with runner.isolated_filesystem():
+        os.environ['HOME'] = '.'
+        result = runner.invoke(gigalixir.cli, ['update', 'api_key', 'foo@gigalixir.com'], input="password\ny\n")
+        assert result.exit_code == 0
+        with open('.netrc') as f:
+            assert f.read() == """machine api.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword another-fake-api-key
+machine git.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword another-fake-api-key
+machine localhost
+\tlogin foo@gigalixir.com
+\tpassword another-fake-api-key
+"""
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vQGdpZ2FsaXhpci5jb206cGFzc3dvcmQ=\r\n')
 
 def test_get_releases():
     pass
