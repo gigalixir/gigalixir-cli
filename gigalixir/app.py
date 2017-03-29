@@ -58,6 +58,28 @@ def restart(app_name):
     if r.status_code != 200:
         raise Exception(r.text)
 
+def rollback(app_name, rollback_id):
+    if rollback_id == None:
+        rollback_id = second_most_recent_rollback_id(app_name)
+    r = requests.post('http://localhost:4000/api/apps/%s/releases/%s/rollback' % (urllib.quote(app_name.encode('utf-8')), urllib.quote(rollback_id.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        raise Exception(r.text)
+
+def second_most_recent_rollback_id(app_name):
+    r = requests.get('http://localhost:4000/api/apps/%s/releases' % urllib.quote(app_name.encode('utf-8')), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        if len(data) < 2:
+            raise Exception("No release available to rollback to.")
+        else:
+            return data[1]["rollback_id"]
+
 def run(app_name, module, function):
     r = requests.put('http://localhost:4000/api/apps/%s/run' % urllib.quote(app_name.encode('utf-8')), headers = {
         'Content-Type': 'application/json',

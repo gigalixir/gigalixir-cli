@@ -235,8 +235,34 @@ def test_get_releases():
 """
 
 @httpretty.activate
+def test_rollback_without_eligible_release():
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/releases', body='{"data":[{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"fake-rollback-id3","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:29.000+00:00"}]}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/apps/fake-app-name/releases/fake-rollback-id2/rollback', body='', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name'])
+    assert result.exit_code == 1
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.has_request()).to.be.true
+    expect(len(httpretty.httpretty.latest_requests)).to.equal(1)
+
+@httpretty.activate
+def test_rollback_without_rollback_id():
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/releases', body='{"data":[{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"fake-rollback-id3","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:29.000+00:00"},{"slug_url":"fake-slug-url","sha":"fake-sha","rollback_id":"fake-rollback-id2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:28.000+00:00"}]}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/apps/fake-app-name/releases/fake-rollback-id2/rollback', body='{"data":{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"52e5dc7b-30d2-4325-afe3-087edeb5f3c2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:38:35.000+00:00"}}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
 def test_rollback():
-    pass
+    httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/apps/fake-app-name/releases/fake-rollback-id/rollback', body='{"data":{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"52e5dc7b-30d2-4325-afe3-087edeb5f3c2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:38:35.000+00:00"}}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name', '-r', 'fake-rollback-id'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
 def test_logs():
     pass

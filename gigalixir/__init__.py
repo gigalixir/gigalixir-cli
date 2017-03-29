@@ -89,6 +89,21 @@ def scale(app_name, replicas, size):
 
 @cli.command()
 @click.argument('app_name')
+@click.option('-r', '--rollback_id', default=None, help='The rollback id of the release to revert to. Use gigalixir get releases to find the rollback_id. If omitted, this defaults to the second most recent release.')
+def rollback(app_name, rollback_id):
+    """
+    Rollback to a previous release. 
+    """
+    try:
+        gigalixir_app.rollback(app_name, rollback_id)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument('app_name')
 def restart(app_name):
     """
     Restart app.
