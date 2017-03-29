@@ -6,6 +6,7 @@ from . import user as gigalixir_user
 from . import app as gigalixir_app
 from . import config as gigalixir_config
 from . import permission as gigalixir_permission
+from . import release as gigalixir_release
 from . import api_key as gigalixir_api_key
 import click
 import requests
@@ -173,6 +174,20 @@ def apps():
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
+
+@get.command()
+@click.argument('app_name')
+def releases(app_name):
+    """
+    Get previous releases for app.
+    """
+    try:
+        gigalixir_release.get(app_name)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
 
 @get.command()
 @click.argument('app_name')

@@ -209,8 +209,30 @@ machine localhost
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vQGdpZ2FsaXhpci5jb206cGFzc3dvcmQ=\r\n')
 
+@httpretty.activate
 def test_get_releases():
-    pass
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/releases', body='{"data":[{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"fake-rollback-id3","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:29.000+00:00"},{"slug_url":"fake-slug-url","sha":"fake-sha","rollback_id":"fake-rollback-id2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:28.000+00:00"}]}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'releases', 'fake-app-name'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    assert result.output == """[
+  {
+    "created_at": "2017-03-29T17:28:29.000+00:00", 
+    "customer_app_name": "gigalixir_getting_started", 
+    "rollback_id": "fake-rollback-id3", 
+    "sha": "another-fake-sha", 
+    "slug_url": "another-fake-slug-url"
+  }, 
+  {
+    "created_at": "2017-03-29T17:28:28.000+00:00", 
+    "customer_app_name": "gigalixir_getting_started", 
+    "rollback_id": "fake-rollback-id2", 
+    "sha": "fake-sha", 
+    "slug_url": "fake-slug-url"
+  }
+]
+"""
 
 @httpretty.activate
 def test_rollback():
