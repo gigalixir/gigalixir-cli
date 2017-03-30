@@ -264,14 +264,30 @@ def test_rollback():
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
-def test_logs():
-    pass
-
+@httpretty.activate
 def test_get_ssh_keys():
-    pass
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/ssh_keys', body='{"data":[{"key":"fake-ssh-key","id":1}]}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'ssh_keys'])
+    assert result.output == """[
+  {
+    "id": 1, 
+    "key": "fake-ssh-key"
+  }
+]
+"""
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
+@httpretty.activate
 def test_create_ssh_key():
-    pass
+    httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/ssh_keys', body='', content_type='application/json', status=201)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['create', 'ssh_key', 'fake-ssh-key'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"ssh_key": "fake-ssh-key"}')
 
 def test_delete_ssh_key():
     pass
@@ -280,5 +296,8 @@ def test_get_payment_method():
     pass
 
 def test_edit_payment_method():
+    pass
+
+def test_logs():
     pass
 

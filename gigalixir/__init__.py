@@ -8,6 +8,7 @@ from . import config as gigalixir_config
 from . import permission as gigalixir_permission
 from . import release as gigalixir_release
 from . import api_key as gigalixir_api_key
+from . import ssh_key as gigalixir_ssh_key
 import click
 import requests
 import getpass
@@ -179,6 +180,18 @@ def login(email, password, yes):
         sys.exit(1)
 
 @get.command()
+def ssh_keys():
+    """
+    Get your ssh keys.
+    """
+    try:
+        gigalixir_ssh_key.get()
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@get.command()
 def apps():
     """
     Get apps.
@@ -218,6 +231,19 @@ def permissions(app_name):
         sys.exit(1)
 
 @create.command()
+@click.argument('ssh_key')
+def ssh_key(ssh_key):
+    """
+    Create ssh key.
+    """
+    try:
+        gigalixir_ssh_key.create(ssh_key)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@create.command()
 @click.argument('app_name')
 @click.argument('key')
 @click.argument('value')
@@ -240,6 +266,19 @@ def configs(app_name):
     """
     try:
         gigalixir_config.get(app_name)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@delete.command()
+@click.argument('key_id')
+def ssh_key(key_id):
+    """
+    Deletes your ssh key. Find the key_id from gigalixir get ssh_keys.
+    """
+    try:
+        gigalixir_ssh_key.delete(key_id)
     except:
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()
