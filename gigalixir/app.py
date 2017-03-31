@@ -5,6 +5,7 @@ import subprocess
 import requests
 import click
 from .shell import cast, call
+from contextlib import closing
 
 def get():
     r = requests.get('http://localhost:4000/api/apps', headers = {
@@ -89,4 +90,13 @@ def run(app_name, module, function):
     })
     if r.status_code != 200:
         raise Exception(r.text)
+
+def logs(app_name):
+    with closing(requests.get('http://localhost:4000/api/apps/%s/logs' % urllib.quote(app_name.encode('utf-8')), stream=True)) as r:
+        if r.status_code != 200:
+            raise Exception(r.text)
+        else:
+            for chunk in r.iter_content(chunk_size=None):
+                if chunk:
+                    click.echo(chunk, nl=False)
 

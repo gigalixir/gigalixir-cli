@@ -1,3 +1,4 @@
+# This Python file uses the following encoding: utf-8
 import os
 from sure import expect
 import subprocess
@@ -323,6 +324,22 @@ def test_update_payment_method():
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"stripe_token": "fake-stripe-token"}')
 
+@httpretty.activate
 def test_logs():
-    pass
+    def log_response():
+        from time import sleep
+        for i in range(3):
+            yield(u"%i 18:14:58.885 request_id=406arqcek0jjs7uo29o34o55sr841jec [info] Sent 200 in 197µs\n" % i)
+
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/logs', body=log_response(), streaming=True)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'logs', 'fake-app-name'])
+    assert result.output == u"\n".join([
+        u"0 18:14:58.885 request_id=406arqcek0jjs7uo29o34o55sr841jec [info] Sent 200 in 197µs",
+        u"1 18:14:58.885 request_id=406arqcek0jjs7uo29o34o55sr841jec [info] Sent 200 in 197µs",
+        u"2 18:14:58.885 request_id=406arqcek0jjs7uo29o34o55sr841jec [info] Sent 200 in 197µs",
+        u""
+    ])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 

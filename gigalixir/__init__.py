@@ -194,6 +194,19 @@ def login(email, password, yes):
         sys.exit(1)
 
 @get.command()
+@click.argument('app_name')
+def logs(app_name):
+    """
+    Stream logs from app.
+    """
+    try:
+        gigalixir_app.logs(app_name)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@get.command()
 def payment_method():
     """
     Get your payment method.
