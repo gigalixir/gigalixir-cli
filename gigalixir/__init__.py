@@ -9,6 +9,7 @@ from . import permission as gigalixir_permission
 from . import release as gigalixir_release
 from . import api_key as gigalixir_api_key
 from . import ssh_key as gigalixir_ssh_key
+from . import payment_method as gigalixir_payment_method
 import click
 import requests
 import getpass
@@ -134,6 +135,19 @@ def run(app_name, module, function):
 
 
 @update.command()
+@click.argument('stripe_token')
+def payment_method(stripe_token):
+    """
+    Update your payment method.
+    """
+    try:
+        gigalixir_payment_method.update(stripe_token)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@update.command()
 @click.argument('email')
 @click.option('-p', '--current_password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-n', '--new_password', prompt=True, hide_input=True, confirmation_prompt=False)
@@ -174,6 +188,18 @@ def login(email, password, yes):
     """
     try:
         gigalixir_user.login(email, password, yes)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@get.command()
+def payment_method():
+    """
+    Get your payment method.
+    """
+    try:
+        gigalixir_payment_method.get()
     except:
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()

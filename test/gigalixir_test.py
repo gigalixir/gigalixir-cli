@@ -57,7 +57,7 @@ gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
     expect(httpretty.last_request().body).to.equal('{"unique_name": "fake-app-name"}')
 
 @httpretty.activate
-def test_edit_user():
+def test_update_user():
     httpretty.register_uri(httpretty.PATCH, 'http://localhost:4000/api/users', body='{}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['update', 'user', 'foo@gigalixir.com'], input="current_password\nnew_password\n")
@@ -289,14 +289,39 @@ def test_create_ssh_key():
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"ssh_key": "fake-ssh-key"}')
 
+@httpretty.activate
 def test_delete_ssh_key():
-    pass
+    httpretty.register_uri(httpretty.DELETE, 'http://localhost:4000/api/ssh_keys/3', body='', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['delete', 'ssh_key', '3'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
+@httpretty.activate
 def test_get_payment_method():
-    pass
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/payment_methods', body='{"data":{"last4":4242,"exp_year":2018,"exp_month":12,"brand":"Visa"}}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'payment_method'])
+    assert result.output == """{
+  "brand": "Visa", 
+  "exp_month": 12, 
+  "exp_year": 2018, 
+  "last4": 4242
+}
+"""
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
 
-def test_edit_payment_method():
-    pass
+@httpretty.activate
+def test_update_payment_method():
+    httpretty.register_uri(httpretty.PUT, 'http://localhost:4000/api/payment_methods', body='{}', content_type='application/json', status=201)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['update', 'payment_method', 'fake-stripe-token'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"stripe_token": "fake-stripe-token"}')
 
 def test_logs():
     pass
