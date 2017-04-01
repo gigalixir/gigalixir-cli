@@ -10,6 +10,7 @@ from . import release as gigalixir_release
 from . import api_key as gigalixir_api_key
 from . import ssh_key as gigalixir_ssh_key
 from . import payment_method as gigalixir_payment_method
+from . import domain as gigalixir_domain
 import click
 import requests
 import getpass
@@ -284,6 +285,20 @@ def ssh_key(ssh_key):
 
 @create.command()
 @click.argument('app_name')
+@click.argument('fully_qualified_domain_name')
+def domain(app_name, fully_qualified_domain_name):
+    """
+    Adds a custom domain name to your app. 
+    """
+    try:
+        gigalixir_domain.create(app_name, fully_qualified_domain_name)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@create.command()
+@click.argument('app_name')
 @click.argument('key')
 @click.argument('value')
 def config(app_name, key, value):
@@ -292,6 +307,19 @@ def config(app_name, key, value):
     """
     try:
         gigalixir_config.create(app_name, key, value)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@get.command()
+@click.argument('app_name')
+def domains(app_name):
+    """
+    Get custom domains for your app.
+    """
+    try:
+        gigalixir_domain.get(app_name)
     except:
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()
@@ -332,6 +360,20 @@ def permission(app_name, email):
     """
     try:
         gigalixir_permission.delete(app_name, email)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@delete.command()
+@click.argument('app_name')
+@click.argument('fully_qualified_domain_name')
+def domain(app_name, fully_qualified_domain_name):
+    """
+    Delete custom domain from your app.
+    """
+    try:
+        gigalixir_domain.delete(app_name, fully_qualified_domain_name)
     except:
         logging.error(sys.exc_info()[1])
         rollbar.report_exc_info()

@@ -343,3 +343,34 @@ def test_logs():
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
+@httpretty.activate
+def test_delete_domain():
+    httpretty.register_uri(httpretty.DELETE, 'http://localhost:4000/api/apps/fake-app-name/domains', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['delete', 'domain', 'fake-app-name', 'www.example.com'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"fqdn": "www.example.com"}')
+
+@httpretty.activate
+def test_get_domains():
+    httpretty.register_uri(httpretty.GET, 'http://localhost:4000/api/apps/fake-app-name/domains', body='{"data":["www.example.com"]}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'domains', 'fake-app-name'])
+    assert result.output == """[
+  "www.example.com"
+]
+"""
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_create_domain():
+    httpretty.register_uri(httpretty.POST, 'http://localhost:4000/api/apps/fake-app-name/domains', body='{}', content_type='application/json', status=201)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['create', 'domain', 'fake-app-name', 'www.example.com'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"fqdn": "www.example.com"}')
