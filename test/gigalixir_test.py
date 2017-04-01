@@ -26,7 +26,7 @@ def test_login():
     # Make sure this test does not modify the user's netrc file.
     with runner.isolated_filesystem():
         os.environ['HOME'] = '.'
-        result = runner.invoke(gigalixir.cli, ['login', 'foo@gigalixir.com'], input="password\ny\n")
+        result = runner.invoke(gigalixir.cli, ['login', '--email=foo@gigalixir.com'], input="password\ny\n")
         assert result.exit_code == 0
         with open('.netrc') as f:
             assert f.read() == """machine api.gigalixir.com

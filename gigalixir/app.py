@@ -52,6 +52,19 @@ def scale(host, app_name, replicas, size):
     if r.status_code != 200:
         raise Exception(r.text)
 
+def ssh(host, app_name, command):
+    r = requests.get('%s/api/apps/%s/ssh_ip' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        ssh_ip = data["ssh_ip"]
+        if command != None and command != "":
+            command = "/opt/gigalixir/run-cmd %s" % command
+        cast("ssh root@%s %s" % (ssh_ip, command))
+
 def restart(host, app_name):
     r = requests.put('%s/api/apps/%s/restart' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',

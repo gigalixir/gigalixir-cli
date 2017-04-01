@@ -112,6 +112,21 @@ def rollback(ctx, app_name, rollback_id):
 
 @cli.command()
 @click.argument('app_name')
+@click.option('-c', '--distillery_command', default="", help='The distillery command to run on the remote container e.g. ping, remote_console.')
+@click.pass_context
+def ssh(ctx, app_name, distillery_command):
+    """
+    Ssh into app. Be sure you added your ssh key using gigalixir create ssh_key.
+    """
+    try:
+        gigalixir_app.ssh(ctx.obj['host'], app_name, distillery_command)
+    except:
+        logging.error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@cli.command()
+@click.argument('app_name')
 @click.pass_context
 def restart(ctx, app_name):
     """
@@ -190,7 +205,7 @@ def api_key(ctx, email, password, yes):
 
 
 @cli.command()
-@click.argument('email')
+@click.option('-e', '--email', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
