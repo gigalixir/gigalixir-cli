@@ -7,8 +7,8 @@ import click
 from .shell import cast, call
 from contextlib import closing
 
-def get():
-    r = requests.get('http://localhost:4000/api/apps', headers = {
+def get(host):
+    r = requests.get('%s/api/apps' % host, headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -22,7 +22,7 @@ def get():
         } for datum in data]
         click.echo(json.dumps(data, indent=2, sort_keys=True))
 
-def create(unique_name):
+def create(host, unique_name):
     try:
         # check for git folder
         with open(os.devnull, 'w') as FNULL:
@@ -31,7 +31,7 @@ def create(unique_name):
         raise Exception("You must call this from inside a git repository.")
 
     unique_name = unique_name.lower()
-    r = requests.post('http://localhost:4000/api/apps', headers = {
+    r = requests.post('%s/api/apps' % host, headers = {
         'Content-Type': 'application/json',
     }, json = {
         "unique_name": unique_name,
@@ -42,8 +42,8 @@ def create(unique_name):
         # create the git remote
         cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % unique_name)
 
-def scale(app_name, replicas, size):
-    r = requests.put('http://localhost:4000/api/apps/%s/scale' % urllib.quote(app_name.encode('utf-8')), headers = {
+def scale(host, app_name, replicas, size):
+    r = requests.put('%s/api/apps/%s/scale' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "replicas": replicas,
@@ -52,24 +52,24 @@ def scale(app_name, replicas, size):
     if r.status_code != 200:
         raise Exception(r.text)
 
-def restart(app_name):
-    r = requests.put('http://localhost:4000/api/apps/%s/restart' % urllib.quote(app_name.encode('utf-8')), headers = {
+def restart(host, app_name):
+    r = requests.put('%s/api/apps/%s/restart' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
         raise Exception(r.text)
 
-def rollback(app_name, rollback_id):
+def rollback(host, app_name, rollback_id):
     if rollback_id == None:
-        rollback_id = second_most_recent_rollback_id(app_name)
-    r = requests.post('http://localhost:4000/api/apps/%s/releases/%s/rollback' % (urllib.quote(app_name.encode('utf-8')), urllib.quote(rollback_id.encode('utf-8'))), headers = {
+        rollback_id = second_most_recent_rollback_id(host, app_name)
+    r = requests.post('%s/api/apps/%s/releases/%s/rollback' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(rollback_id.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
         raise Exception(r.text)
 
-def second_most_recent_rollback_id(app_name):
-    r = requests.get('http://localhost:4000/api/apps/%s/releases' % urllib.quote(app_name.encode('utf-8')), headers = {
+def second_most_recent_rollback_id(host, app_name):
+    r = requests.get('%s/api/apps/%s/releases' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -81,8 +81,8 @@ def second_most_recent_rollback_id(app_name):
         else:
             return data[1]["rollback_id"]
 
-def run(app_name, module, function):
-    r = requests.put('http://localhost:4000/api/apps/%s/run' % urllib.quote(app_name.encode('utf-8')), headers = {
+def run(host, app_name, module, function):
+    r = requests.put('%s/api/apps/%s/run' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "module": module,
@@ -91,8 +91,8 @@ def run(app_name, module, function):
     if r.status_code != 200:
         raise Exception(r.text)
 
-def logs(app_name):
-    with closing(requests.get('http://localhost:4000/api/apps/%s/logs' % urllib.quote(app_name.encode('utf-8')), stream=True)) as r:
+def logs(host, app_name):
+    with closing(requests.get('%s/api/apps/%s/logs' % (host, urllib.quote(app_name.encode('utf-8'))), stream=True)) as r:
         if r.status_code != 200:
             raise Exception(r.text)
         else:

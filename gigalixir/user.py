@@ -5,7 +5,7 @@ import click
 import stripe
 import json
 
-def create(email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
+def create(host, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
     if not accept_terms_of_service_and_privacy_policy:
         logging.info("GIGALIXIR Terms of Service: FPO")
         logging.info("GIGALIXIR Privacy Policy: FPO")
@@ -20,7 +20,7 @@ def create(email, card_number, card_exp_month, card_exp_year, card_cvc, password
             "cvc": card_cvc,
         },
     )
-    r = requests.post('http://localhost:4000/api/users', headers = {
+    r = requests.post('%s/api/users' % host, headers = {
         'Content-Type': 'application/json',
     }, json = {
         'email': email,
@@ -30,8 +30,8 @@ def create(email, card_number, card_exp_month, card_exp_year, card_cvc, password
     if r.status_code != 200:
         raise Exception(r.text)
 
-def change_password(email, current_password, new_password):
-    r = requests.patch('http://localhost:4000/api/users', auth = (email, current_password), json = {
+def change_password(host, email, current_password, new_password):
+    r = requests.patch('%s/api/users' % host, auth = (email, current_password), json = {
         "new_password": new_password
     })
     if r.status_code == 401:
@@ -41,8 +41,8 @@ def change_password(email, current_password, new_password):
     elif r.status_code != 200:
         raise Exception(r.text)
 
-def login(email, password, yes):
-    r = requests.get('http://localhost:4000/api/login', auth = (email, password))
+def login(host, email, password, yes):
+    r = requests.get('%s/api/login' % host, auth = (email, password))
     if r.status_code == 401:
         raise Exception("Unauthorized")
     elif r.status_code != 200:

@@ -4,8 +4,8 @@ import json
 import click
 import logging
 
-def regenerate(email, password, yes):
-    r = requests.post('http://localhost:4000/api/api_keys', auth = (email, password))
+def regenerate(host, email, password, yes):
+    r = requests.post('%s/api/api_keys' % host, auth = (email, password))
     if r.status_code == 401:
         raise Exception("Unauthorized")
     elif r.status_code != 201:
