@@ -34,7 +34,7 @@ import os
 def cli(ctx, host):
     ctx.obj = {}
     logging.basicConfig(format='%(message)s', level = logging.INFO)
-    ROLLBAR_POST_CLIENT_ITEM = "6fb30e5647474decb3fc8f3175e1dfca"
+    ROLLBAR_POST_CLIENT_ITEM = "54d7670397d5499d9ceb392d7a8b5c06"
     rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=False)
 
     stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'

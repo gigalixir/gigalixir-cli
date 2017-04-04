@@ -4,3 +4,4 @@ venv
 *.pyc
 .cache
 .eggs
+dist/
