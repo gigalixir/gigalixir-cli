@@ -11,7 +11,9 @@ def get(host):
     r = requests.get('%s/api/apps' % host, headers = {
         'Content-Type': 'application/json',
     })
-    if r.status_code != 200:
+    if r.status_code == 401:
+        raise Exception("Sorry, you do not have access. Try checking you ~/.netrc file.")
+    elif r.status_code != 200:
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]

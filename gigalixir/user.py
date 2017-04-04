@@ -49,7 +49,7 @@ def login(host, email, password, yes):
         raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
-        if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?'):
+        if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?', default=True):
             netrc.update_netrc(email, key)
         else:
             logging.info('Your api key is %s' % key)
