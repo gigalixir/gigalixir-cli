@@ -7,8 +7,8 @@ import json
 
 def create(host, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
     if not accept_terms_of_service_and_privacy_policy:
-        logging.info("GIGALIXIR Terms of Service: FPO")
-        logging.info("GIGALIXIR Privacy Policy: FPO")
+        logging.info("GIGALIXIR Terms of Service: https://www.gigalixir.com/terms")
+        logging.info("GIGALIXIR Privacy Policy: https://www.gigalixir.com/privacy")
         if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
             raise Exception("Sorry, you must accept the Terms of Service and Privacy Policy to continue.")
 
