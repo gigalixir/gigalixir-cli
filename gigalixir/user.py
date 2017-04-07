@@ -7,8 +7,8 @@ import json
 
 def create(host, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
     if not accept_terms_of_service_and_privacy_policy:
-        logging.info("GIGALIXIR Terms of Service: https://www.gigalixir.com/terms")
-        logging.info("GIGALIXIR Privacy Policy: https://www.gigalixir.com/privacy")
+        logging.getLogger("gigalixir-cli").info("GIGALIXIR Terms of Service: https://www.gigalixir.com/terms")
+        logging.getLogger("gigalixir-cli").info("GIGALIXIR Privacy Policy: https://www.gigalixir.com/privacy")
         if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
             raise Exception("Sorry, you must accept the Terms of Service and Privacy Policy to continue.")
 
@@ -52,6 +52,6 @@ def login(host, email, password, yes):
         if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?', default=True):
             netrc.update_netrc(email, key)
         else:
-            logging.info('Your api key is %s' % key)
-            logging.warn('Many GIGALIXIR CLI commands may not work unless you your ~/.netrc file contains your GIGALIXIR credentials.')
+            logging.getLogger("gigalixir-cli").info('Your api key is %s' % key)
+            logging.getLogger("gigalixir-cli").warn('Many GIGALIXIR CLI commands may not work unless you your ~/.netrc file contains your GIGALIXIR credentials.')
 

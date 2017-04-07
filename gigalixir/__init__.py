@@ -33,7 +33,8 @@ import os
 @click.pass_context
 def cli(ctx, host):
     ctx.obj = {}
-    logging.basicConfig(format='%(message)s', level = logging.INFO)
+    logging.basicConfig(format='%(message)s')
+    logging.getLogger("gigalixir-cli").setLevel(logging.INFO)
     ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
     rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True)
 
@@ -90,7 +91,7 @@ def scale(ctx, app_name, replicas, size):
     try:
         gigalixir_app.scale(ctx.obj['host'], app_name, replicas, size)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -105,7 +106,7 @@ def rollback(ctx, app_name, rollback_id):
     try:
         gigalixir_app.rollback(ctx.obj['host'], app_name, rollback_id)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -121,7 +122,7 @@ def ssh(ctx, app_name, distillery_command):
     try:
         gigalixir_app.ssh(ctx.obj['host'], app_name, distillery_command)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -135,7 +136,7 @@ def restart(ctx, app_name):
     try:
         gigalixir_app.restart(ctx.obj['host'], app_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -152,7 +153,7 @@ def run(ctx, app_name, module, function):
     try:
         gigalixir_app.run(ctx.obj['host'], app_name, module, function)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -167,7 +168,7 @@ def payment_method(ctx, stripe_token):
     try:
         gigalixir_payment_method.update(ctx.obj['host'], stripe_token)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -183,7 +184,7 @@ def user(ctx, email, current_password, new_password):
     try:
         gigalixir_user.change_password(ctx.obj['host'], email, current_password, new_password)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -199,7 +200,7 @@ def api_key(ctx, email, password, yes):
     try:
         gigalixir_api_key.regenerate(ctx.obj['host'], email, password, yes)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -216,7 +217,7 @@ def login(ctx, email, password, yes):
     try:
         gigalixir_user.login(ctx.obj['host'], email, password, yes)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -230,7 +231,7 @@ def logs(ctx, app_name):
     try:
         gigalixir_app.logs(ctx.obj['host'], app_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -243,7 +244,7 @@ def payment_method(ctx):
     try:
         gigalixir_payment_method.get(ctx.obj['host'])
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -256,7 +257,7 @@ def ssh_keys(ctx):
     try:
         gigalixir_ssh_key.get(ctx.obj['host'])
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -269,7 +270,7 @@ def apps(ctx):
     try:
         gigalixir_app.get(ctx.obj['host'])
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -283,7 +284,7 @@ def releases(ctx, app_name):
     try:
         gigalixir_release.get(ctx.obj['host'], app_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -298,7 +299,7 @@ def permissions(ctx, app_name):
     try:
         gigalixir_permission.get(ctx.obj['host'], app_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -312,7 +313,7 @@ def ssh_key(ctx, ssh_key):
     try:
         gigalixir_ssh_key.create(ctx.obj['host'], ssh_key)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -327,7 +328,7 @@ def domain(ctx, app_name, fully_qualified_domain_name):
     try:
         gigalixir_domain.create(ctx.obj['host'], app_name, fully_qualified_domain_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -343,7 +344,7 @@ def config(ctx, app_name, key, value):
     try:
         gigalixir_config.create(ctx.obj['host'], app_name, key, value)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -357,7 +358,7 @@ def domains(ctx, app_name):
     try:
         gigalixir_domain.get(ctx.obj['host'], app_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -371,7 +372,7 @@ def configs(ctx, app_name):
     try:
         gigalixir_config.get(ctx.obj['host'], app_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -385,7 +386,7 @@ def ssh_key(ctx, key_id):
     try:
         gigalixir_ssh_key.delete(ctx.obj['host'], key_id)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -400,7 +401,7 @@ def permission(ctx, app_name, email):
     try:
         gigalixir_permission.delete(ctx.obj['host'], app_name, email)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -415,7 +416,7 @@ def domain(ctx, app_name, fully_qualified_domain_name):
     try:
         gigalixir_domain.delete(ctx.obj['host'], app_name, fully_qualified_domain_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -430,7 +431,7 @@ def config(ctx, app_name, key):
     try:
         gigalixir_config.delete(ctx.obj['host'], app_name, key)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -445,7 +446,7 @@ def permission(ctx, unique_name, email):
     try:
         gigalixir_permission.create(ctx.obj['host'], unique_name, email)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -460,7 +461,7 @@ def app(ctx, unique_name):
     try:
         gigalixir_app.create(ctx.obj['host'], unique_name)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 
@@ -480,7 +481,7 @@ def user(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, passw
     try:
         gigalixir_user.create(ctx.obj['host'], email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy)
     except:
-        logging.error(sys.exc_info()[1])
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
 

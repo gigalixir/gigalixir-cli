@@ -15,6 +15,6 @@ def regenerate(host, email, password, yes):
         if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?'):
             netrc.update_netrc(email, key)
         else:
-            logging.info('Your api key is %s' % key)
-            logging.warn('Many GIGALIXIR CLI commands may not work unless you your ~/.netrc file contains your GIGALIXIR credentials.')
+            logging.getLogger("gigalixir-cli").info('Your api key is %s' % key)
+            logging.getLogger("gigalixir-cli").warn('Many GIGALIXIR CLI commands may not work unless you your ~/.netrc file contains your GIGALIXIR credentials.')
 
