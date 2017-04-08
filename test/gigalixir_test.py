@@ -19,6 +19,36 @@ def test_create_user():
     expect(httpretty.httpretty.latest_requests[1].body).to.equal('{"stripe_token": "fake-stripe-token", "password": "password", "email": "foo@gigalixir.com"}')
 
 @httpretty.activate
+def test_logout():
+    runner = CliRunner()
+    # Make sure this test does not modify the user's netrc file.
+    with runner.isolated_filesystem():
+        os.environ['HOME'] = '.'
+        with open('.netrc', 'w') as f:
+            f.write("""machine api.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+machine git.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+machine github.com
+\tlogin foo
+\tpassword fake-password
+machine localhost
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+""")
+            os.chmod(".netrc", 0600)
+        result = runner.invoke(gigalixir.cli, ['logout'])
+        assert result.output == ''
+        assert result.exit_code == 0
+        with open('.netrc') as f:
+            assert f.read() == """machine github.com
+\tlogin foo
+\tpassword fake-password
+"""
+
+@httpretty.activate
 def test_login():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/login', body='{"data":{"key": "fake-api-key"}}', content_type='application/json')
     runner = CliRunner()
@@ -379,7 +409,7 @@ def test_create_domain():
 def test_resend_confirmation_token():
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/users/reconfirm_email', body='{}', content_type='application/json', status=200)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['get', 'confirmation_token', 'foo@gigalixir.com'])
+    result = runner.invoke(gigalixir.cli, ['get', 'email_confirmation_token', 'foo@gigalixir.com'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true

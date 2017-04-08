@@ -41,6 +41,9 @@ def change_password(host, email, current_password, new_password):
     elif r.status_code != 200:
         raise Exception(r.text)
 
+def logout():
+    netrc.clear_netrc()
+
 def login(host, email, password, yes):
     r = requests.get('%s/api/login' % host, auth = (email, password))
     if r.status_code == 401:

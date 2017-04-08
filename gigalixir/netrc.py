@@ -2,6 +2,25 @@ from __future__ import absolute_import
 import netrc
 import os
 
+def clear_netrc():
+    # TODO: support netrc files in locations other than ~/.netrc
+    try:
+        netrc_file = netrc.netrc()
+    except IOError:
+        # if netrc does not exist, touch it
+        # from: http://stackoverflow.com/questions/1158076/implement-touch-using-python
+        fname = os.path.join(os.environ['HOME'], ".netrc")
+        with open(fname, 'a'):
+                os.utime(fname, None)
+        netrc_file = netrc.netrc()
+
+    del netrc_file.hosts['git.gigalixir.com'] 
+    del netrc_file.hosts['localhost']
+    del netrc_file.hosts['api.gigalixir.com']
+    file = os.path.join(os.environ['HOME'], ".netrc")
+    with open(file, 'w') as fp:
+        fp.write(netrc_repr(netrc_file))
+
 def update_netrc(email, key):
     # TODO: support netrc files in locations other than ~/.netrc
     try:

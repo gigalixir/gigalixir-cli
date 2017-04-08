@@ -12,7 +12,7 @@ def get(host):
         'Content-Type': 'application/json',
     })
     if r.status_code == 401:
-        raise Exception("Sorry, you do not have access. Try checking you ~/.netrc file.")
+        raise Exception("Sorry, you do not have access. Try checking your ~/.netrc file.")
     elif r.status_code != 200:
         raise Exception(r.text)
     else:

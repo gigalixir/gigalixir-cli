@@ -228,6 +228,20 @@ def api_key(ctx, email, password, yes):
 
 
 @cli.command()
+@click.pass_context
+def logout(ctx):
+    """
+    Logout
+    """
+    try:
+        gigalixir_user.logout()
+    except:
+        raise
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@cli.command()
 @click.option('-e', '--email', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--yes', is_flag=True)
@@ -373,7 +387,7 @@ def config(ctx, app_name, key, value):
 @get.command()
 @click.argument('email')
 @click.pass_context
-def confirmation_token(ctx, email):
+def email_confirmation_token(ctx, email):
     """
     Regenerate a email confirmation token and send to email.
     """
