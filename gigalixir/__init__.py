@@ -66,6 +66,13 @@ def create():
     pass
 
 @cli.group()
+def reset():
+    """
+    Reset stuff
+    """
+    pass
+
+@cli.group()
 def update():
     """
     Update users, apps, etc.
@@ -167,6 +174,21 @@ def payment_method(ctx, stripe_token):
     """
     try:
         gigalixir_payment_method.update(ctx.obj['host'], stripe_token)
+    except:
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@reset.command()
+@click.option('-t', '--token', prompt=True)
+@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
+@click.pass_context
+def password(ctx, token, password):
+    """
+    Reset password using reset password token.
+    """
+    try:
+        gigalixir_user.reset_password(ctx.obj['host'], token, password)
     except:
         logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
@@ -349,6 +371,34 @@ def config(ctx, app_name, key, value):
         sys.exit(1)
 
 @get.command()
+@click.argument('email')
+@click.pass_context
+def confirmation_token(ctx, email):
+    """
+    Regenerate a email confirmation token and send to email.
+    """
+    try:
+        gigalixir_user.get_confirmation_token(ctx.obj['host'], email)
+    except:
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@get.command()
+@click.argument('email')
+@click.pass_context
+def reset_password_token(ctx, email):
+    """
+    Send reset password token to email.
+    """
+    try:
+        gigalixir_user.get_reset_password_token(ctx.obj['host'], email)
+    except:
+        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
+        rollbar.report_exc_info()
+        sys.exit(1)
+
+@get.command()
 @click.argument('app_name')
 @click.pass_context
 def domains(ctx, app_name):
@@ -467,11 +517,11 @@ def app(ctx, unique_name):
 
 @create.command()
 @click.option('--email', prompt=True)
+@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('--card_number', prompt=True)
 @click.option('--card_exp_month', prompt=True)
 @click.option('--card_exp_year', prompt=True)
 @click.option('--card_cvc', prompt=True)
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
 @click.pass_context
 def user(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):

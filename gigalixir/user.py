@@ -55,3 +55,21 @@ def login(host, email, password, yes):
             logging.getLogger("gigalixir-cli").info('Your api key is %s' % key)
             logging.getLogger("gigalixir-cli").warn('Many GIGALIXIR CLI commands may not work unless you your ~/.netrc file contains your GIGALIXIR credentials.')
 
+def get_reset_password_token(host, email):
+    r = requests.put('%s/api/users/reset_password' % host, json = {"email": email})
+    if r.status_code != 200:
+        raise Exception(r.text)
+    else:
+        logging.getLogger("gigalixir-cli").info("Reset password token has been sent to your email.")
+
+def reset_password(host, token, password):
+    r = requests.post('%s/api/users/reset_password' % host, json = {"token": token, "password": password})
+    if r.status_code != 200:
+        raise Exception(r.text)
+
+def get_confirmation_token(host, email):
+    r = requests.put('%s/api/users/reconfirm_email' % host, json = {"email": email})
+    if r.status_code != 200:
+        raise Exception(r.text)
+    else:
+        logging.getLogger("gigalixir-cli").info("Confirmation token has been sent to your email.")

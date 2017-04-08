@@ -374,3 +374,32 @@ def test_create_domain():
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"fqdn": "www.example.com"}')
+
+@httpretty.activate
+def test_resend_confirmation_token():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/users/reconfirm_email', body='{}', content_type='application/json', status=200)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'confirmation_token', 'foo@gigalixir.com'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
+
+@httpretty.activate
+def test_get_reset_password_token():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/users/reset_password', body='{}', content_type='application/json', status=200)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['get', 'reset_password_token', 'foo@gigalixir.com'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
+
+@httpretty.activate
+def test_reset_password():
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/users/reset_password', body='{}', content_type='application/json', status=200)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['reset', 'password', '--token=fake-token'], input="password\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"token": "fake-token", "password": "password"}')
