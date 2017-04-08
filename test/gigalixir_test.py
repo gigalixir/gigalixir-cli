@@ -133,6 +133,16 @@ def test_get_apps():
     expect(httpretty.has_request()).to.be.true
 
 @httpretty.activate
+def test_scale_replicas_only():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/scale', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['scale', 'fake-app-name', '--replicas=100'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"replicas": 100}')
+
+@httpretty.activate
 def test_scale():
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/scale', body='{}', content_type='application/json')
     runner = CliRunner()

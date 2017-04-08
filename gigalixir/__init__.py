@@ -88,8 +88,8 @@ def delete():
 
 @cli.command()
 @click.argument('app_name')
-@click.option('-r', '--replicas', type=int, default=None, help='Number of replicas to run.')
-@click.option('-s', '--size', type=float, default=None, help='Size of each replica between 0.5 and 128 in increments of 0.1.')
+@click.option('-r', '--replicas', type=int, help='Number of replicas to run.')
+@click.option('-s', '--size', type=float, help='Size of each replica between 0.5 and 128 in increments of 0.1.')
 @click.pass_context
 def scale(ctx, app_name, replicas, size):
     """
