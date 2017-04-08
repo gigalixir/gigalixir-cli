@@ -98,7 +98,7 @@ def test_update_user():
 
 @httpretty.activate
 def test_get_apps():
-    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps', body='{"data":[{"unique_name":"one","size_m":500,"replicas":1},{"unique_name":"two","size_m":500,"replicas":1},{"unique_name":"three","size_m":500,"replicas":1},{"unique_name":"four","size_m":500,"replicas":1},{"unique_name":"five","size_m":500,"replicas":1}]}', content_type='application/json')
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps', body='{"data":[{"unique_name":"one","size":0.5,"replicas":1},{"unique_name":"two","size":0.5,"replicas":1},{"unique_name":"three","size":0.5,"replicas":1},{"unique_name":"four","size":0.5,"replicas":1},{"unique_name":"five","size":0.5,"replicas":1}]}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['get', 'apps'])
     assert result.output == """[
@@ -150,7 +150,7 @@ def test_scale():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"size": 500, "replicas": 100}')
+    expect(httpretty.last_request().body).to.equal('{"size": 0.5, "replicas": 100}')
 
 @httpretty.activate
 def test_restart():

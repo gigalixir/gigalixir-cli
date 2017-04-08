@@ -19,7 +19,7 @@ def get(host):
         data = json.loads(r.text)["data"]
         data = [{
             "name": datum["unique_name"],
-            "size": datum["size_m"] / 1000.0,
+            "size": datum["size"],
             "replicas": datum["replicas"],
         } for datum in data]
         click.echo(json.dumps(data, indent=2, sort_keys=True))
@@ -49,7 +49,7 @@ def scale(host, app_name, replicas, size):
     if replicas != None:
         json["replicas"] = replicas
     if size != None:
-        json["size"] = int(size * 1000) 
+        json["size"] = size 
     r = requests.put('%s/api/apps/%s/scale' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = json)
