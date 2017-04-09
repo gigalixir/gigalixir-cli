@@ -5,15 +5,16 @@ import subprocess
 import requests
 import click
 from .shell import cast, call
+from . import auth
 from contextlib import closing
 
 def get(host):
     r = requests.get('%s/api/apps' % host, headers = {
         'Content-Type': 'application/json',
     })
-    if r.status_code == 401:
-        raise Exception("Sorry, you do not have access. Try checking your ~/.netrc file.")
-    elif r.status_code != 200:
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
@@ -39,6 +40,8 @@ def create(host, unique_name):
         "unique_name": unique_name,
     })
     if r.status_code != 201:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         # create the git remote
@@ -54,6 +57,8 @@ def scale(host, app_name, replicas, size):
         'Content-Type': 'application/json',
     }, json = json)
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
 
 def ssh(host, app_name, command):
@@ -61,6 +66,8 @@ def ssh(host, app_name, command):
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
@@ -74,6 +81,8 @@ def restart(host, app_name):
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
 
 def rollback(host, app_name, rollback_id):
@@ -83,6 +92,8 @@ def rollback(host, app_name, rollback_id):
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
 
 def second_most_recent_rollback_id(host, app_name):
@@ -90,6 +101,8 @@ def second_most_recent_rollback_id(host, app_name):
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
@@ -106,11 +119,15 @@ def run(host, app_name, module, function):
         "function": function
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
 
 def logs(host, app_name):
     with closing(requests.get('%s/api/apps/%s/logs' % (host, urllib.quote(app_name.encode('utf-8'))), stream=True)) as r:
         if r.status_code != 200:
+            if r.status_code == 401:
+                raise auth.AuthException()
             raise Exception(r.text)
         else:
             for chunk in r.iter_content(chunk_size=None):

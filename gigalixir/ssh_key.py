@@ -1,4 +1,5 @@
 import requests
+from . import auth
 import json
 import click
 
@@ -7,6 +8,8 @@ def get(host):
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
@@ -19,6 +22,8 @@ def create(host, key):
         "ssh_key": key,
     })
     if r.status_code != 201:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
 
 def delete(host, key_id):
@@ -26,4 +31,6 @@ def delete(host, key_id):
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)

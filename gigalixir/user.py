@@ -1,4 +1,5 @@
 import requests
+from . import auth
 from . import netrc
 import logging
 import click
@@ -28,17 +29,17 @@ def create(host, email, card_number, card_exp_month, card_exp_year, card_cvc, pa
         'stripe_token': token["id"],
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
 
 def change_password(host, email, current_password, new_password):
     r = requests.patch('%s/api/users' % host, auth = (email, current_password), json = {
         "new_password": new_password
     })
-    if r.status_code == 401:
-        raise Exception("Unauthorized")
-
-    # TODO: might make sense to catch 422 and report errors more nicely than throwing up a stacktrace
-    elif r.status_code != 200:
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
 
 def logout():
@@ -46,9 +47,9 @@ def logout():
 
 def login(host, email, password, yes):
     r = requests.get('%s/api/login' % host, auth = (email, password))
-    if r.status_code == 401:
-        raise Exception("Unauthorized")
-    elif r.status_code != 200:
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
@@ -61,6 +62,8 @@ def login(host, email, password, yes):
 def get_reset_password_token(host, email):
     r = requests.put('%s/api/users/reset_password' % host, json = {"email": email})
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         logging.getLogger("gigalixir-cli").info("Reset password token has been sent to your email.")
@@ -68,11 +71,15 @@ def get_reset_password_token(host, email):
 def reset_password(host, token, password):
     r = requests.post('%s/api/users/reset_password' % host, json = {"token": token, "password": password})
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
 
 def get_confirmation_token(host, email):
     r = requests.put('%s/api/users/reconfirm_email' % host, json = {"email": email})
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         logging.getLogger("gigalixir-cli").info("Confirmation token has been sent to your email.")

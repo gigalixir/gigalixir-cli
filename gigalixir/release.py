@@ -1,4 +1,5 @@
 import requests
+from . import auth
 import urllib
 import json
 import click
@@ -8,6 +9,8 @@ def get(host, app_name):
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]

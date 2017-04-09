@@ -1,4 +1,5 @@
 import requests
+from . import auth
 from . import netrc
 import json
 import click
@@ -6,9 +7,9 @@ import logging
 
 def regenerate(host, email, password, yes):
     r = requests.post('%s/api/api_keys' % host, auth = (email, password))
-    if r.status_code == 401:
-        raise Exception("Unauthorized")
-    elif r.status_code != 201:
+    if r.status_code != 201:
+        if r.status_code == 401:
+            raise auth.AuthException()
         raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
