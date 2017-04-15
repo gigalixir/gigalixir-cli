@@ -26,4 +26,10 @@ setup(
         'HTTPretty',
         'sure',
     ],
+    extras_require={
+        'dev': [
+            'Sphinx',
+            'sphinx_rtd_theme',
+        ]
+    }
 )
