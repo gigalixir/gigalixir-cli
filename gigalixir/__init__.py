@@ -551,11 +551,10 @@ def user(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, passw
 
 @cli.command()
 @click.argument('app_name')
-@click.argument('ssh_ip')
 @click.pass_context
-def observer(ctx, app_name, ssh_ip):
+def observer(ctx, app_name):
     """
     Launch remote production observer.
     """
-    gigalixir_observer.observer(ctx, app_name, ssh_ip)
+    gigalixir_observer.observer(ctx, app_name)
 

@@ -1,13 +1,30 @@
 import logging
+import urllib
+import json
+import re
+import uuid
+import requests
 import rollbar
 import sys
 from .shell import cast, call
 
-def observer(ctx, app_name, ssh_ip):
+def observer(ctx, app_name):
+    host = ctx.obj['host']
+    r = requests.get('%s/api/apps/%s/ssh_ip' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        ssh_ip = data["ssh_ip"]
+
     try:
         logging.getLogger("gigalixir-cli").info("Fetching pod ip and cookie.")
-        ERLANG_COOKIE = call(" ".join(["ssh", "root@%s" % ssh_ip, "--", "cat", "/observer/ERLANG_COOKIE"]))
-        MY_POD_IP = call("ssh root@%s cat /observer/MY_POD_IP" % ssh_ip)
+        ERLANG_COOKIE = call(" ".join(["ssh", "root@%s" % ssh_ip, "--", "cat", "/kube-env-vars/ERLANG_COOKIE"]))
+        MY_POD_IP = call("ssh root@%s cat /kube-env-vars/MY_POD_IP" % ssh_ip)
         logging.getLogger("gigalixir-cli").info("Fetching epmd port and app port.")
         output = call("ssh root@%s -- epmd -names" % ssh_ip)
         EPMD_PORT = None
