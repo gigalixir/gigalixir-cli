@@ -21,11 +21,12 @@ Next install, the command-line interface. GIGALIXIR currently does not have a we
 Create an Account
 -----------------
 
-Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. It will also prompt you for credit card information. GIGALIXIR currently does not offer a free trial, but we do offer a `money back guarantee`_. Please don't hesitate to use it.
+|signup details|
 
 .. code-block:: bash
 
     gigalixir signup
+
 
 Log In
 ------
@@ -39,13 +40,16 @@ Next, log in. This will grant you an api key which expires in 365 days. It will 
 Prepare Your App
 ----------------
 
-There are a few steps involved to `make your app work on GIGALIXIR`_, but if you are starting a project from scratch, we recommend you clone the :bash:`gigalixir-getting-started` repo.
+There are a few steps involved to `make your existing app work on GIGALIXIR`_, but if you are starting a project from scratch, we recommend you clone the :bash:`gigalixir-getting-started` repo.
 
 .. code-block:: bash
 
     git clone https://github.com/gigalixir/gigalixir-getting-started.git
 
-You also need to create a GIGALIXIR app receord and set up your git remote.
+Set Up App for Deploys
+----------------------
+
+|set up app for deploys|
 
 .. code-block:: bash
 
@@ -62,7 +66,7 @@ Finally, build and deploy.
     git push gigalixir
     curl https://$YOUR_APP_NAME.gigalixirapp.com/
 
-.. _`make your app work on GIGALIXIR`:
+.. _`make your existing app work on GIGALIXIR`:
 
 Modifying an Existing App to Run on GIGALIXIR
 =============================================
@@ -136,6 +140,8 @@ Concepts
   - Payment Method
   - Permission
 
+.. _`life of a deploy`:
+
 Life of a Deploy
 ----------------
 
@@ -182,6 +188,8 @@ There is an extra flags you can pass to clean your cache before building in case
 
     git -c http.extraheader="GIGALIXIR-CLEAN: true" push gigalixir
 
+
+.. _life-of-a-hot-upgrade:
 
 Life of a Hot Upgrade
 ---------------------
@@ -267,6 +275,8 @@ Pricing Details
 
 TODO
  
+.. _`replica sizing`:
+
 Replica Sizing
 ===============
 
@@ -275,8 +285,15 @@ TODO
 Logging
 ===============
 
-TODO
- 
+You can tail logs in real-time aggregated across all containers using the following command. Note that it
+takes up to a minute or so to start streaming logs because it sets up a Stackdriver sink and PubSub topic
+on-demand. We're working on improving this, but if you need more logging features, we suggest `PaperTrail`_.
+We have tested and verified that it works.
+
+.. code-block:: bash
+
+    gigalixir logs $APP_NAME
+
 Monitoring
 ===============
 
@@ -285,43 +302,116 @@ TODO
 How to Set Up Distributed Phoenix Channels
 ===============
 
-TODO
+If you have successfully clustered your nodes, then distributed Phoenix channels *just work* out of 
+the box. No need to follow any of the steps described in `Running Elixir and Phoenix projects on a 
+cluster of nodes`_. See more information on how to `cluster your nodes`_.
  
-How to Create an Account
+How to Sign Up for an Account
 ===============
 
-TODO
- 
+|signup details|
+
+.. code-block:: bash
+
+    gigalixir signup
+
+
 How to Create an App
 ===============
 
-TODO
- 
+|set up app for deploys|
+
+.. code-block:: bash
+
+    gigalixir create_app $YOUR_APP_NAME
+
 How to Deploy an App
 ===============
 
-TODO
+Deploying an app is done using a git push, the same way you would push code to github. For more information
+about how this works, see `life of a deploy`_.
+
+.. code-block:: bash
+
+    git push gigalixir
  
 How to Scale an App
 ===============
 
-TODO
- 
+You can scale your app by adding more memory and cpu to each container, also called a replica. You can also
+scale by adding more replicas. Both are handled by the following command. For more information about, see
+`replica sizing`_.
+
+.. code-block:: bash
+
+    gigalixir scale $APP_NAME --replicas=2 --size=0.6
+
 How to Configure an App
 ===============
 
-TODO
+All app configuration is done through envirnoment variables. You can get, set, and delete configs using
+the following commands. For more information about using environment variables for app configuration, see
+`The Twelve-Factor App's Config Factor`_. For more information about using environment variables in your
+Elixir app, see :ref:`distillery-replace-os-vars`.
  
+.. code-block:: bash
+
+    $ gigalixir get_configs $APP_NAME
+    {}
+    $ gigalixir set_config $APP_NAME FOO bar
+    $ gigalixir get_configs $APP_NAME                                                                                 
+    {
+      "FOO": "bar"
+    }
+    $ gigalixir delete_config $APP_NAME FOO                                                                           
+    $ gigalixir get_configs $APP_NAME
+    {}
+
 How to Hot Upgrade an App
 ===============
 
-TODO
+To do a hot upgrade, deploy your app with the extra header shown below. You'll need git v2.9.0 for this 
+to work. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_. For more information about how hot upgrades work, see :ref:`life-of-a-hot-upgrade`.
+
+.. code-block:: bash
+
+    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir
  
 How to Rollback an App
 ===============
 
-TODO
+To rollback one release, run the following command. 
  
+.. code-block:: bash
+
+    gigalixir rollback $APP_NAME
+
+To rollback to a specific release, find the :bash:`rollback_id` by listing all releases. You can see
+which SHA the release was built on and when it was built.
+
+.. code-block:: bash
+
+    $ gigalixir get_releases foo
+    [
+      {
+        "created_at": "2017-04-12T17:43:28.000+00:00", 
+        "customer_app_name": "gigalixir_getting_started", 
+        "rollback_id": "2fbf5dd5-b920-4f2c-aeea-ebde333ee1e6", 
+        "sha": "77f6c2952129ffecccc4e56ae6b27bba1e65a1e3", 
+        "slug_url": "<REDACTED>"
+      }, 
+      ...
+    ]
+
+Then specify the rollback_id when rolling back.
+
+.. code-block:: bash
+
+    gigalixir rollback $APP_NAME --rollback_id=2fbf5dd5-b920-4f2c-aeea-ebde333ee1e6
+
+The release list is immutable so when you rollback, we create a new release on top of the old releases,
+but the new release refers to the old slug. 
+
 How to Set Up a Custom Domain
 ===============
 
@@ -403,6 +493,13 @@ To launch observer and connect it to a production node
 
 and follow the instructions. This connects to a random container. We don't currently allow you to specify which container you want to connect to.
 
+.. _distillery-replace-os-vars:
+
+Using Environment Variables in your App
+=======================================
+
+TODO
+
 Indices and Tables
 ==================
 
@@ -419,3 +516,8 @@ Indices and Tables
 .. _`elixir homepage`: http://elixir-lang.org/
 .. _`phoenix homepage`: http://www.phoenixframework.org/
 .. _`twelve-factor methodology`: https://12factor.net/
+.. _`PaperTrail`: https://papertrailapp.com/
+.. _`Running Elixir and Phoenix projects on a cluster of nodes`: https://dockyard.com/blog/2016/01/28/running-elixir-and-phoenix-projects-on-a-cluster-of-nodes
+.. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. It will also prompt you for credit card information. GIGALIXIR currently does not offer a free trial, but we do offer a `money back guarantee`_. Please don't hesitate to use it.
+.. |set up app for deploys| replace:: This command will let GIGALIXIR know you intend to deploy this app so it can set up the necessary prerequisites needed to do so. It will also set up a git remote so you can later run`git push gigalixir`. This must be run from within a git repository folder.
+.. _`The Twelve-Factor App's Config Factor`: https://12factor.net/config
