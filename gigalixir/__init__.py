@@ -24,6 +24,19 @@ import logging
 import json
 import netrc
 import os
+from functools import wraps
+
+def report_errors(f):
+    @wraps(f)
+    def wrapper(*args, **kwds):
+        try:
+            f(*args, **kwds)
+        except:
+            raise
+            logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
+            rollbar.report_exc_info()
+            sys.exit(1)
+    return wrapper
 
 # TODO: replace localhost:4000 with api.gigalixir.com
 # TODO: remove localhost from .netrc file
@@ -51,101 +64,50 @@ def cli(ctx, host):
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
 
-@cli.group()
-def get():
-    """
-    Get users, apps, etc.
-    """
-    pass
-
-@cli.group()
-def create():
-    """
-    Create users, apps, etc.
-    """
-    pass
-
-@cli.group()
-def reset():
-    """
-    Reset stuff
-    """
-    pass
-
-@cli.group()
-def update():
-    """
-    Update users, apps, etc.
-    """
-    pass
-
-@cli.group()
-def delete():
-    """
-    Delete configs, etc
-    """
-    pass
-
 @cli.command()
 @click.argument('app_name')
 @click.option('-r', '--replicas', type=int, help='Number of replicas to run.')
 @click.option('-s', '--size', type=float, help='Size of each replica between 0.5 and 128 in increments of 0.1.')
 @click.pass_context
+@report_errors
 def scale(ctx, app_name, replicas, size):
     """
     Scale app.
     """
-    try:
-        gigalixir_app.scale(ctx.obj['host'], app_name, replicas, size)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_app.scale(ctx.obj['host'], app_name, replicas, size)
 
 @cli.command()
 @click.argument('app_name')
 @click.option('-r', '--rollback_id', default=None, help='The rollback id of the release to revert to. Use gigalixir get releases to find the rollback_id. If omitted, this defaults to the second most recent release.')
 @click.pass_context
+@report_errors
 def rollback(ctx, app_name, rollback_id):
     """
     Rollback to a previous release. 
     """
-    try:
-        gigalixir_app.rollback(ctx.obj['host'], app_name, rollback_id)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_app.rollback(ctx.obj['host'], app_name, rollback_id)
 
 
 @cli.command()
 @click.argument('app_name')
 @click.option('-c', '--distillery_command', default="", help='The distillery command to run on the remote container e.g. ping, remote_console.')
 @click.pass_context
+@report_errors
 def ssh(ctx, app_name, distillery_command):
     """
     Ssh into app. Be sure you added your ssh key using gigalixir create ssh_key.
     """
-    try:
-        gigalixir_app.ssh(ctx.obj['host'], app_name, distillery_command)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_app.ssh(ctx.obj['host'], app_name, distillery_command)
 
 @cli.command()
 @click.argument('app_name')
 @click.pass_context
+@report_errors
 def restart(ctx, app_name):
     """
     Restart app.
     """
-    try:
-        gigalixir_app.restart(ctx.obj['host'], app_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_app.restart(ctx.obj['host'], app_name)
 
 
 @cli.command()
@@ -153,383 +115,305 @@ def restart(ctx, app_name):
 @click.argument('module')
 @click.argument('function')
 @click.pass_context
+@report_errors
 def run(ctx, app_name, module, function):
     """
     Run arbitrary function e.g. Elixir.Tasks.migrate/0.
     """
-    try:
-        gigalixir_app.run(ctx.obj['host'], app_name, module, function)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_app.run(ctx.obj['host'], app_name, module, function)
 
 
-@update.command()
-@click.argument('stripe_token')
+# @update.command()
+@cli.command()
+@click.option('--card_number', prompt=True)
+@click.option('--card_exp_month', prompt=True)
+@click.option('--card_exp_year', prompt=True)
+@click.option('--card_cvc', prompt=True)
 @click.pass_context
-def payment_method(ctx, stripe_token):
+@report_errors
+def set_payment_method(ctx, card_number, card_exp_month, card_exp_year, card_cvc):
     """
-    Update your payment method.
+    Set your payment method.
     """
-    try:
-        gigalixir_payment_method.update(ctx.obj['host'], stripe_token)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_payment_method.update(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc)
 
-@reset.command()
+# @reset.command()
+@cli.command()
 @click.option('-t', '--token', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.pass_context
-def password(ctx, token, password):
+@report_errors
+def set_password(ctx, token, password):
     """
-    Reset password using reset password token.
+    Set password using reset password token.
     """
-    try:
-        gigalixir_user.reset_password(ctx.obj['host'], token, password)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_user.reset_password(ctx.obj['host'], token, password)
 
-@update.command()
-@click.argument('email')
+# @update.command()
+@cli.command()
+@click.option('-e', '--email', prompt=True)
 @click.option('-p', '--current_password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-n', '--new_password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.pass_context
-def user(ctx, email, current_password, new_password):
+@report_errors
+def change_password(ctx, email, current_password, new_password):
     """
-    Edit user. Currently only password is editable.
+    Change password.
     """
-    try:
-        gigalixir_user.change_password(ctx.obj['host'], email, current_password, new_password)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_user.change_password(ctx.obj['host'], email, current_password, new_password)
 
-@update.command()
-@click.argument('email')
+# @update.command()
+@cli.command()
+@click.option('-e', '--email', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
-def api_key(ctx, email, password, yes):
+@report_errors
+def reset_api_key(ctx, email, password, yes):
     """
-    Regenerate a new api key to replace the old one.
+    Regenerate a replacement api key. 
     """
-    try:
-        gigalixir_api_key.regenerate(ctx.obj['host'], email, password, yes)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_api_key.regenerate(ctx.obj['host'], email, password, yes)
 
 
 @cli.command()
 @click.pass_context
+@report_errors
 def logout(ctx):
     """
     Logout
     """
-    try:
-        gigalixir_user.logout()
-    except:
-        raise
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_user.logout()
 
 @cli.command()
 @click.option('-e', '--email', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
+@report_errors
 def login(ctx, email, password, yes):
     """
     Login and receive an api key.
     """
-    try:
-        gigalixir_user.login(ctx.obj['host'], email, password, yes)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_user.login(ctx.obj['host'], email, password, yes)
 
-@get.command()
+# @get.command()
+@cli.command()
 @click.argument('app_name')
 @click.pass_context
+@report_errors
 def logs(ctx, app_name):
     """
     Stream logs from app.
     """
-    try:
-        gigalixir_app.logs(ctx.obj['host'], app_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_app.logs(ctx.obj['host'], app_name)
 
-@get.command()
+# @get.command()
+@cli.command()
 @click.pass_context
-def payment_method(ctx):
+@report_errors
+def get_payment_method(ctx):
     """
     Get your payment method.
     """
-    try:
-        gigalixir_payment_method.get(ctx.obj['host'])
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_payment_method.get(ctx.obj['host'])
 
-@get.command()
+# @get.command()
+@cli.command()
 @click.pass_context
-def ssh_keys(ctx):
+@report_errors
+def get_ssh_keys(ctx):
     """
     Get your ssh keys.
     """
-    try:
-        gigalixir_ssh_key.get(ctx.obj['host'])
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_ssh_key.get(ctx.obj['host'])
 
-@get.command()
+# @get.command()
+@cli.command()
 @click.pass_context
-def apps(ctx):
+@report_errors
+def get_apps(ctx):
     """
     Get apps.
     """
-    try:
-        gigalixir_app.get(ctx.obj['host'])
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_app.get(ctx.obj['host'])
 
-@get.command()
+# @get.command()
+@cli.command()
 @click.argument('app_name')
 @click.pass_context
-def releases(ctx, app_name):
+@report_errors
+def get_releases(ctx, app_name):
     """
     Get previous releases for app.
     """
-    try:
-        gigalixir_release.get(ctx.obj['host'], app_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_release.get(ctx.obj['host'], app_name)
 
 
-@get.command()
+# @get.command()
+@cli.command()
 @click.argument('app_name')
 @click.pass_context
-def permissions(ctx, app_name):
+@report_errors
+def get_permissions(ctx, app_name):
     """
     Get permissions for app.
     """
-    try:
-        gigalixir_permission.get(ctx.obj['host'], app_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_permission.get(ctx.obj['host'], app_name)
 
-@create.command()
+# @create.command()
+@cli.command()
 @click.argument('ssh_key')
 @click.pass_context
-def ssh_key(ctx, ssh_key):
+@report_errors
+def add_ssh_key(ctx, ssh_key):
     """
-    Create ssh key.
+    Add an ssh key.
     """
-    try:
-        gigalixir_ssh_key.create(ctx.obj['host'], ssh_key)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_ssh_key.create(ctx.obj['host'], ssh_key)
 
-@create.command()
+# @create.command()
+@cli.command()
 @click.argument('app_name')
 @click.argument('fully_qualified_domain_name')
 @click.pass_context
-def domain(ctx, app_name, fully_qualified_domain_name):
+@report_errors
+def add_domain(ctx, app_name, fully_qualified_domain_name):
     """
     Adds a custom domain name to your app. 
     """
-    try:
-        gigalixir_domain.create(ctx.obj['host'], app_name, fully_qualified_domain_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_domain.create(ctx.obj['host'], app_name, fully_qualified_domain_name)
 
-@create.command()
+# @create.command()
+@cli.command()
 @click.argument('app_name')
 @click.argument('key')
 @click.argument('value')
 @click.pass_context
-def config(ctx, app_name, key, value):
+@report_errors
+def set_config(ctx, app_name, key, value):
     """
-    Create app configuration/environment variable.
+    Set an app configuration/environment variable.
     """
-    try:
-        gigalixir_config.create(ctx.obj['host'], app_name, key, value)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_config.create(ctx.obj['host'], app_name, key, value)
 
-@get.command()
-@click.argument('email')
+# @get.command()
+@cli.command()
+@click.option('-e', '--email', prompt=True)
 @click.pass_context
-def email_confirmation_token(ctx, email):
+@report_errors
+def send_email_confirmation_token(ctx, email):
     """
     Regenerate a email confirmation token and send to email.
     """
-    try:
-        gigalixir_user.get_confirmation_token(ctx.obj['host'], email)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_user.get_confirmation_token(ctx.obj['host'], email)
 
-@get.command()
-@click.argument('email')
+# @get.command()
+@cli.command()
+@click.option('-e', '--email', prompt=True)
 @click.pass_context
-def reset_password_token(ctx, email):
+@report_errors
+def send_reset_password_token(ctx, email):
     """
     Send reset password token to email.
     """
-    try:
-        gigalixir_user.get_reset_password_token(ctx.obj['host'], email)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_user.get_reset_password_token(ctx.obj['host'], email)
 
-@get.command()
+# @get.command()
+@cli.command()
 @click.argument('app_name')
 @click.pass_context
-def domains(ctx, app_name):
+@report_errors
+def get_domains(ctx, app_name):
     """
     Get custom domains for your app.
     """
-    try:
-        gigalixir_domain.get(ctx.obj['host'], app_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_domain.get(ctx.obj['host'], app_name)
 
-@get.command()
+# @get.command()
+@cli.command()
 @click.argument('app_name')
 @click.pass_context
-def configs(ctx, app_name):
+@report_errors
+def get_configs(ctx, app_name):
     """
     Get app configuration/environment variables.
     """
-    try:
-        gigalixir_config.get(ctx.obj['host'], app_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_config.get(ctx.obj['host'], app_name)
 
-@delete.command()
+# @delete.command()
+@cli.command()
 @click.argument('key_id')
 @click.pass_context
-def ssh_key(ctx, key_id):
+@report_errors
+def delete_ssh_key(ctx, key_id):
     """
-    Deletes your ssh key. Find the key_id from gigalixir get ssh_keys.
+    Deletes your ssh key. Find the key_id from gigalixir get_ssh_keys.
     """
-    try:
-        gigalixir_ssh_key.delete(ctx.obj['host'], key_id)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_ssh_key.delete(ctx.obj['host'], key_id)
 
-@delete.command()
+# @delete.command()
+@cli.command()
 @click.argument('app_name')
 @click.argument('email')
 @click.pass_context
-def permission(ctx, app_name, email):
+@report_errors
+def delete_permission(ctx, app_name, email):
     """
     Denies user access to app.
     """
-    try:
-        gigalixir_permission.delete(ctx.obj['host'], app_name, email)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_permission.delete(ctx.obj['host'], app_name, email)
 
-@delete.command()
+# @delete.command()
+@cli.command()
 @click.argument('app_name')
 @click.argument('fully_qualified_domain_name')
 @click.pass_context
-def domain(ctx, app_name, fully_qualified_domain_name):
+@report_errors
+def delete_domain(ctx, app_name, fully_qualified_domain_name):
     """
     Delete custom domain from your app.
     """
-    try:
-        gigalixir_domain.delete(ctx.obj['host'], app_name, fully_qualified_domain_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_domain.delete(ctx.obj['host'], app_name, fully_qualified_domain_name)
 
-@delete.command()
+# @delete.command()
+@cli.command()
 @click.argument('app_name')
 @click.argument('key')
 @click.pass_context
-def config(ctx, app_name, key):
+@report_errors
+def delete_config(ctx, app_name, key):
     """
     Delete app configuration/environment variables.
     """
-    try:
-        gigalixir_config.delete(ctx.obj['host'], app_name, key)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_config.delete(ctx.obj['host'], app_name, key)
 
-@create.command()
+# @create.command()
+@cli.command()
 @click.argument('unique_name')
 @click.argument('email')
 @click.pass_context
-def permission(ctx, unique_name, email):
+@report_errors
+def add_permission(ctx, unique_name, email):
     """
-    Grants another user permission to collaborate on an app.
+    Grants a user permission to deploy an app.
     """
-    try:
-        gigalixir_permission.create(ctx.obj['host'], unique_name, email)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_permission.create(ctx.obj['host'], unique_name, email)
 
 
-@create.command()
+# @create.command()
+@cli.command()
 @click.argument('unique_name')
 @click.pass_context
-def app(ctx, unique_name):
+@report_errors
+def create_app(ctx, unique_name):
     """
     Create a new app.
     """
-    try:
-        gigalixir_app.create(ctx.obj['host'], unique_name)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_app.create(ctx.obj['host'], unique_name)
 
-@create.command()
+# @create.command()
+@cli.command()
 @click.option('--email', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('--card_number', prompt=True)
@@ -538,16 +422,12 @@ def app(ctx, unique_name):
 @click.option('--card_cvc', prompt=True)
 @click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
 @click.pass_context
-def user(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
+@report_errors
+def signup(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
     """
-    Create a new user.
+    Sign up for a new account.
     """
-    try:
-        gigalixir_user.create(ctx.obj['host'], email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
+    gigalixir_user.create(ctx.obj['host'], email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy)
 
 @cli.command()
 @click.argument('app_name')

@@ -1,4 +1,5 @@
 import requests
+import stripe
 from . import auth
 import urllib
 import json
@@ -16,11 +17,19 @@ def get(host):
         data = json.loads(r.text)["data"]
         click.echo(json.dumps(data, indent=2, sort_keys=True))
 
-def update(host, stripe_token):
+def update(host, card_number, card_exp_month, card_exp_year, card_cvc):
+    token = stripe.Token.create(
+        card={
+            "number": card_number,
+            "exp_month": card_exp_month,
+            "exp_year": card_exp_year,
+            "cvc": card_cvc,
+        },
+    )
     r = requests.put('%s/api/payment_methods' % host, headers = {
         'Content-Type': 'application/json',
     }, json = {
-        "stripe_token": stripe_token,
+        "stripe_token": token["id"],
     })
     if r.status_code != 201:
         if r.status_code == 401:
