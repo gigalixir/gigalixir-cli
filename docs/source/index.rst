@@ -25,7 +25,7 @@ Prequisites
 You should make sure you have :bash:`pip` installed. For help, take a look at the `pip documentation`_.
 
 Install the Command-Line Interface
----------------------
+----------------------------------
 
 Next install, the command-line interface. GIGALIXIR currently does not have a web interface. We want the command-line to be a first-class citizen so that you can build scripts and tools easily.
 
@@ -101,7 +101,26 @@ TODO: insert diagram, component list with descriptions
 Life of a Deploy
 ----------------
 
-When you run :bash:`git push gigalixir`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in a docker container which produces a slug which we store for later.
+When you run :bash:`git push gigalixir`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in a docker container using `herokuish`_ which produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpack` file.
+
+By default, the buildpacks we use include
+
+  - https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
+
+    - To clean the cache if enabled.
+
+  - https://github.com/HashNuke/heroku-buildpack-elixir.git
+
+    - To run mix compile
+    - If you want, you can `configure this buildpack <https://github.com/HashNuke/heroku-buildpack-elixir#configuration>`_.
+
+  - https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
+
+    - To run mix phoenix.digest
+
+  - https://github.com/gigalixir/gigalixir-buildpack-distillery.git
+
+    - To run mix release
 
 We only build the master branch and ignore other branches. When building, we cache compiled files and dependencies so you do not have to repeat the work on every deploy. We support git submodules. 
 
@@ -109,7 +128,7 @@ Once your slug is built, we upload it to cloud storage and we create a new relea
 
 Then we create or update your Kubernetes configuration to deploy the app. We create a separate Kubernetes namespace for every app, a service account, an ingress for HTTP traffic, an ingress for SSH traffic, a TLS certificate, a service, and finally a deployment which creates pods and containers. 
 
-The container that runs your app is a derivative of `heroku/cedar:14`_. The entrypoint is a script that sets up necessary environment variables including those from your `app configuration`_. It also starts an SSH server, installs your SSH keys, downloads the current slug, and executes it. We automatically generate and set up your erlang cookie, distributed node name, and phoenix secret key base for you. We also set up the Kubernetes permissions and libcluster selector you need to `cluster your nodes`_. We poll for your SSH keys every minute in case they have changed.
+The `container that runs your app`_ is a derivative of `heroku/cedar:14`_. The entrypoint is a script that sets up necessary environment variables including those from your `app configuration`_. It also starts an SSH server, installs your SSH keys, downloads the current slug, and executes it. We automatically generate and set up your erlang cookie, distributed node name, and phoenix secret key base for you. We also set up the Kubernetes permissions and libcluster selector you need to `cluster your nodes`_. We poll for your SSH keys every minute in case they have changed.
 
 At this point, your app is running. The Kubernetes ingress controller is routing traffic from your host to the appropriate pods and terminating SSL/TLS for you automatically.
 
@@ -153,6 +172,69 @@ App Configuration/Enviroment Variables
 
 TODO
 
+Frequently Asked Questions
+==========================
+
+  - *What is Elixir? What is Phoenix?*
+
+    This is probably best answered by someone else. Take a look at the `elixir homepage`_ and 
+    the `phoenix homepage`_.
+
+  - *How is GIGALIXIR different from Heroku, Deis, Dokku, Elastic Beanstalk, and App Engine?*
+
+    Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed
+    based on their excellent `twelve-factor methodology`_. But Heroku made design decisions that
+    prioritize simplicity and it is difficult to run Elixir and Phoenix on Heroku unless you are
+    willing to sacrifice many of the greatest advantages Elixir and Phoenix provide like node
+    clustering, hot upgrades, and remote observer.
+
+    Deis is also really great platform if you want to run on your own infrastructure. You can 
+    install Deis and run apps almost as easily as Heroku, but they do not support Elixir's
+    distributed features out of the box. While it can be done, there's a lot of extra work 
+    you'll have to do to support clustering, hot upgrades, and remote observer. GIGALIXIR has
+    already figured these out so you can focus on building your app. 
+
+    Dokku is also a great solution, but only runs on a single node so it inherently does not support
+    clustering.
+
+    Elastic Beanstalk and App Engine similarly does not support distributed Elixir features 
+    without a lot of extra effort.
+
+  - *I thought you weren't supposed to SSH into docker containers!?*
+
+    There are a lot of reasons not to SSH into your docker containers, but it is a tradeoff that
+    doesn't fit that well with Elixir apps. We need to allow SSH in order to connect a remote observer
+    to a production node, drop into a remote console, and do hot upgrades. If you don't need any
+    of these features, then you probably don't need and probably shouldn't SSH into your containers,
+    but it is available should you want to. Just keep in mind that full SSH access to your containers
+    means you have almost complete freedom to do whatever you want including shoot yourself in the foot.
+    Any manual changes you make during an SSH session will also be wiped out if the container restarts 
+    itself so use SSH with care.
+
+  - *Why do you download the slug on startup instead of including the slug in the Docker image?*
+
+    Great question! The short answer is that after a hot-upgrade, if the container restarts, you end 
+    up reverting back to the slug included in the container. By downloading the slug on startup, 
+    we can always be sure to pull the most current slug even after a hot upgrade.
+
+    This sort of flies in the face of a lot of advice about how to use Docker, but it is a tradeoff
+    we felt was necessary in order to support hot upgrades in a containerized environment. The 
+    non-immutability of the containers can cause problems, but over time we've ironed them out and
+    feel that there is no longer much downside to this approach. All the headaches that came as a
+    result of this decision are our responsibility to address and shouldn't affect you as a customer. 
+    In other words, you reap the benefits while we pay the cost, which is one of the ways we provide value.
+
+Remote Observer
+===============
+
+To launch observer and connect it to a production node
+
+.. code-block:: bash
+
+    gigalixir observer $APP_NAME
+
+and follow the instructions. This connects to a random container. We don't currently allow you to specify which container you want to connect to.
+
 Indices and Tables
 ==================
 
@@ -164,3 +246,8 @@ Indices and Tables
 .. _`Distillery appup documentation`: https://hexdocs.pm/distillery/upgrades-and-downgrades.html#appups
 .. _`Distillery's upgrade command`: https://hexdocs.pm/distillery/walkthrough.html#deploying-an-upgrade
 .. _`heroku/cedar:14`: https://hub.docker.com/r/heroku/cedar/
+.. _`container that runs your app`: https://github.com/gigalixir/gigalixir-run
+.. _`herokuish`: https://github.com/gliderlabs/herokuish
+.. _`elixir homepage`: http://elixir-lang.org/
+.. _`phoenix homepage`: http://www.phoenixframework.org/
+.. _`twelve-factor methodology`: https://12factor.net/
