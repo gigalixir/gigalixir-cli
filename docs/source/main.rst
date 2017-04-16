@@ -25,7 +25,7 @@ Create an account using the following command. It will prompt you for your email
 
 .. code-block:: bash
 
-    gigalixir create user
+    gigalixir signup
 
 Log In
 ------
@@ -50,7 +50,7 @@ You also need to create a GIGALIXIR app receord and set up your git remote.
 .. code-block:: bash
 
     cd gigalixir-getting-started
-    gigalixir create app $YOUR_APP_NAME
+    gigalixir create_app $YOUR_APP_NAME
 
 Deploy!
 -------
