@@ -82,7 +82,17 @@ Finally, build and deploy.
 Modifying an Existing App to Run on GIGALIXIR
 =============================================
 
-TODO
+Required
+
+  - Distillery
+  - Buildpacks
+
+Optional 
+
+  - Libcluster
+  - Secrets
+  - Migrations
+  - Git
 
 .. _`money back guarantee`:
 
@@ -97,6 +107,49 @@ How Does GIGALIXIR Work?
 We use Kubernetes and Docker to run your apps. We use a git server with pre-receive hooks to build your apps. We use Google Cloud Storage to store your release tarball, also called a slug. We built an API server which orchestrates everything together. 
 
 TODO: insert diagram, component list with descriptions
+
+Components
+----------
+
+  - Slug Builder
+
+    - Herokuish
+    - Buildpacks
+
+  - API Server / Controller
+  - Database
+  - Logger
+
+    - PubSub
+    - Stackdriver
+
+  - Router
+
+    - Nginx Ingress Controller
+
+  - TLS Manager
+
+    - kube-lego
+
+  - Kubernetes
+  - Slug Storage
+  - Secret/Config Storage
+  - Observer
+  - Run Container
+  - Command-Line Interface
+
+Concepts
+--------
+
+  - User
+  - API Key
+  - SSH Key
+  - App
+  - Releases
+  - Replicas
+  - Custom Domain
+  - Payment Method
+  - Permission
 
 Life of a Deploy
 ----------------
