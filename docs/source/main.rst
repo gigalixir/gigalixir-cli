@@ -174,10 +174,16 @@ Then we create or update your Kubernetes configuration to deploy the app. We cre
 
 The `container that runs your app`_ is a derivative of `heroku/cedar:14`_. The entrypoint is a script that sets up necessary environment variables including those from your `app configuration`_. It also starts an SSH server, installs your SSH keys, downloads the current slug, and executes it. We automatically generate and set up your erlang cookie, distributed node name, and phoenix secret key base for you. We also set up the Kubernetes permissions and libcluster selector you need to `cluster your nodes`_. We poll for your SSH keys every minute in case they have changed.
 
-At this point, your app is running. The Kubernetes ingress controller is routing traffic from your host to the appropriate pods and terminating SSL/TLS for you automatically.
-
+At this point, your app is running. The Kubernetes ingress controller is routing traffic from your host to the appropriate pods and terminating SSL/TLS for you automatically. For more information about how SSL/TLS works, see :ref:`how-tls-works`.
 
 If at any point, the deploy fails, we rollback to the last know good release.
+
+.. _how-tls-works:
+
+How SSL/TLS Works
+-----------------
+
+TODO
 
 Cleaning Your Cache
 -------------------
@@ -278,36 +284,24 @@ TODO
 .. _`replica sizing`:
 
 Replica Sizing
-===============
+==============
 
 TODO
  
-Logging
-===============
-
-You can tail logs in real-time aggregated across all containers using the following command. Note that it
-takes up to a minute or so to start streaming logs because it sets up a Stackdriver sink and PubSub topic
-on-demand. We're working on improving this, but if you need more logging features, we suggest `PaperTrail`_.
-We have tested and verified that it works.
-
-.. code-block:: bash
-
-    gigalixir logs $APP_NAME
-
 Monitoring
-===============
+==========
 
 TODO
  
 How to Set Up Distributed Phoenix Channels
-===============
+==========================================
 
 If you have successfully clustered your nodes, then distributed Phoenix channels *just work* out of 
 the box. No need to follow any of the steps described in `Running Elixir and Phoenix projects on a 
 cluster of nodes`_. See more information on how to `cluster your nodes`_.
  
 How to Sign Up for an Account
-===============
+=============================
 
 |signup details|
 
@@ -317,7 +311,7 @@ How to Sign Up for an Account
 
 
 How to Create an App
-===============
+====================
 
 |set up app for deploys|
 
@@ -326,7 +320,7 @@ How to Create an App
     gigalixir create_app $YOUR_APP_NAME
 
 How to Deploy an App
-===============
+====================
 
 Deploying an app is done using a git push, the same way you would push code to github. For more information
 about how this works, see `life of a deploy`_.
@@ -336,7 +330,7 @@ about how this works, see `life of a deploy`_.
     git push gigalixir
  
 How to Scale an App
-===============
+===================
 
 You can scale your app by adding more memory and cpu to each container, also called a replica. You can also
 scale by adding more replicas. Both are handled by the following command. For more information about, see
@@ -347,7 +341,7 @@ scale by adding more replicas. Both are handled by the following command. For mo
     gigalixir scale $APP_NAME --replicas=2 --size=0.6
 
 How to Configure an App
-===============
+=======================
 
 All app configuration is done through envirnoment variables. You can get, set, and delete configs using
 the following commands. For more information about using environment variables for app configuration, see
@@ -368,7 +362,7 @@ Elixir app, see :ref:`distillery-replace-os-vars`.
     {}
 
 How to Hot Upgrade an App
-===============
+=========================
 
 To do a hot upgrade, deploy your app with the extra header shown below. You'll need git v2.9.0 for this 
 to work. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_. For more information about how hot upgrades work, see :ref:`life-of-a-hot-upgrade`.
@@ -378,7 +372,7 @@ to work. For information on how to install the latest version of git on Ubuntu, 
     git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir
  
 How to Rollback an App
-===============
+======================
 
 To rollback one release, run the following command. 
  
@@ -413,74 +407,190 @@ The release list is immutable so when you rollback, we create a new release on t
 but the new release refers to the old slug. 
 
 How to Set Up a Custom Domain
-===============
+=============================
 
-TODO
+After your first deploy, you can see your app by visiting https://$APP_NAME.gigalixirapp.com/, but if 
+you want, you can point your own domain such as www.example.com to your app. To do this, first modify
+your DNS records and point your domain to $APP_NAME.gigalixirapp.com using a CNAME record. Then, run 
+the following command to add a custom domain.
+
+.. code-block:: bash
+
+    gigalixir add_domain $APP_NAME www.example.com
+
+This will do a few things. It registers your fully qualified domain name in the load balancer so that
+it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more
+information on how SSL/TLS works, see :ref:`how-tls-works`.
+
+The GIGALIXIR Command-Line Interface
+====================================
+
+  - installation
+  - encryption
+  - no news is good news
+  - exit codes
+  - stderr vs stdout
+  - options vs arguments
+  - naming
+  - authentication
+  - error reporting
+  - open source
  
 How to Set Up SSL/TLS
-===============
+=====================
 
-TODO
+SSL/TLS certificates are set up for you automatically assuming your custom domain is set up properly. You
+shouldn't have to lift a finger. For more information on how this works, see :ref:`how-tls-works`.
  
 How to Tail Logs
-===============
+================
+
+You can tail logs in real-time aggregated across all containers using the following command. Note that it
+takes up to a minute or so to start streaming logs because it sets up a Stackdriver sink and PubSub topic
+on-demand. We're working on improving this, but if you need more logging features, we suggest `PaperTrail`_.
+We have tested and verified that it works.
+
+.. code-block:: bash
+
+    gigalixir logs $APP_NAME
+ 
+
+.. _managing-ssh-keys:
+
+Managing SSH Keys
+=================
 
 TODO
- 
+
 How to SSH into a Production Container
-===============
+======================================
 
-TODO
- 
+To SSH into a running production container, first, add your public SSH keys to your account. For more information on managing SSH keys, see :ref:`managing-ssh-keys`.
+
+.. code-block:: bash
+
+    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+
+Then use the following command to SSH into a live production container. If you are running multiple 
+containers, this will put you in a random container. We do not yet support specifying which container you want to SSH to. In order for this work, you must add your public SSH keys to your account.
+
+.. code-block:: bash
+
+    gigalixir ssh $APP_NAME
+
 How to List Apps
-===============
+================
 
-TODO
- 
+To see what apps you own and information about them, run
+
+
+.. code-block:: bash
+
+    gigalixir get_apps
+
 How to List Releases
-===============
+====================
 
-TODO
+Each time you deploy or rollback a new release is generated. To see all your previous releases, run
+
+.. code-block:: bash
+
+    gigalixir get_releases $APP_NAME
  
 How to Change or Reset Your Password
-==============
+====================================
 
-TODO
+To change your password, run
+
+
+.. code-block:: bash
+
+    gigalixir change_password
+
+If you forgot your password, send a reset token to your email address by running the following command and following the instructions in the email.
+
+.. code-block:: bash
+
+    gigalixir send_reset_password_token
 
 How to Change Your Credit Card
-==============
+==============================
 
-TODO
+To change your credit card, run
+
+.. code-block:: bash
+
+    gigalixir set_payment_method
 
 How to Delete an App
-==============
+====================
 
-TODO
+There is currently no way to completely delete an app, but if you scale the replicas down to 0, you will not incur any charges. We are working on implementing this feature.
 
 How to Delete your Account
+==========================
+
+There is currently no way to completely delete an account. We are working on implementing this feature.
+
+How to View Billing and Usage
+=============================
+
+TODO
+
+How to Restart an App
+=====================
+
+TODO
+
+How to Run Jobs
+========================
+
+TODO
+
+How to Reset your API Key
+=========================
+
+TODO
+
+How to Log Out
 ==============
 
 TODO
 
-How to View Billing and Usage
-==============
+How to Log In
+=============
 
 TODO
 
 How to Connect a Database
-==============
+=========================
 
 TODO
 
 How to Run Migrations
-==============
+=====================
 
 TODO
+
+.. _`Launching a remote console`: 
 
 How to Drop into a Remote Console
-==============
+=================================
 
-TODO
+.. code-block:: bash
+
+    gigalixir ssh $APP_NAME -c remote_console
+
+How to Run Distillery Commands
+==============================
+
+Since we use Distillery to build releases, we also get all the commands Distillery provides such as ping, rpc, command, and eval. `Launching a remote console`_ is just a special case of this. To run a Distillery command, run the command below. For a complete list of commands, see `Distillery's boot.eex`_.
+
+.. code-block:: bash
+
+    gigalixir ssh $APP_NAME -c $COMMAND
+
+.. _`Distillery's boot.eex`: https://github.com/bitwalker/distillery/blob/master/priv/templates/boot.eex#L417
 
 How to Launch a Remote Observer
 ===============================
