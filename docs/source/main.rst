@@ -4,6 +4,9 @@ Quick Start
 Prequisites
 -----------
 
+.. role:: elixir(code)
+    :language: elixir
+
 .. role:: bash(code)
     :language: bash
 
@@ -232,25 +235,15 @@ Frequently Asked Questions
     This is probably best answered by someone else. Take a look at the `elixir homepage`_ and 
     the `phoenix homepage`_.
 
-  - *How is GIGALIXIR different from Heroku, Deis, Dokku, Elastic Beanstalk, and App Engine?*
+  - *How is GIGALIXIR different from Heroku and Deis Workflow?*
 
-    Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed
-    based on their excellent `twelve-factor methodology`_. But Heroku made design decisions that
-    prioritize simplicity and it is difficult to run Elixir and Phoenix on Heroku unless you are
-    willing to sacrifice many of the greatest advantages Elixir and Phoenix provide like node
-    clustering, hot upgrades, and remote observer.
+    Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku made design decisions that prioritize simplicity and they make it difficult to shoot yourself in the foot. As a consequence, it is difficult to run Elixir and Phoenix on Heroku unless you are willing to sacrifice many of the greatest advantages Elixir and Phoenix provide like node clustering, hot upgrades, and remote observer.
 
-    Deis is also really great platform if you want to run on your own infrastructure. You can 
-    install Deis and run apps almost as easily as Heroku, but they do not support Elixir's
-    distributed features out of the box. While it can be done, there's a lot of extra work 
-    you'll have to do to support clustering, hot upgrades, and remote observer. GIGALIXIR has
-    already figured these out so you can focus on building your app. 
+    Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you could conceivably make modifications to support node clustering and remote observer, but hot upgrades would require some fundamental changes to the way Deis was designed to work. Even if all this was possible, you'd still have to spend quite a bit of timing solving problems that GIGALIXIR has already figured out for you.
 
-    Dokku is also a great solution, but only runs on a single node so it inherently does not support
-    clustering.
+    On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
 
-    Elastic Beanstalk and App Engine similarly does not support distributed Elixir features 
-    without a lot of extra effort.
+    In the end, because GIGALIXIR is focused on just Elixir and Phoenix, we make fundamental design decisions that Heroku and Deis can't make and spend time building features that they can't build. For example, Heroku and Deis will almost certainly never support `hot configuration updates`_. Like they say, we try to do one thing and do it well.
 
   - *I thought you weren't supposed to SSH into docker containers!?*
 
@@ -359,11 +352,14 @@ All app configuration is done through envirnoment variables. You can get, set, a
     {}
 
 .. _`hot-configure`:
+.. _`hot configuration updates`: 
 
 How to Hot Configure an App
 ===========================
 
 This feature is still a work in progress.
+
+.. _`hot-upgrade`:
 
 How to Hot Upgrade an App
 =========================
@@ -427,6 +423,11 @@ This will do a few things. It registers your fully qualified domain name in the 
 it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more
 information on how SSL/TLS works, see :ref:`how-tls-works`.
 
+Troubleshooting
+===============
+
+TODO
+
 The GIGALIXIR Command-Line Interface
 ====================================
 
@@ -465,7 +466,23 @@ We have tested and verified that it works.
 Managing SSH Keys
 =================
 
-TODO
+In order to SSH, run remote observer, remote console, etc, you need to set up your SSH keys. It could take up to a minute for the SSH keys to update in your containers.
+
+.. code-block:: bash
+
+    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+
+To view your SSH keys
+
+.. code-block:: bash
+
+    gigalixir ssh_keys
+
+To delete an SSH key, find the key's id and then run delete the key by id.
+
+.. code-block:: bash
+
+    gigalixir delete_ssh_key 1
 
 How to SSH into a Production Container
 ======================================
@@ -540,17 +557,43 @@ There is currently no way to completely delete an account. We are working on imp
 How to View Billing and Usage
 =============================
 
-TODO
+Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card. We currently do not have a way to view usage or your bill so far in the middle of the month, but we are working on it.
+
+replica-size-seconds is how many replicas you ran multiplied by size of each replica multiplied by how many seconds they were run. This is aggregated across all your apps and is prorated to the second.
 
 How to Restart an App
 =====================
 
-TODO
+Currently, restarts will cause brief downtime as we restart all containers at once. To avoid downtime, consider doing a hot upgrade instead. See, :ref:`hot-upgrade`. We are working on adding health checks so we can do rolling restarts with no downtime.
+
+.. code-block:: bash
+
+    gigalixir restart $APP_NAME
 
 How to Run Jobs
-========================
+===============
 
-TODO
+There are many ways to run one-off jobs and tasks with Distillery. The approach described here uses Distillery's :bash:`command` command. As an alternative, you can also `drop into a remote console`_ and run code manually or use Distillery's custom commands, eval command, rpc command, pre-start hooks, and probably others.
+
+To run one-off jobs like migrations and scripts, you'll need to write an Elixir function within your app somewhere, for example, :bash:`lib/tasks.ex` maybe. GIGALIXIR uses Distillery's :bash:`command` command to run your task.
+
+.. code-block:: bash
+
+    gigalixir run $APP_NAME $MODULE $FUNCTION
+
+
+For example, the following command will run the :elixir:`Tasks.migrate/0` function.
+
+.. code-block:: bash
+
+    gigalixir run myapp Elixir.Tasks migrate
+
+For an example task, see `gigalixir-getting-started's migrate task`_. The task is not run on the same node that your app is running in. We start a separate container to run the job so if you need any applications started such as your :elixir:`Repo`, use :elixir:`Application.ensure_all_started/2`. Also, be sure to stop all applications when done, otherwise your job will never complete and just hang until it times out. Jobs are currently killed after 5 minutes. For more information about running migrations with Distillery, see `Distillery's Running Migrations`_. Distillery commands currently do not support passing arguments into the job. 
+
+We prepend :elixir:`Elixir.` to your module name to let the BEAM virtual machine know that you want to run an Elixir module rather than an Erlang module. The BEAM doesn't know the difference between Elixir code and Erlang code once it is compiled down, but compiled Elixir code is namespaced under the Elixir module.
+
+.. _`gigalixir-getting-started's migrate task`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/lib/tasks.ex
+.. _`Distillery's Running Migrations`: https://hexdocs.pm/distillery/running-migrations.html
 
 How to Reset your API Key
 =========================
@@ -578,6 +621,7 @@ How to Run Migrations
 TODO
 
 .. _`Launching a remote console`: 
+.. _`drop into a remote console`: 
 
 How to Drop into a Remote Console
 =================================
