@@ -74,6 +74,8 @@ Finally, build and deploy.
 Modifying an Existing App to Run on GIGALIXIR
 =============================================
 
+TODO
+
 Required
 
   - Distillery
@@ -102,6 +104,8 @@ TODO: insert diagram, component list with descriptions
 
 Components
 ----------
+
+TODO
 
   - Slug Builder
 
@@ -132,6 +136,8 @@ Components
 
 Concepts
 --------
+
+TODO
 
   - User
   - API Key
@@ -322,19 +328,39 @@ Frequently Asked Questions
 Pricing Details
 ===============
 
-TODO
+Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card.
+
+replica-size-seconds is how many replicas you ran multiplied by size of each replica multiplied by how many seconds they were run. This is aggregated across all your apps and is prorated to the second.
+
+For example, if you ran a single 0.5 size replica for 31 days, you will have used (1 replica) * (0.5 size) * (31 days) = 1339200 replica-size-seconds. Your monthly bill will be 1339200 * $0.00001866786 = $25.00.
+
+If you ran a 1.0 size replica for 10 days, then scaled it up to 3 replicas, then 10 days later scaled the size up to 2.0 and it was a 30-day month, then your usage would be (1 replica) * (1.0 size) * (10 days) + (3 replicas) * (1.0 size) * (10 days) + (3 replicas) * (2.0 size) * (10 days) = 8640000 replica-size-seconds or 8640000 * $0.00001866786 = $161.29.
  
 .. _`replica sizing`:
 
 Replica Sizing
 ==============
 
-TODO
+  - A replica is a docker container that your app runs in.
+  - Replica sizes are available in increments of 0.1 between 0.5 and 128. 
+  - 1 size unit is 1GB memory and 1 CPU share.
+  - 1 CPU share is 200m as defined using `Kubernetes CPU requests`_ or roughly 20% of a core guaranteed.
+
+    - If you are on a machine with other containers that don't use much CPU, you can use as much CPU as you like.
+
+  - Memory is defined using `Kuberenetes memory requests`_.
+
+    - If you are on a machine with other machines that don't use much memory, you can use as much memory as you like.
+
+  - Memory and CPU sizes can not be adjusted separately.
+
+.. _`Kubernetes CPU requests`: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-cpu
+.. _`Kuberenetes memory requests`: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-memory
  
 Monitoring
 ==========
 
-TODO
+GIGALIXIR doesn't provide any monitoring out of the box, but we are working on it.
  
 How to Set Up Distributed Phoenix Channels
 ==========================================
@@ -483,6 +509,8 @@ TODO
 The GIGALIXIR Command-Line Interface
 ====================================
 
+TODO
+
   - installation
   - encryption
   - no news is good news
@@ -609,9 +637,8 @@ There is currently no way to completely delete an account. We are working on imp
 How to View Billing and Usage
 =============================
 
-Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card. We currently do not have a way to view usage or your bill so far in the middle of the month, but we are working on it.
+We currently do not have a way to view usage or your bill so far in the middle of the month, but we are working on it. For more information about how your bill is calculated, see :ref:`pricing`.
 
-replica-size-seconds is how many replicas you ran multiplied by size of each replica multiplied by how many seconds they were run. This is aggregated across all your apps and is prorated to the second.
 
 How to Restart an App
 =====================
