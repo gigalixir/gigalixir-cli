@@ -186,7 +186,9 @@ If at any point, the deploy fails, we rollback to the last know good release.
 How SSL/TLS Works
 -----------------
 
-TODO
+We use kube-lego for automatic TLS certificate generation with Let's Encrypt. For more information, see `kube-lego`s documentation`_. When you add a custom domain, we create a Kubernetes ingress for you to route traffic to your app. kube-lego picks this up, obtains certificates for you and installs them. Our ingress controller then handles terminating SSL traffic before sending it to your app.
+
+.. _`kube-lego's documentation`: https://github.com/jetstack/kube-lego
 
 Cleaning Your Cache
 -------------------
@@ -218,14 +220,53 @@ Once the slug is generated and uploaded, we execute an upgrade script on each ru
 Clustering Nodes
 ================
 
-TODO
+We use libcluster to manage node clustering. For more information, see `libcluster's documentation`_. GIGALIXIR handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run's run-cmd script`_ for more details. 
 
-.. _`app configuration`:
+Your app configuration needs to have something like this in it. For a full example, see `gigalixir-getting-started's prod.exs file`_.
 
-App Configuration/Enviroment Variables
-======================================
 
-TODO
+.. code-block:: elixir
+
+    ...
+    config :libcluster,
+      topologies: [
+        k8s_example: [
+          strategy: Cluster.Strategy.Kubernetes,
+          config: [
+            kubernetes_selector: "${LIBCLUSTER_KUBERNETES_SELECTOR}",
+            kubernetes_node_basename: "${LIBCLUSTER_KUBERNETES_NODE_BASENAME}"]]]
+    ...
+
+You also need to create a :bash:`rel/vm.args` file with something like this in it. For a full example, see `gigalixir-getting-started's vm.args file`_.
+
+.. code-block:: elixir
+
+    ## Name of the node
+    -name ${MY_NODE_NAME}
+
+    ## Cookie for distributed erlang
+    -setcookie ${MY_COOKIE}
+    ...
+
+Lastly, you need to modify your distillery config so it knows where to find your :bash:`vm.args` file. Something like this. For a full example, see `gigalixir-getting-started's rel/config.exs file`_.
+
+.. code-block:: elixir
+
+    ...
+    environment :prod do
+      ...
+      # this is just to get rid of the warning. see https://github.com/bitwalker/distillery/issues/140
+      set cookie: :"${MY_COOKIE}"
+      set vm_args: "rel/vm.args"
+    end
+    ...
+
+.. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
+.. _`gigalixir-getting-started's vm.args file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/vm.args
+.. _`gigalixir-getting-started's prod.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/config/prod.exs#L68
+.. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/config.exs#L27
+.. _`gigalixir-run's run-cmd script`: https://github.com/gigalixir/gigalixir-run/blob/master/run-cmd
+
 
 Frequently Asked Questions
 ==========================
@@ -268,6 +309,15 @@ Frequently Asked Questions
     feel that there is no longer much downside to this approach. All the headaches that came as a
     result of this decision are our responsibility to address and shouldn't affect you as a customer. 
     In other words, you reap the benefits while we pay the cost, which is one of the ways we provide value.
+
+  - *How do I add worker processes?*
+
+    Heroku and others allow you to specify different types of processes under a single app such as workers that pull work from a queue. With Elixir, that is rarely needed since you can spawn asynchronous tasks within your application itself. Elixir and OTP provide all the tools you need to do this type of stuff among others. For more information, see `Background Jobs in Phoenix`_ which is an excellent blog post. If you really need to run an Redis-backed queue to process jobs, take a look at Exq, but consider `whether you really need Exq`_.
+
+.. _`Background Jobs in Phoenix`: http://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix.html
+.. _`whether you really need Exq`: https://github.com/akira/exq#do-you-need-exq
+
+.. _`pricing`:
 
 Pricing Details
 ===============
@@ -332,6 +382,8 @@ scale by adding more replicas. Both are handled by the following command. For mo
 .. code-block:: bash
 
     gigalixir scale $APP_NAME --replicas=2 --size=0.6
+
+.. _`configs`:
 
 How to Configure an App
 =======================
@@ -570,6 +622,8 @@ Currently, restarts will cause brief downtime as we restart all containers at on
 
     gigalixir restart $APP_NAME
 
+.. _`jobs`:
+
 How to Run Jobs
 ===============
 
@@ -592,33 +646,51 @@ For an example task, see `gigalixir-getting-started's migrate task`_. The task i
 
 We prepend :elixir:`Elixir.` to your module name to let the BEAM virtual machine know that you want to run an Elixir module rather than an Erlang module. The BEAM doesn't know the difference between Elixir code and Erlang code once it is compiled down, but compiled Elixir code is namespaced under the Elixir module.
 
+The size of the container that runs your job will be the same size as the app containers and billed the same way, based on replica-size-seconds. See, :ref:`pricing`.
+
 .. _`gigalixir-getting-started's migrate task`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/lib/tasks.ex
 .. _`Distillery's Running Migrations`: https://hexdocs.pm/distillery/running-migrations.html
 
 How to Reset your API Key
 =========================
 
-TODO
+If you lost your API key or it has been stolen, you can reset it by running
+
+.. code-block:: bash
+
+    gigalixir reset_api_key
+
+Your old API key will no longer work and you may have to login again.
 
 How to Log Out
 ==============
 
-TODO
+.. code-block:: bash
+
+    gigalixir logout
 
 How to Log In
 =============
 
-TODO
+.. code-block:: bash
+
+    gigalixir login
+
+This modifies your ~/.netrc file so that future API requests will be authenticated. API keys expire after 365 days, but if you login again, you will automatically receive an we API key.
 
 How to Connect a Database
 =========================
 
-TODO
+Connecting to a database is done no differently from apps running outside GIGALIXIR. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable.
 
 How to Run Migrations
 =====================
 
-TODO
+Migrations are the same as any other job you might run. For information on running jobs, see :ref:`jobs`. In short, prepare a function to run the migration and execute the function by running
+
+.. code-block:: bash
+
+    gigalixir run $APP_NAME $MODULE $FUNCTION
 
 .. _`Launching a remote console`: 
 .. _`drop into a remote console`: 
@@ -646,7 +718,11 @@ Since we use Distillery to build releases, we also get all the commands Distille
 How to Check App Status
 =======================
 
-TODO
+To see how many replicas are actually running in production compared to how many are desired, run
+
+.. code-block:: bash
+
+    gigalixir status $APP_NAME
 
 How to Launch a Remote Observer
 ===============================
@@ -660,11 +736,34 @@ To launch observer and connect it to a production node
 and follow the instructions. This connects to a random container. We don't currently allow you to specify which container you want to connect to.
 
 .. _distillery-replace-os-vars:
+.. _`app configuration`:
 
 Using Environment Variables in your App
 =======================================
 
-TODO
+Environment variables with Elixir, Distillery, and releases in general are one of those things that always trip up beginners. I think `Distillery's Runtime Configuration`_ explains it better than I can. GIGALIXIR automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you have to do is add something like this to your config.exs file, set your app config, and you should be good to go. For information about how to set app configs, see :ref:`configs`.
+
+.. code-block:: elixir
+
+    ...
+    config :myapp,
+        my_config: "$MY_CONFIG"
+    ...
+
+Then set MY_CONFIG, by running
+
+.. code-block:: bash
+
+    gigalixir set_config MY_CONFIG foo
+
+In your app code, 
+
+.. code-block:: elixir
+
+    Application.get_env(:myapp, :my_config) == "foo"
+    System.get_env("MY_CONFIG") == "foo"
+
+.. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/runtime-configuration.html#content
 
 Indices and Tables
 ==================
