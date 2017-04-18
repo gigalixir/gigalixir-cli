@@ -1,4 +1,5 @@
 import os
+import logging
 import urllib
 import json
 import subprocess
@@ -33,19 +34,41 @@ def create(host, unique_name):
     except subprocess.CalledProcessError:
         raise Exception("You must call this from inside a git repository.")
 
-    unique_name = unique_name.lower()
+    body = {}
+    if unique_name != None:
+        body = {
+            "unique_name": unique_name.lower()
+        }
     r = requests.post('%s/api/apps' % host, headers = {
         'Content-Type': 'application/json',
-    }, json = {
-        "unique_name": unique_name,
-    })
+    }, json = body)
     if r.status_code != 201:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
     else:
+        data = json.loads(r.text)["data"]
+        unique_name = data["unique_name"]
+        logging.getLogger("gigalixir-cli").info("Created app: %s." % unique_name)
+
         # create the git remote
+        remotes = call('git remote').splitlines()
+        if 'gigalixir' in remotes:
+            cast('git remote rm gigalixir')
         cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % unique_name)
+        logging.getLogger("gigalixir-cli").info("Added git remote: gigalixir.")
+
+def status(host, app_name):
+    r = requests.get('%s/api/apps/%s/status' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        click.echo(json.dumps(data, indent=2, sort_keys=True))
 
 def scale(host, app_name, replicas, size):
     json = {}

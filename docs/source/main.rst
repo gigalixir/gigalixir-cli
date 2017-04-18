@@ -54,7 +54,7 @@ Set Up App for Deploys
 .. code-block:: bash
 
     cd gigalixir-getting-started
-    gigalixir create_app $YOUR_APP_NAME
+    gigalixir create 
 
 Deploy!
 -------
@@ -317,7 +317,7 @@ How to Create an App
 
 .. code-block:: bash
 
-    gigalixir create_app $YOUR_APP_NAME
+    gigalixir create 
 
 How to Deploy an App
 ====================
@@ -343,23 +343,27 @@ scale by adding more replicas. Both are handled by the following command. For mo
 How to Configure an App
 =======================
 
-All app configuration is done through envirnoment variables. You can get, set, and delete configs using
-the following commands. For more information about using environment variables for app configuration, see
-`The Twelve-Factor App's Config Factor`_. For more information about using environment variables in your
-Elixir app, see :ref:`distillery-replace-os-vars`.
+All app configuration is done through envirnoment variables. You can get, set, and delete configs using the following commands. Note that setting configs does not automatically restart your app so you may need to do that yourself. We do this to give you more control at the cost of simplicity. It also potentially enables hot config updates or updating your environment variables without restarting. For more information on hot configuration, see :ref:`hot-configure`. For more information about using environment variables for app configuration, see `The Twelve-Factor App's Config Factor`_. For more information about using environment variables in your Elixir app, see :ref:`distillery-replace-os-vars`.
  
 .. code-block:: bash
 
-    $ gigalixir get_configs $APP_NAME
+    $ gigalixir configs $APP_NAME
     {}
     $ gigalixir set_config $APP_NAME FOO bar
-    $ gigalixir get_configs $APP_NAME                                                                                 
+    $ gigalixir configs $APP_NAME                                                                                 
     {
       "FOO": "bar"
     }
     $ gigalixir delete_config $APP_NAME FOO                                                                           
-    $ gigalixir get_configs $APP_NAME
+    $ gigalixir configs $APP_NAME
     {}
+
+.. _`hot-configure`:
+
+How to Hot Configure an App
+===========================
+
+This feature is still a work in progress.
 
 How to Hot Upgrade an App
 =========================
@@ -381,11 +385,12 @@ To rollback one release, run the following command.
     gigalixir rollback $APP_NAME
 
 To rollback to a specific release, find the :bash:`rollback_id` by listing all releases. You can see
-which SHA the release was built on and when it was built.
+which SHA the release was built on and when it was built. This will also automatically restart your app
+with the new release.
 
 .. code-block:: bash
 
-    $ gigalixir get_releases foo
+    $ gigalixir releases foo
     [
       {
         "created_at": "2017-04-12T17:43:28.000+00:00", 
@@ -481,12 +486,12 @@ containers, this will put you in a random container. We do not yet support speci
 How to List Apps
 ================
 
-To see what apps you own and information about them, run
-
+To see what apps you own and information about them, run the following command. This will only show you
+your desired app configuration. To see the actual status of your app, see :ref:`app-status`.
 
 .. code-block:: bash
 
-    gigalixir get_apps
+    gigalixir apps
 
 How to List Releases
 ====================
@@ -495,7 +500,7 @@ Each time you deploy or rollback a new release is generated. To see all your pre
 
 .. code-block:: bash
 
-    gigalixir get_releases $APP_NAME
+    gigalixir releases $APP_NAME
  
 How to Change or Reset Your Password
 ====================================
@@ -592,6 +597,13 @@ Since we use Distillery to build releases, we also get all the commands Distille
 
 .. _`Distillery's boot.eex`: https://github.com/bitwalker/distillery/blob/master/priv/templates/boot.eex#L417
 
+.. _app-status:
+
+How to Check App Status
+=======================
+
+TODO
+
 How to Launch a Remote Observer
 ===============================
 
@@ -629,5 +641,5 @@ Indices and Tables
 .. _`PaperTrail`: https://papertrailapp.com/
 .. _`Running Elixir and Phoenix projects on a cluster of nodes`: https://dockyard.com/blog/2016/01/28/running-elixir-and-phoenix-projects-on-a-cluster-of-nodes
 .. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. It will also prompt you for credit card information. GIGALIXIR currently does not offer a free trial, but we do offer a `money back guarantee`_. Please don't hesitate to use it.
-.. |set up app for deploys| replace:: This command will let GIGALIXIR know you intend to deploy this app so it can set up the necessary prerequisites needed to do so. It will also set up a git remote so you can later run`git push gigalixir`. This must be run from within a git repository folder.
+.. |set up app for deploys| replace:: To create your app, run the following command. It will also set up a git remote so you can later run :bash:`git push gigalixir`. This must be run from within a git repository folder. An app name will be generated for you, but you can also optionally supply an app name if you wish. There is currently no way to change your app name.
 .. _`The Twelve-Factor App's Config Factor`: https://12factor.net/config

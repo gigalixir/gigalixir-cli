@@ -42,7 +42,7 @@ def report_errors(f):
 # TODO: remove localhost from .netrc file
 
 @click.group()
-@click.option('--host', envvar='GIGALIXIR_HOST', default="https://api.gigalixir.com")
+@click.option('--host', envvar='GIGALIXIR_HOST', default="https://api.gigalixir.com", help="GIGALIXIR API server host.")
 @click.pass_context
 def cli(ctx, host):
     ctx.obj = {}
@@ -63,6 +63,16 @@ def cli(ctx, host):
         ctx.obj['router'] = DarwinRouter()
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
+
+@cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
+def status(ctx, app_name):
+    """
+    Current app status.
+    """
+    gigalixir_app.status(ctx.obj['host'], app_name)
 
 @cli.command()
 @click.argument('app_name')
@@ -87,6 +97,16 @@ def rollback(ctx, app_name, rollback_id):
     """
     gigalixir_app.rollback(ctx.obj['host'], app_name, rollback_id)
 
+
+@cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
+def remote_console(ctx, app_name):
+    """
+    Drop into a remote console on a live production node.
+    """
+    gigalixir_app.ssh(ctx.obj['host'], app_name, 'remote_console')
 
 @cli.command()
 @click.argument('app_name')
@@ -212,7 +232,7 @@ def logs(ctx, app_name):
 @cli.command()
 @click.pass_context
 @report_errors
-def get_payment_method(ctx):
+def payment_method(ctx):
     """
     Get your payment method.
     """
@@ -222,7 +242,7 @@ def get_payment_method(ctx):
 @cli.command()
 @click.pass_context
 @report_errors
-def get_ssh_keys(ctx):
+def ssh_keys(ctx):
     """
     Get your ssh keys.
     """
@@ -232,7 +252,7 @@ def get_ssh_keys(ctx):
 @cli.command()
 @click.pass_context
 @report_errors
-def get_apps(ctx):
+def apps(ctx):
     """
     Get apps.
     """
@@ -243,7 +263,7 @@ def get_apps(ctx):
 @click.argument('app_name')
 @click.pass_context
 @report_errors
-def get_releases(ctx, app_name):
+def releases(ctx, app_name):
     """
     Get previous releases for app.
     """
@@ -255,7 +275,7 @@ def get_releases(ctx, app_name):
 @click.argument('app_name')
 @click.pass_context
 @report_errors
-def get_permissions(ctx, app_name):
+def permissions(ctx, app_name):
     """
     Get permissions for app.
     """
@@ -324,7 +344,7 @@ def send_reset_password_token(ctx, email):
 @click.argument('app_name')
 @click.pass_context
 @report_errors
-def get_domains(ctx, app_name):
+def domains(ctx, app_name):
     """
     Get custom domains for your app.
     """
@@ -335,7 +355,7 @@ def get_domains(ctx, app_name):
 @click.argument('app_name')
 @click.pass_context
 @report_errors
-def get_configs(ctx, app_name):
+def configs(ctx, app_name):
     """
     Get app configuration/environment variables.
     """
@@ -403,14 +423,14 @@ def add_permission(ctx, unique_name, email):
 
 # @create.command()
 @cli.command()
-@click.argument('unique_name')
+@click.option('-n', '--name')
 @click.pass_context
 @report_errors
-def create_app(ctx, unique_name):
+def create(ctx, name):
     """
     Create a new app.
     """
-    gigalixir_app.create(ctx.obj['host'], unique_name)
+    gigalixir_app.create(ctx.obj['host'], name)
 
 # @create.command()
 @cli.command()
