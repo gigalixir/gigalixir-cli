@@ -1,3 +1,4 @@
+import logging
 import requests
 import stripe
 from . import auth
@@ -9,7 +10,9 @@ def get(host):
     r = requests.get('%s/api/payment_methods' % host, headers = {
         'Content-Type': 'application/json',
     })
-    if r.status_code != 200:
+    if r.status_code == 404:
+        logging.getLogger("gigalixir-cli").info("No payment method found.")
+    elif r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)

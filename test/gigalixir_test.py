@@ -74,16 +74,16 @@ machine localhost
 
 @httpretty.activate
 def test_create_app():
-    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps', body='{}', content_type='application/json', status=201)
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps', body='{"data":{"unique_name":"fake-app-name"}}', content_type='application/json', status=201)
     runner = CliRunner()
     with runner.isolated_filesystem():
         subprocess.check_call(['git', 'init'])
-        result = runner.invoke(gigalixir.cli, ['create_app', 'fake-app-name'])
+        result = runner.invoke(gigalixir.cli, ['create', '--name=fake-app-name'])
+        assert result.exit_code == 0
         remotes = subprocess.check_output(['git', 'remote', '-v'])
         assert remotes == """gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (fetch)
 gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 """
-        assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"unique_name": "fake-app-name"}')
 
@@ -100,7 +100,7 @@ def test_update_user():
 def test_get_apps():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps', body='{"data":[{"unique_name":"one","size":0.5,"replicas":1},{"unique_name":"two","size":0.5,"replicas":1},{"unique_name":"three","size":0.5,"replicas":1},{"unique_name":"four","size":0.5,"replicas":1},{"unique_name":"five","size":0.5,"replicas":1}]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['get_apps'])
+    result = runner.invoke(gigalixir.cli, ['apps'])
     assert result.output == """[
   {
     "name": "one", 
@@ -175,7 +175,7 @@ def test_run():
 def test_get_configs():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/configs', body='{"data":{"DATABASE_URL":"ecto://user:pass@host:5432/db"}}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['get_configs', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['configs', 'fake-app-name'])
     assert result.output == """{
   "DATABASE_URL": "ecto://user:pass@host:5432/db"
 }
@@ -205,7 +205,7 @@ def test_delete_config():
 def test_get_permissions():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/permissions', body='{"data":["foo@gigalixir.com"]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['get_permissions', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['permissions', 'fake-app-name'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -254,7 +254,7 @@ machine localhost
 def test_get_releases():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"fake-rollback-id3","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:29.000+00:00"},{"slug_url":"fake-slug-url","sha":"fake-sha","rollback_id":"fake-rollback-id2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:28.000+00:00"}]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['get_releases', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['releases', 'fake-app-name'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     assert result.output == """[
@@ -309,7 +309,7 @@ def test_rollback():
 def test_get_ssh_keys():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/ssh_keys', body='{"data":[{"key":"fake-ssh-key","id":1}]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['get_ssh_keys'])
+    result = runner.invoke(gigalixir.cli, ['ssh_keys'])
     assert result.output == """[
   {
     "id": 1, 
@@ -343,7 +343,7 @@ def test_delete_ssh_key():
 def test_get_payment_method():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/payment_methods', body='{"data":{"last4":4242,"exp_year":2018,"exp_month":12,"brand":"Visa"}}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['get_payment_method'])
+    result = runner.invoke(gigalixir.cli, ['payment_method'])
     assert result.output == """{
   "brand": "Visa", 
   "exp_month": 12, 
@@ -398,7 +398,7 @@ def test_delete_domain():
 def test_get_domains():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/domains', body='{"data":["www.example.com"]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['get_domains', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['domains', 'fake-app-name'])
     assert result.output == """[
   "www.example.com"
 ]

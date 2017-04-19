@@ -147,6 +147,7 @@ def run(host, app_name, module, function):
         raise Exception(r.text)
 
 def logs(host, app_name):
+    logging.getLogger("gigalixir-cli").info("Aggregating and routing logs, this may take a minute.")
     with closing(requests.get('%s/api/apps/%s/logs' % (host, urllib.quote(app_name.encode('utf-8'))), stream=True)) as r:
         if r.status_code != 200:
             if r.status_code == 401:

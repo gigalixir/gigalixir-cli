@@ -55,6 +55,7 @@ def login(host, email, password, yes):
         key = json.loads(r.text)["data"]["key"]
         if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?', default=True):
             netrc.update_netrc(email, key)
+            logging.getLogger("gigalixir-cli").info('Logged in as %s.' % email)
         else:
             logging.getLogger("gigalixir-cli").info('Your api key is %s' % key)
             logging.getLogger("gigalixir-cli").warn('Many GIGALIXIR CLI commands may not work unless you your ~/.netrc file contains your GIGALIXIR credentials.')

@@ -38,21 +38,27 @@ def report_errors(f):
             sys.exit(1)
     return wrapper
 
-# TODO: replace localhost:4000 with api.gigalixir.com
 # TODO: remove localhost from .netrc file
 
 @click.group()
-@click.option('--host', envvar='GIGALIXIR_HOST', default="https://api.gigalixir.com", help="GIGALIXIR API server host.")
+@click.option('--env', envvar='GIGALIXIR_ENV', default='prod', help="GIGALIXIR environment [prod, dev].")
 @click.pass_context
-def cli(ctx, host):
+def cli(ctx, env):
     ctx.obj = {}
     logging.basicConfig(format='%(message)s')
     logging.getLogger("gigalixir-cli").setLevel(logging.INFO)
     ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
-    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True)
 
-    stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
-    # stripe.api_key = 'pk_live_45dmSl66k4xLy4X4yfF3RVpd'
+    if env == "prod":
+        stripe.api_key = 'pk_live_45dmSl66k4xLy4X4yfF3RVpd'
+        rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True)
+        host = "https://api.gigalixir.com"
+    elif env == "dev":
+        stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
+        rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'development', enabled=False)
+        host = "http://localhost:4000"
+    else:
+        raise Exception("Invalid GIGALIXIR_ENV")
 
     ctx.obj['host'] = host
 
