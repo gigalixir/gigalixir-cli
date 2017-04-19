@@ -4,17 +4,19 @@
 
     pip install gigalixir
 
+If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
+
 ## Quickstart
 
-    gigalixir create account $EMAIL $CARD_NUMBER $CARD_EXP_MONTH $CARD_EXP_YEAR $CARD_CVC
-    gigalixir login $EMAIL
-    gigalixir create app $APP_NAME
+    gigalixir signup
+    gigalixir login
+    gigalixir create 
     git push gigalixir
     curl https://$APP_NAME.gigalixirapp.com/
 
 ## Documentation
 
-    FPO
+    TODO
 
 ## Testing
 

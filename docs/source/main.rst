@@ -74,19 +74,88 @@ Finally, build and deploy.
 Modifying an Existing App to Run on GIGALIXIR
 =============================================
 
-TODO
+Required Modifications
+----------------------
 
-Required
+These modifications are required to run on GIGALIXIR, but features such as node clustering probably won't work unless you make some optional modifications described in the next section.
 
-  - Distillery
-  - Buildpacks
+Install Distillery to Build Releases
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Optional 
+Distillery is currently the only supported release tool. We assume you have followed the `Distillery installation instructions`_. We use Distillery instead of bundling up your source code is to support hot upgrades. 
 
-  - Libcluster
-  - Secrets
-  - Migrations
-  - Git
+.. _`Distillery installation instructions`: https://hexdocs.pm/distillery/getting-started.html#installation-setup
+
+.. _`buildpacks`:
+
+Specify Buildpacks to Compile and Build Releases
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We rely on buildpacks to compile and build your release. Create a :bash:`.buildpacks` file with the following contents.
+
+.. code-block:: bash
+
+    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-distillery.git
+
+If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your GIGALIXIR build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+
+
+Optional Modifications
+----------------------
+
+These modifications are not required, but are recommended if you want to use all of features GIGALIXIR offers.
+
+Set up Node Clustering with Libcluster
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to cluster nodes, you should install libcluster. For more information about installing libcluster, see :ref:`cluster your nodes`.
+
+Secrets using Environment Variables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, Phoenix creates a :bash:`prod.secret.exs` file to store secrets. If you want to continue using :bash:`prod.secret.exs` you'll have to commit it to version control so we can bundle it into your release. This is usually not a good idea, though. 
+
+GIGALIXIR prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`prod.exs` file, and modify the values to pull from environment variables. 
+
+Open your :bash:`prod.exs` file and delete the following line if it is there
+
+.. code-block:: elixir
+
+    import_config "prod.secret.exs"
+
+Then add the following in :bash:`prod.exs`
+
+.. code-block:: elixir
+
+     config :gigalixir_getting_started, GigalixirGettingStarted.Endpoint,
+       server: true,
+       secret_key_base: "${SECRET_KEY_BASE}"
+     
+     config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
+       adapter: Ecto.Adapters.Postgres,
+       url: {:system, "DATABASE_URL"},
+       pool_size: 20
+
+Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following. For more information on setting configs, see :ref:`configs`.
+
+.. code-block:: bash
+
+    gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
+
+Set Up Migrations
+^^^^^^^^^^^^^^^^^
+
+In development, you use `Mix`_ to run database migrations. In production, `Mix`_ is not available so you need a different approach. Instructions on how to set up and run migrations are described in more detail in :ref:`migrations`.
+
+.. _`Mix`: https://hexdocs.pm/mix/Mix.html
+
+Set Up Hot Upgrades with Git v2.9.0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
 
 .. _`money back guarantee`:
 
@@ -100,54 +169,37 @@ How Does GIGALIXIR Work?
 
 We use Kubernetes and Docker to run your apps. We use a git server with pre-receive hooks to build your apps. We use Google Cloud Storage to store your release tarball, also called a slug. We built an API server which orchestrates everything together. 
 
-TODO: insert diagram, component list with descriptions
+TODO: insert diagram of components
 
 Components
 ----------
 
-TODO
-
-  - Slug Builder
-
-    - Herokuish
-    - Buildpacks
-
-  - API Server / Controller
-  - Database
-  - Logger
-
-    - PubSub
-    - Stackdriver
-
-  - Router
-
-    - Nginx Ingress Controller
-
-  - TLS Manager
-
-    - kube-lego
-
-  - Kubernetes
-  - Slug Storage
-  - Secret/Config Storage
-  - Observer
-  - Run Container
-  - Command-Line Interface
+  - *Slug Builder*: This is responsible for building your code into a release or slug.
+  - *API Server / Controller*: This is responsible for handling all user requests such as scaling apps, setting configs, etc. 
+  - *Database*: The database is where all of your app configuration is stored with the exception of configs. Configs are stored separately in Secret/Config Storage because of their sensitive nature.
+  - *Logger*: This is responsible for collecting logs from all your containers, aggregating them, and streaming them to you.
+  - *Router*: This is responsible for receiving web traffic for your app, terminating TLS, and routing the traffic to your app containers.
+  - *TLS Manager*: This is responsible for obtaining TLS certificates and storing them.
+  - *Kubernetes*: This is responsible for managing your containers.
+  - *Slug Storage*: This is where your slugs are stored.
+  - *Secret/Config Storage*: This is where your configs are stored.
+  - *Observer*: This is an application that runs on your local machine that connects to your production node to show you everything you could ever want to know about your live production app.
+  - *Run Container*: This is the container that your app runs in.
+  - *Command-Line Interface*: This is the command-line tool that runs on your local machine that you use to control GIGALIXIR.
 
 Concepts
 --------
 
-TODO
-
-  - User
-  - API Key
-  - SSH Key
-  - App
-  - Releases
-  - Replicas
-  - Custom Domain
-  - Payment Method
-  - Permission
+  - *User*: The user is you. When you sign up, we create a user.
+  - *API Key*: Every user has an API Key which is used to authenticate most API requests. You get one when you login and you can regenerate it at any time. It expires every 365 days.
+  - *SSH Key*: SSH keys are what we use to authenticate you when SSHing to your containers. We usethem for remote observer, remote console, etc.
+  - *App*: An app is your Elixir application.
+  - *Releases*: A release a record of when a slug was deployed. It contains metadata about the deploy such as the git SHA, timestamps.
+  - *Slug*: Each app is compiled and built into a slug. The slug is the actual code that is run in your containers. Each app will have many slugs, one for every deploy.
+  - *Replicas*: An app can have many replicas. A replica is a single instance of your app.
+  - *Custom Domain*: A custom domain is a fully qualified domain that you control which you can set up to point to your app.
+  - *Payment Method*: Your payment method is the credit card on file you use to pay your bill each month.
+  - *Permission*: A permission grants another user the ability to deploy. Even though they can deploy, you remain the owner and are responsible for paying the bill.
 
 .. _`life of a deploy`:
 
@@ -504,23 +556,55 @@ information on how SSL/TLS works, see :ref:`how-tls-works`.
 Troubleshooting
 ===============
 
-TODO
+TODO: Common issues go here.
+
+Support/Help
+============
+
+If you run into issues, `Stack Overflow`_ is the best place to search. If you can't find an answer, the developers at GIGALIXIR monitor `the gigalixir tag`_ and will answer questions there. We prefer Stack Overflow over a knowledge base because it is public and collaborative. If you have a private question, email help@gigalixir.com or call us at `(415) 326-8880`_.
+
+.. _`Stack Overflow`: http://stackoverflow.com/
+.. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
+.. _`(415) 326-8880`: tel:4153268880
 
 The GIGALIXIR Command-Line Interface
 ====================================
 
-TODO
+The GIGALIXIR Command-Line Interface or CLI is a tool you install on your local machine to control GIGALIXIR.
 
-  - installation
-  - encryption
-  - no news is good news
-  - exit codes
-  - stderr vs stdout
-  - options vs arguments
-  - naming
-  - authentication
-  - error reporting
-  - open source
+Installation
+------------
+
+Install :bash:`gigalixir` using :bash:`pip install gigalixir`. If you don't have pip installed, take a look at the `pip documentation`_.
+
+Encryption
+----------
+
+All HTTP requests made between your machine and GIGALIXIR's servers are encrypted.
+
+Conventions
+-----------
+
+  - No news is good news: If you run a command that produces no output, then the command succeeded.
+  - Exit codes: Commands that succeed will return a 0 exit code, and non-zero otherwise.
+  - stderr vs stdout: Stderr is used for errors and for log output. Stdout is for the data output of your command.
+
+Authentication
+--------------
+
+When you login with your email and password, you receive an API key. This API key is stored in your :bash:`~/.netrc` file. Commands generally use your :bash:`~/.netrc` file to authenticate with few exceptions.
+
+Error Reporting
+---------------
+
+Bugs in the CLI are reported to GIGALIXIR's error tracking service. There is currently no way to disable this.
+
+Open Source
+-----------
+
+The GIGALIXIR CLI is open source and we welcome pull requests. See `the gigalixir-cli repository`_.
+
+.. _`the gigalixir-cli repository`: https://github.com/gigalixir/gigalixir-cli
  
 How to Set Up SSL/TLS
 =====================
@@ -710,6 +794,8 @@ How to Connect a Database
 
 Connecting to a database is done no differently from apps running outside GIGALIXIR. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable.
 
+.. _`migrations`:
+
 How to Run Migrations
 =====================
 
@@ -813,3 +899,4 @@ Indices and Tables
 .. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. It will also prompt you for credit card information. GIGALIXIR currently does not offer a free trial, but we do offer a `money back guarantee`_. Please don't hesitate to use it.
 .. |set up app for deploys| replace:: To create your app, run the following command. It will also set up a git remote so you can later run :bash:`git push gigalixir`. This must be run from within a git repository folder. An app name will be generated for you, but you can also optionally supply an app name if you wish. There is currently no way to change your app name.
 .. _`The Twelve-Factor App's Config Factor`: https://12factor.net/config
+.. _`Herokuish`: https://github.com/gliderlabs/herokuish
