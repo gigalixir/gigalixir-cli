@@ -1,4 +1,4 @@
-# gigalixir-cli
+# GIGALIXIR Command-Line Interface
 
 ## Installation
 
