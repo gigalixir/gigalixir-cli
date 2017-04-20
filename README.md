@@ -16,7 +16,8 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 
 ## Documentation
 
-    TODO
+    http://gigalixir.readthedocs.io/en/latest/
+    https://www.gigalixir.com
 
 ## Testing
 
