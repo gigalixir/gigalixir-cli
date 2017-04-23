@@ -1,5 +1,6 @@
 erl_crash.dump
 venv
+gigalixir-cli
 *.egg-info
 *.pyc
 .cache

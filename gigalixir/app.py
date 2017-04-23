@@ -96,7 +96,7 @@ def ssh(host, app_name, command):
         data = json.loads(r.text)["data"]
         ssh_ip = data["ssh_ip"]
         if command != None and command != "":
-            command = "/opt/gigalixir/run-cmd %s" % command
+            command = "gigalixir_run run %s" % command
         cast("ssh root@%s %s" % (ssh_ip, command))
 
 def restart(host, app_name):
