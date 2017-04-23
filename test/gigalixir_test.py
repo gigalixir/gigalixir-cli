@@ -163,7 +163,7 @@ def test_restart():
 
 @httpretty.activate
 def test_run():
-    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/run', body='{}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/run', body='{}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['run', 'fake-app-name', 'Elixir.Tasks', 'migrate'])
     assert result.output == ''

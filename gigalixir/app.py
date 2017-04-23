@@ -135,7 +135,7 @@ def second_most_recent_rollback_id(host, app_name):
             return data[1]["rollback_id"]
 
 def run(host, app_name, module, function):
-    r = requests.put('%s/api/apps/%s/run' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.post('%s/api/apps/%s/run' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "module": module,
