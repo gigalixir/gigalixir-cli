@@ -32,7 +32,6 @@ def report_errors(f):
         try:
             f(*args, **kwds)
         except:
-            raise
             logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
             rollbar.report_exc_info()
             sys.exit(1)

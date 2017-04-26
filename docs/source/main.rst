@@ -157,13 +157,6 @@ Set Up Hot Upgrades with Git v2.9.0
 
 To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
 
-.. _`money back guarantee`:
-
-Money-back Guarantee
-====================
-
-If you are unhappy for any reason within the first 31 days, contact us to get a refund up to $75. Enough to run a 3 node cluster for 31 days.
-
 How Does GIGALIXIR Work?
 ========================
 
@@ -273,6 +266,56 @@ A hot upgrade follows the same steps as a regular deploy, except for a few diffe
 
 Once the slug is generated and uploaded, we execute an upgrade script on each run container instead of restarting. The upgrade script downloads the new slug, and calls `Distillery's upgrade command`_. Your app should now be upgraded in place without any downtime, dropped connections, or loss of in-memory state.
 
+Frequently Asked Questions
+==========================
+
+  - *What is Elixir? What is Phoenix?*
+
+    This is probably best answered by someone else. Take a look at the `elixir homepage`_ and 
+    the `phoenix homepage`_.
+
+  - *How is GIGALIXIR different from Heroku and Deis Workflow?*
+
+    Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku made design decisions that prioritize simplicity and they make it difficult to shoot yourself in the foot. As a consequence, it is difficult to run Elixir and Phoenix on Heroku unless you are willing to sacrifice many of the greatest advantages Elixir and Phoenix provide like node clustering, hot upgrades, and remote observer.
+
+    Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you could conceivably make modifications to support node clustering and remote observer, but hot upgrades would require some fundamental changes to the way Deis was designed to work. Even if all this was possible, you'd still have to spend quite a bit of timing solving problems that GIGALIXIR has already figured out for you.
+
+    On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
+
+    In the end, because GIGALIXIR is focused on just Elixir and Phoenix, we make fundamental design decisions that Heroku and Deis can't make and spend time building features that they can't build. For example, Heroku and Deis will almost certainly never support `hot configuration updates`_. Like they say, we try to do one thing and do it well.
+
+  - *I thought you weren't supposed to SSH into docker containers!?*
+
+    There are a lot of reasons not to SSH into your docker containers, but it is a tradeoff that
+    doesn't fit that well with Elixir apps. We need to allow SSH in order to connect a remote observer
+    to a production node, drop into a remote console, and do hot upgrades. If you don't need any
+    of these features, then you probably don't need and probably shouldn't SSH into your containers,
+    but it is available should you want to. Just keep in mind that full SSH access to your containers
+    means you have almost complete freedom to do whatever you want including shoot yourself in the foot.
+    Any manual changes you make during an SSH session will also be wiped out if the container restarts 
+    itself so use SSH with care.
+
+  - *Why do you download the slug on startup instead of including the slug in the Docker image?*
+
+    Great question! The short answer is that after a hot-upgrade, if the container restarts, you end 
+    up reverting back to the slug included in the container. By downloading the slug on startup, 
+    we can always be sure to pull the most current slug even after a hot upgrade.
+
+    This sort of flies in the face of a lot of advice about how to use Docker, but it is a tradeoff
+    we felt was necessary in order to support hot upgrades in a containerized environment. The 
+    non-immutability of the containers can cause problems, but over time we've ironed them out and
+    feel that there is no longer much downside to this approach. All the headaches that came as a
+    result of this decision are our responsibility to address and shouldn't affect you as a customer. 
+    In other words, you reap the benefits while we pay the cost, which is one of the ways we provide value.
+
+  - *How do I add worker processes?*
+
+    Heroku and others allow you to specify different types of processes under a single app such as workers that pull work from a queue. With Elixir, that is rarely needed since you can spawn asynchronous tasks within your application itself. Elixir and OTP provide all the tools you need to do this type of stuff among others. For more information, see `Background Jobs in Phoenix`_ which is an excellent blog post. If you really need to run an Redis-backed queue to process jobs, take a look at Exq, but consider `whether you really need Exq`_.
+
+.. _`Background Jobs in Phoenix`: http://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix.html
+.. _`whether you really need Exq`: https://github.com/akira/exq#do-you-need-exq
+
+
 .. _`cluster your nodes`:
 
 Clustering Nodes
@@ -325,56 +368,6 @@ Lastly, you need to modify your distillery config so it knows where to find your
 .. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/config.exs#L27
 .. _`gigalixir-run's run-cmd script`: https://github.com/gigalixir/gigalixir-run/blob/master/run-cmd
 
-
-Frequently Asked Questions
-==========================
-
-  - *What is Elixir? What is Phoenix?*
-
-    This is probably best answered by someone else. Take a look at the `elixir homepage`_ and 
-    the `phoenix homepage`_.
-
-  - *How is GIGALIXIR different from Heroku and Deis Workflow?*
-
-    Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku made design decisions that prioritize simplicity and they make it difficult to shoot yourself in the foot. As a consequence, it is difficult to run Elixir and Phoenix on Heroku unless you are willing to sacrifice many of the greatest advantages Elixir and Phoenix provide like node clustering, hot upgrades, and remote observer.
-
-    Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you could conceivably make modifications to support node clustering and remote observer, but hot upgrades would require some fundamental changes to the way Deis was designed to work. Even if all this was possible, you'd still have to spend quite a bit of timing solving problems that GIGALIXIR has already figured out for you.
-
-    On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
-
-    In the end, because GIGALIXIR is focused on just Elixir and Phoenix, we make fundamental design decisions that Heroku and Deis can't make and spend time building features that they can't build. For example, Heroku and Deis will almost certainly never support `hot configuration updates`_. Like they say, we try to do one thing and do it well.
-
-  - *I thought you weren't supposed to SSH into docker containers!?*
-
-    There are a lot of reasons not to SSH into your docker containers, but it is a tradeoff that
-    doesn't fit that well with Elixir apps. We need to allow SSH in order to connect a remote observer
-    to a production node, drop into a remote console, and do hot upgrades. If you don't need any
-    of these features, then you probably don't need and probably shouldn't SSH into your containers,
-    but it is available should you want to. Just keep in mind that full SSH access to your containers
-    means you have almost complete freedom to do whatever you want including shoot yourself in the foot.
-    Any manual changes you make during an SSH session will also be wiped out if the container restarts 
-    itself so use SSH with care.
-
-  - *Why do you download the slug on startup instead of including the slug in the Docker image?*
-
-    Great question! The short answer is that after a hot-upgrade, if the container restarts, you end 
-    up reverting back to the slug included in the container. By downloading the slug on startup, 
-    we can always be sure to pull the most current slug even after a hot upgrade.
-
-    This sort of flies in the face of a lot of advice about how to use Docker, but it is a tradeoff
-    we felt was necessary in order to support hot upgrades in a containerized environment. The 
-    non-immutability of the containers can cause problems, but over time we've ironed them out and
-    feel that there is no longer much downside to this approach. All the headaches that came as a
-    result of this decision are our responsibility to address and shouldn't affect you as a customer. 
-    In other words, you reap the benefits while we pay the cost, which is one of the ways we provide value.
-
-  - *How do I add worker processes?*
-
-    Heroku and others allow you to specify different types of processes under a single app such as workers that pull work from a queue. With Elixir, that is rarely needed since you can spawn asynchronous tasks within your application itself. Elixir and OTP provide all the tools you need to do this type of stuff among others. For more information, see `Background Jobs in Phoenix`_ which is an excellent blog post. If you really need to run an Redis-backed queue to process jobs, take a look at Exq, but consider `whether you really need Exq`_.
-
-.. _`Background Jobs in Phoenix`: http://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix.html
-.. _`whether you really need Exq`: https://github.com/akira/exq#do-you-need-exq
-
 .. _`pricing`:
 
 Pricing Details
@@ -384,9 +377,29 @@ Every month after you sign up on the same day of the month, we calculate the num
 
 replica-size-seconds is how many replicas you ran multiplied by size of each replica multiplied by how many seconds they were run. This is aggregated across all your apps and is prorated to the second.
 
-For example, if you ran a single 0.5 size replica for 31 days, you will have used (1 replica) * (0.5 size) * (31 days) = 1339200 replica-size-seconds. Your monthly bill will be 1339200 * $0.00001866786 = $25.00.
+For example, if you ran a single 0.5 size replica for 31 days, you will have used 
 
-If you ran a 1.0 size replica for 10 days, then scaled it up to 3 replicas, then 10 days later scaled the size up to 2.0 and it was a 30-day month, then your usage would be (1 replica) * (1.0 size) * (10 days) + (3 replicas) * (1.0 size) * (10 days) + (3 replicas) * (2.0 size) * (10 days) = 8640000 replica-size-seconds or 8640000 * $0.00001866786 = $161.29.
+.. code-block:: bash
+
+  (1 replica) * (0.5 size) * (31 days) = 1339200 replica-size-seconds. 
+  
+Your monthly bill will be 
+
+.. code-block:: bash
+
+  1339200 * $0.00001866786 = $25.00.
+
+If you ran a 1.0 size replica for 10 days, then scaled it up to 3 replicas, then 10 days later scaled the size up to 2.0 and it was a 30-day month, then your usage would be 
+
+.. code-block:: bash
+
+  (1 replica) * (1.0 size) * (10 days) + (3 replicas) * (1.0 size) * (10 days) + (3 replicas) * (2.0 size) * (10 days) = 8640000 replica-size-seconds 
+  
+Your monthly bill will be
+
+.. code-block:: bash
+
+  8640000 * $0.00001866786 = $161.29.
  
 .. _`replica sizing`:
 
@@ -877,6 +890,13 @@ In your app code,
     System.get_env("MY_CONFIG") == "foo"
 
 .. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/runtime-configuration.html#content
+
+.. _`money back guarantee`:
+
+Money-back Guarantee
+====================
+
+If you are unhappy for any reason within the first 31 days, contact us to get a refund up to $75. Enough to run a 3 node cluster for 31 days.
 
 Indices and Tables
 ==================

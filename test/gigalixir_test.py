@@ -259,18 +259,18 @@ def test_get_releases():
     expect(httpretty.has_request()).to.be.true
     assert result.output == """[
   {
-    "created_at": "2017-03-29T17:28:29.000+00:00", 
-    "customer_app_name": "gigalixir_getting_started", 
-    "rollback_id": "fake-rollback-id3", 
-    "sha": "another-fake-sha", 
-    "slug_url": "another-fake-slug-url"
-  }, 
-  {
     "created_at": "2017-03-29T17:28:28.000+00:00", 
     "customer_app_name": "gigalixir_getting_started", 
     "rollback_id": "fake-rollback-id2", 
     "sha": "fake-sha", 
     "slug_url": "fake-slug-url"
+  }, 
+  {
+    "created_at": "2017-03-29T17:28:29.000+00:00", 
+    "customer_app_name": "gigalixir_getting_started", 
+    "rollback_id": "fake-rollback-id3", 
+    "sha": "another-fake-sha", 
+    "slug_url": "another-fake-slug-url"
   }
 ]
 """

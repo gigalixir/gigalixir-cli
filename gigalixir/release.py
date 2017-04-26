@@ -14,5 +14,5 @@ def get(host, app_name):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        click.echo(json.dumps(list(reversed(data)), indent=2, sort_keys=True))
 
