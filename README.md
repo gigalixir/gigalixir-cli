@@ -22,3 +22,9 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 ## Testing
 
     python setup.py test
+
+## Distribute
+
+    python setup.py sdist upload -r pypitest
+    python setup.py sdist upload -r pypi
+
