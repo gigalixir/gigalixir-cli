@@ -439,12 +439,12 @@ def create(ctx, name):
 
 # @create.command()
 @cli.command()
-@click.option('--email', prompt=True)
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
-@click.option('--card_number', prompt=True)
-@click.option('--card_exp_month', prompt=True)
-@click.option('--card_exp_year', prompt=True)
-@click.option('--card_cvc', prompt=True)
+@click.option('--email')
+@click.option('-p', '--password')
+@click.option('--card_number')
+@click.option('--card_exp_month')
+@click.option('--card_exp_year')
+@click.option('--card_cvc')
 @click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
 @click.pass_context
 @report_errors
@@ -452,6 +452,31 @@ def signup(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, pas
     """
     Sign up for a new account.
     """
+    if not accept_terms_of_service_and_privacy_policy:
+        logging.getLogger("gigalixir-cli").info("GIGALIXIR Terms of Service: https://www.gigalixir.com/terms")
+        logging.getLogger("gigalixir-cli").info("GIGALIXIR Privacy Policy: https://www.gigalixir.com/privacy")
+        if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
+            raise Exception("You must accept the Terms of Service and Privacy Policy to continue.")
+
+    if email == None:
+        email = click.prompt('Email')
+    gigalixir_user.validate_email(ctx.obj['host'], email)
+
+    if password == None:
+        password = click.prompt('Password', hide_input=True)
+    gigalixir_user.validate_password(ctx.obj['host'], password)
+
+    if card_number == None:
+        logging.getLogger("gigalixir-cli").info("GIGALIXIR Money-Back Guarantee: http://gigalixir.readthedocs.io/en/latest/main.html#money-back-guarantee")
+        card_number = click.prompt('Credit Card Number', type=int)
+
+    if card_exp_month == None:
+        card_exp_month = click.prompt('Credit Card Expiration Month', type=int)
+    if card_exp_year == None:
+        card_exp_year = click.prompt('Credit Card Expiration Year', type=int)
+    if card_cvc == None:
+        card_cvc = click.prompt('Credit Card CVC', type=int)
+
     gigalixir_user.create(ctx.obj['host'], email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy)
 
 @cli.command()

@@ -7,12 +7,6 @@ import stripe
 import json
 
 def create(host, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
-    if not accept_terms_of_service_and_privacy_policy:
-        logging.getLogger("gigalixir-cli").info("GIGALIXIR Terms of Service: https://www.gigalixir.com/terms")
-        logging.getLogger("gigalixir-cli").info("GIGALIXIR Privacy Policy: https://www.gigalixir.com/privacy")
-        if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
-            raise Exception("Sorry, you must accept the Terms of Service and Privacy Policy to continue.")
-
     token = stripe.Token.create(
         card={
             "number": card_number,
@@ -32,6 +26,21 @@ def create(host, email, card_number, card_exp_month, card_exp_year, card_cvc, pa
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    logging.getLogger("gigalixir-cli").info('Created account for %s. Confirmation email sent.' % email)
+
+def validate_email(host, email):
+    r = requests.get('%s/api/validate_email' % host, headers = {
+        'Content-Type': 'application/json',
+    }, params = {
+        "email": email
+    })
+    if r.status_code != 200:
+        errors = json.loads(r.text)["errors"]
+        raise Exception("\n".join(errors))
+
+def validate_password(host, password):
+    if len(password) < 4:
+        raise Exception("Password should be at least 4 characters.")
 
 def change_password(host, email, current_password, new_password):
     r = requests.patch('%s/api/users' % host, auth = (email, current_password), json = {
