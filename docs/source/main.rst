@@ -57,7 +57,7 @@ Set Up App for Deploys
 .. code-block:: bash
 
     cd gigalixir-getting-started
-    gigalixir create 
+    APP_NAME=$(gigalixir create)
 
 Deploy!
 -------
@@ -67,7 +67,7 @@ Finally, build and deploy.
 .. code-block:: bash
 
     git push gigalixir
-    curl https://$YOUR_APP_NAME.gigalixirapp.com/
+    curl https://$APP_NAME.gigalixirapp.com/
 
 .. _`make your existing app work on GIGALIXIR`:
 

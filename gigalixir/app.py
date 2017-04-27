@@ -57,6 +57,7 @@ def create(host, unique_name):
             cast('git remote rm gigalixir')
         cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % unique_name)
         logging.getLogger("gigalixir-cli").info("Added git remote: gigalixir.")
+        click.echo(unique_name)
 
 def status(host, app_name):
     r = requests.get('%s/api/apps/%s/status' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {

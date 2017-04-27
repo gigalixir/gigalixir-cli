@@ -66,8 +66,15 @@ def login(host, email, password, yes):
             netrc.update_netrc(email, key)
             logging.getLogger("gigalixir-cli").info('Logged in as %s.' % email)
         else:
-            logging.getLogger("gigalixir-cli").info('Your api key is %s' % key)
-            logging.getLogger("gigalixir-cli").warn('Many GIGALIXIR CLI commands may not work unless you your ~/.netrc file contains your GIGALIXIR credentials.')
+            logging.getLogger("gigalixir-cli").warn('Please edit your ~/.netrc file manually. Many GIGALIXIR CLI commands may not work unless your ~/.netrc file contains your GIGALIXIR credentials.')
+            logging.getLogger("gigalixir-cli").info('Add the following:')
+            logging.getLogger("gigalixir-cli").info('')
+            logging.getLogger("gigalixir-cli").info('machine api.gigalixir.com')
+            logging.getLogger("gigalixir-cli").info('\tlogin %s' % email)
+            logging.getLogger("gigalixir-cli").info('\tpassword %s' % key)
+            logging.getLogger("gigalixir-cli").info('machine git.gigalixir.com')
+            logging.getLogger("gigalixir-cli").info('\tlogin %s' % email)
+            logging.getLogger("gigalixir-cli").info('\tpassword %s' % key)
 
 def get_reset_password_token(host, email):
     r = requests.put('%s/api/users/reset_password' % host, json = {"email": email})
