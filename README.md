@@ -21,7 +21,14 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 
 ## Testing
 
+    pip install -e .[dev]
     python setup.py test
+
+    # e2e tests
+    pip install pytest
+    export GIGALIXIR_EMAIL=foo
+    export GIGALIXIR_PASSWORD=bar
+    pytest -s e2e/test.py
 
 ## Distribute
 
