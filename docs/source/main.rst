@@ -186,7 +186,8 @@ How Does GIGALIXIR Work?
 
 We use Kubernetes and Docker to run your apps. We use a git server with pre-receive hooks to build your apps. We use Google Cloud Storage to store your compiled app tarball, also called a slug. We built an API server which orchestrates everything together. 
 
-TODO: insert diagram of components
+.. image:: deploy.png
+.. image:: config.png
 
 Components
 ----------
@@ -299,6 +300,8 @@ Frequently Asked Questions
     the `phoenix homepage`_.
 
   - *How is GIGALIXIR different from Heroku and Deis Workflow?*
+
+    .. image:: venn.png
 
     Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku made design decisions that prioritize simplicity and they make it difficult to shoot yourself in the foot. As a consequence, it is difficult to run Elixir and Phoenix on Heroku unless you are willing to sacrifice many of the greatest advantages Elixir and Phoenix provide like node clustering, hot upgrades, and remote observer.
 
