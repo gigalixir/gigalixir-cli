@@ -3,6 +3,8 @@ What is GIGALIXIR?
 
 GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy an app to production, but none except GIGALIXIR are designed to support all of Elixir's most useful features like node clustering, hot upgrades, and remote observer. Moreover, some platforms impose restrictions on the number of connections, connection duration, and process uptime. GIGALIXIR makes opinionated design decisions to support distributed Elixir features and does not impose the same limits because we know that most Elixir apps are built to handle large numbers of concurrent connections, long-lived connection duration, and apps with nine nines of uptime.
 
+.. _`quick start`:
+
 Quick Start
 ===========
 
@@ -48,7 +50,7 @@ Next, log in. This will grant you an api key which expires in 365 days. It will 
 Prepare Your App
 ----------------
 
-There are a few steps involved to `make your existing app work on GIGALIXIR`_, but if you are starting a project from scratch, we recommend you clone the :bash:`gigalixir-getting-started` repo.
+There are a few steps involved to `make your existing app work on GIGALIXIR`_, but if you are starting a project from scratch, we recommend you clone the `gigalixir-getting-started`_ repo.
 
 .. code-block:: bash
 
@@ -73,6 +75,11 @@ Finally, build and deploy.
 
     git push gigalixir
     curl https://$APP_NAME.gigalixirapp.com/
+
+Note!
+-----
+
+The `gigalixir-getting-started`_ app does not have a database connected yet. In fact, we removed the Ecto Repo from the supervisor tree to prevent database connection attempts. To connect a database, see :ref:`connect-database`.
 
 .. _`make your existing app work on GIGALIXIR`:
 
@@ -165,7 +172,7 @@ To run hot upgrades, you send an extra http header when running :bash:`git push 
 Known Issues
 ============
 
-TODO
+  - Logging is still currently in the alpha testing stage. It's known to have slow startup, high latency, and will periodically fail entirely if another app is producing too many logs. We are currently rebuilding the logging system to address these issues. In most cases, however, logging should still be useful. If it doesn't fit your needs, we recommend `PaperTrail`_.
 
 How Does GIGALIXIR Work?
 ========================
@@ -822,10 +829,33 @@ How to Log In
 
 This modifies your ~/.netrc file so that future API requests will be authenticated. API keys expire after 365 days, but if you login again, you will automatically receive an we API key.
 
+.. _`connect-database`:
+
 How to Connect a Database
 =========================
 
-Connecting to a database is done no differently from apps running outside GIGALIXIR. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable.
+Connecting to a database is done no differently from apps running outside GIGALIXIR. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable. In short, you'll want to add something like this to your :bash:`prod.exs` file.
+
+.. code-block:: elixir
+
+     config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
+       adapter: Ecto.Adapters.Postgres,
+       url: {:system, "DATABASE_URL"},
+       pool_size: 20
+
+Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`.
+
+.. code-block:: bash
+
+    gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
+
+Note that if you started by cloning the gigialixir-getting-started repo, you'll have to uncomment a line in you :bash:`lib/gigalixir-getting-started.ex` file that looks like this.
+
+.. code-block:: elixir
+
+    supervisor(GigalixirGettingStarted.Repo, []),
+
+We commented this line out by default in order to disable database connection attempts before the database is configured. If you had followed the `quick start`_ without setting a :bash:`DATABASE_URL`, then the app won't start up properly. 
 
 .. _`migrations`:
 
@@ -940,3 +970,4 @@ Indices and Tables
 .. |set up app for deploys| replace:: To create your app, run the following command. It will also set up a git remote so you can later run :bash:`git push gigalixir`. This must be run from within a git repository folder. An app name will be generated for you, but you can also optionally supply an app name if you wish. There is currently no way to change your app name.
 .. _`The Twelve-Factor App's Config Factor`: https://12factor.net/config
 .. _`Herokuish`: https://github.com/gliderlabs/herokuish
+.. _`gigalixir-getting-started`: https://github.com/gigalixir/gigalixir-getting-started
