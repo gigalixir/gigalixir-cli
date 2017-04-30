@@ -184,9 +184,12 @@ Known Issues
 How Does GIGALIXIR Work?
 ========================
 
-We use Kubernetes and Docker to run your apps. We use a git server with pre-receive hooks to build your apps. We use Google Cloud Storage to store your compiled app tarball, also called a slug. We built an API server which orchestrates everything together. 
+When you deploy an app on GIGALIXIR, you :bash:`git push` the source code to a build server. The build server compiles the code and assets and generates a standalone tarball we call a slug. The controller then combines the slug and your app configuration into a release. The release is deployed to run containers which actually run your app.
 
 .. image:: deploy.png
+
+When you update a config, we encrypt it, store it, and combine it with the existing slug into a new release. The release is deployed to run containers.
+
 .. image:: config.png
 
 Components
@@ -196,9 +199,9 @@ Components
   - *API Server / Controller*: This is responsible for handling all user requests such as scaling apps, setting configs, etc. It is also responsible for deploying the release into a run container.
   - *Database*: The database is where all of your app configuration is stored. Configs are encrypted due to their sensitive nature.
   - *Logger*: This is responsible for collecting logs from all your containers, aggregating them, and streaming them to you.
-  - *Router*: This is responsible for receiving web traffic for your app, terminating TLS, and routing the traffic to your app containers.
-  - *TLS Manager*: This is responsible for obtaining TLS certificates and storing them.
-  - *Kubernetes*: This is responsible for managing your containers.
+  - *Router*: This is responsible for receiving web traffic for your app, terminating TLS, and routing the traffic to your run containers.
+  - *TLS Manager*: This is responsible for automatically obtaining TLS certificates and storing them.
+  - *Kubernetes*: This is responsible for managing your run containers.
   - *Slug Storage*: This is where your slugs are stored.
   - *Observer*: This is an application that runs on your local machine that connects to your production node to show you everything you could ever want to know about your live production app.
   - *Run Container*: This is the container that your app runs in.
@@ -213,7 +216,7 @@ Concepts
   - *App*: An app is your Elixir application.
   - *Release*: A release is a combination of a slug and a config which is deployed to a run container.
   - *Slug*: Each app is compiled and built into a slug. The slug is the actual code that is run in your containers. Each app will have many slugs, one for every deploy.
-  - *Config*: A config is a set of key-value pairs that you use to configure your app.
+  - *Config*: A config is a set of key-value pairs that you use to configure your app. They are injected into your run container as environment variables.
   - *Replicas*: An app can have many replicas. A replica is a single instance of your app.
   - *Custom Domain*: A custom domain is a fully qualified domain that you control which you can set up to point to your app.
   - *Payment Method*: Your payment method is the credit card on file you use to pay your bill each month.
@@ -224,7 +227,7 @@ Concepts
 Life of a Deploy
 ----------------
 
-When you run :bash:`git push gigalixir`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in a docker container using `herokuish`_ which produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpack` file.
+When you run :bash:`git push gigalixir`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in an isolated docker container which ultimately produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpack` file.
 
 By default, the buildpacks we use include
 
@@ -294,50 +297,56 @@ Once the slug is generated and uploaded, we execute an upgrade script on each ru
 Frequently Asked Questions
 ==========================
 
-  - *What is Elixir? What is Phoenix?*
+*What is Elixir? What is Phoenix?*
+----------------------------------
 
-    This is probably best answered by someone else. Take a look at the `elixir homepage`_ and 
-    the `phoenix homepage`_.
+This is probably best answered by taking a look at the `elixir homepage`_ and the `phoenix homepage`_.
 
-  - *How is GIGALIXIR different from Heroku and Deis Workflow?*
+*How is GIGALIXIR different from Heroku and Deis Workflow?*
+-----------------------------------------------------------
 
-    .. image:: venn.png
+.. image:: venn.png
 
-    Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku made design decisions that prioritize simplicity and they make it difficult to shoot yourself in the foot. As a consequence, it is difficult to run Elixir and Phoenix on Heroku unless you are willing to sacrifice many of the greatest advantages Elixir and Phoenix provide like node clustering, hot upgrades, and remote observer.
+Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku and GIGALIXIR are similar in that they both try to make deployment and operations as simple as possible. Elixir applications, however, aren't very much like most other apps today written in Ruby, Python, Java, etc. Elixir apps are distributed, highly-available, hot-upgradeable, and often use lots of concurrent long-lived connections. GIGALIXIR made many fundamental design choices that ensure all these things are possible.
 
-    Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you could conceivably make modifications to support node clustering and remote observer, but hot upgrades would require some fundamental changes to the way Deis was designed to work. Even if all this was possible, you'd still have to spend quite a bit of timing solving problems that GIGALIXIR has already figured out for you.
+For example, Heroku restarts your app every 24 hours regardless of if it is healthy. Elixir apps were designed to be long-lived and many use in-memory state so restarting every 24 hours sort of kills that. Heroku also limits the number of concurrent connections you can have at once. It also has limits to how long these connections can live. Heroku isolates each instance of your app so they cannot communicate with each other, which sort of kill node clustering. Heroku also restricts SSH access to your containers which make it impossible to do hot upgrades, remote consoles, remote observers, production tracing, and a bunch of other things. The list goes on, but suffice it to say, running an Elixir app on Heroku forces you to give up a lot of the features that drew you to Elixir in the first place.
 
-    On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
+Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you could conceivably make modifications to support node clustering and remote observer, but hot upgrades would require some fundamental changes to the way Deis was designed to work. Even if all this was possible, you'd still have to spend quite a bit of timing solving problems that GIGALIXIR has already figured out for you.
 
-    In the end, because GIGALIXIR is focused on just Elixir and Phoenix, we make fundamental design decisions that Heroku and Deis can't make and spend time building features that they can't build. For example, Heroku and Deis will almost certainly never support `hot configuration updates`_. Like they say, we try to do one thing and do it well.
+On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
 
-  - *I thought you weren't supposed to SSH into docker containers!?*
+In the end, because GIGALIXIR is focused on just Elixir and Phoenix, we make fundamental design decisions that Heroku and Deis can't make and spend time building features that they can't build. For example, Heroku and Deis will almost certainly never support `hot configuration updates`_. 
 
-    There are a lot of reasons not to SSH into your docker containers, but it is a tradeoff that
-    doesn't fit that well with Elixir apps. We need to allow SSH in order to connect a remote observer
-    to a production node, drop into a remote console, and do hot upgrades. If you don't need any
-    of these features, then you probably don't need and probably shouldn't SSH into your containers,
-    but it is available should you want to. Just keep in mind that full SSH access to your containers
-    means you have almost complete freedom to do whatever you want including shoot yourself in the foot.
-    Any manual changes you make during an SSH session will also be wiped out if the container restarts 
-    itself so use SSH with care.
+*I thought you weren't supposed to SSH into docker containers!?*
+----------------------------------------------------------------
 
-  - *Why do you download the slug on startup instead of including the slug in the Docker image?*
+There are a lot of reasons not to SSH into your docker containers, but it is a tradeoff that
+doesn't fit that well with Elixir apps. We need to allow SSH in order to connect a remote observer
+to a production node, drop into a remote console, and do hot upgrades. If you don't need any
+of these features, then you probably don't need and probably shouldn't SSH into your containers,
+but it is available should you want to. Just keep in mind that full SSH access to your containers
+means you have almost complete freedom to do whatever you want including shoot yourself in the foot.
+Any manual changes you make during an SSH session will also be wiped out if the container restarts 
+itself so use SSH with care.
 
-    Great question! The short answer is that after a hot-upgrade, if the container restarts, you end 
-    up reverting back to the slug included in the container. By downloading the slug on startup, 
-    we can always be sure to pull the most current slug even after a hot upgrade.
+*Why do you download the slug on startup instead of including the slug in the Docker image?*
+--------------------------------------------------------------------------------------------
 
-    This sort of flies in the face of a lot of advice about how to use Docker, but it is a tradeoff
-    we felt was necessary in order to support hot upgrades in a containerized environment. The 
-    non-immutability of the containers can cause problems, but over time we've ironed them out and
-    feel that there is no longer much downside to this approach. All the headaches that came as a
-    result of this decision are our responsibility to address and shouldn't affect you as a customer. 
-    In other words, you reap the benefits while we pay the cost, which is one of the ways we provide value.
+Great question! The short answer is that after a hot-upgrade, if the container restarts, you end 
+up reverting back to the slug included in the container. By downloading the slug on startup, 
+we can always be sure to pull the most current slug even after a hot upgrade.
 
-  - *How do I add worker processes?*
+This sort of flies in the face of a lot of advice about how to use Docker, but it is a tradeoff
+we felt was necessary in order to support hot upgrades in a containerized environment. The 
+non-immutability of the containers can cause problems, but over time we've ironed them out and
+feel that there is no longer much downside to this approach. All the headaches that came as a
+result of this decision are our responsibility to address and shouldn't affect you as a customer. 
+In other words, you reap the benefits while we pay the cost, which is one of the ways we provide value.
 
-    Heroku and others allow you to specify different types of processes under a single app such as workers that pull work from a queue. With Elixir, that is rarely needed since you can spawn asynchronous tasks within your application itself. Elixir and OTP provide all the tools you need to do this type of stuff among others. For more information, see `Background Jobs in Phoenix`_ which is an excellent blog post. If you really need to run an Redis-backed queue to process jobs, take a look at Exq, but consider `whether you really need Exq`_.
+*How do I add worker processes?*
+--------------------------------
+
+Heroku and others allow you to specify different types of processes under a single app such as workers that pull work from a queue. With Elixir, that is rarely needed since you can spawn asynchronous tasks within your application itself. Elixir and OTP provide all the tools you need to do this type of stuff among others. For more information, see `Background Jobs in Phoenix`_ which is an excellent blog post. If you really need to run an Redis-backed queue to process jobs, take a look at Exq, but consider `whether you really need Exq`_.
 
 .. _`Background Jobs in Phoenix`: http://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix.html
 .. _`whether you really need Exq`: https://github.com/akira/exq#do-you-need-exq
