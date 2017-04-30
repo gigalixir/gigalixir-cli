@@ -1,3 +1,8 @@
+What is GIGALIXIR?
+==================
+
+GIGALIXIR is a Platform-as-a-Service designer for Elixir and Phoenix apps. Platforms-as-a-Service are designed to make it simple to deploy an app to production, but none except GIGALIXIR are designed to support all of Elixir's most useful features like node clustering, hot upgrades, and remote observer. Moreover, many platforms impose restrictions on the number of connections, connection duration, and process uptime. GIGALIXIR makes opinionated design decisions to support distributed Elixir features and does not impose those same arbitrary limits because we know that most Elixir apps are built to handle large numbers of concurrent connections, long-lived connection duration, and apps with nine nines of uptime.
+
 Quick Start
 ===========
 
@@ -157,25 +162,29 @@ Set Up Hot Upgrades with Git v2.9.0
 
 To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
 
+Known Issues
+============
+
+TODO
+
 How Does GIGALIXIR Work?
 ========================
 
-We use Kubernetes and Docker to run your apps. We use a git server with pre-receive hooks to build your apps. We use Google Cloud Storage to store your release tarball, also called a slug. We built an API server which orchestrates everything together. 
+We use Kubernetes and Docker to run your apps. We use a git server with pre-receive hooks to build your apps. We use Google Cloud Storage to store your compiled app tarball, also called a slug. We built an API server which orchestrates everything together. 
 
 TODO: insert diagram of components
 
 Components
 ----------
 
-  - *Slug Builder*: This is responsible for building your code into a release or slug.
-  - *API Server / Controller*: This is responsible for handling all user requests such as scaling apps, setting configs, etc. 
-  - *Database*: The database is where all of your app configuration is stored with the exception of configs. Configs are stored separately in Secret/Config Storage because of their sensitive nature.
+  - *Build Server*: This is responsible for building your code into a release or slug.
+  - *API Server / Controller*: This is responsible for handling all user requests such as scaling apps, setting configs, etc. It is also responsible for deploying the release into a run container.
+  - *Database*: The database is where all of your app configuration is stored. Configs are encrypted due to their sensitive nature.
   - *Logger*: This is responsible for collecting logs from all your containers, aggregating them, and streaming them to you.
   - *Router*: This is responsible for receiving web traffic for your app, terminating TLS, and routing the traffic to your app containers.
   - *TLS Manager*: This is responsible for obtaining TLS certificates and storing them.
   - *Kubernetes*: This is responsible for managing your containers.
   - *Slug Storage*: This is where your slugs are stored.
-  - *Secret/Config Storage*: This is where your configs are stored.
   - *Observer*: This is an application that runs on your local machine that connects to your production node to show you everything you could ever want to know about your live production app.
   - *Run Container*: This is the container that your app runs in.
   - *Command-Line Interface*: This is the command-line tool that runs on your local machine that you use to control GIGALIXIR.
@@ -187,8 +196,9 @@ Concepts
   - *API Key*: Every user has an API Key which is used to authenticate most API requests. You get one when you login and you can regenerate it at any time. It expires every 365 days.
   - *SSH Key*: SSH keys are what we use to authenticate you when SSHing to your containers. We usethem for remote observer, remote console, etc.
   - *App*: An app is your Elixir application.
-  - *Releases*: A release a record of when a slug was deployed. It contains metadata about the deploy such as the git SHA, timestamps.
+  - *Release*: A release is a combination of a slug and a config which is deployed to a run container.
   - *Slug*: Each app is compiled and built into a slug. The slug is the actual code that is run in your containers. Each app will have many slugs, one for every deploy.
+  - *Config*: A config is a set of key-value pairs that you use to configure your app.
   - *Replicas*: An app can have many replicas. A replica is a single instance of your app.
   - *Custom Domain*: A custom domain is a fully qualified domain that you control which you can set up to point to your app.
   - *Payment Method*: Your payment method is the credit card on file you use to pay your bill each month.
@@ -222,7 +232,7 @@ By default, the buildpacks we use include
 
 We only build the master branch and ignore other branches. When building, we cache compiled files and dependencies so you do not have to repeat the work on every deploy. We support git submodules. 
 
-Once your slug is built, we upload it to cloud storage and we create a new release record for your app which points at the location of the new slug. The release record also includes a :bash:`rollback_id` which you can use later on if you need to rollback to this release. 
+Once your slug is built, we upload it to slug storage and we combine it with a config to create a new release for your app. The release is tagged with a :bash:`version` number which you can use later on if you need to rollback to this release. 
 
 Then we create or update your Kubernetes configuration to deploy the app. We create a separate Kubernetes namespace for every app, a service account, an ingress for HTTP traffic, an ingress for SSH traffic, a TLS certificate, a service, and finally a deployment which creates pods and containers. 
 
@@ -237,7 +247,7 @@ If at any point, the deploy fails, we rollback to the last know good release.
 How SSL/TLS Works
 -----------------
 
-We use kube-lego for automatic TLS certificate generation with Let's Encrypt. For more information, see `kube-lego`s documentation`_. When you add a custom domain, we create a Kubernetes ingress for you to route traffic to your app. kube-lego picks this up, obtains certificates for you and installs them. Our ingress controller then handles terminating SSL traffic before sending it to your app.
+We use kube-lego for automatic TLS certificate generation with Let's Encrypt. For more information, see `kube-lego's documentation`_. When you add a custom domain, we create a Kubernetes ingress for you to route traffic to your app. kube-lego picks this up, obtains certificates for you and installs them. Our ingress controller then handles terminating SSL traffic before sending it to your app.
 
 .. _`kube-lego's documentation`: https://github.com/jetstack/kube-lego
 
@@ -323,6 +333,8 @@ Clustering Nodes
 
 We use libcluster to manage node clustering. For more information, see `libcluster's documentation`_. GIGALIXIR handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run's run-cmd script`_ for more details. 
 
+.. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
+
 Your app configuration needs to have something like this in it. For a full example, see `gigalixir-getting-started's prod.exs file`_.
 
 
@@ -362,7 +374,6 @@ Lastly, you need to modify your distillery config so it knows where to find your
     end
     ...
 
-.. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
 .. _`gigalixir-getting-started's vm.args file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/vm.args
 .. _`gigalixir-getting-started's prod.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/config/prod.exs#L68
 .. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/config.exs#L27
@@ -422,6 +433,18 @@ Replica Sizing
 .. _`Kubernetes CPU requests`: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-cpu
 .. _`Kuberenetes memory requests`: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#meaning-of-memory
  
+Releases
+========
+
+One common pitfall for beginners is how releases differ from running apps with `Mix`_. In development, you typically have access to `Mix`_ tasks to run your app, migrate your database, etc. In production, we use releases. With releases, your code is distributed in it's compiled form and is almost no different from an Erlang release. You no longer have access to `Mix`_ commands. However, in return, you also have access to hot upgrades and smaller slug sizes. We no longer have to ship around X MB of unnecessary source code which improves startup times and infrastructure costs.
+
+Limits
+======
+
+GIGALIXIR is designed for Elixir/Phoenix apps and it is common for Elixir/Phoenix apps to have many connections open at a time and to have connections open for long periods of time. Because of this, we do not limit the number of concurrent connections or the duration of each connection. 
+
+We also know that Elixir/Phoenix apps are designed to be long-lived and potentially store state in-memory so we do not restart replicas arbitrarily. In fact, replicas should not restart at all, unless there is an extenuating circumstance that requires it.  For apps that require extreme high availability, we suggest that your app be able to handle node restarts just as you would for any app not running on GIGALIXIR.
+
 Monitoring
 ==========
 
@@ -523,8 +546,7 @@ To rollback one release, run the following command.
 
     gigalixir rollback $APP_NAME
 
-To rollback to a specific release, find the :bash:`rollback_id` by listing all releases. You can see
-which SHA the release was built on and when it was built. This will also automatically restart your app
+To rollback to a specific release, find the :bash:`version` by listing all releases. You can see which SHA the release was built on and when it was built. This will also automatically restart your app
 with the new release.
 
 .. code-block:: bash
@@ -533,22 +555,20 @@ with the new release.
     [
       {
         "created_at": "2017-04-12T17:43:28.000+00:00", 
-        "customer_app_name": "gigalixir_getting_started", 
-        "rollback_id": "2fbf5dd5-b920-4f2c-aeea-ebde333ee1e6", 
+        "version": "5", 
         "sha": "77f6c2952129ffecccc4e56ae6b27bba1e65a1e3", 
         "slug_url": "<REDACTED>"
       }, 
       ...
     ]
 
-Then specify the rollback_id when rolling back.
+Then specify the version when rolling back.
 
 .. code-block:: bash
 
-    gigalixir rollback $APP_NAME --rollback_id=2fbf5dd5-b920-4f2c-aeea-ebde333ee1e6
+    gigalixir rollback $APP_NAME --version=5
 
-The release list is immutable so when you rollback, we create a new release on top of the old releases,
-but the new release refers to the old slug. 
+The release list is immutable so when you rollback, we create a new release on top of the old releases, but the new release refers to the old slug. 
 
 How to Set Up a Custom Domain
 =============================

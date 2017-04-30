@@ -21,6 +21,7 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 
 ## Testing
 
+    # set up a virtualenv
     pip install -e .[dev]
     python setup.py test
 
