@@ -1,7 +1,7 @@
 What is GIGALIXIR?
 ==================
 
-GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy an app to production, but none except GIGALIXIR are designed to support all of Elixir's most useful features like node clustering, hot upgrades, and remote observer. Moreover, some platforms impose restrictions on the number of connections, connection duration, and process uptime. GIGALIXIR makes opinionated design decisions to support distributed Elixir features and does not impose the same limits because we know that most Elixir apps are built to handle large numbers of concurrent connections, long-lived connection duration, and apps with nine nines of uptime.
+GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy an app to production, but none except GIGALIXIR are designed to support all of Elixir's most useful features like node clustering, hot upgrades, and remote observer. Moreover, some platforms impose restrictions on the number of connections, connection duration, and process uptime. GIGALIXIR makes opinionated design decisions to support distributed Elixir features and does not impose the same limits because we know that most Elixir apps are built to be distributed, highly available, and handle large numbers of concurrent long-lived connections. 
 
 .. _`quick start`:
 
@@ -80,6 +80,13 @@ Note!
 -----
 
 The `gigalixir-getting-started`_ app does not have a database connected yet. In fact, we removed the Ecto Repo from the supervisor tree to prevent database connection attempts. To connect a database, see :ref:`connect-database`.
+
+What's Next?
+------------
+
+- :ref:`connect-database`
+- :ref:`configs`
+- :ref:`scale`
 
 .. _`make your existing app work on GIGALIXIR`:
 
@@ -247,7 +254,7 @@ The `container that runs your app`_ is a derivative of `heroku/cedar:14`_. The e
 
 At this point, your app is running. The Kubernetes ingress controller is routing traffic from your host to the appropriate pods and terminating SSL/TLS for you automatically. For more information about how SSL/TLS works, see :ref:`how-tls-works`.
 
-If at any point, the deploy fails, we rollback to the last know good release.
+If at any point, the deploy fails, we rollback to the last known good release.
 
 .. _how-tls-works:
 
@@ -261,7 +268,7 @@ We use kube-lego for automatic TLS certificate generation with Let's Encrypt. Fo
 Cleaning Your Cache
 -------------------
 
-There is an extra flags you can pass to clean your cache before building in case you need it, but you need git 2.9.0 or higher for it to work. 
+There is an extra flag you can pass to clean your cache before building in case you need it, but you need git 2.9.0 or higher for it to work. 
 
 .. code-block:: bash
 
@@ -279,7 +286,7 @@ There is an extra flag you can pass to deploy by hot upgrade instead of a restar
 
     git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir
 
-A hot upgrade follows the same steps as a regular deploy, except for a few differences. In order for distillery to build an upgrade, it needs access to your old app so we download it and make it available in the docker build container. 
+A hot upgrade follows the same steps as a regular deploy, except for a few differences. In order for distillery to build an upgrade, it needs access to your old app so we download it and make it available in the build container. 
 
 Once the slug is generated and uploaded, we execute an upgrade script on each run container instead of restarting. The upgrade script downloads the new slug, and calls `Distillery's upgrade command`_. Your app should now be upgraded in place without any downtime, dropped connections, or loss of in-memory state.
 
@@ -393,7 +400,7 @@ Pricing Details
 
 Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card.
 
-replica-size-seconds is how many replicas you ran multiplied by size of each replica multiplied by how many seconds they were run. This is aggregated across all your apps and is prorated to the second.
+replica-size-seconds is how many replicas you ran multiplied by the size of each replica multiplied by how many seconds they were run. This is aggregated across all your apps and is prorated to the second.
 
 For example, if you ran a single 0.5 size replica for 31 days, you will have used 
 
@@ -425,7 +432,7 @@ Replica Sizing
 ==============
 
   - A replica is a docker container that your app runs in.
-  - Replica sizes are available in increments of 0.1 between 0.5 and 128. 
+  - Replica sizes are available in increments of 0.1 between 0.5 and 16. Contact us if you need a bigger size.
   - 1 size unit is 1GB memory and 1 CPU share.
   - 1 CPU share is 200m as defined using `Kubernetes CPU requests`_ or roughly 20% of a core guaranteed.
 
@@ -443,7 +450,9 @@ Replica Sizing
 Releases
 ========
 
-One common pitfall for beginners is how releases differ from running apps with `Mix`_. In development, you typically have access to `Mix`_ tasks to run your app, migrate your database, etc. In production, we use releases. With releases, your code is distributed in it's compiled form and is almost no different from an Erlang release. You no longer have access to `Mix`_ commands. However, in return, you also have access to hot upgrades and smaller slug sizes. We no longer have to ship around X MB of unnecessary source code which improves startup times and infrastructure costs.
+One common pitfall for beginners is how releases differ from running apps with `Mix`_. In development, you typically have access to `Mix`_ tasks to run your app, migrate your database, etc. In production, we use releases. With releases, your code is distributed in it's compiled form and is almost no different from an Erlang release. You no longer have access to `Mix`_ commands. However, in return, you also have access to hot upgrades and smaller slug sizes, and a "single package which can be deployed anywhere, independently of an Erlang/Elixir installation. No dependencies, no hassle" [1].
+
+[1]: https://github.com/bitwalker/distillery
 
 Limits
 ======
@@ -456,6 +465,91 @@ Monitoring
 ==========
 
 GIGALIXIR doesn't provide any monitoring out of the box, but we are working on it.
+ 
+.. _distillery-replace-os-vars:
+.. _`app configuration`:
+
+Using Environment Variables in your App
+=======================================
+
+Environment variables with Elixir, Distillery, and releases in general are one of those things that always trip up beginners. I think `Distillery's Runtime Configuration`_ explains it better than I can. GIGALIXIR automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you have to do is add something like this to your config.exs file, set your app config, and you should be good to go. For information about how to set app configs, see :ref:`configs`.
+
+.. code-block:: elixir
+
+    ...
+    config :myapp,
+        my_config: "$MY_CONFIG"
+    ...
+
+Then set MY_CONFIG, by running
+
+.. code-block:: bash
+
+    gigalixir set_config MY_CONFIG foo
+
+In your app code, 
+
+.. code-block:: elixir
+
+    Application.get_env(:myapp, :my_config) == "foo"
+    System.get_env("MY_CONFIG") == "foo"
+
+.. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/runtime-configuration.html#content
+
+Troubleshooting
+===============
+
+TODO: Common issues go here.
+
+Support/Help
+============
+
+If you run into issues, `Stack Overflow`_ is the best place to search. If you can't find an answer, the developers at GIGALIXIR monitor `the gigalixir tag`_ and will answer questions there. We prefer Stack Overflow over a knowledge base because it is public and collaborative. If you have a private question, email help@gigalixir.com or call us at `(415) 326-8880`_.
+
+.. _`Stack Overflow`: http://stackoverflow.com/
+.. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
+.. _`(415) 326-8880`: tel:4153268880
+
+The GIGALIXIR Command-Line Interface
+====================================
+
+The GIGALIXIR Command-Line Interface or CLI is a tool you install on your local machine to control GIGALIXIR.
+
+Installation
+------------
+
+Install :bash:`gigalixir` using :bash:`pip install gigalixir`. If you don't have pip installed, take a look at the `pip documentation`_.
+
+Encryption
+----------
+
+All HTTP requests made between your machine and GIGALIXIR's servers are encrypted.
+
+Conventions
+-----------
+
+  - No news is good news: If you run a command that produces no output, then the command probably succeeded.
+  - Exit codes: Commands that succeed will return a 0 exit code, and non-zero otherwise.
+  - stderr vs stdout: Stderr is used for errors and for log output. Stdout is for the data output of your command.
+
+Authentication
+--------------
+
+When you login with your email and password, you receive an API key. This API key is stored in your :bash:`~/.netrc` file. Commands generally use your :bash:`~/.netrc` file to authenticate with few exceptions.
+
+Error Reporting
+---------------
+
+Bugs in the CLI are reported to GIGALIXIR's error tracking service. Currently, the only way to disable this is by modifying the source code. `Pull requests`_ are also accepted!
+
+.. _`Pull requests`: https://github.com/gigalixir/gigalixir-cli/pulls
+
+Open Source
+-----------
+
+The GIGALIXIR CLI is open source and we welcome pull requests. See `the gigalixir-cli repository`_.
+
+.. _`the gigalixir-cli repository`: https://github.com/gigalixir/gigalixir-cli
  
 How to Set Up Distributed Phoenix Channels
 ==========================================
@@ -493,6 +587,8 @@ about how this works, see `life of a deploy`_.
 
     git push gigalixir
  
+.. _`scale`:
+
 How to Scale an App
 ===================
 
@@ -564,7 +660,7 @@ with the new release.
         "created_at": "2017-04-12T17:43:28.000+00:00", 
         "version": "5", 
         "sha": "77f6c2952129ffecccc4e56ae6b27bba1e65a1e3", 
-        "slug_url": "<REDACTED>"
+        "summary": "Set `DATABASE_URL` config var."
       }, 
       ...
     ]
@@ -593,59 +689,6 @@ This will do a few things. It registers your fully qualified domain name in the 
 it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more
 information on how SSL/TLS works, see :ref:`how-tls-works`.
 
-Troubleshooting
-===============
-
-TODO: Common issues go here.
-
-Support/Help
-============
-
-If you run into issues, `Stack Overflow`_ is the best place to search. If you can't find an answer, the developers at GIGALIXIR monitor `the gigalixir tag`_ and will answer questions there. We prefer Stack Overflow over a knowledge base because it is public and collaborative. If you have a private question, email help@gigalixir.com or call us at `(415) 326-8880`_.
-
-.. _`Stack Overflow`: http://stackoverflow.com/
-.. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
-.. _`(415) 326-8880`: tel:4153268880
-
-The GIGALIXIR Command-Line Interface
-====================================
-
-The GIGALIXIR Command-Line Interface or CLI is a tool you install on your local machine to control GIGALIXIR.
-
-Installation
-------------
-
-Install :bash:`gigalixir` using :bash:`pip install gigalixir`. If you don't have pip installed, take a look at the `pip documentation`_.
-
-Encryption
-----------
-
-All HTTP requests made between your machine and GIGALIXIR's servers are encrypted.
-
-Conventions
------------
-
-  - No news is good news: If you run a command that produces no output, then the command succeeded.
-  - Exit codes: Commands that succeed will return a 0 exit code, and non-zero otherwise.
-  - stderr vs stdout: Stderr is used for errors and for log output. Stdout is for the data output of your command.
-
-Authentication
---------------
-
-When you login with your email and password, you receive an API key. This API key is stored in your :bash:`~/.netrc` file. Commands generally use your :bash:`~/.netrc` file to authenticate with few exceptions.
-
-Error Reporting
----------------
-
-Bugs in the CLI are reported to GIGALIXIR's error tracking service. There is currently no way to disable this.
-
-Open Source
------------
-
-The GIGALIXIR CLI is open source and we welcome pull requests. See `the gigalixir-cli repository`_.
-
-.. _`the gigalixir-cli repository`: https://github.com/gigalixir/gigalixir-cli
- 
 How to Set Up SSL/TLS
 =====================
 
@@ -849,13 +892,15 @@ Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarte
 
     gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
 
-Note that if you started by cloning the gigialixir-getting-started repo, you'll have to uncomment a line in you :bash:`lib/gigalixir-getting-started.ex` file that looks like this.
+Note that if you started by cloning the `gigialixir-getting-started`_ repo, you'll have to uncomment a line in your :ref:`lib/gigalixir-getting-started.ex` file that looks like this.
 
 .. code-block:: elixir
 
-    supervisor(GigalixirGettingStarted.Repo, []),
+    # supervisor(GigalixirGettingStarted.Repo, []),
 
 We commented this line out by default in order to disable database connection attempts before the database is configured. If you had followed the `quick start`_ without setting a :bash:`DATABASE_URL`, then the app won't start up properly. 
+
+.. _`lib/gigalixir-getting-started.ex`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/lib/gigalixir_getting_started.ex#L14
 
 .. _`migrations`:
 
@@ -910,36 +955,6 @@ To launch observer and connect it to a production node
     gigalixir observer $APP_NAME
 
 and follow the instructions. This connects to a random container. We don't currently allow you to specify which container you want to connect to.
-
-.. _distillery-replace-os-vars:
-.. _`app configuration`:
-
-Using Environment Variables in your App
-=======================================
-
-Environment variables with Elixir, Distillery, and releases in general are one of those things that always trip up beginners. I think `Distillery's Runtime Configuration`_ explains it better than I can. GIGALIXIR automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you have to do is add something like this to your config.exs file, set your app config, and you should be good to go. For information about how to set app configs, see :ref:`configs`.
-
-.. code-block:: elixir
-
-    ...
-    config :myapp,
-        my_config: "$MY_CONFIG"
-    ...
-
-Then set MY_CONFIG, by running
-
-.. code-block:: bash
-
-    gigalixir set_config MY_CONFIG foo
-
-In your app code, 
-
-.. code-block:: elixir
-
-    Application.get_env(:myapp, :my_config) == "foo"
-    System.get_env("MY_CONFIG") == "foo"
-
-.. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/runtime-configuration.html#content
 
 .. _`money back guarantee`:
 
