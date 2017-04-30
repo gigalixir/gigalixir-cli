@@ -30,6 +30,9 @@ setup(
         'dev': [
             'Sphinx',
             'sphinx_rtd_theme',
-        ]
+        ],
+        'e2e': [
+            'pytest',
+        ],
     }
 )
