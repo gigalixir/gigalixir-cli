@@ -1,7 +1,7 @@
 What is GIGALIXIR?
 ==================
 
-GIGALIXIR is a Platform-as-a-Service designer for Elixir and Phoenix apps. Platforms-as-a-Service are designed to make it simple to deploy an app to production, but none except GIGALIXIR are designed to support all of Elixir's most useful features like node clustering, hot upgrades, and remote observer. Moreover, many platforms impose restrictions on the number of connections, connection duration, and process uptime. GIGALIXIR makes opinionated design decisions to support distributed Elixir features and does not impose those same arbitrary limits because we know that most Elixir apps are built to handle large numbers of concurrent connections, long-lived connection duration, and apps with nine nines of uptime.
+GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy an app to production, but none except GIGALIXIR are designed to support all of Elixir's most useful features like node clustering, hot upgrades, and remote observer. Moreover, some platforms impose restrictions on the number of connections, connection duration, and process uptime. GIGALIXIR makes opinionated design decisions to support distributed Elixir features and does not impose the same limits because we know that most Elixir apps are built to handle large numbers of concurrent connections, long-lived connection duration, and apps with nine nines of uptime.
 
 Quick Start
 ===========
