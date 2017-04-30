@@ -253,7 +253,7 @@ machine localhost
 
 @httpretty.activate
 def test_get_releases():
-    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"fake-rollback-id3","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:29.000+00:00"},{"slug_url":"fake-slug-url","sha":"fake-sha","rollback_id":"fake-rollback-id2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:28.000+00:00"}]}', content_type='application/json')
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"sha":"another-fake-sha","version":1,"created_at":"2017-03-29T17:28:29.000+00:00","summary":"fake summary"},{"sha":"fake-sha","version":2,"created_at":"2017-03-29T17:28:28.000+00:00","summary":"fake summary"}]}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['releases', 'fake-app-name'])
     assert result.exit_code == 0
@@ -261,36 +261,32 @@ def test_get_releases():
     assert result.output == """[
   {
     "created_at": "2017-03-29T17:28:28.000+00:00", 
-    "customer_app_name": "gigalixir_getting_started", 
-    "rollback_id": "fake-rollback-id2", 
     "sha": "fake-sha", 
-    "slug_url": "fake-slug-url"
+    "summary": "fake summary", 
+    "version": 2
   }, 
   {
     "created_at": "2017-03-29T17:28:29.000+00:00", 
-    "customer_app_name": "gigalixir_getting_started", 
-    "rollback_id": "fake-rollback-id3", 
     "sha": "another-fake-sha", 
-    "slug_url": "another-fake-slug-url"
+    "summary": "fake summary", 
+    "version": 1
   }
 ]
 """
 
 @httpretty.activate
 def test_rollback_without_eligible_release():
-    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"fake-rollback-id3","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:29.000+00:00"}]}', content_type='application/json')
-    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/releases/fake-rollback-id2/rollback', body='', content_type='application/json')
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"sha":"another-fake-sha","version":1,"created_at":"2017-03-29T17:28:29.000+00:00","summary":"fake summary"}]}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name'])
     assert result.exit_code != 0
-    expect(httpretty.has_request()).to.be.true
-    expect(httpretty.has_request()).to.be.true
+    # expect(httpretty.has_request()).to.be.true
     expect(len(httpretty.httpretty.latest_requests)).to.equal(1)
 
 @httpretty.activate
-def test_rollback_without_rollback_id():
-    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"fake-rollback-id3","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:29.000+00:00"},{"slug_url":"fake-slug-url","sha":"fake-sha","rollback_id":"fake-rollback-id2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:28:28.000+00:00"}]}', content_type='application/json')
-    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/releases/fake-rollback-id2/rollback', body='{"data":{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"52e5dc7b-30d2-4325-afe3-087edeb5f3c2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:38:35.000+00:00"}}', content_type='application/json')
+def test_rollback_without_version():
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"sha":"another-fake-sha","version":3,"created_at":"2017-03-29T17:28:29.000+00:00","summary":"fake summary"},{"sha":"fake-sha","version":2,"created_at":"2017-03-29T17:28:28.000+00:00","summary":"fake summary"}]}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/releases/2/rollback', body='', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name'])
     assert result.output == ''
@@ -299,9 +295,9 @@ def test_rollback_without_rollback_id():
 
 @httpretty.activate
 def test_rollback():
-    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/releases/fake-rollback-id/rollback', body='{"data":{"slug_url":"another-fake-slug-url","sha":"another-fake-sha","rollback_id":"52e5dc7b-30d2-4325-afe3-087edeb5f3c2","customer_app_name":"gigalixir_getting_started","created_at":"2017-03-29T17:38:35.000+00:00"}}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/releases/1/rollback', body='', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name', '-r', 'fake-rollback-id'])
+    result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name', '-r', '1'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true

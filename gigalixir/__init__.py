@@ -93,14 +93,14 @@ def scale(ctx, app_name, replicas, size):
 
 @cli.command()
 @click.argument('app_name')
-@click.option('-r', '--rollback_id', default=None, help='The rollback id of the release to revert to. Use gigalixir get releases to find the rollback_id. If omitted, this defaults to the second most recent release.')
+@click.option('-r', '--version', default=None, help='The version of the release to revert to. Use gigalixir get releases to find the version. If omitted, this defaults to the second most recent release.')
 @click.pass_context
 @report_errors
-def rollback(ctx, app_name, rollback_id):
+def rollback(ctx, app_name, version):
     """
     Rollback to a previous release. 
     """
-    gigalixir_app.rollback(ctx.obj['host'], app_name, rollback_id)
+    gigalixir_app.rollback(ctx.obj['host'], app_name, version)
 
 
 @cli.command()

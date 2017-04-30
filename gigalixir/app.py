@@ -109,10 +109,10 @@ def restart(host, app_name):
             raise auth.AuthException()
         raise Exception(r.text)
 
-def rollback(host, app_name, rollback_id):
-    if rollback_id == None:
-        rollback_id = second_most_recent_rollback_id(host, app_name)
-    r = requests.post('%s/api/apps/%s/releases/%s/rollback' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(rollback_id.encode('utf-8'))), headers = {
+def rollback(host, app_name, version):
+    if version == None:
+        version = second_most_recent_version(host, app_name)
+    r = requests.post('%s/api/apps/%s/releases/%s/rollback' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(str(version).encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -120,7 +120,7 @@ def rollback(host, app_name, rollback_id):
             raise auth.AuthException()
         raise Exception(r.text)
 
-def second_most_recent_rollback_id(host, app_name):
+def second_most_recent_version(host, app_name):
     r = requests.get('%s/api/apps/%s/releases' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
@@ -133,7 +133,7 @@ def second_most_recent_rollback_id(host, app_name):
         if len(data) < 2:
             raise Exception("No release available to rollback to.")
         else:
-            return data[1]["rollback_id"]
+            return data[1]["version"]
 
 def run(host, app_name, module, function):
     r = requests.post('%s/api/apps/%s/run' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
