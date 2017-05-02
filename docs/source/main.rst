@@ -1,7 +1,7 @@
 What is GIGALIXIR?
 ==================
 
-GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy an app to production, but none except GIGALIXIR are designed to support all of Elixir's most useful features like node clustering, hot upgrades, and remote observer. Moreover, some platforms impose restrictions on the number of connections, connection duration, and process uptime. GIGALIXIR makes opinionated design decisions to support distributed Elixir features and does not impose the same limits because we know that most Elixir apps are built to be distributed, highly available, and handle large numbers of concurrent long-lived connections. 
+GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy, run, and manage an app in production, but GIGALIXIR is unique because it is designed to support all of features that probably drew you to Elixir in the first place, like node clustering, hot upgrades, and remote observer. Moreover, some platforms restart your processes every 24 hours, restrict you to 50 simultaneous connections per instance, and limit each connection to 30 seconds. GIGALIXIR made opinionated design decisions from the ground up to support all the fetaures of Elixir because we know that most Elixir apps are built to be distributed, highly available, and handle large numbers of concurrent long-lived connections. 
 
 .. _`quick start`:
 
@@ -307,27 +307,18 @@ This is probably best answered by taking a look at the `elixir homepage`_ and th
 
 .. image:: venn.png
 
-Heroku is a really great platform to run you Elixir apps and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku and GIGALIXIR are similar in that they both try to make deployment and operations as simple as possible. Elixir applications, however, aren't very much like most other apps today written in Ruby, Python, Java, etc. Elixir apps are distributed, highly-available, hot-upgradeable, and often use lots of concurrent long-lived connections. GIGALIXIR made many fundamental design choices that ensure all these things are possible.
+Heroku is a really great platform and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku and GIGALIXIR are similar in that they both try to make deployment and operations as simple as possible. Elixir applications, however, aren't very much like most other apps today written in Ruby, Python, Java, etc. Elixir apps are distributed, highly-available, hot-upgradeable, and often use lots of concurrent long-lived connections. GIGALIXIR made many fundamental design choices that ensure all these things are possible.
 
-For example, Heroku restarts your app every 24 hours regardless of if it is healthy. Elixir apps were designed to be long-lived and many use in-memory state so restarting every 24 hours sort of kills that. Heroku also limits the number of concurrent connections you can have at once. It also has limits to how long these connections can live. Heroku isolates each instance of your app so they cannot communicate with each other, which sort of kill node clustering. Heroku also restricts SSH access to your containers which make it impossible to do hot upgrades, remote consoles, remote observers, production tracing, and a bunch of other things. The list goes on, but suffice it to say, running an Elixir app on Heroku forces you to give up a lot of the features that drew you to Elixir in the first place.
+For example, Heroku restarts your app every 24 hours regardless of if it is healthy or not. Elixir apps are designed to be long-lived and many use in-memory state so restarting every 24 hours sort of kills that. Heroku also limits the number of concurrent connections you can have to 50 per instance. It also has limits to how long these connections can live. Heroku isolates each instance of your app so they cannot communicate with each other, which prevents node clustering. Heroku also restricts SSH access to your containers which makes it impossible to do hot upgrades, remote consoles, remote observers, production tracing, and a bunch of other things. The list goes on, but suffice it to say, running an Elixir app on Heroku forces you to give up a lot of the features that drew you to Elixir in the first place.
 
-Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you could conceivably make modifications to support node clustering and remote observer, but hot upgrades would require some fundamental changes to the way Deis was designed to work. Even if all this was possible, you'd still have to spend quite a bit of timing solving problems that GIGALIXIR has already figured out for you.
+Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you *could* make modifications to support node clustering and remote observer, but they won't work out of the box and hot upgrades would require some fundamental changes to the way Deis was designed to work. Even so, you'd still have to spend a lot of time solving problems that GIGALIXIR has already figured out for you.
 
 On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
-
-In the end, because GIGALIXIR is focused on just Elixir and Phoenix, we make fundamental design decisions that Heroku and Deis can't make and spend time building features that they can't build. For example, Heroku and Deis will almost certainly never support `hot configuration updates`_. 
 
 *I thought you weren't supposed to SSH into docker containers!?*
 ----------------------------------------------------------------
 
-There are a lot of reasons not to SSH into your docker containers, but it is a tradeoff that
-doesn't fit that well with Elixir apps. We need to allow SSH in order to connect a remote observer
-to a production node, drop into a remote console, and do hot upgrades. If you don't need any
-of these features, then you probably don't need and probably shouldn't SSH into your containers,
-but it is available should you want to. Just keep in mind that full SSH access to your containers
-means you have almost complete freedom to do whatever you want including shoot yourself in the foot.
-Any manual changes you make during an SSH session will also be wiped out if the container restarts 
-itself so use SSH with care.
+There are a lot of reasons not to SSH into your docker containers, but it is a tradeoff that doesn't fit that well with Elixir apps. We need to allow SSH in order to connect a remote observer to a production node, drop into a remote console, and do hot upgrades. If you don't need any of these features, then you probably don't need and probably shouldn't SSH into your containers, but it is available should you want to. Just keep in mind that full SSH access to your containers means you have almost complete freedom to do whatever you want including shoot yourself in the foot.  Any manual changes you make during an SSH session will also be wiped out if the container restarts itself so use SSH with care.
 
 *Why do you download the slug on startup instead of including the slug in the Docker image?*
 --------------------------------------------------------------------------------------------
@@ -912,6 +903,13 @@ Note that if you started by cloning the `gigialixir-getting-started`_ repo, you'
 
 We commented this line out by default in order to disable database connection attempts before the database is configured. If you had followed the `quick start`_ without setting a :bash:`DATABASE_URL`, then the app won't start up properly. 
 
+GIGALIXIR does not currently provide Databases-as-a-Service, but we are working on it. In the meantime, we recommend `Amazon Relational Database Service`_ or `Google Cloud SQL`_. We currently host your apps in Google Cloud Platform's us-central1 region so you'll likely get the best latency using Google Cloud SQL in the us-central1 region. Google Cloud SQL `supports PostgreSQL`_, but it is still in beta. To use MySQL, follow the `Phoenix Using MySQL Guide`_.
+
+.. _`supports PostgreSQL`: https://cloud.google.com/sql/docs/postgres/
+.. _`Phoenix Using MySQL Guide`: http://www.phoenixframework.org/docs/using-mysql
+.. _`Amazon Relational Database Service`: https://aws.amazon.com/rds/
+.. _`Google Cloud SQL`: https://cloud.google.com/sql/docs/
+.. _`gigalixir-getting-started`: https://github.com/gigalixir/gigalixir-getting-started
 .. _`lib/gigalixir-getting-started.ex`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/lib/gigalixir_getting_started.ex#L14
 
 .. _`migrations`:
