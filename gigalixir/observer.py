@@ -55,8 +55,17 @@ def observer(ctx, app_name):
         # cmd = "iex --name %(name)s@%(MY_POD_IP)s --cookie %(ERLANG_COOKIE)s --hidden -e ':observer.start()'" % {"name": name, "MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
         cmd = "erl -name %(name)s@%(MY_POD_IP)s -setcookie %(ERLANG_COOKIE)s -hidden -run observer" % {"name": name, "MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
         logging.getLogger("gigalixir-cli").info("Running observer using: %s" % cmd)
+        logging.getLogger("gigalixir-cli").info("")
+        logging.getLogger("gigalixir-cli").info("")
+        logging.getLogger("gigalixir-cli").info("============")
+        logging.getLogger("gigalixir-cli").info("Instructions")
+        logging.getLogger("gigalixir-cli").info("============")
+
         logging.getLogger("gigalixir-cli").info("In the 'Node' menu, click 'Connect Node'" )
-        logging.getLogger("gigalixir-cli").info("Enter: %(app_name)s@%(MY_POD_IP)s" % {"app_name": app_name, "MY_POD_IP": MY_POD_IP})
+        logging.getLogger("gigalixir-cli").info("enter: %(app_name)s@%(MY_POD_IP)s" % {"app_name": app_name, "MY_POD_IP": MY_POD_IP})
+        logging.getLogger("gigalixir-cli").info("and press OK.")
+        logging.getLogger("gigalixir-cli").info("")
+        logging.getLogger("gigalixir-cli").info("")
         cast(cmd)
     except:
         logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
