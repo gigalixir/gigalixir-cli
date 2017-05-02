@@ -58,7 +58,7 @@ def login(host, email, password, yes):
     r = requests.get('%s/api/login' % host, auth = (email, password))
     if r.status_code != 200:
         if r.status_code == 401:
-            raise auth.AuthException()
+            raise Exception("Sorry, we could not authenticate you. If you need to reset your password, run `gigalixir send_reset_password_token --email=%s`." % email)
         raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
@@ -81,7 +81,8 @@ def get_reset_password_token(host, email):
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
-        raise Exception(r.text)
+        errors = json.loads(r.text)["errors"]
+        raise Exception("\n".join(errors))
     else:
         logging.getLogger("gigalixir-cli").info("Reset password token has been sent to your email.")
 

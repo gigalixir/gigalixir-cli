@@ -39,7 +39,9 @@ def report_errors(f):
 
 # TODO: remove localhost from .netrc file
 
-@click.group()
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+@click.group(context_settings=CONTEXT_SETTINGS)
 @click.option('--env', envvar='GIGALIXIR_ENV', default='prod', help="GIGALIXIR environment [prod, dev].")
 @click.pass_context
 def cli(ctx, env):
@@ -68,6 +70,12 @@ def cli(ctx, env):
         ctx.obj['router'] = DarwinRouter()
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
+
+@cli.command()
+@click.pass_context
+@report_errors
+def help(ctx):
+    click.echo(ctx.parent.get_help(), color=ctx.color)
 
 @cli.command()
 @click.argument('app_name')
