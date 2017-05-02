@@ -329,12 +329,13 @@ def test_create_ssh_key():
 
 @httpretty.activate
 def test_delete_ssh_key():
-    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/ssh_keys/3', body='', content_type='application/json')
+    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/ssh_keys', body='', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['delete_ssh_key', '3'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"id": "3"}')
 
 @httpretty.activate
 def test_get_payment_method():

@@ -27,8 +27,10 @@ def create(host, key):
         raise Exception(r.text)
 
 def delete(host, key_id):
-    r = requests.delete('%s/api/ssh_keys/%s' % (host, key_id), headers = {
+    r = requests.delete('%s/api/ssh_keys' % (host), headers = {
         'Content-Type': 'application/json',
+    }, json = {
+        "id": key_id
     })
     if r.status_code != 200:
         if r.status_code == 401:
