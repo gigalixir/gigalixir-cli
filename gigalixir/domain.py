@@ -1,4 +1,5 @@
 import requests
+import logging
 from . import auth
 import urllib
 import json
@@ -26,6 +27,9 @@ def create(host, app_name, fqdn):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    logging.getLogger("gigalixir-cli").info("Added %s." % fqdn)
+    logging.getLogger("gigalixir-cli").info("Please give us a few minutes to set up a new TLS certificate.")
+
 
 def delete(host, app_name, fqdn):
     r = requests.delete('%s/api/apps/%s/domains' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
