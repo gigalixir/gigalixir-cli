@@ -681,7 +681,7 @@ How to Set Up a Custom Domain
 
 After your first deploy, you can see your app by visiting https://$APP_NAME.gigalixirapp.com/, but if 
 you want, you can point your own domain such as www.example.com to your app. To do this, first modify
-your DNS records and point your domain to $APP_NAME.gigalixirapp.com using a CNAME record. Then, run 
+your DNS records and point your domain to :bash:`tls.gigalixir.com` using a CNAME record. Then, run 
 the following command to add a custom domain.
 
 .. code-block:: bash
