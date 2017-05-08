@@ -121,17 +121,6 @@ We rely on buildpacks to compile and build your release. Create a :bash:`.buildp
 
 If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your GIGALIXIR build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
-
-Optional Modifications
-----------------------
-
-These modifications are not required, but are recommended if you want to use all of features GIGALIXIR offers.
-
-Set up Node Clustering with Libcluster
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you want to cluster nodes, you should install libcluster. For more information about installing libcluster, see :ref:`cluster your nodes`.
-
 Secrets using Environment Variables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -163,6 +152,18 @@ Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarte
 .. code-block:: bash
 
     gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
+
+Optional Modifications
+----------------------
+
+These modifications are not required, but are recommended if you want to use all of features GIGALIXIR offers. If you want to see the difference between :bash:`mix phoenix.new` and `gigalixir-getting-started`_ take a look at `the diff`.
+
+.. _`the diff`: https://github.com/gigalixir/gigalixir-getting-started/compare/fe3e06690ba926de817a48ae98bdf155f1cdb201...master
+
+Set up Node Clustering with Libcluster
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to cluster nodes, you should install libcluster. For more information about installing libcluster, see :ref:`cluster your nodes`.
 
 Set Up Migrations
 ^^^^^^^^^^^^^^^^^
