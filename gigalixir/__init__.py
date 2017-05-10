@@ -476,6 +476,7 @@ def signup(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, pas
 
     if card_number == None:
         logging.getLogger("gigalixir-cli").info("GIGALIXIR Money-Back Guarantee: http://gigalixir.readthedocs.io/en/latest/main.html#money-back-guarantee")
+        logging.getLogger("gigalixir-cli").info("Don't worry, all communication is encrypted and secured with TLS. You can verify at https://github.com/gigalixir/gigalixir-cli.")
         card_number = click.prompt('Credit Card Number', type=int)
 
     if card_exp_month == None:

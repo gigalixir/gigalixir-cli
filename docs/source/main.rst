@@ -73,7 +73,7 @@ Finally, build and deploy.
 
 .. code-block:: bash
 
-    git push gigalixir
+    git push gigalixir master
     curl https://$APP_NAME.gigalixirapp.com/
 
 Note!
@@ -103,6 +103,22 @@ Install Distillery to Build Releases
 
 Distillery is currently the only supported release tool. We assume you have followed the `Distillery installation instructions`_. We use Distillery instead of bundling up your source code is to support hot upgrades. 
 
+In short, you'll need to add something like this to the :elixir:`deps` list in :bash:`mix.exs`
+
+.. code-block:: elixir
+
+    {:distillery, "~> 1.0.0"}
+
+Then, run
+
+.. code-block:: bash
+
+    mix deps.get
+    mix release.init
+
+Note, there is a `known issue`_ right now with Distillery 1.3.5 with Elixir 1.3.1, but a fix should be released soon. In the meantime, if you are on Elixir 1.3.1, try using Distillery 1.0.0.
+
+.. _`known issue`: https://github.com/bitwalker/distillery/issues/260
 .. _`Distillery installation instructions`: https://hexdocs.pm/distillery/getting-started.html#installation-setup
 
 .. _`buildpacks`:
@@ -175,7 +191,7 @@ In development, you use `Mix`_ to run database migrations. In production, `Mix`_
 Set Up Hot Upgrades with Git v2.9.0
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
+To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir master`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
 
 Known Issues
 ============
@@ -228,7 +244,7 @@ Concepts
 Life of a Deploy
 ----------------
 
-When you run :bash:`git push gigalixir`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in an isolated docker container which ultimately produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpack` file.
+When you run :bash:`git push gigalixir master`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in an isolated docker container which ultimately produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpack` file.
 
 By default, the buildpacks we use include
 
@@ -277,7 +293,7 @@ There is an extra flag you can pass to clean your cache before building in case 
 
 .. code-block:: bash
 
-    git -c http.extraheader="GIGALIXIR-CLEAN: true" push gigalixir
+    git -c http.extraheader="GIGALIXIR-CLEAN: true" push gigalixir master
 
 
 .. _life-of-a-hot-upgrade:
@@ -289,7 +305,7 @@ There is an extra flag you can pass to deploy by hot upgrade instead of a restar
 
 .. code-block:: bash
 
-    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir
+    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir master
 
 A hot upgrade follows the same steps as a regular deploy, except for a few differences. In order for distillery to build an upgrade, it needs access to your old app so we download it and make it available in the build container. 
 
@@ -589,7 +605,7 @@ about how this works, see `life of a deploy`_.
 
 .. code-block:: bash
 
-    git push gigalixir
+    git push gigalixir master
  
 .. _`scale`:
 
@@ -642,7 +658,7 @@ to work. For information on how to install the latest version of git on Ubuntu, 
 
 .. code-block:: bash
 
-    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir
+    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir master
  
 How to Rollback an App
 ======================
@@ -993,7 +1009,7 @@ Indices and Tables
 .. _`PaperTrail`: https://papertrailapp.com/
 .. _`Running Elixir and Phoenix projects on a cluster of nodes`: https://dockyard.com/blog/2016/01/28/running-elixir-and-phoenix-projects-on-a-cluster-of-nodes
 .. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. It will also prompt you for credit card information. GIGALIXIR currently does not offer a free trial, but we do offer a `money back guarantee`_. Please don't hesitate to use it.
-.. |set up app for deploys| replace:: To create your app, run the following command. It will also set up a git remote so you can later run :bash:`git push gigalixir`. This must be run from within a git repository folder. An app name will be generated for you, but you can also optionally supply an app name if you wish. There is currently no way to change your app name.
+.. |set up app for deploys| replace:: To create your app, run the following command. It will also set up a git remote so you can later run :bash:`git push gigalixir master`. This must be run from within a git repository folder. An app name will be generated for you, but you can also optionally supply an app name if you wish. There is currently no way to change your app name.
 .. _`The Twelve-Factor App's Config Factor`: https://12factor.net/config
 .. _`Herokuish`: https://github.com/gliderlabs/herokuish
 .. _`gigalixir-getting-started`: https://github.com/gigalixir/gigalixir-getting-started
