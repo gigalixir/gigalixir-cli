@@ -27,7 +27,7 @@ def test_everything():
             result = runner.invoke(gigalixir.cli, ['create'])
             assert result.exit_code == 0
             app_name = result.output.rstrip()
-            gigalixir.shell.cast("git push gigalixir")
+            gigalixir.shell.cast("git push gigalixir master")
         logging.info('Completed Deploy.')
         start_time = timeit.default_timer()
         url = 'https://%s.gigalixirapp.com/' % app_name
@@ -84,7 +84,8 @@ def test_everything():
 
         # hot upgrade
         with cd("gigalixir-getting-started"):
-            gigalixir.shell.cast("""git -c http.extraheader="GIGALIXIR-HOT:true" push gigalixir origin/v0.0.2:master""")
+            gigalixir.shell.cast("""git rebase origin/v0.0.2""")
+            subprocess.check_call(["git", "-c", "http.extraheader=GIGALIXIR-HOT:true","push","gigalixir","master"])
         logging.info('Completed Hot Upgrade.')
         start_time = timeit.default_timer()
         url = 'https://%s.gigalixirapp.com/' % app_name
