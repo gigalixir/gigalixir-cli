@@ -13,6 +13,7 @@ from . import payment_method as gigalixir_payment_method
 from . import domain as gigalixir_domain
 from . import invoice as gigalixir_invoice
 from . import usage as gigalixir_usage
+from . import credit as gigalixir_credit
 import click
 import requests
 import getpass
@@ -446,6 +447,15 @@ def create(ctx, name):
     Create a new app.
     """
     gigalixir_app.create(ctx.obj['host'], name)
+
+@cli.command()
+@click.pass_context
+@report_errors
+def credit(ctx):
+    """
+    How much credit is on your account.
+    """
+    gigalixir_credit.get(ctx.obj['host'])
 
 @cli.command()
 @click.pass_context

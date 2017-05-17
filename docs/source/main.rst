@@ -1003,6 +1003,15 @@ To see all your previous period's invoices, run
 
     gigalixir invoices
 
+How to get current credit balance
+============================
+
+If you have a credit balance on your account, you can see it by running
+
+.. code-block:: bash
+
+    gigalixir credit
+
 .. _`money back guarantee`:
 
 Money-back Guarantee

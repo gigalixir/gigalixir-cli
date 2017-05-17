@@ -458,3 +458,11 @@ def test_current_period_usage():
     result = runner.invoke(gigalixir.cli, ['current_period_usage'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_credit():
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/credit', body='{"data":{"credit_cents":-7500}}', content_type='application/json', status=200)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['credit'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
