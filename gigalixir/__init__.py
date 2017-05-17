@@ -11,6 +11,8 @@ from . import api_key as gigalixir_api_key
 from . import ssh_key as gigalixir_ssh_key
 from . import payment_method as gigalixir_payment_method
 from . import domain as gigalixir_domain
+from . import invoice as gigalixir_invoice
+from . import usage as gigalixir_usage
 import click
 import requests
 import getpass
@@ -444,6 +446,24 @@ def create(ctx, name):
     Create a new app.
     """
     gigalixir_app.create(ctx.obj['host'], name)
+
+@cli.command()
+@click.pass_context
+@report_errors
+def invoices(ctx):
+    """
+    List all previous invoices.
+    """
+    gigalixir_invoice.get(ctx.obj['host'])
+
+@cli.command()
+@click.pass_context
+@report_errors
+def current_period_usage(ctx):
+    """
+    See how much usage you've accumulated so far this month.
+    """
+    gigalixir_usage.get(ctx.obj['host'])
 
 # @create.command()
 @cli.command()

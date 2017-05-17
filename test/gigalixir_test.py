@@ -442,3 +442,19 @@ def test_reset_password():
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"token": "fake-token", "password": "password"}')
+
+@httpretty.activate
+def test_invoices():
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/invoices', body='{"data":[{"replica_size_seconds":43944,"period_start":"2017-05-11T22:57:34.000+00:00","period_end":"2017-05-12T22:57:34.000+00:00","paid":true,"app_name":"bar","amount_cents":82},{"replica_size_seconds":43200,"period_start":"2017-05-12T22:57:34.000+00:00","period_end":"2017-05-13T22:57:34.000+00:00","paid":true,"app_name":"bar","amount_cents":81},{"replica_size_seconds":43200,"period_start":"2017-05-13T22:57:34.000+00:00","period_end":"2017-05-14T22:57:34.000+00:00","paid":true,"app_name":"bar","amount_cents":81},{"replica_size_seconds":43200,"period_start":"2017-05-14T22:57:34.000+00:00","period_end":"2017-05-15T22:57:34.000+00:00","paid":true,"app_name":"bar","amount_cents":81},{"replica_size_seconds":43200,"period_start":"2017-05-15T22:57:34.000+00:00","period_end":"2017-05-16T22:57:34.000+00:00","paid":true,"app_name":"bar","amount_cents":81},{"replica_size_seconds":43200,"period_start":"2017-05-16T22:57:34.000+00:00","period_end":"2017-05-17T22:57:34.000+00:00","paid":false,"app_name":"bar","amount_cents":81}]}', content_type='application/json', status=200)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['invoices'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_current_period_usage():
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/usage', body='{"data":[{"app":"foo","amount_cents":81}]}', content_type='application/json', status=200)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['current_period_usage'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
