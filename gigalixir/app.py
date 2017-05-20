@@ -98,7 +98,7 @@ def ssh(host, app_name, command):
         ssh_ip = data["ssh_ip"]
         if command != None and command != "":
             command = "gigalixir_run run %s" % command
-        cast("ssh root@%s %s" % (ssh_ip, command))
+        cast("ssh -t root@%s %s" % (ssh_ip, command))
 
 def restart(host, app_name):
     r = requests.put('%s/api/apps/%s/restart' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
@@ -148,8 +148,6 @@ def run(host, app_name, module, function):
         raise Exception(r.text)
 
 def logs(host, app_name):
-    logging.getLogger("gigalixir-cli").info("Warning: Logging is still in alpha. If you need faster, more reliable logging, consider PaperTrail.")
-    logging.getLogger("gigalixir-cli").info("Aggregating and routing logs, this may take a minute.")
     with closing(requests.get('%s/api/apps/%s/logs' % (host, urllib.quote(app_name.encode('utf-8'))), stream=True)) as r:
         if r.status_code != 200:
             if r.status_code == 401:
