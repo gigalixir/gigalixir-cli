@@ -949,7 +949,7 @@ We provide a special command to run migrations.
 
     gigalixir migrate $APP_NAME
 
-Since Mix is not available in production with Distillery, this command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. To see exactly what command we run, see `the source code`_.
+Since Mix is not available in production with Distillery, this command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. 
 
 .. _`the source code`: https://github.com/gigalixir/gigalixir-cli/blob/master/gigalixir/app.py#L160
 

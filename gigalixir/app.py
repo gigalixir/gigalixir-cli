@@ -165,7 +165,6 @@ def migrate(host, app_name):
         raise Exception(r.text)
     else:
         command = json.loads(r.text)["data"]
-        print command
         distillery_eval(host, app_name, command)
 
 def logs(host, app_name):
