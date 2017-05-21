@@ -521,6 +521,9 @@ Troubleshooting
 
 TODO: Common issues go here.
 
+.. _`contact us for help`:
+.. _`help`:
+
 Support/Help
 ============
 
@@ -843,7 +846,7 @@ How to Run Jobs
 
 There are many ways to run one-off jobs and tasks with Distillery. The approach described here uses Distillery's :bash:`command` command. As an alternative, you can also `drop into a remote console`_ and run code manually or use Distillery's custom commands, eval command, rpc command, pre-start hooks, and probably others.
 
-To run one-off jobs like migrations and scripts, you'll need to write an Elixir function within your app somewhere, for example, :bash:`lib/tasks.ex` maybe. GIGALIXIR uses Distillery's :bash:`command` command to run your task.
+To run one-off jobs, you'll need to write an Elixir function within your app somewhere, for example, :bash:`lib/tasks.ex` maybe. GIGALIXIR uses Distillery's :bash:`command` command to run your task.
 
 .. code-block:: bash
 
@@ -854,9 +857,15 @@ For example, the following command will run the :elixir:`Tasks.migrate/0` functi
 
 .. code-block:: bash
 
-    gigalixir run myapp Elixir.Tasks migrate
+    gigalixir run myapp Elixir.Tasks foo
 
-For an example task, see `gigalixir-getting-started's migrate task`_. The task is not run on the same node that your app is running in. We start a separate container to run the job so if you need any applications started such as your :elixir:`Repo`, use :elixir:`Application.ensure_all_started/2`. Also, be sure to stop all applications when done, otherwise your job will never complete and just hang until it times out. Jobs are currently killed after 5 minutes. For more information about running migrations with Distillery, see `Distillery's Running Migrations`_. Distillery commands currently do not support passing arguments into the job. 
+.. For an example task, see `gigalixir-getting-started's migrate task`_. 
+
+The task is not run on the same node that your app is running in. We start a separate container to run the job so if you need any applications started such as your :elixir:`Repo`, use :elixir:`Application.ensure_all_started/2`. Also, be sure to stop all applications when done, otherwise your job will never complete and just hang until it times out. Jobs are currently killed after 5 minutes. 
+
+.. For more information about running migrations with Distillery, see `Distillery's Running Migrations`_. 
+
+Distillery commands currently do not support passing arguments into the job. 
 
 We prepend :elixir:`Elixir.` to your module name to let the BEAM virtual machine know that you want to run an Elixir module rather than an Erlang module. The BEAM doesn't know the difference between Elixir code and Erlang code once it is compiled down, but compiled Elixir code is namespaced under the Elixir module.
 
@@ -934,11 +943,15 @@ GIGALIXIR does not currently provide Databases-as-a-Service, but we are working 
 How to Run Migrations
 =====================
 
-Migrations are the same as any other job you might run. For information on running jobs, see :ref:`jobs`. In short, prepare a function to run the migration and execute the function by running
+We provide a special command to run migrations.
 
 .. code-block:: bash
 
-    gigalixir run $APP_NAME $MODULE $FUNCTION
+    gigalixir migrate $APP_NAME
+
+Since Mix is not available in production with Distillery, this command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. To see exactly what command we run, see `the source code`_.
+
+.. _`the source code`: https://github.com/gigalixir/gigalixir-cli/blob/master/gigalixir/app.py#L160
 
 .. _`Launching a remote console`: 
 .. _`drop into a remote console`: 
