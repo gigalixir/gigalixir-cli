@@ -961,7 +961,7 @@ How to Drop into a Remote Console
 
 .. code-block:: bash
 
-    gigalixir ssh $APP_NAME -c remote_console
+    gigalixir remote_console $APP_NAME 
 
 How to Run Distillery Commands
 ==============================
@@ -970,7 +970,7 @@ Since we use Distillery to build releases, we also get all the commands Distille
 
 .. code-block:: bash
 
-    gigalixir ssh $APP_NAME -c $COMMAND
+    gigalixir distillery $APP_NAME $COMMAND
 
 .. _`Distillery's boot.eex`: https://github.com/bitwalker/distillery/blob/master/priv/templates/boot.eex#L417
 
@@ -1016,7 +1016,7 @@ To see all your previous period's invoices, run
 
     gigalixir invoices
 
-How to get current credit balance
+How to check my credit balance
 ============================
 
 If you have a credit balance on your account, you can see it by running
