@@ -126,14 +126,24 @@ def remote_console(ctx, app_name):
 
 @cli.command()
 @click.argument('app_name')
-@click.option('-c', '--distillery_command', default="", help='The distillery command to run on the remote container e.g. ping, remote_console.')
 @click.pass_context
 @report_errors
-def ssh(ctx, app_name, distillery_command):
+def ssh(ctx, app_name):
     """
     Ssh into app. Be sure you added your ssh key using gigalixir create ssh_key.
     """
-    gigalixir_app.ssh(ctx.obj['host'], app_name, distillery_command)
+    gigalixir_app.ssh(ctx.obj['host'], app_name)
+
+@cli.command()
+@click.argument('app_name')
+@click.argument('distillery_command', nargs=-1)
+@click.pass_context
+@report_errors
+def distillery(ctx, app_name, distillery_command):
+    """
+    Runs a distillery command to run on the remote container e.g. ping, remote_console. Be sure you've added your ssh key.
+    """
+    gigalixir_app.ssh(ctx.obj['host'], app_name, *distillery_command)
 
 @cli.command()
 @click.argument('app_name')
@@ -154,10 +164,19 @@ def restart(ctx, app_name):
 @report_errors
 def run(ctx, app_name, module, function):
     """
-    Run arbitrary function e.g. Elixir.Tasks.migrate/0.
+    Run arbitrary function e.g. Elixir.Tasks.migrate/0. Runs as a job in a separate process.
     """
     gigalixir_app.run(ctx.obj['host'], app_name, module, function)
 
+@cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
+def migrate(ctx, app_name):
+    """
+    Run Ecto Migrations on a production node.
+    """
+    gigalixir_app.migrate(ctx.obj['host'], app_name)
 
 # @update.command()
 @cli.command()
