@@ -156,8 +156,17 @@ def distillery_eval(host, app_name, expression):
     ssh(host, app_name, "eval", expression)
 
 def migrate(host, app_name):
-    customer_app_name = "gigalixir_getting_started"
-    distillery_eval(host, app_name, "'Elixir.Ecto.Migrator':run(lists:nth(1, 'Elixir.Application':get_env(%s, ecto_repos)), 'Elixir.Application':app_dir(%s, <<\"priv/repo/migrations\">>), up, [{all, true}])" % (customer_app_name, customer_app_name))
+    r = requests.get('%s/api/apps/%s/migrate-command' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        command = json.loads(r.text)["data"]
+        print command
+        distillery_eval(host, app_name, command)
 
 def logs(host, app_name):
     with closing(requests.get('%s/api/apps/%s/logs' % (host, urllib.quote(app_name.encode('utf-8'))), stream=True)) as r:
