@@ -913,6 +913,7 @@ Connecting to a database is done no differently from apps running outside GIGALI
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
        url: {:system, "DATABASE_URL"},
+       ssl: true,
        pool_size: 20
 
 Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`.
@@ -921,15 +922,17 @@ Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarte
 
     gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
 
-Note that if you started by cloning the `gigialixir-getting-started`_ repo, you'll have to uncomment a line in your :ref:`lib/gigalixir-getting-started.ex` file that looks like this.
+Note that if you started by cloning the `gigalixir-getting-started`_ repo, you'll have to uncomment a line in your :ref:`lib/gigalixir-getting-started.ex` file that looks like this.
 
 .. code-block:: elixir
 
     # supervisor(GigalixirGettingStarted.Repo, []),
 
-We commented this line out by default in order to disable database connection attempts before the database is configured. If you had followed the `quick start`_ without setting a :bash:`DATABASE_URL`, then the app won't start up properly. 
+We commented this line out by default in order to disable database connection attempts before the database is configured. If you had followed the `quick start`_ without setting a :bash:`DATABASE_URL`, then the app wouldn't have started up properly. 
 
-GIGALIXIR does not currently provide Databases-as-a-Service, but we are working on it. In the meantime, we recommend `Amazon Relational Database Service`_ or `Google Cloud SQL`_. We currently host your apps in Google Cloud Platform's us-central1 region so you'll likely get the best latency using Google Cloud SQL in the us-central1 region. Google Cloud SQL `supports PostgreSQL`_, but it is still in beta. To use MySQL, follow the `Phoenix Using MySQL Guide`_.
+GIGALIXIR does not currently provide Databases-as-a-Service, but we are working on it. We do provide instructions on `How to set up a Google Cloud SQL PostgreSQL database`_ so you can set it up yourself.
+
+We recommend `Google Cloud SQL`, but `Amazon Relational Database Service`_ will work also. We currently host your apps in Google Cloud Platform's us-central1 region so you'll get the best latency using Google Cloud SQL in the us-central1 region. Google Cloud SQL `supports PostgreSQL`_, but it is still in beta. To use MySQL, follow the `Phoenix Using MySQL Guide`_. 
 
 .. _`supports PostgreSQL`: https://cloud.google.com/sql/docs/postgres/
 .. _`Phoenix Using MySQL Guide`: http://www.phoenixframework.org/docs/using-mysql
@@ -937,6 +940,41 @@ GIGALIXIR does not currently provide Databases-as-a-Service, but we are working 
 .. _`Google Cloud SQL`: https://cloud.google.com/sql/docs/
 .. _`gigalixir-getting-started`: https://github.com/gigalixir/gigalixir-getting-started
 .. _`lib/gigalixir-getting-started.ex`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/lib/gigalixir_getting_started.ex#L14
+
+.. _`How to set up a Google Cloud SQL PostgreSQL database`:
+
+How to set up a Google Cloud SQL PostgreSQL database
+--------------------------------------------------
+
+Note: You can also use Amazon RDS, but we do not have instructions provided yet.
+
+1. Navigate to https://console.cloud.google.com/sql/instances and click "Create Instance".
+#. Select PostgreSQL and click "Next".
+#. Configure your database.
+
+   a. Choose any instance id you like. 
+   #. Choose us-central1 as the Region. 
+   #. Choose how many cores, memory, and disk.
+   #. In "Default user password", click "Generate" and save it somewhere secure.
+   #. In "Authorized networks", click "Add network" and enter "0.0.0.0/0" in the "Network" field. It will be encrypted with TLS and authenticated with a password so it should be okay to make the instance publically accessible. Click "Done".
+
+#. Click "Create".
+#. Wait for the database to create.
+#. Make note of the database's external ip. You'll need it later.
+#. Click on the new database to see instance details.
+#. Click on the "Databases" tab.
+#. Click "Create database".
+#. Choose any name you like, remember it, and click "Create".
+#. Run 
+   
+   .. code-block:: bash
+   
+       gigalixir set_config $APP_NAME DATABASE_URL "ecto://postgres:$PASSWORD@$EXTERNAL_IP:5432/$DB_NAME"
+    
+   with $APP_NAME, $PASSWORD, $EXTERNAL_IP, and $DB_NAME replaced with values from the previous steps.
+#. Make sure you have :elixir:`ssl:true` in your :bash:`prod.exs` database configuration.
+
+We hope to provide a database-as-a-service soon and automate the process you just went through. Stay tuned.
 
 .. _`migrations`:
 
