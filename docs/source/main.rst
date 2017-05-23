@@ -972,7 +972,7 @@ Note: You can also use Amazon RDS, but we do not have instructions provided yet.
        gigalixir set_config $APP_NAME DATABASE_URL "ecto://postgres:$PASSWORD@$EXTERNAL_IP:5432/$DB_NAME"
     
    with $APP_NAME, $PASSWORD, $EXTERNAL_IP, and $DB_NAME replaced with values from the previous steps.
-#. Make sure you have :elixir:`ssl:true` in your :bash:`prod.exs` database configuration.
+#. Make sure you have :elixir:`ssl:true` in your :bash:`prod.exs` database configuration. Cloud SQL supports TLS out of the boxso your database traffic should be encrypted.
 
 We hope to provide a database-as-a-service soon and automate the process you just went through. Stay tuned.
 
