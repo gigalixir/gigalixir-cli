@@ -20,6 +20,18 @@ def test_create_user():
     expect(httpretty.httpretty.latest_requests[2].body).to.equal('{"stripe_token": "fake-stripe-token", "password": "password", "email": "foo@gigalixir.com"}')
 
 @httpretty.activate
+def test_create_user_cvc_leading_zero():
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/validate_email', body='{}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/users', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['signup', '--email=foo@gigalixir.com', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '-y'], input="password\n023\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.httpretty.latest_requests[1].body).to.equal('card%5Bnumber%5D=4111111111111111&card%5Bexp_year%5D=34&card%5Bcvc%5D=023&card%5Bexp_month%5D=12')
+    expect(httpretty.httpretty.latest_requests[2].body).to.equal('{"stripe_token": "fake-stripe-token", "password": "password", "email": "foo@gigalixir.com"}')
+
+@httpretty.activate
 def test_logout():
     runner = CliRunner()
     # Make sure this test does not modify the user's netrc file.

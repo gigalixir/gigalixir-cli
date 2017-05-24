@@ -533,7 +533,7 @@ def signup(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, pas
     if card_exp_year == None:
         card_exp_year = click.prompt('Credit Card Expiration Year', type=int)
     if card_cvc == None:
-        card_cvc = click.prompt('Credit Card CVC', type=int)
+        card_cvc = click.prompt('Credit Card CVC')
 
     gigalixir_user.create(ctx.obj['host'], email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy)
 
