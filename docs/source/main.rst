@@ -17,7 +17,12 @@ Prequisites
 .. role:: bash(code)
     :language: bash
 
-You should make sure you have :bash:`pip` installed. For help, take a look at the `pip documentation`_.
+#. Make sure you have :bash:`pip` installed. For help, take a look at the `pip documentation`_. 
+#. Make sure you have :bash:`python2.7`, not :bash:`python3`. 
+#. Make sure you are on Linux or OS X. 
+#. Make sure you have a beta invitation. If you don't have one, request one using the `beta sign up form`_.
+
+.. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
 
 Install the Command-Line Interface
 ----------------------------------
@@ -137,8 +142,8 @@ We rely on buildpacks to compile and build your release. Create a :bash:`.buildp
 
 If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your GIGALIXIR build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
-Secrets using Environment Variables
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Configuration and Secrets
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, Phoenix creates a :bash:`prod.secret.exs` file to store secrets. If you want to continue using :bash:`prod.secret.exs` you'll have to commit it to version control so we can bundle it into your release. This is usually not a good idea, though. 
 
@@ -164,6 +169,8 @@ Then add the following in :bash:`prod.exs`
        pool_size: 20
 
 Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following. For more information on setting configs, see :ref:`configs`.
+
+Also, note that `server: true` is configured. That is required as well.
 
 .. code-block:: bash
 
