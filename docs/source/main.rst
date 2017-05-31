@@ -166,6 +166,7 @@ Then add the following in :bash:`prod.exs`
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
        url: {:system, "DATABASE_URL"},
+       ssl: true,
        pool_size: 20
 
 Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following. For more information on setting configs, see :ref:`configs`.
@@ -203,7 +204,9 @@ To run hot upgrades, you send an extra http header when running :bash:`git push 
 Known Issues
 ============
 
-  - Logging is still currently in the alpha testing stage. It's known to have slow startup, high latency, and will periodically fail entirely if another app is producing too many logs. We are currently rebuilding the logging system to address these issues. In most cases, however, logging should still be useful. If it doesn't fit your needs, we recommend `PaperTrail`_.
+  -  Warning: Multiple default buildpacks reported the ability to handle this app. The first buildpack in the list below will be used.
+
+      - This warning is safe to ignore. It is a temporary warning due to a workaround. 
 
 How Does GIGALIXIR Work?
 ========================
@@ -241,7 +244,7 @@ Concepts
   - *Release*: A release is a combination of a slug and a config which is deployed to a run container.
   - *Slug*: Each app is compiled and built into a slug. The slug is the actual code that is run in your containers. Each app will have many slugs, one for every deploy.
   - *Config*: A config is a set of key-value pairs that you use to configure your app. They are injected into your run container as environment variables.
-  - *Replicas*: An app can have many replicas. A replica is a single instance of your app.
+  - *Replicas*: An app can have many replicas. A replica is a single instance of your app in a single container in a single pod.
   - *Custom Domain*: A custom domain is a fully qualified domain that you control which you can set up to point to your app.
   - *Payment Method*: Your payment method is the credit card on file you use to pay your bill each month.
   - *Permission*: A permission grants another user the ability to deploy. Even though they can deploy, you remain the owner and are responsible for paying the bill.
@@ -366,6 +369,19 @@ Heroku and others allow you to specify different types of processes under a sing
 .. _`Background Jobs in Phoenix`: http://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix.html
 .. _`whether you really need Exq`: https://github.com/akira/exq#do-you-need-exq
 
+*What if GIGALIXIR shuts down?*
+-------------------------------
+
+GIGALIXIR was built as a labor of love. We want to see Elixir grow and this is our way of helping make that happen. Although making money is nice, that is not our primary goal.
+
+*My git push was rejected*
+--------------------------
+
+Try force pushing with
+
+.. code-block:: bash
+
+    git push -f gigalixir master
 
 .. _`cluster your nodes`:
 
@@ -534,7 +550,7 @@ TODO: Common issues go here.
 Support/Help
 ============
 
-If you run into issues, `Stack Overflow`_ is the best place to search. If you can't find an answer, the developers at GIGALIXIR monitor `the gigalixir tag`_ and will answer questions there. We prefer Stack Overflow over a knowledge base because it is public and collaborative. If you have a private question, email help@gigalixir.com or call us at `(415) 326-8880`_.
+If you run into issues, `Stack Overflow`_ is the best place to search. If you can't find an answer, the developers at GIGALIXIR monitor `the gigalixir tag`_ and will answer questions there. We prefer Stack Overflow over a knowledge base because it is public and collaborative. If you have a private question, email help@gigalixir.com or call us at `(415) 326-8880`_. With GIGALIXIR, you always get support from developers, not customer support representatives. We are very responsive and we are available 24/7. If we become too big, it's possible we won't be able to offer this level of support one day, but we think it is extra important for a startup to provide above-and-beyond support.
 
 .. _`Stack Overflow`: http://stackoverflow.com/
 .. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
@@ -549,6 +565,15 @@ Installation
 ------------
 
 Install :bash:`gigalixir` using :bash:`pip install gigalixir`. If you don't have pip installed, take a look at the `pip documentation`_.
+
+Upgrade
+-------
+
+To upgrade the GIGALIXIR CLI, run
+
+.. code-block:: bash
+
+    pip install -U gigalixir
 
 Encryption
 ----------
@@ -617,6 +642,39 @@ about how this works, see `life of a deploy`_.
 
     git push gigalixir master
  
+How to Set Up a Staging Environment
+===================================
+
+To set up a separate staging app and production app, you'll need to create another gigalixir app. To do this, first rename your current gigalixir git remote to staging.
+
+.. code-block:: bash
+
+    git remote rename gigalixir staging
+
+Then create a new app for production
+
+.. code-block:: bash
+
+    gigalixir create 
+
+If you like, you can also rename the new app remote.
+
+.. code-block:: bash
+
+    git remote rename gigalixir production
+
+From now on, you can run this to push to staging.
+
+.. code-block:: bash
+
+    git push staging master
+
+And this to push to production
+
+.. code-block:: bash
+
+    git push production  master
+
 .. _`scale`:
 
 How to Scale an App
@@ -995,6 +1053,8 @@ We provide a special command to run migrations.
     gigalixir migrate $APP_NAME
 
 Since Mix is not available in production with Distillery, this command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. 
+
+Also note that because we don't spin up an entire new node just to run your migrations, migrations are free.
 
 .. _`the source code`: https://github.com/gigalixir/gigalixir-cli/blob/master/gigalixir/app.py#L160
 
