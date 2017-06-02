@@ -1,7 +1,7 @@
 from gigalixir.shell import cast
 
 class LinuxRouter(object):
-    def route_to_localhost(self, ip):
+    def route_to_localhost(self, ip, epmd_port, distribution_port):
         # cast("sudo iptables -t nat -L OUTPUT")
         cast("sudo iptables -t nat -A OUTPUT -p all -d %(ip)s -j DNAT --to-destination 127.0.0.1" % {"ip": ip})
     def unroute_to_localhost(self, ip):

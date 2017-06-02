@@ -2,7 +2,7 @@ from gigalixir.shell import cast
 import subprocess
 
 class DarwinRouter(object):
-    def route_to_localhost(self, ip):
+    def route_to_localhost(self, ip, epmd_port, distribution_port):
         """
         It's not great that we use "from any to any". It would be better to use
         from any to 10.244.7.124, but when I do that, erl fails to startup with
@@ -11,14 +11,14 @@ class DarwinRouter(object):
         something in this file.
         """
         ps = subprocess.Popen(('echo', """
-rdr pass on lo0 inet proto tcp from any to any port 4369 -> 127.0.0.1 port 4369
-rdr pass on lo0 inet proto tcp from any to 10.244.7.124 port 36606 -> 127.0.0.1 port 36606
-"""), stdout=subprocess.PIPE)
+rdr pass on lo0 inet proto tcp from any to any port %s -> 127.0.0.1 port %s
+rdr pass on lo0 inet proto tcp from any to %s port %s -> 127.0.0.1 port %s
+""" % (epmd_port, epmd_port, ip, distribution_port, distribution_port)), stdout=subprocess.PIPE)
         subprocess.call(('sudo', 'pfctl', '-ef', '-'), stdin=ps.stdout)
         ps.wait()
-        cast("sudo ifconfig lo0 10.244.7.124 netmask 255.255.255.255 alias")
+        cast("sudo ifconfig lo0 %s netmask 255.255.255.255 alias" % ip)
         
     def unroute_to_localhost(self, ip):
-        cast("sudo ifconfig lo0 10.244.7.124 netmask 255.255.255.255 -alias")
+        cast("sudo ifconfig lo0 %s netmask 255.255.255.255 -alias" % ip)
         subprocess.call("sudo pfctl -ef /etc/pf.conf".split())
 
