@@ -22,11 +22,12 @@ Prequisites
 #. Make sure you are on Linux or OS X. 
 #. Make sure you have a beta invitation. If you don't have one, request one using the `beta sign up form`_.
 #. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
-#. Phoenis 1.2 is officially supported. Phoenix 1.3 is known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3.
+#. Phoenis 1.2 is officially supported. Phoenix 1.3 is known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
 #. Umbrella apps are known to work, but they are not yet officially supported. We are working on adding official support.
 
 .. _`buildpack configuration file`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 .. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
+.. _`gigalixir-getting-started-phx-1-3-rc-2`: https://github.com/gigalixir/gigalixir-getting-started-phx-1-3-rc-2
 
 Install the Command-Line Interface
 ----------------------------------
