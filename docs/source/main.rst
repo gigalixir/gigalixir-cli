@@ -23,6 +23,7 @@ Prequisites
 #. Make sure you have a beta invitation. If you don't have one, request one using the `beta sign up form`_.
 #. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
 #. Phoenis 1.2 is officially supported. Phoenix 1.3 is known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3.
+#. Umbrella apps are known to work, but they are not yet officially supported. We are working on adding official support.
 
 .. _`buildpack configuration file`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 .. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
@@ -387,6 +388,7 @@ Try force pushing with
     git push -f gigalixir master
 
 .. _`cluster your nodes`:
+.. _`clustering`:
 
 Clustering Nodes
 ================
@@ -1066,7 +1068,7 @@ We provide a special command to run migrations.
 
 Since Mix is not available in production with Distillery, this command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. 
 
-Also note that because we don't spin up an entire new node just to run your migrations, migrations are free.
+Also note that because we don't spin up an entire new node just to run your migrations, migrations are free. Also, this doesn't yet work if you have an umbrella app and the app the migrations are in is a different name from your release name.
 
 .. _`the source code`: https://github.com/gigalixir/gigalixir-cli/blob/master/gigalixir/app.py#L160
 
@@ -1107,7 +1109,7 @@ How to Launch a Remote Observer
 
 Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have clustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`clustering`.
 
-You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file.
+You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file. Phoenix 1.3 adds it by default, but you have to add it youself in Phoenix 1.2.
 
 Then, to launch observer and connect it to a production node, run
 
