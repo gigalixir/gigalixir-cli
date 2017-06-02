@@ -5,7 +5,7 @@ setup(
     url='https://github.com/gigalixir/gigalixir-cli',
     author='Jesse Shieh',
     author_email='jesse@gigalixir.com',
-    version='0.9.2',
+    version='0.9.3',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
