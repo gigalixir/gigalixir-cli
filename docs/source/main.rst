@@ -21,7 +21,10 @@ Prequisites
 #. Make sure you have :bash:`python2.7`, not :bash:`python3`. 
 #. Make sure you are on Linux or OS X. 
 #. Make sure you have a beta invitation. If you don't have one, request one using the `beta sign up form`_.
+#. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
+#. Phoenis 1.2 is officially supported. Phoenix 1.3 is known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3.
 
+.. _`buildpack configuration file`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 .. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
 
 Install the Command-Line Interface
@@ -388,12 +391,17 @@ Try force pushing with
 Clustering Nodes
 ================
 
-We use libcluster to manage node clustering. For more information, see `libcluster's documentation`_. GIGALIXIR handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run's run-cmd script`_ for more details. 
+We use libcluster to manage node clustering. For more information, see `libcluster's documentation`_. 
 
-.. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
+To install libcluster, add this to the deps list in :bash:`mix.exs`
+
+.. code-block:: elixir
+
+    {:libcluster, "~> 2.0.3"}
+
+Then add :elixir`:libcluster` and :elixir:`:ssl` to your applications list. This may be different in Elixir 1.4. We'll update these instructions once we officially support Elixir 1.4. For a full example, see `gigalixir-getting-started's mix.exs file`_.
 
 Your app configuration needs to have something like this in it. For a full example, see `gigalixir-getting-started's prod.exs file`_.
-
 
 .. code-block:: elixir
 
@@ -431,10 +439,14 @@ Lastly, you need to modify your distillery config so it knows where to find your
     end
     ...
 
+GIGALIXIR handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run`_ for more details. 
+
+.. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
 .. _`gigalixir-getting-started's vm.args file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/vm.args
 .. _`gigalixir-getting-started's prod.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/config/prod.exs#L68
+.. _`gigalixir-getting-started's mix.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/mix.exs
 .. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/config.exs#L27
-.. _`gigalixir-run's run-cmd script`: https://github.com/gigalixir/gigalixir-run/blob/master/run-cmd
+.. _`gigalixir-run`: https://github.com/gigalixir/gigalixir-run
 
 .. _`pricing`:
 
@@ -1093,13 +1105,17 @@ To see how many replicas are actually running in production compared to how many
 How to Launch a Remote Observer
 ===============================
 
-To launch observer and connect it to a production node
+Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have clustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`clustering`.
+
+You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file.
+
+Then, to launch observer and connect it to a production node, run
 
 .. code-block:: bash
 
     gigalixir observer $APP_NAME
 
-and follow the instructions. This connects to a random container. We don't currently allow you to specify which container you want to connect to.
+and follow the instructions. This connects to a random container using consistent hashing. We don't currently allow you to specify which container you want to connect to, but it will connect to the same container each time based on a hash of your ip address.
 
 How to see the current period's usage
 =====================================
