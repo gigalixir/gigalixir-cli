@@ -19,7 +19,7 @@ Prequisites
 
 #. Make sure you have :bash:`pip` installed. For help, take a look at the `pip documentation`_. 
 #. Make sure you have :bash:`python2.7`, not :bash:`python3`. 
-#. Make sure you are on Linux or OS X. 
+#. Make sure you are on Linux or OS X. Windows users have been using a small Linux instance in the cloud to use GIGALIXIR.
 #. Make sure you have a beta invitation. If you don't have one, request one using the `beta sign up form`_.
 #. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
 #. Phoenis 1.2 is officially supported. Phoenix 1.3 is known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
@@ -1070,6 +1070,20 @@ We provide a special command to run migrations.
 Since Mix is not available in production with Distillery, this command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. 
 
 Also note that because we don't spin up an entire new node just to run your migrations, migrations are free. Also, this doesn't yet work if you have an umbrella app and the app the migrations are in is a different name from your release name.
+
+If you need to tweak the migration command, all we are doing is dropping into a remote_console and running this
+
+.. code-block:: elixir
+
+    repo = List.first(Application.get_env(:gigalixir_getting_started, :ecto_repos))
+    app_dir = Application.app_dir(:gigalixir_getting_started, "priv/repo/migrations")
+    Ecto.Migrator.run(repo, app_dir, :up, all: true)
+
+So for example, if you are running an umbrella app, you may need to change the app name which could be different from your gigalixir app name or your umbrella app name. 
+
+Or if you have more than one app, you may not want to use :elixir:`List.first` to find the app that contains the migrations.
+
+We're working on making this simpler for all cases, stay tuned.
 
 .. _`the source code`: https://github.com/gigalixir/gigalixir-cli/blob/master/gigalixir/app.py#L160
 
