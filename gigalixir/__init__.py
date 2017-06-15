@@ -14,6 +14,7 @@ from . import domain as gigalixir_domain
 from . import invoice as gigalixir_invoice
 from . import usage as gigalixir_usage
 from . import credit as gigalixir_credit
+from . import database as gigalixir_database
 import click
 import requests
 import getpass
@@ -379,6 +380,17 @@ def send_reset_password_token(ctx, email):
 @click.argument('app_name')
 @click.pass_context
 @report_errors
+def databases(ctx, app_name):
+    """
+    Get databases for your app.
+    """
+    gigalixir_database.get(ctx.obj['host'], app_name)
+
+# @get.command()
+@cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
 def domains(ctx, app_name):
     """
     Get custom domains for your app.
@@ -422,6 +434,18 @@ def delete_permission(ctx, app_name, email):
 # @delete.command()
 @cli.command()
 @click.argument('app_name')
+@click.argument('database_id')
+@click.pass_context
+@report_errors
+def delete_database(ctx, app_name, database_id):
+    """
+    Delete database.
+    """
+    gigalixir_database.delete(ctx.obj['host'], app_name, database_id)
+
+# @delete.command()
+@cli.command()
+@click.argument('app_name')
 @click.argument('fully_qualified_domain_name')
 @click.pass_context
 @report_errors
@@ -455,6 +479,17 @@ def add_permission(ctx, unique_name, email):
     """
     gigalixir_permission.create(ctx.obj['host'], unique_name, email)
 
+
+@cli.command()
+@click.argument('app_name')
+@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
+@click.pass_context
+@report_errors
+def create_database(ctx, app_name, size):
+    """
+    Create a new database for app.
+    """
+    gigalixir_database.create(ctx.obj['host'], app_name, size)
 
 # @create.command()
 @cli.command()

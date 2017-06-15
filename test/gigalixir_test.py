@@ -478,3 +478,84 @@ def test_credit():
     result = runner.invoke(gigalixir.cli, ['credit'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_delete_database():
+    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['delete_database', 'fake-app-name', 'fake-database-id'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_get_databases():
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/databases', body="""
+{
+  "data": [
+    {
+      "username": "app",
+      "state": "DELETED",
+      "size": 0.6,
+      "port": 5432,
+      "password": "REDACTED",
+      "id": "REDACTED",
+      "host": "REDACTED",
+      "database": "REDACTED",
+      "app_name": "REDACTED"
+    },
+    {
+      "username": "app",
+      "state": "AVAILABLE",
+      "size": 0.6,
+      "port": 5432,
+      "password": "REDACTED",
+      "id": "REDACTED",
+      "host": "REDACTED",
+      "database": "REDACTED",
+      "app_name": "REDACTED"
+    }
+  ]
+}
+""", content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['databases', 'fake-app-name'])
+    print result.output
+    assert result.output == """[
+  {
+    "app_name": "REDACTED", 
+    "database": "REDACTED", 
+    "host": "REDACTED", 
+    "id": "REDACTED", 
+    "password": "REDACTED", 
+    "port": 5432, 
+    "size": 0.6, 
+    "state": "DELETED", 
+    "username": "app"
+  }, 
+  {
+    "app_name": "REDACTED", 
+    "database": "REDACTED", 
+    "host": "REDACTED", 
+    "id": "REDACTED", 
+    "password": "REDACTED", 
+    "port": 5432, 
+    "size": 0.6, 
+    "state": "AVAILABLE", 
+    "username": "app"
+  }
+]
+"""
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_create_database():
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/databases', body='{}', content_type='application/json', status=201)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['create_database', 'fake-app-name', '--size=4'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"size": 4.0}')
+
