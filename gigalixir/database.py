@@ -38,3 +38,14 @@ def delete(host, app_name, database_id):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+
+def scale(host, app_name, database_id, size):
+    r = requests.put('%s/api/apps/%s/databases/%s' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(database_id.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    }, json = {
+        "size": size,
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)

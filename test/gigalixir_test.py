@@ -559,3 +559,13 @@ def test_create_database():
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"size": 4.0}')
 
+@httpretty.activate
+def test_scale_database():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['scale_database', 'fake-app-name', 'fake-database-id', '--size=8'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"size": 8.0}')
+

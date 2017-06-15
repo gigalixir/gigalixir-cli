@@ -93,6 +93,18 @@ def status(ctx, app_name):
 
 @cli.command()
 @click.argument('app_name')
+@click.argument('database_id')
+@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
+@click.pass_context
+@report_errors
+def scale_database(ctx, app_name, database_id, size):
+    """
+    Scale database.
+    """
+    gigalixir_database.scale(ctx.obj['host'], app_name, database_id, size)
+
+@cli.command()
+@click.argument('app_name')
 @click.option('-r', '--replicas', type=int, help='Number of replicas to run.')
 @click.option('-s', '--size', type=float, help='Size of each replica between 0.5 and 128 in increments of 0.1.')
 @click.pass_context
