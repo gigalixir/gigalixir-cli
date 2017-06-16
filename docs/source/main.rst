@@ -86,15 +86,50 @@ Finally, build and deploy.
     git push gigalixir master
     curl https://$APP_NAME.gigalixirapp.com/
 
-Note!
------
+Provision a Database
+--------------------
 
-The `gigalixir-getting-started`_ app does not have a database connected yet. In fact, we removed the Ecto Repo from the supervisor tree to prevent database connection attempts. To connect a database, see :ref:`connect-database`.
+Your app does not have a database yet, let's create one.
+
+.. code-block:: bash
+
+    gigalixir create_database $APP_NAME 
+
+Configure Phoenix for the database
+----------------------------------
+
+Modify your :bash:`prod.exs` file so that it includes this
+
+.. code-block:: elixir
+
+     config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
+       adapter: Ecto.Adapters.Postgres,
+       url: {:system, "DATABASE_URL"},
+       ssl: true,
+       pool_size: 20
+
+Hot Upgrade!
+------------
+
+Re-deploy with the database configuration as a hot upgrade.
+
+.. code-block:: bash
+
+    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir master
+    curl https://$APP_NAME.gigalixirapp.com/
+
+Verify logs
+-----------
+
+Make sure your logs look good
+
+.. code-block:: bash
+
+    gigalixir logs $APP_NAME
 
 What's Next?
 ------------
 
-- :ref:`connect-database`
 - :ref:`configs`
 - :ref:`scale`
 
@@ -798,6 +833,8 @@ How to Set Up SSL/TLS
 SSL/TLS certificates are set up for you automatically assuming your custom domain is set up properly. You
 shouldn't have to lift a finger. For more information on how this works, see :ref:`how-tls-works`.
  
+.. _`tail logs`:
+
 How to Tail Logs
 ================
 
@@ -981,6 +1018,74 @@ How to Log In
 
 This modifies your ~/.netrc file so that future API requests will be authenticated. API keys expire after 365 days, but if you login again, you will automatically receive an we API key.
 
+
+.. _`provisioning database`:
+
+How to provision a PostgreSQL database
+======================================
+
+The following command will provision a database for you and set your :bash:`DATABASE_URL` environment variable appropriately. 
+
+.. code-block:: bash
+
+    gigalixir create_database $APP_NAME --size=0.6
+
+It takes a few minutes to provision. You can check the status by running
+
+.. code-block:: bash
+
+    gigalixir databases $APP_NAME
+
+You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
+
+Under the hood, we use Google's Cloud SQL which provides reliability, security, and automatic backups. For more information, see `Google Cloud SQL for PostgreSQL Documentation`_.
+
+.. _`Google Cloud SQL for PostgreSQL Documentation`: https://cloud.google.com/sql/docs/postgres/
+
+How to scale a database
+=======================
+
+To change the size of your database, run
+
+.. code-block:: bash
+
+    gigalixir scale_database $APP_NAME $DATABASE_ID --size=1.7
+
+Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. For more information about databases sizes, see :ref:`database sizes`.
+
+How to delete a database
+========================
+
+WARNING!! Deleting a database also deletes all of its backups. Please make sure you backup your data first.
+
+To delete a database, run
+
+.. code-block:: bash
+
+    gigalixir delete_database $APP_NAME $DATABASE_ID
+
+.. _`database sizes`:
+
+Database Sizes & Pricing
+========================
+
+Database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically. We currently do not set a limit for disk size, but we probably will later.
+
+====  =============
+Size  Price / Month
+====  =============
+0.6   $25
+1.7   $50
+  4   $400
+  8   $800
+ 16   $1600
+ 32   $3200
+ 64   $6400
+128   $12800
+====  =============
+
+Prices are prorated to the second.
+
 .. _`connect-database`:
 
 How to Connect a Database
@@ -996,7 +1101,7 @@ Connecting to a database is done no differently from apps running outside GIGALI
        ssl: true,
        pool_size: 20
 
-Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`.
+Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`. If you provisioned your database using, :ref:`provisioning database`, then :bash:`DATABASE_URL` should be set for you automatically once the database in provisioned.
 
 .. code-block:: bash
 
@@ -1021,9 +1126,10 @@ We recommend `Google Cloud SQL`, but `Amazon Relational Database Service`_ will 
 .. _`gigalixir-getting-started`: https://github.com/gigalixir/gigalixir-getting-started
 .. _`lib/gigalixir-getting-started.ex`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/lib/gigalixir_getting_started.ex#L14
 
+
 .. _`How to set up a Google Cloud SQL PostgreSQL database`:
 
-How to set up a Google Cloud SQL PostgreSQL database
+How to manually set up a Google Cloud SQL PostgreSQL database
 --------------------------------------------------
 
 Note: You can also use Amazon RDS, but we do not have instructions provided yet.

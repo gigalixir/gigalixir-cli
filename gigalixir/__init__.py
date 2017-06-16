@@ -453,7 +453,10 @@ def delete_database(ctx, app_name, database_id):
     """
     Delete database.
     """
-    gigalixir_database.delete(ctx.obj['host'], app_name, database_id)
+    logging.getLogger("gigalixir-cli").info("WARNING!! Deleting your database will also delete all backups.")
+    logging.getLogger("gigalixir-cli").info("WARNING!! Please make sure you backup your data first.")
+    if click.confirm('Do you want to delete your database and all backups?'):
+        gigalixir_database.delete(ctx.obj['host'], app_name, database_id)
 
 # @delete.command()
 @cli.command()
