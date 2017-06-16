@@ -95,19 +95,6 @@ Your app does not have a database yet, let's create one.
 
     gigalixir create_database $APP_NAME 
 
-Configure Phoenix for the database
-----------------------------------
-
-Modify your :bash:`prod.exs` file so that it includes this
-
-.. code-block:: elixir
-
-     config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
-       adapter: Ecto.Adapters.Postgres,
-       url: {:system, "DATABASE_URL"},
-       ssl: true,
-       pool_size: 20
-
 Hot Upgrade!
 ------------
 
@@ -1091,7 +1078,7 @@ Prices are prorated to the second.
 How to Connect a Database
 =========================
 
-Connecting to a database is done no differently from apps running outside GIGALIXIR. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable. In short, you'll want to add something like this to your :bash:`prod.exs` file.
+If you followed the quick start, then your database should already be connected. If not, connecting to a database is done no differently from apps running outside GIGALIXIR. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable. In short, you'll want to add something like this to your :bash:`prod.exs` file.
 
 .. code-block:: elixir
 
@@ -1101,23 +1088,13 @@ Connecting to a database is done no differently from apps running outside GIGALI
        ssl: true,
        pool_size: 20
 
-Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`. If you provisioned your database using, :ref:`provisioning database`, then :bash:`DATABASE_URL` should be set for you automatically once the database in provisioned.
+Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`. If you provisioned your database using, :ref:`provisioning database`, then :bash:`DATABASE_URL` should be set for you automatically once the database in provisioned. Otherwise,
 
 .. code-block:: bash
 
     gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
 
-Note that if you started by cloning the `gigalixir-getting-started`_ repo, you'll have to uncomment a line in your :ref:`lib/gigalixir-getting-started.ex` file that looks like this.
-
-.. code-block:: elixir
-
-    # supervisor(GigalixirGettingStarted.Repo, []),
-
-We commented this line out by default in order to disable database connection attempts before the database is configured. If you had followed the `quick start`_ without setting a :bash:`DATABASE_URL`, then the app wouldn't have started up properly. 
-
-GIGALIXIR does not currently provide Databases-as-a-Service, but we are working on it. We do provide instructions on `How to set up a Google Cloud SQL PostgreSQL database`_ so you can set it up yourself.
-
-We recommend `Google Cloud SQL`, but `Amazon Relational Database Service`_ will work also. We currently host your apps in Google Cloud Platform's us-central1 region so you'll get the best latency using Google Cloud SQL in the us-central1 region. Google Cloud SQL `supports PostgreSQL`_, but it is still in beta. To use MySQL, follow the `Phoenix Using MySQL Guide`_. 
+If you need to provision a database, GIGALIXIR provides Databases-as-a-Service. See :ref:`provisioning database`. If you prefer to provision your database manually, follow `How to set up a Google Cloud SQL PostgreSQL database`_.
 
 .. _`supports PostgreSQL`: https://cloud.google.com/sql/docs/postgres/
 .. _`Phoenix Using MySQL Guide`: http://www.phoenixframework.org/docs/using-mysql
