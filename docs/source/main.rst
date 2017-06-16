@@ -95,16 +95,6 @@ Your app does not have a database yet, let's create one.
 
     gigalixir create_database $APP_NAME 
 
-Hot Upgrade!
-------------
-
-Re-deploy with the database configuration as a hot upgrade.
-
-.. code-block:: bash
-
-    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir master
-    curl https://$APP_NAME.gigalixirapp.com/
-
 Verify logs
 -----------
 
