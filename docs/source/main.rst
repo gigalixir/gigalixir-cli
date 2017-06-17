@@ -107,6 +107,7 @@ Make sure your logs look good
 What's Next?
 ------------
 
+- :ref:`hot-upgrade`
 - :ref:`configs`
 - :ref:`scale`
 
@@ -224,6 +225,11 @@ Known Issues
   -  Warning: Multiple default buildpacks reported the ability to handle this app. The first buildpack in the list below will be used.
 
       - This warning is safe to ignore. It is a temporary warning due to a workaround. 
+
+  - curl: (56) GnuTLS recv error (-110): The TLS connection was non-properly terminated.
+
+      - Currently, the load balancer for domains under gigalixirapp.com has a request timeout of 30 seconds. If your request takes longer than 30 seconds to respond, the load balancer cuts the connection. Often, the cryptic error message you will see when using curl is the above. The load balancer for custom domains does not have this problem.
+
 
 How Does GIGALIXIR Work?
 ========================
@@ -662,8 +668,7 @@ How to Create an App
 How to Deploy an App
 ====================
 
-Deploying an app is done using a git push, the same way you would push code to github. For more information
-about how this works, see `life of a deploy`_.
+Deploying an app is done using a git push, the same way you would push code to github. For more information about how this works, see `life of a deploy`_.
 
 .. code-block:: bash
 
@@ -707,9 +712,7 @@ And this to push to production
 How to Scale an App
 ===================
 
-You can scale your app by adding more memory and cpu to each container, also called a replica. You can also
-scale by adding more replicas. Both are handled by the following command. For more information about, see
-`replica sizing`_.
+You can scale your app by adding more memory and cpu to each container, also called a replica. You can also scale by adding more replicas. Both are handled by the following command. For more information, see `replica sizing`_.
 
 .. code-block:: bash
 
