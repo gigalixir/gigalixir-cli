@@ -183,13 +183,14 @@ def run(ctx, app_name, module, function):
 
 @cli.command()
 @click.argument('app_name')
+@click.option('-m', '--migration_app_name', default=None, help='For umbrella apps, specify which inner app to migrate.')
 @click.pass_context
 @report_errors
-def migrate(ctx, app_name):
+def migrate(ctx, app_name, migration_app_name):
     """
     Run Ecto Migrations on a production node.
     """
-    gigalixir_app.migrate(ctx.obj['host'], app_name)
+    gigalixir_app.migrate(ctx.obj['host'], app_name, migration_app_name)
 
 # @update.command()
 @cli.command()

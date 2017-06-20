@@ -155,10 +155,15 @@ def run(host, app_name, module, function):
 def distillery_eval(host, app_name, expression):
     ssh(host, app_name, "eval", expression)
 
-def migrate(host, app_name):
-    r = requests.get('%s/api/apps/%s/migrate-command' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def migrate(host, app_name, migration_app_name):
+    if migration_app_name == None:
+        r = requests.get('%s/api/apps/%s/migrate-command' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+            'Content-Type': 'application/json',
+        })
+    else:
+        r = requests.get('%s/api/apps/%s/migrate-command?migration_app_name=%s' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(migration_app_name.encode('utf-8'))), headers = {
+            'Content-Type': 'application/json',
+        })
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
