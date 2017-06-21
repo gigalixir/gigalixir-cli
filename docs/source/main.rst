@@ -1,7 +1,7 @@
 What is GIGALIXIR?
 ==================
 
-GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy, run, and manage an app in production, but GIGALIXIR is unique because it is designed to support all of features that probably drew you to Elixir in the first place, like node clustering, hot upgrades, and remote observer. Moreover, some platforms restart your processes every 24 hours, restrict you to 50 simultaneous connections per instance, and limit each connection to 30 seconds. GIGALIXIR made opinionated design decisions from the ground up to support all the fetaures of Elixir because we know that most Elixir apps are built to be distributed, highly available, and handle large numbers of concurrent long-lived connections. 
+GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy, run, and manage an app in production, but GIGALIXIR is unique because it is designed to support all of features that probably drew you to Elixir in the first place, like node clustering, hot upgrades, and remote observer. Moreover, some platforms restart your processes every 24 hours, restrict you to 50 simultaneous connections per instance, and limit each connection to 30 seconds. GIGALIXIR made opinionated design decisions from the ground up to support all the features of Elixir because we know that most Elixir apps are built to be distributed, highly available, and handle large numbers of concurrent long-lived connections. 
 
 .. _`quick start`:
 
@@ -21,7 +21,7 @@ Prequisites
 #. Make sure you have :bash:`python2.7`, not :bash:`python3`. 
 #. Make sure you are on Linux or OS X. Windows users have been using a small Linux instance in the cloud to use GIGALIXIR.
 #. Make sure you have a beta invitation. If you don't have one, request one using the `beta sign up form`_.
-#. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
+#. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.4. You can configure the production version in your `buildpack configuration file`_.
 #. Phoenis 1.2 is officially supported. Phoenix 1.3 is known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
 #. Umbrella apps are known to work, but they are not yet officially supported. We are working on adding official support.
 
