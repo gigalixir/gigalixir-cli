@@ -13,7 +13,6 @@ from . import payment_method as gigalixir_payment_method
 from . import domain as gigalixir_domain
 from . import invoice as gigalixir_invoice
 from . import usage as gigalixir_usage
-from . import credit as gigalixir_credit
 from . import database as gigalixir_database
 import click
 import requests
@@ -206,6 +205,16 @@ def set_payment_method(ctx, card_number, card_exp_month, card_exp_year, card_cvc
     """
     gigalixir_payment_method.update(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc)
 
+@cli.command()
+@click.pass_context
+@report_errors
+def upgrade(ctx):
+    """
+    Upgrade from free tier to standard tier.
+    """
+    if click.confirm('Are you sure you want to upgrade to the standard tier?'):
+        gigalixir_user.upgrade(ctx.obj['host'])
+
 # @reset.command()
 @cli.command()
 @click.option('-t', '--token', prompt=True)
@@ -230,6 +239,15 @@ def change_password(ctx, email, current_password, new_password):
     Change password.
     """
     gigalixir_user.change_password(ctx.obj['host'], email, current_password, new_password)
+
+@cli.command()
+@click.pass_context
+@report_errors
+def account(ctx):
+    """
+    Account information.
+    """
+    gigalixir_user.account(ctx.obj['host'])
 
 # @update.command()
 @cli.command()
@@ -521,15 +539,6 @@ def create(ctx, name):
 @cli.command()
 @click.pass_context
 @report_errors
-def credit(ctx):
-    """
-    How much credit is on your account.
-    """
-    gigalixir_credit.get(ctx.obj['host'])
-
-@cli.command()
-@click.pass_context
-@report_errors
 def invoices(ctx):
     """
     List all previous invoices.
@@ -549,14 +558,10 @@ def current_period_usage(ctx):
 @cli.command()
 @click.option('--email')
 @click.option('-p', '--password')
-@click.option('--card_number')
-@click.option('--card_exp_month')
-@click.option('--card_exp_year')
-@click.option('--card_cvc')
 @click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
 @click.pass_context
 @report_errors
-def signup(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
+def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
     """
     Sign up for a new account.
     """
@@ -574,19 +579,7 @@ def signup(ctx, email, card_number, card_exp_month, card_exp_year, card_cvc, pas
         password = click.prompt('Password', hide_input=True)
     gigalixir_user.validate_password(ctx.obj['host'], password)
 
-    if card_number == None:
-        logging.getLogger("gigalixir-cli").info("GIGALIXIR Money-Back Guarantee: http://gigalixir.readthedocs.io/en/latest/main.html#money-back-guarantee")
-        logging.getLogger("gigalixir-cli").info("Don't worry, all communication is encrypted and secured with TLS. You can verify at https://github.com/gigalixir/gigalixir-cli.")
-        card_number = click.prompt('Credit Card Number', type=int)
-
-    if card_exp_month == None:
-        card_exp_month = click.prompt('Credit Card Expiration Month', type=int)
-    if card_exp_year == None:
-        card_exp_year = click.prompt('Credit Card Expiration Year', type=int)
-    if card_cvc == None:
-        card_cvc = click.prompt('Credit Card CVC')
-
-    gigalixir_user.create(ctx.obj['host'], email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy)
+    gigalixir_user.create(ctx.obj['host'], email, password, accept_terms_of_service_and_privacy_policy)
 
 @cli.command()
 @click.argument('app_name')

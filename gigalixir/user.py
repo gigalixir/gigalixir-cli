@@ -6,27 +6,28 @@ import click
 import stripe
 import json
 
-def create(host, email, card_number, card_exp_month, card_exp_year, card_cvc, password, accept_terms_of_service_and_privacy_policy):
-    token = stripe.Token.create(
-        card={
-            "number": card_number,
-            "exp_month": card_exp_month,
-            "exp_year": card_exp_year,
-            "cvc": card_cvc,
-        },
-    )
-    r = requests.post('%s/api/users' % host, headers = {
+def create(host, email, password, accept_terms_of_service_and_privacy_policy):
+    r = requests.post('%s/api/free_users' % host, headers = {
         'Content-Type': 'application/json',
     }, json = {
         'email': email,
         'password': password,
-        'stripe_token': token["id"],
     })
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
     logging.getLogger("gigalixir-cli").info('Created account for %s. Confirmation email sent.' % email)
+
+def upgrade(host):
+    r = requests.put('%s/api/users/upgrade' % host, headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    logging.getLogger("gigalixir-cli").info('Account upgraded.')
 
 def validate_email(host, email):
     r = requests.get('%s/api/validate_email' % host, headers = {
@@ -101,3 +102,13 @@ def get_confirmation_token(host, email):
         raise Exception(r.text)
     else:
         logging.getLogger("gigalixir-cli").info("Confirmation token has been sent to your email.")
+
+def account(host):
+    r = requests.get('%s/api/users' % host)
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        click.echo(json.dumps(data, indent=2, sort_keys=True))
