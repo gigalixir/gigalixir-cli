@@ -3,6 +3,8 @@ What is GIGALIXIR?
 
 GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy, run, and manage an app in production, but GIGALIXIR is unique because it is designed to support all of features that probably drew you to Elixir in the first place, like node clustering, hot upgrades, and remote observer. Moreover, some platforms restart your processes every 24 hours, restrict you to 50 simultaneous connections per instance, and limit each connection to 30 seconds. GIGALIXIR made opinionated design decisions from the ground up to support all the fetaures of Elixir because we know that most Elixir apps are built to be distributed, highly available, and handle large numbers of concurrent long-lived connections. 
 
+Try GIGALIXIR for free without a credit card by following the :ref:`quick start`.
+
 .. _`quick start`:
 
 Quick Start
@@ -20,10 +22,8 @@ Prequisites
 #. Make sure you have :bash:`pip` installed. For help, take a look at the `pip documentation`_. 
 #. Make sure you have :bash:`python2.7`, not :bash:`python3`. 
 #. Make sure you are on Linux or OS X. Windows users have been using a small Linux instance in the cloud to use GIGALIXIR.
-#. Make sure you have a beta invitation. If you don't have one, request one using the `beta sign up form`_.
 #. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
-#. Phoenis 1.2 is officially supported. Phoenix 1.3 is known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
-#. Umbrella apps are known to work, but they are not yet officially supported. We are working on adding official support.
+#. Phoenix 1.2 is officially supported. Phoenix 1.3 release candidates are known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
 
 .. _`buildpack configuration file`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 .. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
@@ -94,6 +94,12 @@ Your app does not have a database yet, let's create one.
 .. code-block:: bash
 
     gigalixir create_database $APP_NAME 
+
+This may take a few minutes to become AVAILABLE. Run this to check the status.
+
+.. code-block:: bash
+
+    gigalixir databases $APP_NAME
 
 Verify logs
 -----------
@@ -361,6 +367,8 @@ Heroku is a really great platform and much of GIGALIXIR was designed based on th
 
 For example, Heroku restarts your app every 24 hours regardless of if it is healthy or not. Elixir apps are designed to be long-lived and many use in-memory state so restarting every 24 hours sort of kills that. Heroku also limits the number of concurrent connections you can have to 50 per instance. It also has limits to how long these connections can live. Heroku isolates each instance of your app so they cannot communicate with each other, which prevents node clustering. Heroku also restricts SSH access to your containers which makes it impossible to do hot upgrades, remote consoles, remote observers, production tracing, and a bunch of other things. The list goes on, but suffice it to say, running an Elixir app on Heroku forces you to give up a lot of the features that drew you to Elixir in the first place.
 
+For a feature comparison table between GIGALIXIR and Heroku see, :ref:`gigalixir heroku feature comparison`.
+
 Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you *could* make modifications to support node clustering and remote observer, but they won't work out of the box and hot upgrades would require some fundamental changes to the way Deis was designed to work. Even so, you'd still have to spend a lot of time solving problems that GIGALIXIR has already figured out for you.
 
 On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
@@ -471,8 +479,64 @@ GIGALIXIR handles permissions so that you have access to Kubernetes endpoints an
 
 .. _`pricing`:
 
+Tiers
+=====
+
+GIGALIXIR offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.5 instance and 1 size 0.6 database. The database is also limited to 10,000 rows. 
+
+=======================  ========= =============
+Feature                  FREE Tier STANDARD Tier
+=======================  ========= =============
+Websockets               YES       YES
+Automatic TLS            YES       YES
+Log Aggregation          YES       YES
+Log Tailing              YES       YES
+Hot Upgrades             YES       YES
+Remote Observer          YES       YES
+No Connection Limits     YES       YES
+No Daily Restarts        YES       YES
+Custom Domains           YES       YES
+Postgres-as-a-Service    YES       YES
+SSH Access               YES       YES
+Flexible Instance Sizes            YES
+Horizontal Scaling                 YES
+Clustering                         YES
+=======================  ========= =============
+
+.. _`gigalixir heroku feature comparison`:
+
+GIGALIXIR vs Heroku Feature Comparison
+======================================
+
+=======================  =================== ======================= =========== =============== ==================
+Feature                  GIGALIXIR FREE Tier GIGALIXIR STANDARD Tier Heroku Free Heroku Standard Heroku Performance
+=======================  =================== ======================= =========== =============== ==================
+Websockets               YES                 YES                     YES         YES             YES
+Log Aggregation          YES                 YES                     YES         YES             YES
+Log Tailing              YES                 YES                     YES         YES             YES
+Custom Domains           YES                 YES                     YES         YES             YES
+Postgres-as-a-Service    YES                 YES                     YES         YES             YES
+Automatic TLS            YES                 YES                                 YES             YES
+Preboot                  YES                 YES                                 YES             YES
+SSH Access               YES                 YES
+Hot Upgrades             YES                 YES
+Remote Observer          YES                 YES
+No Connection Limits     YES                 YES
+No Daily Restarts        YES                 YES
+Flexible Instance Sizes                      YES
+Clustering                                   YES
+Horizontal Scaling                           YES                                 YES             YES
+Built-in Metrics                                                                 YES             YES
+Threshold Alerts                                                                 YES             YES
+Dedicated Instances                                                                              YES
+Autoscaling                                                                                      YES
+=======================  =================== ======================= =========== =============== ==================
+
+
 Pricing Details
 ===============
+
+In the free tier, everything is free. Once you upgrade to the standard tier, pricing is calculated as follows.
 
 Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card.
 
@@ -655,6 +719,22 @@ How to Sign Up for an Account
 
     gigalixir signup
 
+.. `upgrade account`:
+
+How to Upgrade an Account
+=========================
+
+The free tier is limited to 1 instance and 1 database. If you need more, or you need to increase the size of either, you'll need to upgrade your account. To upgrade, first add a payment method
+
+.. code-block:: bash
+
+    gigalixir set_payment_method
+
+Then upgrade.
+
+.. code-block:: bash
+
+    gigalixir upgrade
 
 How to Create an App
 ====================
@@ -921,12 +1001,6 @@ How to Delete your Account
 
 There is currently no way to completely delete an account. We are working on implementing this feature.
 
-How to View Billing and Usage
-=============================
-
-We currently do not have a way to view usage or your bill so far in the middle of the month, but we are working on it. For more information about how your bill is calculated, see :ref:`pricing`.
-
-
 How to Restart an App
 =====================
 
@@ -1020,6 +1094,8 @@ You can only have one database per app because otherwise managing your :bash:`DA
 
 Under the hood, we use Google's Cloud SQL which provides reliability, security, and automatic backups. For more information, see `Google Cloud SQL for PostgreSQL Documentation`_.
 
+If you are on the free tier, you will be limited to 10,000 rows. For information on upgrading your account, see :ref:`upgrade account`.
+
 .. _`Google Cloud SQL for PostgreSQL Documentation`: https://cloud.google.com/sql/docs/postgres/
 
 How to scale a database
@@ -1050,6 +1126,16 @@ Database Sizes & Pricing
 ========================
 
 Database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically. We currently do not set a limit for disk size, but we probably will later.
+
+In the free tier, you get a size 0.6 database for free, but it is limited to 10,000 rows. 
+
+====  =============
+Size  Price / Month
+====  =============
+0.6   FREE
+====  =============
+
+Once you upgrade to the standard tier, the pricing is as follows.
 
 ====  =============
 Size  Price / Month
@@ -1198,6 +1284,15 @@ To see how many replicas are actually running in production compared to how many
 
     gigalixir status $APP_NAME
 
+How to Check Account Status
+===========================
+
+To see things like which account you are logged in as, what tier you are on, and how many credits you have available, run
+
+.. code-block:: bash
+
+    gigalixir account
+
 How to Launch a Remote Observer
 ===============================
 
@@ -1233,15 +1328,6 @@ To see all your previous period's invoices, run
 
     gigalixir invoices
 
-How to check my credit balance
-============================
-
-If you have a credit balance on your account, you can see it by running
-
-.. code-block:: bash
-
-    gigalixir credit
-
 .. _`money back guarantee`:
 
 Money-back Guarantee
@@ -1267,7 +1353,7 @@ Indices and Tables
 .. _`twelve-factor methodology`: https://12factor.net/
 .. _`PaperTrail`: https://papertrailapp.com/
 .. _`Running Elixir and Phoenix projects on a cluster of nodes`: https://dockyard.com/blog/2016/01/28/running-elixir-and-phoenix-projects-on-a-cluster-of-nodes
-.. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. It will also prompt you for credit card information. GIGALIXIR currently does not offer a free trial, but we do offer a `money back guarantee`_. Please don't hesitate to use it.
+.. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. GIGALIXIR's free tier does not require a credit card, but you will be limited to 1 instance with 0.5GB of memory and 1 postgresql database limited to 10,000 rows.
 .. |set up app for deploys| replace:: To create your app, run the following command. It will also set up a git remote so you can later run :bash:`git push gigalixir master`. This must be run from within a git repository folder. An app name will be generated for you, but you can also optionally supply an app name if you wish. There is currently no way to change your app name.
 .. _`The Twelve-Factor App's Config Factor`: https://12factor.net/config
 .. _`Herokuish`: https://github.com/gliderlabs/herokuish
