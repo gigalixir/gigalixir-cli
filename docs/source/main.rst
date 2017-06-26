@@ -516,6 +516,7 @@ Log Aggregation          YES                 YES                     YES        
 Log Tailing              YES                 YES                     YES         YES             YES
 Custom Domains           YES                 YES                     YES         YES             YES
 Postgres-as-a-Service    YES                 YES                     YES         YES             YES
+No sleeping              YES                 YES                                 YES             YES
 Automatic TLS            YES                 YES                                 YES             YES
 Preboot                  YES                 YES                                 YES             YES
 SSH Access               YES                 YES
@@ -536,7 +537,7 @@ Autoscaling                                                                     
 Pricing Details
 ===============
 
-In the free tier, everything is free. Once you upgrade to the standard tier, pricing is calculated as follows.
+In the free tier, everything is free. Once you upgrade to the standard tier, you pay $50 per GB-month of memory. CPU, bandwidth, and power are included. You get 1 CPU share per GB of memory. See :ref:`replica sizing`.
 
 Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card.
 
@@ -565,6 +566,8 @@ Your monthly bill will be
 .. code-block:: bash
 
   8640000 * $0.00001866786 = $161.29.
+
+For database pricing, see :ref:`database sizes`.
  
 .. _`replica sizing`:
 
@@ -1125,7 +1128,7 @@ To delete a database, run
 Database Sizes & Pricing
 ========================
 
-Database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically. We currently do not set a limit for disk size, but we probably will later.
+Database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically as needed. We currently do not set a limit for disk size, but we probably will later.
 
 In the free tier, you get a size 0.6 database for free, but it is limited to 10,000 rows. 
 
