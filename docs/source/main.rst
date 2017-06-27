@@ -19,8 +19,9 @@ Prequisites
 .. role:: bash(code)
     :language: bash
 
-#. Make sure you have :bash:`pip` installed. For help, take a look at the `pip documentation`_. 
 #. Make sure you have :bash:`python2.7`, not :bash:`python3`. 
+#. Make sure you have :bash:`pip` installed. For help, take a look at the `pip documentation`_. 
+#. Make sure you have :bash:`git` installed. For help, take a look at the `git documentation`_. 
 #. Make sure you are on Linux or OS X. Windows users have been using a small Linux instance in the cloud to use GIGALIXIR.
 #. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
 #. Phoenix 1.2 is officially supported. Phoenix 1.3 release candidates are known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
@@ -84,6 +85,11 @@ Finally, build and deploy.
 .. code-block:: bash
 
     git push gigalixir master
+
+Wait a minute or two since this is the first deploy, then test it out.
+
+.. code-block:: bash
+
     curl https://$APP_NAME.gigalixirapp.com/
 
 Provision a Database
@@ -101,18 +107,10 @@ This may take a few minutes to become AVAILABLE. Run this to check the status.
 
     gigalixir databases $APP_NAME
 
-Verify logs
------------
-
-Make sure your logs look good
-
-.. code-block:: bash
-
-    gigalixir logs $APP_NAME
-
 What's Next?
 ------------
 
+- :ref:`logging`
 - :ref:`hot-upgrade`
 - :ref:`configs`
 - :ref:`scale`
@@ -190,8 +188,9 @@ Then add the following in :bash:`prod.exs`
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
        url: {:system, "DATABASE_URL"},
+       database: "",
        ssl: true,
-       pool_size: 20
+       pool_size: 10
 
 Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following. For more information on setting configs, see :ref:`configs`.
 
@@ -642,7 +641,9 @@ In your app code,
 Troubleshooting
 ===============
 
-TODO: Common issues go here.
+    - ~/.netrc access too permissive: access permissions must restrict access to only the owner
+
+        - run :bash:`chmod og-rwx ~/.netrc`
 
 .. _`contact us for help`:
 .. _`help`:
@@ -897,6 +898,7 @@ SSL/TLS certificates are set up for you automatically assuming your custom domai
 shouldn't have to lift a finger. For more information on how this works, see :ref:`how-tls-works`.
  
 .. _`tail logs`:
+.. _`logging`:
 
 How to Tail Logs
 ================
@@ -1167,8 +1169,9 @@ If you followed the quick start, then your database should already be connected.
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
        url: {:system, "DATABASE_URL"},
+       database: "",
        ssl: true,
-       pool_size: 20
+       pool_size: 10
 
 Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`. If you provisioned your database using, :ref:`provisioning database`, then :bash:`DATABASE_URL` should be set for you automatically once the database in provisioned. Otherwise,
 
@@ -1346,6 +1349,7 @@ Indices and Tables
 * :ref:`search`
 
 .. _`pip documentation`: https://packaging.python.org/installing/
+.. _`git documentation`: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 .. _`Distillery appup documentation`: https://hexdocs.pm/distillery/upgrades-and-downgrades.html#appups
 .. _`Distillery's upgrade command`: https://hexdocs.pm/distillery/walkthrough.html#deploying-an-upgrade
 .. _`heroku/cedar:14`: https://hub.docker.com/r/heroku/cedar/
