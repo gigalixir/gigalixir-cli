@@ -18,6 +18,7 @@ def create(host, email, password, accept_terms_of_service_and_privacy_policy):
             raise auth.AuthException()
         raise Exception(r.text)
     logging.getLogger("gigalixir-cli").info('Created account for %s. Confirmation email sent.' % email)
+    logging.getLogger("gigalixir-cli").info('Please check your email and click confirm before continuing.')
 
 def upgrade(host):
     r = requests.put('%s/api/users/upgrade' % host, headers = {
@@ -63,7 +64,7 @@ def login(host, email, password, yes):
         raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
-        if yes or click.confirm('Would you like to save your api key to your ~/.netrc file?', default=True):
+        if yes or click.confirm('Would you like us to save your api key to your ~/.netrc file?', default=True):
             netrc.update_netrc(email, key)
             logging.getLogger("gigalixir-cli").info('Logged in as %s.' % email)
         else:

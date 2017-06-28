@@ -19,12 +19,20 @@ Prequisites
 .. role:: bash(code)
     :language: bash
 
-#. Make sure you have :bash:`python2.7`, not :bash:`python3`. 
-#. Make sure you have :bash:`pip` installed. For help, take a look at the `pip documentation`_. 
-#. Make sure you have :bash:`git` installed. For help, take a look at the `git documentation`_. 
-#. Make sure you are on Linux or OS X. Windows users have been using a small Linux instance in the cloud to use GIGALIXIR.
-#. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
-#. Phoenix 1.2 is officially supported. Phoenix 1.3 release candidates are known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
+#. :bash:`python2.7`, not :bash:`python3`. 
+#. :bash:`pip`. For help, take a look at the `pip documentation`_. 
+#. :bash:`git`. For help, take a look at the `git documentation`_.
+#. Linux or OS X. 
+
+.. #. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
+.. #. Phoenix 1.2 is officially supported. Phoenix 1.3 release candidates are known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
+
+For example, on Ubuntu, run
+
+.. code-block:: bash
+
+    sudo apt-get update
+    sudo apt-get install -y python python-pip git-core curl
 
 .. _`buildpack configuration file`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 .. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
@@ -811,16 +819,9 @@ All app configuration is done through envirnoment variables. You can get, set, a
  
 .. code-block:: bash
 
-    $ gigalixir configs $APP_NAME
-    {}
-    $ gigalixir set_config $APP_NAME FOO bar
-    $ gigalixir configs $APP_NAME                                                                                 
-    {
-      "FOO": "bar"
-    }
-    $ gigalixir delete_config $APP_NAME FOO                                                                           
-    $ gigalixir configs $APP_NAME
-    {}
+    gigalixir configs $APP_NAME
+    gigalixir set_config $APP_NAME FOO bar
+    gigalixir delete_config $APP_NAME FOO                                                               
 
 .. _`hot-configure`:
 .. _`hot configuration updates`: 
@@ -856,7 +857,12 @@ with the new release.
 
 .. code-block:: bash
 
-    $ gigalixir releases foo
+    gigalixir releases $APP_NAME
+
+You should see something like this
+
+.. code-block:: bash
+
     [
       {
         "created_at": "2017-04-12T17:43:28.000+00:00", 
