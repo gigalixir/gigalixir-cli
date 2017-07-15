@@ -918,7 +918,7 @@ You can tail logs in real-time aggregated across all containers using the follow
 How to Forward Logs Externally
 ==============================
 
-If you want to forward your logs to another service such as `timber.io`_ or `PaperTrail`_, you'll need to set up a log drain. We support HTTPS and syslog drains. To create a log drain, run
+If you want to forward your logs to another service such as `Timber`_ or `PaperTrail`_, you'll need to set up a log drain. We support HTTPS and syslog drains. To create a log drain, run
 
 .. code-block:: bash
 
@@ -938,7 +938,7 @@ To delete a drain, run
 
     gigalixir delete_log_drain $APP_NAME $DRAIN_ID
 
-.. _`timber.io`: https://timber.io
+.. _`Timber`: https://timber.io
 
 .. _managing-ssh-keys:
 
