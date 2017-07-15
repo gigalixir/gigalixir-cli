@@ -44,3 +44,7 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     cd docs
     make html
     xdg-open build/html/index.html
+
+## Credits
+
+Beaker by Eugen Belyakoff from the Noun Project
