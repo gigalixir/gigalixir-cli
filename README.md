@@ -21,7 +21,8 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 
 ## Testing
 
-    # set up a virtualenv
+    # set up a virtualenv, then
+    unset GIGALIXIR_ENV
     pip install -e .[dev]
     python setup.py test
 
@@ -36,3 +37,10 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     python setup.py sdist upload -r pypitest
     python setup.py sdist upload -r pypi
 
+## Modify documentation
+
+    pip install sphinx
+    pip install sphinx_rtd_theme
+    cd docs
+    make html
+    xdg-open build/html/index.html

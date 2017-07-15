@@ -576,3 +576,42 @@ def test_upgrade():
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
+@httpretty.activate
+def test_get_log_drains():
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/drains', body='{"data":[{"url":"syslog+tls://foo.papertrailapp.com:12345","token":"fake-token1","id":1},{"url":"https://user:pass@logs.timber.io/frames","token":"fake-token2","id":2}]}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['log_drains', 'fake-app-name'])
+    print result.output
+    assert result.output == """[
+  {
+    "id": 1, 
+    "token": "fake-token1", 
+    "url": "syslog+tls://foo.papertrailapp.com:12345"
+  }, 
+  {
+    "id": 2, 
+    "token": "fake-token2", 
+    "url": "https://user:pass@logs.timber.io/frames"
+  }
+]
+"""
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_add_log_drain():
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/drains', body='{}', content_type='application/json', status=201)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['add_log_drain', 'fake-app-name', 'fake-url'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"url": "fake-url"}')
+
+@httpretty.activate
+def test_delete_log_drain():
+    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/drains', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['delete_log_drain', 'fake-app-name', "10"])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body).to.equal('{"drain_id": "10"}')

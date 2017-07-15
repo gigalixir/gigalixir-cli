@@ -9,6 +9,7 @@ from . import permission as gigalixir_permission
 from . import release as gigalixir_release
 from . import api_key as gigalixir_api_key
 from . import ssh_key as gigalixir_ssh_key
+from . import log_drain as gigalixir_log_drain
 from . import payment_method as gigalixir_payment_method
 from . import domain as gigalixir_domain
 from . import invoice as gigalixir_invoice
@@ -307,6 +308,18 @@ def payment_method(ctx):
 
 # @get.command()
 @cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
+def log_drains(ctx, app_name):
+    """
+    Get your log drains.
+    """
+    gigalixir_log_drain.get(ctx.obj['host'], app_name)
+
+
+# @get.command()
+@cli.command()
 @click.pass_context
 @report_errors
 def ssh_keys(ctx):
@@ -347,6 +360,19 @@ def permissions(ctx, app_name):
     Get permissions for app.
     """
     gigalixir_permission.get(ctx.obj['host'], app_name)
+
+# @create.command()
+@cli.command()
+@click.argument('app_name')
+@click.argument('url')
+@click.pass_context
+@report_errors
+def add_log_drain(ctx, app_name, url):
+    """
+    Add a drain to send your logs to.
+    """
+    gigalixir_log_drain.create(ctx.obj['host'], app_name, url)
+
 
 # @create.command()
 @cli.command()
@@ -438,6 +464,18 @@ def configs(ctx, app_name):
     Get app configuration/environment variables.
     """
     gigalixir_config.get(ctx.obj['host'], app_name)
+
+# @delete.command()
+@cli.command()
+@click.argument('app_name')
+@click.argument('drain_id')
+@click.pass_context
+@report_errors
+def delete_log_drain(ctx, app_name, drain_id):
+    """
+    Deletes a log drain. Find the drain_id from gigalixir log_drains.
+    """
+    gigalixir_log_drain.delete(ctx.obj['host'], app_name, drain_id)
 
 # @delete.command()
 @cli.command()

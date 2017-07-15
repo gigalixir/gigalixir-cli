@@ -909,15 +909,36 @@ shouldn't have to lift a finger. For more information on how this works, see :re
 How to Tail Logs
 ================
 
-You can tail logs in real-time aggregated across all containers using the following command. Note that it
-takes up to a minute or so to start streaming logs because it sets up a Stackdriver sink and PubSub topic
-on-demand. We're working on improving this, but if you need more logging features, we suggest `PaperTrail`_.
-We have tested and verified that it works.
+You can tail logs in real-time aggregated across all containers using the following command. 
 
 .. code-block:: bash
 
     gigalixir logs $APP_NAME
  
+How to Forward Logs Externally
+==============================
+
+If you want to forward your logs to another service such as `timber.io`_ or `PaperTrail`_, you'll need to set up a log drain. We support HTTPS and syslog drains. To create a log drain, run
+
+.. code-block:: bash
+
+    gigalixir add_log_drain $APP_NAME $URL
+    # e.g. gigalixir add_log_drain $APP_NAME https://$TIMBER_API_KEY@logs.timber.io/frames
+    # e.g. gigalixir add_log_drain $APP_NAME syslog+tls://logs123.papertrailapp.com:12345
+
+To show all your drains, run
+
+.. code-block:: bash
+
+    gigalixir log_drains $APP_NAME
+
+To delete a drain, run
+
+.. code-block:: bash
+
+    gigalixir delete_log_drain $APP_NAME $DRAIN_ID
+
+.. _`timber.io`: https://timber.io
 
 .. _managing-ssh-keys:
 
