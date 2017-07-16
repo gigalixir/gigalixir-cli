@@ -1,14 +1,16 @@
-What is GIGALIXIR?
+What is Gigalixir?
 ==================
 
-GIGALIXIR is a Platform-as-a-Service designed for Elixir and Phoenix apps. PaaSes are designed to make it simple to deploy, run, and manage an app in production, but GIGALIXIR is unique because it is designed to support all of features that probably drew you to Elixir in the first place, like node clustering, hot upgrades, and remote observer. Moreover, some platforms restart your processes every 24 hours, restrict the number of simultaneous connections per instance, and limit the duration of each connection. GIGALIXIR made opinionated design decisions from the ground up to support all the fetaures of Elixir because we know that most Elixir apps are built to be distributed, highly available, and handle large numbers of concurrent long-lived connections. 
+`Gigalixir`_ is a Platform-as-a-Service built for Elixir. No other platform supports distributed clustering, hot upgrades, and remote console/observer. Other platforms restart your processes every 24 hours, restrict the number of simultaneous connections per instance, and limit the duration of each connection. Gigalixir unlocks the full power of Elixir and Phoenix without forcing you to build production infrastructure or run maintenance and operations.
 
-Try GIGALIXIR for free without a credit card by following the :ref:`quick start`.
+Try Gigalixir for free without a credit card by following the :ref:`quick start`.
 
 .. _`quick start`:
 
 Quick Start
 ===========
+
+If you're starting from scratch, you're in the right place. If you have an existing app, see :ref:`modifying existing app`.
 
 Prequisites
 -----------
@@ -41,7 +43,7 @@ For example, on Ubuntu, run
 Install the Command-Line Interface
 ----------------------------------
 
-Next install, the command-line interface. GIGALIXIR currently does not have a web interface. We want the command-line to be a first-class citizen so that you can build scripts and tools easily.
+Next install, the command-line interface. Gigalixir currently does not have a web interface. We want the command-line to be a first-class citizen so that you can build scripts and tools easily.
 
 .. code-block:: bash
 
@@ -69,7 +71,7 @@ Next, log in. This will grant you an api key which expires in 365 days. It will 
 Prepare Your App
 ----------------
 
-There are a few steps involved to `make your existing app work on GIGALIXIR`_, but if you are starting a project from scratch, we recommend you clone the `gigalixir-getting-started`_ repo.
+There are a few steps involved to `make your existing app work on Gigalixir`_, but if you are starting a project from scratch, we recommend you clone the `gigalixir-getting-started`_ repo.
 
 .. code-block:: bash
 
@@ -123,15 +125,16 @@ What's Next?
 - :ref:`configs`
 - :ref:`scale`
 
-.. _`make your existing app work on GIGALIXIR`:
+.. _`make your existing app work on Gigalixir`:
+.. _`modifying existing app`:
 
-Modifying an Existing App to Run on GIGALIXIR
+Modifying an Existing App to Run on Gigalixir
 =============================================
 
 Required Modifications
 ----------------------
 
-These modifications are required to run on GIGALIXIR, but features such as node clustering probably won't work unless you make some optional modifications described in the next section.
+These modifications are required to run on Gigalixir, but features such as node clustering probably won't work unless you make some optional modifications described in the next section.
 
 Install Distillery to Build Releases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -170,14 +173,14 @@ We rely on buildpacks to compile and build your release. Create a :bash:`.buildp
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
-If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your GIGALIXIR build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your Gigalixir build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, Phoenix creates a :bash:`prod.secret.exs` file to store secrets. If you want to continue using :bash:`prod.secret.exs` you'll have to commit it to version control so we can bundle it into your release. This is usually not a good idea, though. 
 
-GIGALIXIR prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`prod.exs` file, and modify the values to pull from environment variables. 
+Gigalixir prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`prod.exs` file, and modify the values to pull from environment variables. 
 
 Open your :bash:`prod.exs` file and delete the following line if it is there
 
@@ -211,7 +214,7 @@ Also, note that `server: true` is configured. That is required as well.
 Optional Modifications
 ----------------------
 
-These modifications are not required, but are recommended if you want to use all of features GIGALIXIR offers. If you want to see the difference between :bash:`mix phoenix.new` and `gigalixir-getting-started`_ take a look at `the diff`.
+These modifications are not required, but are recommended if you want to use all of features Gigalixir offers. If you want to see the difference between :bash:`mix phoenix.new` and `gigalixir-getting-started`_ take a look at `the diff`.
 
 .. _`the diff`: https://github.com/gigalixir/gigalixir-getting-started/compare/fe3e06690ba926de817a48ae98bdf155f1cdb201...master
 
@@ -244,10 +247,10 @@ Known Issues
       - Currently, the load balancer for domains under gigalixirapp.com has a request timeout of 30 seconds. If your request takes longer than 30 seconds to respond, the load balancer cuts the connection. Often, the cryptic error message you will see when using curl is the above. The load balancer for custom domains does not have this problem.
 
 
-How Does GIGALIXIR Work?
+How Does Gigalixir Work?
 ========================
 
-When you deploy an app on GIGALIXIR, you :bash:`git push` the source code to a build server. The build server compiles the code and assets and generates a standalone tarball we call a slug. The controller then combines the slug and your app configuration into a release. The release is deployed to run containers which actually run your app.
+When you deploy an app on Gigalixir, you :bash:`git push` the source code to a build server. The build server compiles the code and assets and generates a standalone tarball we call a slug. The controller then combines the slug and your app configuration into a release. The release is deployed to run containers which actually run your app.
 
 .. image:: deploy.png
 
@@ -268,7 +271,7 @@ Components
   - *Slug Storage*: This is where your slugs are stored.
   - *Observer*: This is an application that runs on your local machine that connects to your production node to show you everything you could ever want to know about your live production app.
   - *Run Container*: This is the container that your app runs in.
-  - *Command-Line Interface*: This is the command-line tool that runs on your local machine that you use to control GIGALIXIR.
+  - *Command-Line Interface*: This is the command-line tool that runs on your local machine that you use to control Gigalixir.
 
 Concepts
 --------
@@ -365,18 +368,18 @@ Frequently Asked Questions
 
 This is probably best answered by taking a look at the `elixir homepage`_ and the `phoenix homepage`_.
 
-*How is GIGALIXIR different from Heroku and Deis Workflow?*
+*How is Gigalixir different from Heroku and Deis Workflow?*
 -----------------------------------------------------------
 
 .. image:: venn.png
 
-Heroku is a really great platform and much of GIGALIXIR was designed based on their excellent `twelve-factor methodology`_. Heroku and GIGALIXIR are similar in that they both try to make deployment and operations as simple as possible. Elixir applications, however, aren't very much like most other apps today written in Ruby, Python, Java, etc. Elixir apps are distributed, highly-available, hot-upgradeable, and often use lots of concurrent long-lived connections. GIGALIXIR made many fundamental design choices that ensure all these things are possible.
+Heroku is a really great platform and much of Gigalixir was designed based on their excellent `twelve-factor methodology`_. Heroku and Gigalixir are similar in that they both try to make deployment and operations as simple as possible. Elixir applications, however, aren't very much like most other apps today written in Ruby, Python, Java, etc. Elixir apps are distributed, highly-available, hot-upgradeable, and often use lots of concurrent long-lived connections. Gigalixir made many fundamental design choices that ensure all these things are possible.
 
 For example, Heroku restarts your app every 24 hours regardless of if it is healthy or not. Elixir apps are designed to be long-lived and many use in-memory state so restarting every 24 hours sort of kills that. Heroku also limits the number of concurrent connections you can have. It also has limits to how long these connections can live. Heroku isolates each instance of your app so they cannot communicate with each other, which prevents node clustering. Heroku also restricts SSH access to your containers which makes it impossible to do hot upgrades, remote consoles, remote observers, production tracing, and a bunch of other things. The list goes on, but suffice it to say, running an Elixir app on Heroku forces you to give up a lot of the features that drew you to Elixir in the first place.
 
-For a feature comparison table between GIGALIXIR and Heroku see, :ref:`gigalixir heroku feature comparison`.
+For a feature comparison table between Gigalixir and Heroku see, :ref:`gigalixir heroku feature comparison`.
 
-Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you *could* make modifications to support node clustering and remote observer, but they won't work out of the box and hot upgrades would require some fundamental changes to the way Deis was designed to work. Even so, you'd still have to spend a lot of time solving problems that GIGALIXIR has already figured out for you.
+Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you *could* make modifications to support node clustering and remote observer, but they won't work out of the box and hot upgrades would require some fundamental changes to the way Deis was designed to work. Even so, you'd still have to spend a lot of time solving problems that Gigalixir has already figured out for you.
 
 On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
 
@@ -407,10 +410,10 @@ Heroku and others allow you to specify different types of processes under a sing
 .. _`Background Jobs in Phoenix`: http://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix.html
 .. _`whether you really need Exq`: https://github.com/akira/exq#do-you-need-exq
 
-*What if GIGALIXIR shuts down?*
+*What if Gigalixir shuts down?*
 -------------------------------
 
-GIGALIXIR was built as a labor of love. We want to see Elixir grow and this is our way of helping make that happen. Although making money is nice, that is not our primary goal.
+Gigalixir was built as a labor of love. We want to see Elixir grow and this is our way of helping make that happen. Although making money is nice, that is not our primary goal.
 
 *My git push was rejected*
 --------------------------
@@ -475,7 +478,7 @@ Lastly, you need to modify your distillery config so it knows where to find your
     end
     ...
 
-GIGALIXIR handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run`_ for more details. 
+Gigalixir handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run`_ for more details. 
 
 .. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
 .. _`gigalixir-getting-started's vm.args file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/vm.args
@@ -489,7 +492,7 @@ GIGALIXIR handles permissions so that you have access to Kubernetes endpoints an
 Tiers
 =====
 
-GIGALIXIR offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.5 instance and 1 size 0.6 database. The database is also limited to 10,000 rows. 
+Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.5 instance and 1 size 0.6 database. The database is also limited to 10,000 rows. 
 
 =======================  ========= =============
 Feature                  FREE Tier STANDARD Tier
@@ -512,11 +515,11 @@ Clustering                         YES
 
 .. _`gigalixir heroku feature comparison`:
 
-GIGALIXIR vs Heroku Feature Comparison
+Gigalixir vs Heroku Feature Comparison
 ======================================
 
 =======================  =================== ======================= =========== =============== ==================
-Feature                  GIGALIXIR FREE Tier GIGALIXIR STANDARD Tier Heroku Free Heroku Standard Heroku Performance
+Feature                  Gigalixir FREE Tier Gigalixir STANDARD Tier Heroku Free Heroku Standard Heroku Performance
 =======================  =================== ======================= =========== =============== ==================
 Websockets               YES                 YES                     YES         YES             YES
 Log Aggregation          YES                 YES                     YES         YES             YES
@@ -607,14 +610,14 @@ One common pitfall for beginners is how releases differ from running apps with `
 Limits
 ======
 
-GIGALIXIR is designed for Elixir/Phoenix apps and it is common for Elixir/Phoenix apps to have many connections open at a time and to have connections open for long periods of time. Because of this, we do not limit the number of concurrent connections or the duration of each connection. 
+Gigalixir is designed for Elixir/Phoenix apps and it is common for Elixir/Phoenix apps to have many connections open at a time and to have connections open for long periods of time. Because of this, we do not limit the number of concurrent connections or the duration of each connection. 
 
-We also know that Elixir/Phoenix apps are designed to be long-lived and potentially store state in-memory so we do not restart replicas arbitrarily. In fact, replicas should not restart at all, unless there is an extenuating circumstance that requires it.  For apps that require extreme high availability, we suggest that your app be able to handle node restarts just as you would for any app not running on GIGALIXIR.
+We also know that Elixir/Phoenix apps are designed to be long-lived and potentially store state in-memory so we do not restart replicas arbitrarily. In fact, replicas should not restart at all, unless there is an extenuating circumstance that requires it.  For apps that require extreme high availability, we suggest that your app be able to handle node restarts just as you would for any app not running on Gigalixir.
 
 Monitoring
 ==========
 
-GIGALIXIR doesn't provide any monitoring out of the box, but we are working on it.
+Gigalixir doesn't provide any monitoring out of the box, but we are working on it.
  
 .. _distillery-replace-os-vars:
 .. _`app configuration`:
@@ -622,7 +625,7 @@ GIGALIXIR doesn't provide any monitoring out of the box, but we are working on i
 Using Environment Variables in your App
 =======================================
 
-Environment variables with Elixir, Distillery, and releases in general are one of those things that always trip up beginners. I think `Distillery's Runtime Configuration`_ explains it better than I can. GIGALIXIR automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you have to do is add something like this to your config.exs file, set your app config, and you should be good to go. For information about how to set app configs, see :ref:`configs`.
+Environment variables with Elixir, Distillery, and releases in general are one of those things that always trip up beginners. I think `Distillery's Runtime Configuration`_ explains it better than I can. Gigalixir automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you have to do is add something like this to your config.exs file, set your app config, and you should be good to go. For information about how to set app configs, see :ref:`configs`.
 
 .. code-block:: elixir
 
@@ -659,16 +662,16 @@ Troubleshooting
 Support/Help
 ============
 
-If you run into issues, `Stack Overflow`_ is the best place to search. If you can't find an answer, the developers at GIGALIXIR monitor `the gigalixir tag`_ and will answer questions there. We prefer Stack Overflow over a knowledge base because it is public and collaborative. If you have a private question, email help@gigalixir.com or call us at `(415) 326-8880`_. With GIGALIXIR, you always get support from developers, not customer support representatives. We are very responsive and we are available 24/7. If we become too big, it's possible we won't be able to offer this level of support one day, but we think it is extra important for a startup to provide above-and-beyond support.
+If you run into issues, `Stack Overflow`_ is the best place to search. If you can't find an answer, the developers at Gigalixir monitor `the gigalixir tag`_ and will answer questions there. We prefer Stack Overflow over a knowledge base because it is public and collaborative. If you have a private question, email help@gigalixir.com or call us at `(415) 326-8880`_. With Gigalixir, you always get support from developers, not customer support representatives. We are very responsive and we are available 24/7. If we become too big, it's possible we won't be able to offer this level of support one day, but we think it is extra important for a startup to provide above-and-beyond support.
 
 .. _`Stack Overflow`: http://stackoverflow.com/
 .. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
 .. _`(415) 326-8880`: tel:4153268880
 
-The GIGALIXIR Command-Line Interface
+The Gigalixir Command-Line Interface
 ====================================
 
-The GIGALIXIR Command-Line Interface or CLI is a tool you install on your local machine to control GIGALIXIR.
+The Gigalixir Command-Line Interface or CLI is a tool you install on your local machine to control Gigalixir.
 
 Installation
 ------------
@@ -678,7 +681,7 @@ Install :bash:`gigalixir` using :bash:`pip install gigalixir`. If you don't have
 Upgrade
 -------
 
-To upgrade the GIGALIXIR CLI, run
+To upgrade the Gigalixir CLI, run
 
 .. code-block:: bash
 
@@ -687,7 +690,7 @@ To upgrade the GIGALIXIR CLI, run
 Encryption
 ----------
 
-All HTTP requests made between your machine and GIGALIXIR's servers are encrypted.
+All HTTP requests made between your machine and Gigalixir's servers are encrypted.
 
 Conventions
 -----------
@@ -704,14 +707,14 @@ When you login with your email and password, you receive an API key. This API ke
 Error Reporting
 ---------------
 
-Bugs in the CLI are reported to GIGALIXIR's error tracking service. Currently, the only way to disable this is by modifying the source code. `Pull requests`_ are also accepted!
+Bugs in the CLI are reported to Gigalixir's error tracking service. Currently, the only way to disable this is by modifying the source code. `Pull requests`_ are also accepted!
 
 .. _`Pull requests`: https://github.com/gigalixir/gigalixir-cli/pulls
 
 Open Source
 -----------
 
-The GIGALIXIR CLI is open source and we welcome pull requests. See `the gigalixir-cli repository`_.
+The Gigalixir CLI is open source and we welcome pull requests. See `the gigalixir-cli repository`_.
 
 .. _`the gigalixir-cli repository`: https://github.com/gigalixir/gigalixir-cli
  
@@ -1064,7 +1067,7 @@ How to Run Jobs
 
 There are many ways to run one-off jobs and tasks with Distillery. The approach described here uses Distillery's :bash:`command` command. As an alternative, you can also `drop into a remote console`_ and run code manually or use Distillery's custom commands, eval command, rpc command, pre-start hooks, and probably others.
 
-To run one-off jobs, you'll need to write an Elixir function within your app somewhere, for example, :bash:`lib/tasks.ex` maybe. GIGALIXIR uses Distillery's :bash:`command` command to run your task.
+To run one-off jobs, you'll need to write an Elixir function within your app somewhere, for example, :bash:`lib/tasks.ex` maybe. Gigalixir uses Distillery's :bash:`command` command to run your task.
 
 .. code-block:: bash
 
@@ -1204,7 +1207,7 @@ Prices are prorated to the second.
 How to Connect a Database
 =========================
 
-If you followed the quick start, then your database should already be connected. If not, connecting to a database is done no differently from apps running outside GIGALIXIR. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable. In short, you'll want to add something like this to your :bash:`prod.exs` file.
+If you followed the quick start, then your database should already be connected. If not, connecting to a database is done no differently from apps running outside Gigalixir. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable. In short, you'll want to add something like this to your :bash:`prod.exs` file.
 
 .. code-block:: elixir
 
@@ -1221,7 +1224,7 @@ Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarte
 
     gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
 
-If you need to provision a database, GIGALIXIR provides Databases-as-a-Service. See :ref:`provisioning database`. If you prefer to provision your database manually, follow `How to set up a Google Cloud SQL PostgreSQL database`_.
+If you need to provision a database, Gigalixir provides Databases-as-a-Service. See :ref:`provisioning database`. If you prefer to provision your database manually, follow `How to set up a Google Cloud SQL PostgreSQL database`_.
 
 .. _`supports PostgreSQL`: https://cloud.google.com/sql/docs/postgres/
 .. _`Phoenix Using MySQL Guide`: http://www.phoenixframework.org/docs/using-mysql
@@ -1397,12 +1400,13 @@ Indices and Tables
 .. _`heroku/cedar:14`: https://hub.docker.com/r/heroku/cedar/
 .. _`container that runs your app`: https://github.com/gigalixir/gigalixir-run
 .. _`herokuish`: https://github.com/gliderlabs/herokuish
+.. _`Gigalixir`: https://gigalixir.com
 .. _`elixir homepage`: http://elixir-lang.org/
 .. _`phoenix homepage`: http://www.phoenixframework.org/
 .. _`twelve-factor methodology`: https://12factor.net/
 .. _`PaperTrail`: https://papertrailapp.com/
 .. _`Running Elixir and Phoenix projects on a cluster of nodes`: https://dockyard.com/blog/2016/01/28/running-elixir-and-phoenix-projects-on-a-cluster-of-nodes
-.. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. GIGALIXIR's free tier does not require a credit card, but you will be limited to 1 instance with 0.5GB of memory and 1 postgresql database limited to 10,000 rows.
+.. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. Gigalixir's free tier does not require a credit card, but you will be limited to 1 instance with 0.5GB of memory and 1 postgresql database limited to 10,000 rows.
 .. |set up app for deploys| replace:: To create your app, run the following command. It will also set up a git remote. This must be run from within a git repository folder. An app name will be generated for you, but you can also optionally supply an app name if you wish. There is currently no way to change your app name.
 .. _`The Twelve-Factor App's Config Factor`: https://12factor.net/config
 .. _`Herokuish`: https://github.com/gliderlabs/herokuish
