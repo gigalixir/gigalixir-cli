@@ -86,6 +86,17 @@ gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body).to.equal('{"unique_name": "fake-app-name"}')
 
+def test_set_git_remote():
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        subprocess.check_call(['git', 'init'])
+        result = runner.invoke(gigalixir.cli, ['set_git_remote', 'fake-app-name'])
+        assert result.exit_code == 0
+        remotes = subprocess.check_output(['git', 'remote', '-v'])
+        assert remotes == """gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (fetch)
+gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
+"""
+
 @httpretty.activate
 def test_update_user():
     httpretty.register_uri(httpretty.PATCH, 'https://api.gigalixir.com/api/users', body='{}', content_type='application/json')

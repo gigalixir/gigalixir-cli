@@ -799,6 +799,21 @@ And this to push to production
 
     git push production  master
 
+How to Set the Gigalixir Git Remote
+===================================
+
+If you have a Gigalixir app already created and want to push a git repository to it, set the git remote by running
+
+.. code-block:: bash
+
+    gigalixir set_git_remote $APP_NAME
+
+If you prefer to do it manually, run
+
+.. code-block:: bash
+
+    git remote add gigalixir https://git.gigalixir.com/$APP_NAME.git
+
 .. _`scale`:
 
 How to Scale an App

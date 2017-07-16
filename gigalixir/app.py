@@ -27,6 +27,13 @@ def get(host):
         } for datum in data]
         click.echo(json.dumps(data, indent=2, sort_keys=True))
 
+def set_git_remote(host, app_name):
+    remotes = call('git remote').splitlines()
+    if 'gigalixir' in remotes:
+        cast('git remote rm gigalixir')
+    cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % app_name)
+    logging.getLogger("gigalixir-cli").info("Set git remote: gigalixir.")
+
 def create(host, unique_name):
     try:
         # check for git folder
@@ -52,12 +59,7 @@ def create(host, unique_name):
         unique_name = data["unique_name"]
         logging.getLogger("gigalixir-cli").info("Created app: %s." % unique_name)
 
-        # create the git remote
-        remotes = call('git remote').splitlines()
-        if 'gigalixir' in remotes:
-            cast('git remote rm gigalixir')
-        cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % unique_name)
-        logging.getLogger("gigalixir-cli").info("Added git remote: gigalixir.")
+        set_git_remote(host, unique_name)
         click.echo(unique_name)
 
 def status(host, app_name):

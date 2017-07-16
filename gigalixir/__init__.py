@@ -565,6 +565,17 @@ def create_database(ctx, app_name, size):
 
 # @create.command()
 @cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
+def set_git_remote(ctx, app_name):
+    """
+    Set the gigalixir git remote.
+    """
+    gigalixir_app.set_git_remote(ctx.obj['host'], app_name)
+
+# @create.command()
+@cli.command()
 @click.option('-n', '--name')
 @click.pass_context
 @report_errors
