@@ -233,7 +233,30 @@ In development, you use `Mix`_ to run database migrations. In production, `Mix`_
 Set Up Hot Upgrades with Git v2.9.0
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir master`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
+To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir master`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
+
+Use Cases
+=========
+
+TODO
+
+I'm learning Elixir and need access to all Elixir's features
+------------------------------------------------------------
+
+TODO
+
+I'm using Heroku, but I've run into limitations
+-----------------------------------------------
+
+TODO
+- Save money too
+
+I'm using AWS, but I'm spending too much time on infrastructure
+---------------------------------------------------------------
+
+TODO
+- Distillery
+- Kubernetes
 
 Known Issues
 ============
@@ -338,7 +361,7 @@ We use kube-lego for automatic TLS certificate generation with Let's Encrypt. Fo
 Cleaning Your Cache
 -------------------
 
-There is an extra flag you can pass to clean your cache before building in case you need it, but you need git 2.9.0 or higher for it to work. 
+There is an extra flag you can pass to clean your cache before building in case you need it, but you need git 2.9.0 or higher for it to work. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_.
 
 .. code-block:: bash
 
