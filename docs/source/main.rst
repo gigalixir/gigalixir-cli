@@ -7,10 +7,10 @@ Try Gigalixir for free without a credit card by following the :ref:`quick start`
 
 .. _`quick start`:
 
-Quick Start
-===========
+Getting Started Guide
+=====================
 
-If you're starting from scratch, you're in the right place. If you have an existing app, see :ref:`modifying existing app`.
+The goal of this guide is to get your app up and running on Gigalixir. You will sign up for an account, prepare your app, deploy, and provision a database.
 
 Prequisites
 -----------
@@ -21,7 +21,7 @@ Prequisites
 .. role:: bash(code)
     :language: bash
 
-#. :bash:`python2.7`, not :bash:`python3`. 
+#. :bash:`python2.7`, not :bash:`python3`. Most OSes already have this installed.
 #. :bash:`pip`. For help, take a look at the `pip documentation`_. 
 #. :bash:`git`. For help, take a look at the `git documentation`_.
 #. Linux or OS X. 
@@ -71,7 +71,7 @@ Next, log in. This will grant you an api key which expires in 365 days. It will 
 Prepare Your App
 ----------------
 
-There are a few steps involved to `make your existing app work on Gigalixir`_, but if you are starting a project from scratch, we recommend you clone the `gigalixir-getting-started`_ repo.
+If you have an existing app or want to use :bash:`mix phoenix.new`, follow the steps in :ref:`modifying existing app`. If you are starting a project from scratch, the easiest way to get started is to clone the the `gigalixir-getting-started`_ repo.
 
 .. code-block:: bash
 
@@ -1230,7 +1230,7 @@ Prices are prorated to the second.
 How to Connect a Database
 =========================
 
-If you followed the quick start, then your database should already be connected. If not, connecting to a database is done no differently from apps running outside Gigalixir. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable. In short, you'll want to add something like this to your :bash:`prod.exs` file.
+If you followed the :ref:`quick start`, then your database should already be connected. If not, connecting to a database is done no differently from apps running outside Gigalixir. We recommend you set a DATABASE_URL config and configure your database adapter accordingly to read from that variable. In short, you'll want to add something like this to your :bash:`prod.exs` file.
 
 .. code-block:: elixir
 
