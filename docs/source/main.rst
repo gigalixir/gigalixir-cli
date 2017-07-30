@@ -1,7 +1,7 @@
 What is Gigalixir?
 ==================
 
-`Gigalixir`_ is a Platform-as-a-Service built for Elixir. No other platform supports distributed clustering, hot upgrades, and remote console/observer. Other platforms restart your processes every 24 hours, restrict the number of simultaneous connections per instance, and limit the duration of each connection. Gigalixir unlocks the full power of Elixir and Phoenix without forcing you to build production infrastructure or run maintenance and operations.
+`Gigalixir`_ is a fully-featured, production-stable platform-as-a-service built just for Elixir that saves you money and unlocks the full power of Elixir and Phoenix without forcing you to build production infrastructure or deal with maintenance and operations. For more information, see https://gigalixir.com.
 
 Try Gigalixir for free without a credit card by following the :ref:`quick start`.
 
