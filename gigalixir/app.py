@@ -8,6 +8,7 @@ import requests
 import click
 from .shell import cast, call
 from . import auth
+from . import ssh_key
 from contextlib import closing
 
 def get(host):
@@ -89,6 +90,11 @@ def scale(host, app_name, replicas, size):
         raise Exception(r.text)
 
 def ssh(host, app_name, *args):
+    # verify SSH keys exist
+    keys = ssh_key.ssh_keys(host)
+    if len(keys) == 0:
+        raise Exception("You don't have any ssh keys yet. See `gigalixir add_ssh_key --help`")
+
     r = requests.get('%s/api/apps/%s/ssh_ip' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })

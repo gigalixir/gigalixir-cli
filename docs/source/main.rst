@@ -49,6 +49,12 @@ Next install, the command-line interface. Gigalixir currently does not have a we
 
     pip install gigalixir
 
+Verify by running
+
+.. code-block:: bash
+
+    gigalixir --help
+
 Create an Account
 -----------------
 
@@ -67,6 +73,12 @@ Next, log in. This will grant you an api key which expires in 365 days. It will 
 .. code-block:: bash
 
     gigalixir login 
+
+Verify by running
+
+.. code-block:: bash
+
+    gigalixir account
 
 Prepare Your App
 ----------------
@@ -87,6 +99,12 @@ Set Up App for Deploys
     cd gigalixir-getting-started
     APP_NAME=$(gigalixir create)
 
+Verify that a git remote was created by running
+
+.. code-block:: bash
+
+    git remote -v
+
 Deploy!
 -------
 
@@ -96,7 +114,7 @@ Finally, build and deploy.
 
     git push gigalixir master
 
-Wait a minute or two since this is the first deploy, then test it out.
+Wait a minute or two since this is the first deploy, then verify by running
 
 .. code-block:: bash
 
@@ -111,25 +129,38 @@ Your app does not have a database yet, let's create one.
 
     gigalixir create_database $APP_NAME 
 
-This may take a few minutes to become AVAILABLE. Run this to check the status.
+This may take a few minutes to become :bash:`AVAILABLE`. Run this to check the status.
 
 .. code-block:: bash
 
     gigalixir databases $APP_NAME
 
+Once the database is created, verify your configuration includes a :bash:`DATABASE_URL` by running
+
+.. code-block:: bash
+
+    gigalixir configs $APP_NAME
+
 What's Next?
 ------------
 
 - :ref:`logging`
-- :ref:`hot-upgrade`
 - :ref:`configs`
 - :ref:`scale`
+- :ref:`restart`
+- :ref:`rollback`
+- :ref:`migrations`
+- :ref:`remote console`
+- :ref:`remote observer`
+- :ref:`hot-upgrade`
 
 .. _`make your existing app work on Gigalixir`:
 .. _`modifying existing app`:
 
 Modifying an Existing App to Run on Gigalixir
 =============================================
+
+Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir.
 
 Required Modifications
 ----------------------
@@ -640,7 +671,7 @@ We also know that Elixir/Phoenix apps are designed to be long-lived and potentia
 Monitoring
 ==========
 
-Gigalixir doesn't provide any monitoring out of the box, but we are working on it.
+Gigalixir doesn't provide any monitoring out of the box, but we are working on it. Also, you can always use a remote observer to inspect your node. See, :ref:`remote observer`.
  
 .. _distillery-replace-os-vars:
 .. _`app configuration`:
@@ -884,6 +915,8 @@ to work. For information on how to install the latest version of git on Ubuntu, 
 
     git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir master
  
+.. _`rollback`:
+
 How to Rollback an App
 ======================
 
@@ -1073,6 +1106,8 @@ How to Delete your Account
 ==========================
 
 There is currently no way to completely delete an account. We are working on implementing this feature.
+
+.. _`restart`:
 
 How to Restart an App
 =====================
@@ -1366,6 +1401,8 @@ To see things like which account you are logged in as, what tier you are on, and
 .. code-block:: bash
 
     gigalixir account
+
+.. _`remote observer`:
 
 How to Launch a Remote Observer
 ===============================

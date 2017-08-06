@@ -4,7 +4,7 @@ import json
 import click
 import logging
 
-def get(host):
+def ssh_keys(host):
     r = requests.get('%s/api/ssh_keys' % host, headers = {
         'Content-Type': 'application/json',
     })
@@ -13,8 +13,11 @@ def get(host):
             raise auth.AuthException()
         raise Exception(r.text)
     else:
-        data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        return json.loads(r.text)["data"]
+
+def get(host):
+    data = ssh_keys(host)
+    click.echo(json.dumps(data, indent=2, sort_keys=True))
 
 def create(host, key):
     r = requests.post('%s/api/ssh_keys' % host, headers = {
