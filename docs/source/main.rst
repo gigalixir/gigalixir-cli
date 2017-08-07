@@ -224,6 +224,7 @@ Then add the following in :bash:`prod.exs`
 .. code-block:: elixir
 
      config :gigalixir_getting_started, GigalixirGettingStarted.Endpoint,
+       http: [port: {:system, "PORT"}],
        server: true,
        secret_key_base: "${SECRET_KEY_BASE}"
      
@@ -1332,6 +1333,12 @@ We hope to provide a database-as-a-service soon and automate the process you jus
 How to Run Migrations
 =====================
 
+In order to run migrations, you need to set up your SSH keys. It could take up to a minute for the SSH keys to update in your containers.
+
+.. code-block:: bash
+
+    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+
 We provide a special command to run migrations.
 
 .. code-block:: bash
@@ -1366,6 +1373,14 @@ So for example, if you have more than one app, you may not want to use :elixir:`
 
 How to Drop into a Remote Console
 =================================
+
+To get a console on a running production container, first, add your public SSH keys to your account. For more information on managing SSH keys, see :ref:`managing-ssh-keys`.
+
+.. code-block:: bash
+
+    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+
+Then run this command to drop into a remote console.
 
 .. code-block:: bash
 
@@ -1406,6 +1421,12 @@ To see things like which account you are logged in as, what tier you are on, and
 
 How to Launch a Remote Observer
 ===============================
+
+In order to run a remote observer, you need to set up your SSH keys. It could take up to a minute for the SSH keys to update in your containers.
+
+.. code-block:: bash
+
+    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
 
 Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have clustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`clustering`.
 
