@@ -4,10 +4,12 @@
    contain the root `toctree` directive.
 
 =====================================
-GIGALIXIR Documentation
+`Gigalixir`_ Documentation
 =====================================
 
-GIGALIXIR is a platform-as-a-service designed just for Elixir and Phoenix.
+`Gigalixir`_ is Elixir's Platform-as-a-Service. For more information, see https://gigalixir.com. Get 1 instance + 1 database for free without a credit card.
+
+.. _`Gigalixir`: https://gigalixir.com
 
 .. toctree::
     :maxdepth: 4
