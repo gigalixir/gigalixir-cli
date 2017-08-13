@@ -58,6 +58,8 @@ Verify by running
 Create an Account
 -----------------
 
+If you already have an account, skip this step.
+
 |signup details|
 
 .. code-block:: bash
@@ -98,6 +100,12 @@ Set Up App for Deploys
 
     cd gigalixir-getting-started
     APP_NAME=$(gigalixir create)
+
+Verify that the app was created, by running
+
+.. code-block:: bash
+
+    gigalixir apps
 
 Verify that a git remote was created by running
 
@@ -415,8 +423,39 @@ A hot upgrade follows the same steps as a regular deploy, except for a few diffe
 
 Once the slug is generated and uploaded, we execute an upgrade script on each run container instead of restarting. The upgrade script downloads the new slug, and calls `Distillery's upgrade command`_. Your app should now be upgraded in place without any downtime, dropped connections, or loss of in-memory state.
 
+.. _`configure versions`:
+
+How do I specify my Elixir, Erlang, Node, NPM, etc versions?
+==============================================
+
+Your Elixir and Erlang versions are handled by the heroku-buildpack-elixir buildpack. To configure, see the `heroku-buildpack-elixir configuration`_.
+
+Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpack. To configure, see the `heroku-buildpack-phoenix-static configuration`_.
+
+.. _`heroku-buildpack-elixir configuration`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
+
 Frequently Asked Questions
 ==========================
+
+*Do you support umbrella apps?*
+-------------------------------
+
+Yes! Just make sure you set :elixir:`server: true` in your :bash:`prod.exs` and when you run migrations, use the :bash:`--migration_app_name` flag to specify which inner app has your migrations. Also, for static assets, be sure to set your :bash:`phoenix_relative_path`, see the `heroku-buildpack-phoenix-static configuration`_.
+
+.. _`heroku-buildpack-phoenix-static configuration`: https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration
+
+*Do you support Phoenix 1.3?*
+-----------------------------
+
+Yes! Just be sure you set your :bash:`phoenix_relative_path`, see the `heroku-buildpack-phoenix-static configuration`_.
+
+*Do you support Elixir 1.5 or OTP 20?*
+
+Yes! We support all versions of Elixir and OTP. See :ref:`configure versions`.
+
+*Can I have multiple custom domains?*
+
+Yes! Just follow :ref:`custom domains` for each domain.
 
 *What is Elixir? What is Phoenix?*
 ----------------------------------
@@ -824,6 +863,15 @@ Deploying an app is done using a git push, the same way you would push code to g
 
     git push gigalixir master
  
+How to Deploy a Branch
+======================
+
+To deploy a local branch, :bash:`my-branch`, run
+
+.. code-block:: bash
+
+    git push gigalixir my-branch:master
+
 How to Set Up a Staging Environment
 ===================================
 
@@ -955,6 +1003,8 @@ Then specify the version when rolling back.
     gigalixir rollback $APP_NAME --version=5
 
 The release list is immutable so when you rollback, we create a new release on top of the old releases, but the new release refers to the old slug. 
+
+.. _`custom domains`:
 
 How to Set Up a Custom Domain
 =============================
