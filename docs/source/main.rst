@@ -905,6 +905,25 @@ And this to push to production
 
     git push production  master
 
+How to Set Up Continuous Integration (CI/CD)?
+=============================================
+
+Since deploys are just a normal :bash:`git push`, Gigalixir should work with any CI/CD tool out there. For Travis CI, put something like this in your :bash:`.travis.yml`
+
+.. code-block:: yaml
+
+    script:
+      - git remote add gigalixir https://$GIGALIXIR_EMAIL:$GIGALIXIR_API_KEY@git.gigalixir.com/$GIGALIXIR_APP_NAME.git
+      - git push gigalixir HEAD:master
+
+For a full example, see `the gigalixir-getting-started repo <https://github.com/gigalixir/gigalixir-getting-started/blob/js/travis/.travis.yml>`_.
+
+In the Travis CI Settings, add a :bash:`GIGALIXIR_EMAIL` environment variable, but be sure to URI encode it e.g. :bash:`foo%40gigalixir.com`. 
+
+Add a :bash:`GIGALIXIR_API_KEY` environment variable which you can find in your :bash:`~/.netrc` file e.g. :bash:`b9fbde22-fb73-4acb-8f74-f0aa6321ebf7`. 
+
+Finally, add a :bash:`GIGALIXIR_APP_NAME` environment variable with the name of your app e.g. :bash:`real-hasty-fruitbat`
+
 How to Set the Gigalixir Git Remote
 ===================================
 
