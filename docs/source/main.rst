@@ -924,6 +924,8 @@ Add a :bash:`GIGALIXIR_API_KEY` environment variable which you can find in your 
 
 Finally, add a :bash:`GIGALIXIR_APP_NAME` environment variable with the name of your app e.g. :bash:`real-hasty-fruitbat`
 
+Using GitLab CI or any other CI/CD service should be very similar. 
+
 How to Set the Gigalixir Git Remote
 ===================================
 
