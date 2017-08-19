@@ -586,7 +586,7 @@ Gigalixir handles permissions so that you have access to Kubernetes endpoints an
 Tiers
 =====
 
-Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.5 instance and 1 size 0.6 database. The database is also limited to 10,000 rows. 
+Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.2 instance and 1 size 0.6 database. The database is also limited to 10,000 rows. 
 
 =======================  ========= =============
 Feature                  FREE Tier STANDARD Tier
@@ -679,7 +679,7 @@ Replica Sizing
 ==============
 
   - A replica is a docker container that your app runs in.
-  - Replica sizes are available in increments of 0.1 between 0.5 and 16. Contact us if you need a bigger size.
+  - Replica sizes are available in increments of 0.1 between 0.2 and 16. Contact us if you need a bigger size.
   - 1 size unit is 1GB memory and 1 CPU share.
   - 1 CPU share is 200m as defined using `Kubernetes CPU requests`_ or roughly 20% of a core guaranteed.
 
@@ -1558,7 +1558,7 @@ Indices and Tables
 .. _`twelve-factor methodology`: https://12factor.net/
 .. _`PaperTrail`: https://papertrailapp.com/
 .. _`Running Elixir and Phoenix projects on a cluster of nodes`: https://dockyard.com/blog/2016/01/28/running-elixir-and-phoenix-projects-on-a-cluster-of-nodes
-.. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. Gigalixir's free tier does not require a credit card, but you will be limited to 1 instance with 0.5GB of memory and 1 postgresql database limited to 10,000 rows.
+.. |signup details| replace:: Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. Gigalixir's free tier does not require a credit card, but you will be limited to 1 instance with 0.2GB of memory and 1 postgresql database limited to 10,000 rows.
 .. |set up app for deploys| replace:: To create your app, run the following command. It will also set up a git remote. This must be run from within a git repository folder. An app name will be generated for you, but you can also optionally supply an app name if you wish. There is currently no way to change your app name.
 .. _`The Twelve-Factor App's Config Factor`: https://12factor.net/config
 .. _`Herokuish`: https://github.com/gliderlabs/herokuish
