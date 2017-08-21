@@ -168,7 +168,7 @@ What's Next?
 Modifying an Existing App to Run on Gigalixir
 =============================================
 
-Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir.
+Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on port 4000, you should be good.
 
 Required Modifications
 ----------------------
@@ -679,7 +679,7 @@ Replica Sizing
 ==============
 
   - A replica is a docker container that your app runs in.
-  - Replica sizes are available in increments of 0.1 between 0.2 and 16. Contact us if you need a bigger size.
+  - Replica sizes are available in increments of 0.1 between 0.2 and 16. 
   - 1 size unit is 1GB memory and 1 CPU share.
   - 1 CPU share is 200m as defined using `Kubernetes CPU requests`_ or roughly 20% of a core guaranteed.
 
@@ -751,16 +751,16 @@ Troubleshooting
         - run :bash:`chmod og-rwx ~/.netrc`
 
 .. _`contact us for help`:
+.. _`contact us`:
 .. _`help`:
 
 Support/Help
 ============
 
-If you run into issues, `Stack Overflow`_ is the best place to search. If you can't find an answer, the developers at Gigalixir monitor `the gigalixir tag`_ and will answer questions there. We prefer Stack Overflow over a knowledge base because it is public and collaborative. If you have a private question, email help@gigalixir.com or call us at `(415) 326-8880`_. With Gigalixir, you always get support from developers, not customer support representatives. We are very responsive and we are available 24/7. If we become too big, it's possible we won't be able to offer this level of support one day, but we think it is extra important for a startup to provide above-and-beyond support.
+Feel free to email help@gigalixir.com for any questions or issues, we generally respond within hours.
 
 .. _`Stack Overflow`: http://stackoverflow.com/
 .. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
-.. _`(415) 326-8880`: tel:4153268880
 
 The Gigalixir Command-Line Interface
 ====================================
