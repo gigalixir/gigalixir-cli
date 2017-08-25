@@ -150,6 +150,7 @@ Once the database is created, verify your configuration includes a :bash:`DATABA
 .. code-block:: bash
 
     gigalixir configs $APP_NAME
+    
 
 What's Next?
 ------------
@@ -1301,6 +1302,13 @@ To delete a database, run
 .. code-block:: bash
 
     gigalixir delete_database $APP_NAME $DATABASE_ID
+
+How to install a Postgres Extension
+===================================
+
+First, make sure Google Cloud SQL supports your extension by checking `their list of extensions`_. If it is supported, `contact us`_ and we'll install it for you. We're working on automating this process, but in the meantime, we usuall respond within an hour or so.
+
+.. _`their list of extensions`: https://cloud.google.com/sql/docs/postgres/extensions
 
 .. _`database sizes`:
 
