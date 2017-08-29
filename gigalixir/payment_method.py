@@ -34,7 +34,7 @@ def update(host, card_number, card_exp_month, card_exp_year, card_cvc):
     }, json = {
         "stripe_token": token["id"],
     })
-    if r.status_code != 201:
+    if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
