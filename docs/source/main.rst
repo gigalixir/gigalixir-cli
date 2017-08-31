@@ -1543,6 +1543,26 @@ To see all your previous period's invoices, run
 
 .. _`money back guarantee`:
 
+How secure is Gigalixir?
+========================
+
+Gigalixir takes security very, very seriously. 
+
+#. Every app exists in its own Kubernetes namespaces and we use Kubernetes role-based access controls to ensure no other apps have access to your app or its metadata. 
+#. Your build environment is fully isolated using Docker containers. 
+#. Your slugs are authenticated using `Signed URLs`_.
+#. All API endpoints are authenticated using API keys instead of your password. API keys can be invalidated at any time by regenerating a new one.
+#. Remote console and remote observer uses a SSH tunnels to secure traffic. 
+#. Erlang does not encrypt distribution traffic between your nodes by default, but you can `set it up to use SSL`_. For an extra layer of security, we route distribution traffic directly to each node so no other apps can sniff the traffic. 
+#. We use `Stripe`_ to manage payment methods so Gigalixir never knows your credit card number.
+#. Passwords and app configs are encrypted at rest using `Cloak`_.
+#. Traffic between Gigalixir services and components are TLS encrypted.
+
+.. _`Signed URLs`: https://cloud.google.com/storage/docs/access-control/signed-urls
+.. _`Cloak`: https://github.com/danielberkompas/cloak
+.. _`Stripe`: https://stripe.com/
+.. _`set it up to use SSL`: http://erlang.org/doc/apps/ssl/ssl_distribution.html
+
 Money-back Guarantee
 ====================
 
