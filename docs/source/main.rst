@@ -1448,9 +1448,29 @@ So for example, if you have more than one app, you may not want to use :elixir:`
 
 .. _`the source code`: https://github.com/gigalixir/gigalixir-cli/blob/master/gigalixir/app.py#L160
 
+If you have a chicken-and-egg problem where your app will not start without migrations run, and migrations won't run without an app running, you can try the following workaround on your local development machine. This will run migrations on your production database from your local machine using your local code.
+
+.. code-block:: bash
+
+    MIX_ENV=prod mix release --env=prod
+    MIX_ENV=prod DATABASE_URL="$YOUR_PRODUCTION_DATABASE_URL" mix ecto.migrate
+
+How to run seeds?
+=================
+
+Running seeds in production is usually a one-time job, so our recommendation is to `drop into a remote console`_ and run commands manually. If you have a :bash:`seeds.exs` file, you can follow `the Distillery migration guide`_ and run something like this in your remote console.
+
+.. code-block:: elixir
+
+    Path.join([priv_dir(:my_app), "repo", "seeds.exs"])
+    Code.eval_file(seed_script)
+
+.. _`the Distillery migration guide`: https://hexdocs.pm/distillery/running-migrations.html#content
+
 .. _`Launching a remote console`: 
 .. _`drop into a remote console`: 
 .. _`remote console`: 
+
 
 How to Drop into a Remote Console
 =================================
