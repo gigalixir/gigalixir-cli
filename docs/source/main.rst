@@ -443,7 +443,7 @@ Frequently Asked Questions
 *Do you support umbrella apps?*
 -------------------------------
 
-Yes! Just make sure you set :elixir:`server: true` in your :bash:`prod.exs` and when you run migrations, use the :bash:`--migration_app_name` flag to specify which inner app has your migrations. Also, for static assets, be sure to set your :bash:`phoenix_relative_path`, see the `heroku-buildpack-phoenix-static configuration`_.
+Yes! Just make sure you set :elixir:`server: true` in your :bash:`prod.exs` and when you run migrations, use the :bash:`--migration_app_name` flag to specify which inner app has your migrations. Also, for static assets, be sure to set your :bash:`phoenix_relative_path`, see the `heroku-buildpack-phoenix-static configuration`_. Also, if you set multiple Distillery releases in your :bash:`rel/config.exs` file, be sure your default release is set properly.
 
 .. _`heroku-buildpack-phoenix-static configuration`: https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration
 
