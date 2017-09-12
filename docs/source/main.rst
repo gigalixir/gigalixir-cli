@@ -1033,18 +1033,15 @@ The release list is immutable so when you rollback, we create a new release on t
 How to Set Up a Custom Domain
 =============================
 
-After your first deploy, you can see your app by visiting https://$APP_NAME.gigalixirapp.com/, but if 
-you want, you can point your own domain such as www.example.com to your app. To do this, first modify
-your DNS records and point your domain to :bash:`tls.gigalixir.com` using a CNAME record. Then, run 
-the following command to add a custom domain.
+Important! Right now, if you have multiple custom domains set for your app, all domain DNS entries must point to tls.gigalixir.com. Let's Encrypt issues a single certificate for all N domains on your app. If any single domain can not be authorized, the entire certificate fails to be provisioned. We're working on mitigating this issue.
+
+After your first deploy, you can see your app by visiting https://$APP_NAME.gigalixirapp.com/, but if you want, you can point your own domain such as www.example.com to your app. To do this, first modify your DNS records and point your domain to :bash:`tls.gigalixir.com` using a CNAME record. Then, run the following command to add a custom domain.
 
 .. code-block:: bash
 
     gigalixir add_domain $APP_NAME www.example.com
 
-This will do a few things. It registers your fully qualified domain name in the load balancer so that
-it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more
-information on how SSL/TLS works, see :ref:`how-tls-works`.
+This will do a few things. It registers your fully qualified domain name in the load balancer so that it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more information on how SSL/TLS works, see :ref:`how-tls-works`.
 
 How to Set Up SSL/TLS
 =====================
