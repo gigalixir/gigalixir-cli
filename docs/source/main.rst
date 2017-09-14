@@ -1208,7 +1208,7 @@ For example, the following command will run the :elixir:`Tasks.migrate/0` functi
 
 .. code-block:: bash
 
-    gigalixir run myapp Elixir.Tasks foo
+    gigalixir run myapp Elixir.Tasks migrate
 
 .. For an example task, see `gigalixir-getting-started's migrate task`_. 
 
