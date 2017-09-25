@@ -28,9 +28,6 @@ Prequisites
 #. :bash:`git`. For help, take a look at the `git documentation`_.
 #. Linux or OS X. 
 
-.. #. Elixir 1.3 is officially supported. Elixir 1.4 is known to work, but a lot of the documentation assumes you are on 1.3. We are working on officially supporting 1.3. You can configure the production version in your `buildpack configuration file`_.
-.. #. Phoenix 1.2 is officially supported. Phoenix 1.3 release candidates are known to work, but a lot of the documentation assumes you are on 1.2. We are working on officially supporting 1.3. For a working example of Phoenix 1.3 and Elixir 1.4, see `gigalixir-getting-started-phx-1-3-rc-2`_.
-
 For example, on Ubuntu, run
 
 .. code-block:: bash
