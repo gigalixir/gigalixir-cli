@@ -906,7 +906,9 @@ And this to push to production
 
 .. code-block:: bash
 
-    git push production  master
+    git push production master
+
+You'll probably also want to check all your environment variables and make sure they are set probably for production and staging. Also, generally speaking, it's best to use :bash:`prod.exs` for both production and staging and let environment variables be the only thing that varies between the two environments. This way staging is as close a simulation of production as possible. If you need to convert any configs into environment variables use :elixir:`"${MYVAR}"`.
 
 How to Set Up Continuous Integration (CI/CD)?
 =============================================
@@ -917,9 +919,16 @@ Since deploys are just a normal :bash:`git push`, Gigalixir should work with any
 
     script:
       - git remote add gigalixir https://$GIGALIXIR_EMAIL:$GIGALIXIR_API_KEY@git.gigalixir.com/$GIGALIXIR_APP_NAME.git
-      - git push gigalixir HEAD:master
+      - mix test && git push gigalixir HEAD:master
+    language: elixir
+    elixir: 1.5.1
+    otp_release: 20.0
+    services:
+      - postgresql
+    before_script:
+      - PGPASSWORD=postgres psql -c 'create database gigalixir_getting_started_test;' -U postgres
 
-For a full example, see `the gigalixir-getting-started repo <https://github.com/gigalixir/gigalixir-getting-started/blob/js/travis/.travis.yml>`_.
+Be sure to replace :bash:`gigalixir_getting_started_test` with your test database name configured in your :bash:`test.exs` file along with your db username and password.
 
 In the Travis CI Settings, add a :bash:`GIGALIXIR_EMAIL` environment variable, but be sure to URI encode it e.g. :bash:`foo%40gigalixir.com`. 
 
