@@ -243,9 +243,9 @@ Then add the following in :bash:`prod.exs`
        ssl: true,
        pool_size: 10
 
-Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following. For more information on setting configs, see :ref:`configs`.
+Important! Note the `server: true` above. That is required otherwise your app will not serve HTTP requests and will fail health checks.
 
-Also, note that `server: true` is configured. That is required as well.
+Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following. For more information on setting configs, see :ref:`configs`.
 
 .. code-block:: bash
 
