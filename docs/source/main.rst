@@ -746,6 +746,38 @@ In your app code,
 Troubleshooting
 ===============
 
+If you're having trouble getting things working, you can verify a few things locally.
+
+First, try generating and running a Distillery release locally by running
+
+.. code-block:: bash
+
+    mix deps.get
+    MIX_ENV=prod mix release --env=prod
+    DATABASE_URL="postgres://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
+    curl localhost:4000
+
+Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
+
+You can safely ignore Kubernetes errors like :bash:`[libcluster:k8s_example]` errors because you probably aren't running inside Kubernetes.
+
+If the above commands succeed, then please `contact us for help`_. If not, `contact us`_ anyway and we'll do our best to help you.
+
+If they don't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
+
+In case static assets don't show up, you can try the following for Phoenix 1.3 and then re-run the commands above.
+
+.. code-block:: bash
+
+    cd assets
+    npm install
+    node_modules/brunch/bin/brunch build --production
+    cd ..
+    mix phx.digest
+
+Common Errors
+-------------
+
     - ~/.netrc access too permissive: access permissions must restrict access to only the owner
 
         - run :bash:`chmod og-rwx ~/.netrc`
