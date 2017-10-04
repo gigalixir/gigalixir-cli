@@ -46,13 +46,15 @@ Next install, the command-line interface. Gigalixir currently does not have a we
 
 .. code-block:: bash
 
-    pip install gigalixir
+    sudo pip install gigalixir --ignore-installed six
 
 Verify by running
 
 .. code-block:: bash
 
     gigalixir --help
+
+The reason we ignore six is because OS X has a pre-installed version of six that is incompatible. When pip tries to upgrade it, OS X won't let us. For more, see https://github.com/pypa/pip/issues/3165
 
 Create an Account
 -----------------
