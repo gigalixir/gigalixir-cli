@@ -8,7 +8,7 @@ import rollbar
 import sys
 from .shell import cast, call
 
-def observer(ctx, app_name):
+def observer(ctx, app_name, erlang_cookie=None):
     host = ctx.obj['host']
     r = requests.get('%s/api/apps/%s/ssh_ip' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
@@ -23,7 +23,10 @@ def observer(ctx, app_name):
 
     try:
         logging.getLogger("gigalixir-cli").info("Fetching pod ip and cookie.")
-        ERLANG_COOKIE = call(" ".join(["ssh", "root@%s" % ssh_ip, "--", "cat", "/kube-env-vars/ERLANG_COOKIE"]))
+        if erlang_cookie is None:
+            ERLANG_COOKIE = call(" ".join(["ssh", "root@%s" % ssh_ip, "--", "cat", "/kube-env-vars/ERLANG_COOKIE"]))
+        else:
+            ERLANG_COOKIE = erlang_cookie
         MY_POD_IP = call("ssh root@%s cat /kube-env-vars/MY_POD_IP" % ssh_ip)
         CUSTOMER_APP_NAME = call("ssh root@%s cat /kube-env-vars/APP" % ssh_ip)
         logging.getLogger("gigalixir-cli").info("Fetching epmd port and app port.")

@@ -632,10 +632,11 @@ def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
 
 @cli.command()
 @click.argument('app_name')
+@click.option('-c', '--cookie')
 @click.pass_context
-def observer(ctx, app_name):
+def observer(ctx, app_name, cookie):
     """
     Launch remote production observer.
     """
-    gigalixir_observer.observer(ctx, app_name)
+    gigalixir_observer.observer(ctx, app_name, cookie)
 
