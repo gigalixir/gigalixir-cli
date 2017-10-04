@@ -364,7 +364,7 @@ def test_get_payment_method():
 @httpretty.activate
 def test_update_payment_method():
     httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
-    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/payment_methods', body='{}', content_type='application/json', status=201)
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/payment_methods', body='{}', content_type='application/json', status=200)
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['set_payment_method', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=123'])
     assert result.output == ''
@@ -376,7 +376,7 @@ def test_update_payment_method():
 @httpretty.activate
 def test_update_payment_method_cvc_leading_zero():
     httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
-    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/payment_methods', body='{}', content_type='application/json', status=201)
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/payment_methods', body='{}', content_type='application/json', status=200)
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['set_payment_method', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=023'])
     assert result.output == ''
