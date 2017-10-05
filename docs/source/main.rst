@@ -721,7 +721,9 @@ Gigalixir doesn't provide any monitoring out of the box, but we are working on i
 Using Environment Variables in your App
 =======================================
 
-Environment variables with Elixir, Distillery, and releases in general are one of those things that always trip up beginners. I think `Distillery's Runtime Configuration`_ explains it better than I can. Gigalixir automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you have to do is add something like this to your config.exs file, set your app config, and you should be good to go. For information about how to set app configs, see :ref:`configs`.
+Environment variables with Elixir, Distillery, and releases in general are one of those things that always trip up beginners. I think `Distillery's Runtime Configuration`_ explains it better than I can, but in short, never use :elixir:`System.get_env("FOO")` in your :bash:`prod.exs`. Always use :elixir:`"${FOO}"` instead. 
+
+Gigalixir automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you have to do to introduce a new :bash:`MY_CONFIG` env var is add something like this to your :bash:`config.exs` file
 
 .. code-block:: elixir
 
@@ -730,18 +732,17 @@ Environment variables with Elixir, Distillery, and releases in general are one o
         my_config: "$MY_CONFIG"
     ...
 
-Then set MY_CONFIG, by running
+Then set the :bash:`MY_CONFIG` environment variable, by running
 
 .. code-block:: bash
 
     gigalixir set_config MY_CONFIG foo
 
-In your app code, 
+In your app code, access the environment variable using 
 
 .. code-block:: elixir
 
     Application.get_env(:myapp, :my_config) == "foo"
-    System.get_env("MY_CONFIG") == "foo"
 
 .. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/runtime-configuration.html#content
 
