@@ -286,6 +286,27 @@ If that didn't work, the first place to check is :bash:`prod.exs`. Make sure you
 
 If it still doesn't work, don't hesitate to `contact us`_.
 
+Deploy!
+^^^^^^^
+
+Add a gigalixir git remote.
+
+.. code-block:: bash
+
+    git remote add https://git.gigalixir.com/$APP_NAME.git
+
+Finally, build and deploy.
+
+.. code-block:: bash
+
+    git push gigalixir master
+
+Wait a minute or two since this is the first deploy, then verify by running
+
+.. code-block:: bash
+
+    curl https://$APP_NAME.gigalixirapp.com/
+
 Optional Modifications
 ----------------------
 
