@@ -233,14 +233,13 @@ Then add the following in :bash:`prod.exs`
 
 .. code-block:: elixir
 
-     config :gigalixir_getting_started, GigalixirGettingStarted.Endpoint,
-       http: [port: {:system, "PORT"}],
+     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
        server: true,
        secret_key_base: "${SECRET_KEY_BASE}"
      
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
-       url: {:system, "DATABASE_URL"},
+       url: "${DATABASE_URL}",
        database: "",
        ssl: true,
        pool_size: 10
@@ -606,7 +605,7 @@ Your app configuration needs to have something like this in it. For a full examp
 
 You also need to create a :bash:`rel/vm.args` file with something like this in it. For a full example, see `gigalixir-getting-started's vm.args file`_.
 
-.. code-block:: elixir
+.. code-block:: bash
 
     ## Name of the node
     -name ${MY_NODE_NAME}
@@ -917,7 +916,7 @@ How to Sign Up for an Account
 
     gigalixir signup
 
-.. `upgrade account`:
+.. _`upgrade account`:
 
 How to Upgrade an Account
 =========================
