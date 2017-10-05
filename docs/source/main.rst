@@ -172,6 +172,8 @@ Modifying an Existing App to Run on Gigalixir
 
 Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on port 4000, you should be good.
 
+Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
+
 Required Modifications
 ----------------------
 
@@ -255,7 +257,7 @@ Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarte
 Verify
 ^^^^^^
 
-Make sure you did everything right.
+Let's make sure everything works. 
 
 First, try generating and running a Distillery release locally by running
 
@@ -491,6 +493,8 @@ Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpa
 
 Frequently Asked Questions
 ==========================
+
+.. _`umbrella`:
 
 *Do you support umbrella apps?*
 -------------------------------
