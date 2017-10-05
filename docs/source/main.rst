@@ -253,6 +253,39 @@ Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarte
 
     gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
 
+Verify
+^^^^^^
+
+Make sure you did everything right.
+
+First, try generating and running a Distillery release locally by running
+
+.. code-block:: bash
+
+    mix deps.get
+
+    # generate static assets
+    cd assets
+    npm install
+    node_modules/brunch/bin/brunch build --production
+    cd ..
+    mix phx.digest
+
+    # build Distillery release
+    MIX_ENV=prod mix release --env=prod
+
+    # run the app
+    DATABASE_URL="postgres://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
+
+    # hit the app
+    curl localhost:4000
+
+Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
+
+If that didn't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
+
+If it still doesn't work, don't hesitate to `contact us`_.
+
 Optional Modifications
 ----------------------
 
@@ -764,8 +797,6 @@ Don't forget to replace :bash:`gigalixir_getting_started` with your own app name
 
 You can safely ignore Kubernetes errors like :bash:`[libcluster:k8s_example]` errors because you probably aren't running inside Kubernetes.
 
-If the above commands succeed, then please `contact us for help`_. If not, `contact us`_ anyway and we'll do our best to help you.
-
 If they don't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
 
 In case static assets don't show up, you can try the following for Phoenix 1.3 and then re-run the commands above.
@@ -777,6 +808,8 @@ In case static assets don't show up, you can try the following for Phoenix 1.3 a
     node_modules/brunch/bin/brunch build --production
     cd ..
     mix phx.digest
+
+If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
 
 Common Errors
 -------------
