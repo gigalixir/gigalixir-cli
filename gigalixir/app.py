@@ -191,3 +191,11 @@ def logs(host, app_name):
                 if chunk:
                     click.echo(chunk, nl=False)
 
+def delete(host, app_name):
+    r = requests.delete('%s/api/apps/%s' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)

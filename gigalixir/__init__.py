@@ -488,6 +488,18 @@ def delete_ssh_key(ctx, key_id):
     """
     gigalixir_ssh_key.delete(ctx.obj['host'], key_id)
 
+@cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
+def delete_app(ctx, app_name):
+    """
+    Deletes an app. Can not be undone. 
+    """
+    logging.getLogger("gigalixir-cli").info("WARNING!! Deleting an app can not be undone and the name can not be reused.")
+    if click.confirm('Do you want to delete your app?'):
+        gigalixir_app.delete(ctx.obj['host'], app_name)
+
 # @delete.command()
 @cli.command()
 @click.argument('app_name')

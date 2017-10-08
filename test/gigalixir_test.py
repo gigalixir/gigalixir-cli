@@ -229,6 +229,14 @@ def test_create_permission():
     expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
 
 @httpretty.activate
+def test_delete_app():
+    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['delete_app', 'fake-app-name'], input="y\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
 def test_delete_permission():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/permissions', body='{}', content_type='application/json')
     runner = CliRunner()
