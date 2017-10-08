@@ -946,6 +946,22 @@ How to Create an App
 
     gigalixir create 
 
+How to Delete an App
+====================
+
+WARNING!! Deleting an app can not be undone and the name can not be reused.
+
+To delete an app, run
+
+.. code-block:: bash
+
+    gigalixir delete_app $APP_NAME
+
+How to Rename an App
+====================
+
+There is no way to rename an app, but you can delete it and then create a new one. Remember to migrate over your configs.
+
 How to Deploy an App
 ====================
 
