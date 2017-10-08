@@ -197,9 +197,6 @@ Then, run
     mix deps.get
     mix release.init
 
-Note, there is a `known issue`_ right now with Distillery 1.3.5 with Elixir 1.3.1, but a fix should be released soon. In the meantime, if you are on Elixir 1.3.1, try using Distillery 1.0.0.
-
-.. _`known issue`: https://github.com/bitwalker/distillery/issues/260
 .. _`Distillery installation instructions`: https://hexdocs.pm/distillery/getting-started.html#installation-setup
 
 .. _`buildpacks`:
@@ -231,14 +228,19 @@ Open your :bash:`prod.exs` file and delete the following line if it is there
 
     import_config "prod.secret.exs"
 
-Then add the following in :bash:`prod.exs`
+Then add something like the following in :bash:`prod.exs`
 
 .. code-block:: elixir
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
+       load_from_system_env: true,
+       url: [host: "example.com", port: 80],
+       cache_static_manifest: "priv/static/cache_manifest.json"
+ 
+     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
        server: true,
        secret_key_base: "${SECRET_KEY_BASE}"
-     
+
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
        url: "${DATABASE_URL}",
@@ -503,14 +505,13 @@ Yes! Just make sure you set :elixir:`server: true` in your :bash:`prod.exs` and 
 
 .. _`heroku-buildpack-phoenix-static configuration`: https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration
 
-*Do you support Phoenix 1.3?*
------------------------------
+*What versions of Phoenix do you support?*
 
-Yes! Just be sure you set your :bash:`phoenix_relative_path`, see the `heroku-buildpack-phoenix-static configuration`_.
+All versions.
 
-*Do you support Elixir 1.5 or OTP 20?*
+*What versions of Elixir and OTP do you support?*
 
-Yes! We support all versions of Elixir and OTP. See :ref:`configure versions`.
+All versions of Elixir and OTP. See :ref:`configure versions`. Some buildpacks don't have the bleeding edge versions so those might not work, but they will eventually.
 
 *Can I have multiple custom domains?*
 
@@ -524,13 +525,13 @@ This is probably best answered by taking a look at the `elixir homepage`_ and th
 *How is Gigalixir different from Heroku and Deis Workflow?*
 -----------------------------------------------------------
 
+For a feature comparison table between Gigalixir and Heroku see, :ref:`gigalixir heroku feature comparison`.
+
 .. image:: venn.png
 
 Heroku is a really great platform and much of Gigalixir was designed based on their excellent `twelve-factor methodology`_. Heroku and Gigalixir are similar in that they both try to make deployment and operations as simple as possible. Elixir applications, however, aren't very much like most other apps today written in Ruby, Python, Java, etc. Elixir apps are distributed, highly-available, hot-upgradeable, and often use lots of concurrent long-lived connections. Gigalixir made many fundamental design choices that ensure all these things are possible.
 
 For example, Heroku restarts your app every 24 hours regardless of if it is healthy or not. Elixir apps are designed to be long-lived and many use in-memory state so restarting every 24 hours sort of kills that. Heroku also limits the number of concurrent connections you can have. It also has limits to how long these connections can live. Heroku isolates each instance of your app so they cannot communicate with each other, which prevents node clustering. Heroku also restricts SSH access to your containers which makes it impossible to do hot upgrades, remote consoles, remote observers, production tracing, and a bunch of other things. The list goes on, but suffice it to say, running an Elixir app on Heroku forces you to give up a lot of the features that drew you to Elixir in the first place.
-
-For a feature comparison table between Gigalixir and Heroku see, :ref:`gigalixir heroku feature comparison`.
 
 Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you *could* make modifications to support node clustering and remote observer, but they won't work out of the box and hot upgrades would require some fundamental changes to the way Deis was designed to work. Even so, you'd still have to spend a lot of time solving problems that Gigalixir has already figured out for you.
 
