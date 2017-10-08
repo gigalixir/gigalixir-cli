@@ -261,7 +261,7 @@ Verify
 
 Let's make sure everything works. 
 
-First, try generating and running a Distillery release locally by running
+First, try generating building static assets
 
 .. code-block:: bash
 
@@ -272,20 +272,32 @@ First, try generating and running a Distillery release locally by running
     npm install
     node_modules/brunch/bin/brunch build --production
     cd ..
-    mix phx.digest
+    mix phoenix.digest
 
-    # build Distillery release
+and building a Distillery release locally
+
+.. code-block:: bash
+
     MIX_ENV=prod mix release --env=prod
 
-    # run the app
+and running it locally
+
+.. code-block:: bash
+
     DATABASE_URL="postgres://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
 
-    # hit the app
-    curl localhost:4000
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
 
+Check it out.
+
+.. code-block:: bash
+
+    curl localhost:4000
+
 If that didn't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
+
+Also check out :ref:`troubleshooting`.
 
 If it still doesn't work, don't hesitate to `contact us`_.
 
@@ -804,6 +816,8 @@ In your app code, access the environment variable using
 
 .. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/runtime-configuration.html#content
 
+.. _`troubleshooting`:
+
 Troubleshooting
 ===============
 
@@ -824,7 +838,7 @@ You can safely ignore Kubernetes errors like :bash:`[libcluster:k8s_example]` er
 
 If they don't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
 
-In case static assets don't show up, you can try the following for Phoenix 1.3 and then re-run the commands above.
+In case static assets don't show up, you can try the following and then re-run the commands above.
 
 .. code-block:: bash
 
@@ -832,7 +846,25 @@ In case static assets don't show up, you can try the following for Phoenix 1.3 a
     npm install
     node_modules/brunch/bin/brunch build --production
     cd ..
-    mix phx.digest
+    mix phoenix.digest
+
+If your problem is with one of the buildpacks, try running the full build using Docker and Herokuish by running
+
+.. code-block:: bash
+
+    APP_ROOT=$(pwd)
+    rm -rf /tmp/gigalixir/cache
+    mkdir -p /tmp/gigalixir/cache
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish /bin/herokuish buildpack build
+
+Or to inspect closer, run
+
+.. code-block:: bash
+
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish /bin/bash
+
+    # and then inside the container run
+    /bin/herokuish buildpack build
 
 If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
 
