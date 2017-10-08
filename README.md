@@ -22,11 +22,14 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 ## Testing
 
     # set up a virtualenv, then
+    source venv/bin/activate
     unset GIGALIXIR_ENV
     pip install -e .[dev]
     python setup.py test
 
     # e2e tests
+    source venv/bin/activate
+    unset GIGALIXIR_ENV
     pip install pytest
     export GIGALIXIR_EMAIL=foo
     export GIGALIXIR_PASSWORD=bar
