@@ -646,6 +646,7 @@ def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
 @click.argument('app_name')
 @click.option('-c', '--cookie')
 @click.pass_context
+@report_errors
 def observer(ctx, app_name, cookie):
     """
     Launch remote production observer.
