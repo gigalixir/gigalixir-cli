@@ -308,7 +308,7 @@ Add a gigalixir git remote.
 
 .. code-block:: bash
 
-    git remote add https://git.gigalixir.com/$APP_NAME.git
+    git remote add gigalixir https://git.gigalixir.com/$APP_NAME.git
 
 Finally, build and deploy.
 
@@ -874,6 +874,24 @@ Common Errors
     - ~/.netrc access too permissive: access permissions must restrict access to only the owner
 
         - run :bash:`chmod og-rwx ~/.netrc`
+
+    - (File.Error) could not read file "foo/bar": no such file or directory
+
+        - Often, this means that Distillery did not package the :bash:`foo` directory into your release tarball. Try using Distillery Overlays to add the :bash:`foo` directory. For example, adjusting your :bash:`rel/config.exs` to something like this
+
+          .. code-block:: bash
+
+              release :gigalixir_getting_started do
+                set version: current_version(:gigalixir_getting_started)
+                set applications: [
+                  :runtime_tools
+                ]
+                set overlays: [
+                  {:copy, "foo", "foo"}
+                ]
+              end
+
+          For more, see https://github.com/bitwalker/distillery/blob/master/docs/Overlays.md
 
 .. _`contact us for help`:
 .. _`contact us`:
