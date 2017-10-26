@@ -913,7 +913,13 @@ The Gigalixir Command-Line Interface or CLI is a tool you install on your local 
 Installation
 ------------
 
-Install :bash:`gigalixir` using :bash:`pip install gigalixir`. If you don't have pip installed, take a look at the `pip documentation`_.
+Install :bash:`gigalixir` using 
+
+.. code-block:: bash
+
+    sudo pip install gigalixir --ignore-installed six
+
+If you don't have pip installed, take a look at the `pip documentation`_.
 
 Upgrade
 -------
@@ -922,7 +928,7 @@ To upgrade the Gigalixir CLI, run
 
 .. code-block:: bash
 
-    pip install -U gigalixir
+    sudo pip install -U gigalixir --ignore-installed six
 
 Encryption
 ----------
