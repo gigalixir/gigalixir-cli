@@ -69,7 +69,31 @@ machine localhost
 \tpassword fake-api-key
 """
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vQGdpZ2FsaXhpci5jb206cGFzc3dvcmQ=\r\n')
+    expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwYXNzd29yZA==\r\n')
+
+@httpretty.activate
+def test_login_escaping():
+    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/login', body='{"data":{"key": "fake-api-key"}}', content_type='application/json')
+    runner = CliRunner()
+
+    # Make sure this test does not modify the user's netrc file.
+    with runner.isolated_filesystem():
+        os.environ['HOME'] = '.'
+        result = runner.invoke(gigalixir.cli, ['login', '--email=foo@gigalixir.com'], input="p:assword\ny\n")
+        assert result.exit_code == 0
+        with open('.netrc') as f:
+            assert f.read() == """machine api.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+machine git.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+machine localhost
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+"""
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwJTNBYXNzd29yZA==\r\n')
 
 @httpretty.activate
 def test_create_app():

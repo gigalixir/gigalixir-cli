@@ -2,6 +2,7 @@ import requests
 from . import auth
 from . import netrc
 import logging
+import urllib
 import click
 import stripe
 import json
@@ -45,7 +46,7 @@ def validate_password(host, password):
         raise Exception("Password should be at least 4 characters.")
 
 def change_password(host, email, current_password, new_password):
-    r = requests.patch('%s/api/users' % host, auth = (email, current_password), json = {
+    r = requests.patch('%s/api/users' % host, auth = (urllib.quote(email.encode('utf-8')), urllib.quote(current_password.encode('utf-8'))), json = {
         "new_password": new_password
     })
     if r.status_code != 200:
@@ -57,7 +58,7 @@ def logout():
     netrc.clear_netrc()
 
 def login(host, email, password, yes):
-    r = requests.get('%s/api/login' % host, auth = (email, password))
+    r = requests.get('%s/api/login' % host, auth = (urllib.quote(email.encode('utf-8')), urllib.quote(password.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise Exception("Sorry, we could not authenticate you. If you need to reset your password, run `gigalixir send_reset_password_token --email=%s`." % email)

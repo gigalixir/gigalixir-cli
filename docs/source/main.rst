@@ -39,6 +39,8 @@ For example, on Ubuntu, run
 .. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
 .. _`gigalixir-getting-started-phx-1-3-rc-2`: https://github.com/gigalixir/gigalixir-getting-started-phx-1-3-rc-2
 
+.. _`install the CLI`:
+
 Install the Command-Line Interface
 ----------------------------------
 
@@ -250,7 +252,7 @@ Then add something like the following in :bash:`prod.exs`
 
 Important! Note the `server: true` above. That is required otherwise your app will not serve HTTP requests and will fail health checks.
 
-Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following. For more information on setting configs, see :ref:`configs`.
+Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
 
 .. code-block:: bash
 
@@ -300,27 +302,6 @@ If that didn't work, the first place to check is :bash:`prod.exs`. Make sure you
 Also check out :ref:`troubleshooting`.
 
 If it still doesn't work, don't hesitate to `contact us`_.
-
-Deploy!
-^^^^^^^
-
-Add a gigalixir git remote.
-
-.. code-block:: bash
-
-    git remote add gigalixir https://git.gigalixir.com/$APP_NAME.git
-
-Finally, build and deploy.
-
-.. code-block:: bash
-
-    git push gigalixir master
-
-Wait a minute or two since this is the first deploy, then verify by running
-
-.. code-block:: bash
-
-    curl https://$APP_NAME.gigalixirapp.com/
 
 Optional Modifications
 ----------------------
