@@ -644,6 +644,7 @@ Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited 
 =======================  ========= =============
 Feature                  FREE Tier STANDARD Tier
 =======================  ========= =============
+Zero-downtime deploy     YES       YES
 Websockets               YES       YES
 Automatic TLS            YES       YES
 Log Aggregation          YES       YES
@@ -676,6 +677,7 @@ Postgres-as-a-Service    YES                 YES                     YES        
 No sleeping              YES                 YES                                 YES             YES
 Automatic TLS            YES                 YES                                 YES             YES
 Preboot                  YES                 YES                                 YES             YES
+Zero-downtime deploys    YES                 YES
 SSH Access               YES                 YES
 Hot Upgrades             YES                 YES
 Remote Observer          YES                 YES
