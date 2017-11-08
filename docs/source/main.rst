@@ -236,7 +236,7 @@ Then add something like the following in :bash:`prod.exs`
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
        load_from_system_env: true,
-       url: [host: "example.com", port: 80],
+       url: [host: "example.com", port: 4000],
        cache_static_manifest: "priv/static/cache_manifest.json"
  
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
