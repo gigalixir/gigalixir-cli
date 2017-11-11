@@ -856,6 +856,10 @@ If the above commands still do not succeed and your app is open source, then ple
 Common Errors
 -------------
 
+    - My deploy succeeded, but nothing happened.
+
+        - When `git push gigalixir master` succeeds, it means your code was compiled and built without any problems, but there can still be problems during runtime. Other platforms will just let your app fail, but gigalixir performs tcp health checks on port 4000 on your new release before terminating the old release. So if your new release is failing health checks, it can appear as if nothing is happening because in a sense, nothing is. Check `gigalixir logs` for any startup errors.
+
     - ~/.netrc access too permissive: access permissions must restrict access to only the owner
 
         - run :bash:`chmod og-rwx ~/.netrc`
