@@ -15,6 +15,7 @@ from . import domain as gigalixir_domain
 from . import invoice as gigalixir_invoice
 from . import usage as gigalixir_usage
 from . import database as gigalixir_database
+from . import free_database as gigalixir_free_database
 import click
 import requests
 import getpass
@@ -448,6 +449,17 @@ def databases(ctx, app_name):
 @click.argument('app_name')
 @click.pass_context
 @report_errors
+def free_databases(ctx, app_name):
+    """
+    Get free databases for your app.
+    """
+    gigalixir_free_database.get(ctx.obj['host'], app_name)
+
+# @get.command()
+@cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
 def domains(ctx, app_name):
     """
     Get custom domains for your app.
@@ -522,10 +534,27 @@ def delete_database(ctx, app_name, database_id):
     """
     Delete database.
     """
-    logging.getLogger("gigalixir-cli").info("WARNING!! Deleting your database will also delete all backups.")
+    logging.getLogger("gigalixir-cli").info("WARNING!! Deleting your database will all your data and backups.")
+    logging.getLogger("gigalixir-cli").info("WARNING!! This can not be undone.")
     logging.getLogger("gigalixir-cli").info("WARNING!! Please make sure you backup your data first.")
     if click.confirm('Do you want to delete your database and all backups?'):
         gigalixir_database.delete(ctx.obj['host'], app_name, database_id)
+
+# @delete.command()
+@cli.command()
+@click.argument('app_name')
+@click.argument('database_id')
+@click.pass_context
+@report_errors
+def delete_free_database(ctx, app_name, database_id):
+    """
+    Delete free database.
+    """
+    logging.getLogger("gigalixir-cli").info("WARNING!! Deleting your database will destroy all your data.")
+    logging.getLogger("gigalixir-cli").info("WARNING!! This can not be undone.")
+    logging.getLogger("gigalixir-cli").info("WARNING!! Please make sure you backup your data first.")
+    if click.confirm('Do you want to delete your database?'):
+        gigalixir_free_database.delete(ctx.obj['host'], app_name, database_id)
 
 # @delete.command()
 @cli.command()
@@ -574,6 +603,16 @@ def create_database(ctx, app_name, size):
     Create a new database for app.
     """
     gigalixir_database.create(ctx.obj['host'], app_name, size)
+
+@cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
+def create_free_database(ctx, app_name):
+    """
+    Create a new free database for app.
+    """
+    gigalixir_free_database.create(ctx.obj['host'], app_name)
 
 # @create.command()
 @cli.command()
