@@ -138,13 +138,13 @@ Your app does not have a database yet, let's create one.
 
 .. code-block:: bash
 
-    gigalixir create_database $APP_NAME 
+    gigalixir create_free_database $APP_NAME 
 
 This may take a few minutes to become :bash:`AVAILABLE`. Run this to check the status.
 
 .. code-block:: bash
 
-    gigalixir databases $APP_NAME
+    gigalixir free_databases $APP_NAME
 
 Once the database is created, verify your configuration includes a :bash:`DATABASE_URL` by running
 
@@ -252,7 +252,7 @@ Then add something like the following in :bash:`prod.exs`
 
 Important! Note the `server: true` above. That is required otherwise your app will not serve HTTP requests and will fail health checks.
 
-Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you use a database, you'll have to set the DATABASE_URL yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
+Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name, and take note that you need to keep the :elixir:`Web` suffix. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the DATABASE_URL yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
 
 .. code-block:: bash
 
@@ -286,7 +286,7 @@ and running it locally
 
 .. code-block:: bash
 
-    DATABASE_URL="postgres://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
+    DATABASE_URL="postgresql://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
 
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
@@ -528,7 +528,7 @@ For example, Heroku restarts your app every 24 hours regardless of if it is heal
 
 Deis Workflow is also really great platform and is very similar to Heroku, except you run it your own infrastructure. Because Deis is open source and runs on Kubernetes, you *could* make modifications to support node clustering and remote observer, but they won't work out of the box and hot upgrades would require some fundamental changes to the way Deis was designed to work. Even so, you'd still have to spend a lot of time solving problems that Gigalixir has already figured out for you.
 
-On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir. Heroku has a web interface, databases as a service, and tons of add-ons.
+On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir.
 
 *I thought you weren't supposed to SSH into docker containers!?*
 ----------------------------------------------------------------
@@ -634,17 +634,17 @@ Gigalixir handles permissions so that you have access to Kubernetes endpoints an
 .. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/config.exs#L27
 .. _`gigalixir-run`: https://github.com/gigalixir/gigalixir-run
 
-.. _`pricing`:
+.. _`tiers`:
 
 Tiers
 =====
 
-Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.2 instance and 1 size 0.6 database. The database is also limited to 10,000 rows. 
+Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.2 instance and 1 database. 
 
 =======================  ========= =============
-Feature                  FREE Tier STANDARD Tier
+Instance Feature         FREE Tier STANDARD Tier
 =======================  ========= =============
-Zero-downtime deploy     YES       YES
+Zero-downtime deploys    YES       YES
 Websockets               YES       YES
 Automatic TLS            YES       YES
 Log Aggregation          YES       YES
@@ -656,10 +656,31 @@ No Daily Restarts        YES       YES
 Custom Domains           YES       YES
 Postgres-as-a-Service    YES       YES
 SSH Access               YES       YES
-Flexible Instance Sizes            YES
+Vertical Scaling                   YES
 Horizontal Scaling                 YES
 Clustering                         YES
+Multiple Apps                      YES
+Team Permissions                   YES
 =======================  ========= =============
+
+=======================  ========= =============
+Database Feature         FREE Tier STANDARD Tier
+=======================  ========= =============
+SSL Connections          YES       YES
+Data Import/Export       YES       YES
+Data Encryption                    YES
+Dedicated CPU                      YES*
+Dedicated Memory                   YES
+Dedicated Disk                     YES
+No Connection Limits               YES
+No Row Limits                      YES
+Backups                            YES
+Scalable                           YES
+Automatic Data Migration           YES
+Postgres Extensions                YES
+=======================  ========= =============
+
+* Only sizes 4 and above have dedicated CPU. See :ref:`database sizes`.
 
 .. _`gigalixir heroku feature comparison`:
 
@@ -692,11 +713,12 @@ Dedicated Instances                                                             
 Autoscaling                                                                                      YES
 =======================  =================== ======================= =========== =============== ==================
 
+.. _`pricing`:
 
 Pricing Details
 ===============
 
-In the free tier, everything is free. Once you upgrade to the standard tier, you pay $50 per GB-month of memory. CPU, bandwidth, and power are included. You get 1 CPU share per GB of memory. See :ref:`replica sizing`.
+In the free tier, everything is no-credit-card free. Once you upgrade to the standard tier, you pay $10 for every 200MB of memory per month. CPU, bandwidth, and power are free. You get 1 CPU share per GB of memory. See :ref:`replica sizing` for more.
 
 Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card.
 
@@ -814,7 +836,7 @@ First, try generating and running a Distillery release locally by running
 
     mix deps.get
     MIX_ENV=prod mix release --env=prod
-    DATABASE_URL="postgres://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
+    DATABASE_URL="postgresql://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
     curl localhost:4000
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
@@ -1424,10 +1446,39 @@ How to Log In
 This modifies your ~/.netrc file so that future API requests will be authenticated. API keys expire after 365 days, but if you login again, you will automatically receive an we API key.
 
 
+.. _`provisioning free database`:
+
+How to provision a Free PostgreSQL database
+===========================================
+
+The following command will provision a free database for you and set your :bash:`DATABASE_URL` environment variable appropriately. 
+
+.. code-block:: bash
+
+    gigalixir create_free_database $APP_NAME
+
+List databases by running
+
+.. code-block:: bash
+
+    gigalixir free_databases $APP_NAME
+
+Delete by running
+
+.. code-block:: bash
+
+    gigalixir delete_free_database $APP_NAME $DATABASE_ID
+
+You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
+
+In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 1 connection, 1,000 rows, and no backups. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
+
+For information on upgrading your account, see :ref:`upgrade account`.
+
 .. _`provisioning database`:
 
-How to provision a PostgreSQL database
-======================================
+How to provision a Standard PostgreSQL database
+===============================================
 
 The following command will provision a database for you and set your :bash:`DATABASE_URL` environment variable appropriately. 
 
@@ -1444,8 +1495,6 @@ It takes a few minutes to provision. You can check the status by running
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
 Under the hood, we use Google's Cloud SQL which provides reliability, security, and automatic backups. For more information, see `Google Cloud SQL for PostgreSQL Documentation`_.
-
-If you are on the free tier, you will be limited to 10,000 rows. For information on upgrading your account, see :ref:`upgrade account`.
 
 .. _`Google Cloud SQL for PostgreSQL Documentation`: https://cloud.google.com/sql/docs/postgres/
 
@@ -1483,17 +1532,9 @@ First, make sure Google Cloud SQL supports your extension by checking `their lis
 Database Sizes & Pricing
 ========================
 
-Database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically as needed. We currently do not set a limit for disk size, but we probably will later.
+In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 1 connection, 1,000 rows, and no backups. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
 
-In the free tier, you get a size 0.6 database for free, but it is limited to 10,000 rows. 
-
-====  =============
-Size  Price / Month
-====  =============
-0.6   FREE
-====  =============
-
-Once you upgrade to the standard tier, the pricing is as follows.
+In the standard tier, database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically as needed. We currently do not set a limit for disk size, but we probably will later.
 
 ====  =============
 Size  Price / Month
@@ -1509,6 +1550,8 @@ Size  Price / Month
 ====  =============
 
 Prices are prorated to the second.
+
+For more, see :ref:`provisioning database` and :ref:`provisioning free database`.
 
 .. _`connect-database`:
 
@@ -1730,6 +1773,21 @@ To see all your previous period's invoices, run
     gigalixir invoices
 
 .. _`money back guarantee`:
+
+How to give another user permission to deploy my app
+====================================================
+
+.. code-block:: bash
+
+    gigalixir add_permission $APP_NAME $USER_EMAIL
+
+.. code-block:: bash
+
+    gigalixir permissions $APP_NAME 
+
+.. code-block:: bash
+
+    gigalixir delete_permission $APP_NAME $USER_EMAIL
 
 How secure is Gigalixir?
 ========================
