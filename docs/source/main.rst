@@ -138,13 +138,13 @@ Your app does not have a database yet, let's create one.
 
 .. code-block:: bash
 
-    gigalixir create_free_database $APP_NAME 
+    gigalixir create_database --free $APP_NAME 
 
 This may take a few minutes to become :bash:`AVAILABLE`. Run this to check the status.
 
 .. code-block:: bash
 
-    gigalixir free_databases $APP_NAME
+    gigalixir databases $APP_NAME
 
 Once the database is created, verify your configuration includes a :bash:`DATABASE_URL` by running
 
@@ -1455,19 +1455,19 @@ The following command will provision a free database for you and set your :bash:
 
 .. code-block:: bash
 
-    gigalixir create_free_database $APP_NAME
+    gigalixir create_database --free $APP_NAME
 
 List databases by running
 
 .. code-block:: bash
 
-    gigalixir free_databases $APP_NAME
+    gigalixir databases $APP_NAME
 
 Delete by running
 
 .. code-block:: bash
 
-    gigalixir delete_free_database $APP_NAME $DATABASE_ID
+    gigalixir delete_database $APP_NAME $DATABASE_ID
 
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
