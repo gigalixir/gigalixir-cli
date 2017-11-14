@@ -382,7 +382,8 @@ def add_log_drain(ctx, app_name, url):
 @report_errors
 def add_ssh_key(ctx, ssh_key):
     """
-    Add an ssh key.
+    Add an ssh key. Make sure you use the actual key and not the filename as the argument. For example,
+    don't use ~/.ssh/id_rsa.pub, use the contents of that file.
     """
     gigalixir_ssh_key.create(ctx.obj['host'], ssh_key)
 
@@ -596,23 +597,17 @@ def add_permission(ctx, unique_name, email):
 @cli.command()
 @click.argument('app_name')
 @click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
+@click.option('-f', '--free', is_flag=True)
 @click.pass_context
 @report_errors
-def create_database(ctx, app_name, size):
+def create_database(ctx, app_name, size, free):
     """
     Create a new database for app.
     """
-    gigalixir_database.create(ctx.obj['host'], app_name, size)
-
-@cli.command()
-@click.argument('app_name')
-@click.pass_context
-@report_errors
-def create_free_database(ctx, app_name):
-    """
-    Create a new free database for app.
-    """
-    gigalixir_free_database.create(ctx.obj['host'], app_name)
+    if free:
+        gigalixir_free_database.create(ctx.obj['host'], app_name)
+    else:
+        gigalixir_database.create(ctx.obj['host'], app_name, size)
 
 # @create.command()
 @cli.command()
