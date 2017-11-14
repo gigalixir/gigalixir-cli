@@ -609,6 +609,16 @@ def create_database(ctx, app_name, size, free):
     else:
         gigalixir_database.create(ctx.obj['host'], app_name, size)
 
+@cli.command()
+@click.argument('app_name')
+@click.pass_context
+@report_errors
+def create_free_database(ctx, app_name):
+    """
+    Create a new free database for app.
+    """
+    gigalixir_free_database.create(ctx.obj['host'], app_name)
+
 # @create.command()
 @cli.command()
 @click.argument('app_name')
