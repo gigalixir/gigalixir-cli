@@ -1117,8 +1117,8 @@ If you want to automatically run migrations on each automatic deploy, you have t
 
    .. code-block:: bash
 
-       giglaixir login -e $GIGALIXIR_EMAIL -p $GIGALIXIR_PASSWORD -y
-       gigalixir $GIGALIXIR_APP_NAME migrate
+       gigalixir login -e $GIGALIXIR_EMAIL -p $GIGALIXIR_PASSWORD -y
+       gigalixir migrate $GIGALIXIR_APP_NAME
 
 2. Use a Distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/Running%20Migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/Boot%20Hooks.md
 
