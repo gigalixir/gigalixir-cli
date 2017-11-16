@@ -248,7 +248,7 @@ Then add something like the following in :bash:`prod.exs`
        url: "${DATABASE_URL}",
        database: "",
        ssl: true,
-       pool_size: 10
+       pool_size: 1
 
 Important! Note the `server: true` above. That is required otherwise your app will not serve HTTP requests and will fail health checks.
 
@@ -663,22 +663,22 @@ Multiple Apps                      YES
 Team Permissions                   YES
 =======================  ========= =============
 
-=======================  ========= =============
-Database Feature         FREE Tier STANDARD Tier
-=======================  ========= =============
-SSL Connections          YES       YES
-Data Import/Export       YES       YES
-Data Encryption                    YES
-Dedicated CPU                      YES*
-Dedicated Memory                   YES
-Dedicated Disk                     YES
-No Connection Limits               YES
-No Row Limits                      YES
-Backups                            YES
-Scalable                           YES
-Automatic Data Migration           YES
-Postgres Extensions                YES
-=======================  ========= =============
+========================  ========= =============
+Database Feature          FREE Tier STANDARD Tier
+========================  ========= =============
+SSL Connections           YES       YES
+Data Import/Export        YES       YES
+Data Encryption                     YES
+Dedicated CPU                       YES*
+Dedicated Memory                    YES
+Dedicated Disk                      YES
+No Connection Limits                YES
+No Row Limits                       YES
+Backups                             YES
+Scalable/Upgradeable                YES
+Automatic Data Migration            YES
+Postgres Extensions                 YES
+========================  ========= =============
 
 * Only sizes 4 and above have dedicated CPU. See :ref:`database sizes`.
 
@@ -993,7 +993,11 @@ How to Sign Up for an Account
 How to Upgrade an Account
 =========================
 
-The free tier is limited to 1 instance and 1 database. If you need more, or you need to increase the size of either, you'll need to upgrade your account. To upgrade, first add a payment method
+The standard tier offers much more than the free tier, see :ref:`tiers`.
+
+The easiest way to upgrade is through the web interface. Login at https://gigalixir.com/#/signin and click the Upgrade button.
+
+To upgrade with the CLI, first add a payment method
 
 .. code-block:: bash
 
@@ -1567,7 +1571,7 @@ If you followed the :ref:`quick start`, then your database should already be con
        url: {:system, "DATABASE_URL"},
        database: "",
        ssl: true,
-       pool_size: 10
+       pool_size: 1
 
 Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`. If you provisioned your database using, :ref:`provisioning database`, then :bash:`DATABASE_URL` should be set for you automatically once the database in provisioned. Otherwise,
 
