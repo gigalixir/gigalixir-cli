@@ -806,7 +806,7 @@ Gigalixir automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you hav
 
     ...
     config :myapp,
-        my_config: "$MY_CONFIG"
+        my_config: "${MY_CONFIG}"
     ...
 
 Then set the :bash:`MY_CONFIG` environment variable, by running
