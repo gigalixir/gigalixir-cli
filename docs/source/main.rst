@@ -639,7 +639,7 @@ Gigalixir handles permissions so that you have access to Kubernetes endpoints an
 Tiers
 =====
 
-Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.2 instance and 1 database. 
+Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited to 1 size 0.2 instance and 1 free tier database. Also, on the free tier, if you are inactive for over 30 days, we will send you an email to remind you to keep your account active. If you do not, your app may be scaled down to 0 replicas. We know this isn't ideal, but we think it is better than sleeping instances and we appreciate your understanding since the free tier does cost a lot to run.
 
 =======================  ========= =============
 Instance Feature         FREE Tier STANDARD Tier
@@ -661,6 +661,7 @@ Horizontal Scaling                 YES
 Clustering                         YES
 Multiple Apps                      YES
 Team Permissions                   YES
+No Inactivity Checks               YES
 =======================  ========= =============
 
 ========================  ========= =============
@@ -1475,7 +1476,7 @@ Delete by running
 
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
-In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 1 connection, 1,000 rows, and no backups. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
+In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 1 connection, 10,000 rows, and no backups. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
 
 For information on upgrading your account, see :ref:`upgrade account`.
 
@@ -1536,7 +1537,7 @@ First, make sure Google Cloud SQL supports your extension by checking `their lis
 Database Sizes & Pricing
 ========================
 
-In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 1 connection, 1,000 rows, and no backups. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
+In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 1 connection, 10,000 rows, and no backups. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
 
 In the standard tier, database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically as needed. We currently do not set a limit for disk size, but we probably will later.
 
