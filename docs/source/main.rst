@@ -251,6 +251,7 @@ Then add something like the following in :bash:`prod.exs`
        pool_size: 1
 
 Important! Note the `server: true` above. That is required otherwise your app will not serve HTTP requests and will fail health checks.
+Important! In the free tier, :elixir:`pool_size` needs to be 1 because the free database limits your app to 1 connection.
 
 Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name, and take note that you need to keep the :elixir:`Web` suffix. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the DATABASE_URL yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
 
