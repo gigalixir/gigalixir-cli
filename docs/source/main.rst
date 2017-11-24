@@ -892,6 +892,10 @@ Common Errors
 
         - run :bash:`chmod og-rwx ~/.netrc`
 
+    - `git push gigalixir master` asks for my password
+
+        - First try running `gigalixir login` and try again. If that doesn't work, try resetting your git remote by running `gigalixir set_git_remote $APP` and trying again.
+
     - (File.Error) could not read file "foo/bar": no such file or directory
 
         - Often, this means that Distillery did not package the :bash:`foo` directory into your release tarball. Try using Distillery Overlays to add the :bash:`foo` directory. For example, adjusting your :bash:`rel/config.exs` to something like this
