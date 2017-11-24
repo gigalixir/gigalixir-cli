@@ -882,7 +882,7 @@ Common Errors
 
     - My deploy succeeded, but nothing happened.
 
-        - When `git push gigalixir master` succeeds, it means your code was compiled and built without any problems, but there can still be problems during runtime. Other platforms will just let your app fail, but gigalixir performs tcp health checks on port 4000 on your new release before terminating the old release. So if your new release is failing health checks, it can appear as if nothing is happening because in a sense, nothing is. Check `gigalixir logs` for any startup errors.
+        - When :bash:`git push gigalixir master` succeeds, it means your code was compiled and built without any problems, but there can still be problems during runtime. Other platforms will just let your app fail, but gigalixir performs tcp health checks on port 4000 on your new release before terminating the old release. So if your new release is failing health checks, it can appear as if nothing is happening because in a sense, nothing is. Check :bash:`gigalixir logs` for any startup errors.
 
     - failed to connect: ** (Postgrex.Error) FATAL 53300 (too_many_connections): too many connections for database
 
@@ -892,9 +892,9 @@ Common Errors
 
         - run :bash:`chmod og-rwx ~/.netrc`
 
-    - `git push gigalixir master` asks for my password
+    - :bash:`git push gigalixir master` asks for my password
 
-        - First try running `gigalixir login` and try again. If that doesn't work, try resetting your git remote by running `gigalixir set_git_remote $APP` and trying again.
+        - First try running :bash:`gigalixir login` and try again. If that doesn't work, try resetting your git remote by running :bash:`gigalixir set_git_remote $APP` and trying again.
 
     - (File.Error) could not read file "foo/bar": no such file or directory
 
@@ -1464,6 +1464,8 @@ This modifies your ~/.netrc file so that future API requests will be authenticat
 
 How to provision a Free PostgreSQL database
 ===========================================
+
+IMPORTANT: Make sure you set your :bash:`pool_size` in :bash:`prod.exs` to 1 beforehand. The free tier database only allows one connection.
 
 The following command will provision a free database for you and set your :bash:`DATABASE_URL` environment variable appropriately. 
 
