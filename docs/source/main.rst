@@ -442,6 +442,8 @@ At this point, your app is running. The Kubernetes ingress controller is routing
 
 If at any point, the deploy fails, we rollback to the last known good release.
 
+To see how we do zero-downtime deploys, see :ref:`zero-downtime`.
+
 .. _how-tls-works:
 
 How SSL/TLS Works
@@ -1391,11 +1393,34 @@ There is currently no way to completely delete an account. We are working on imp
 How to Restart an App
 =====================
 
-Currently, restarts will cause brief downtime as we restart all containers at once. To avoid downtime, consider doing a hot upgrade instead. See, :ref:`hot-upgrade`. We are working on adding health checks so we can do rolling restarts with no downtime.
-
 .. code-block:: bash
 
     gigalixir restart $APP_NAME
+
+For hot upgrades, See :ref:`hot-upgrade`. We are working on adding custom health checks. 
+
+Restarts should be zero-downtime. See :ref:`zero-downtime`.
+
+.. _`zero-downtime`:
+
+How to Set Up Zero-Downtime Deploys
+===================================
+
+Normally, there is nothing you need to do to have zero-downtime deploys. The only caveat is that health checks are currently done by checking if tcp port 4000 is listening. If your app opens the port before it is ready, then it may start receiving traffic before it is ready to serve it. In most cases, with Phoenix, this isn't a problem.
+
+One downside of zero-downtime deploys is that they make deploys slower. What happens during a deploy is
+
+  1. Spawn a new instance
+  2. Wait for health check on the new instance to pass
+  3. Start sending traffic to the new instance
+  4. Stop sending traffic to the old instance
+  5. Wait 30 seconds for old instance is finish processing requests
+  6. Terminate the old instance
+  7. Repeat for every instance
+
+Although you should see your new code running within a few seconds, the entire process takes over 30 seconds per instance so if you have a lot of instances running, this could take a long time.
+
+Heroku opts for faster deploys and restarts instead of zero-downtime deploys.
 
 .. _`jobs`:
 
