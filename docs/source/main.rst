@@ -44,7 +44,7 @@ For example, on Ubuntu, run
 Install the Command-Line Interface
 ----------------------------------
 
-Next install, the command-line interface. Gigalixir currently does not have a web interface. We want the command-line to be a first-class citizen so that you can build scripts and tools easily.
+Next install, the command-line interface. Gigalixir has a web interface at https://gigalixir.com/#/dashboard, but you will still need the CLI to do anything other than signup, deploy, and scale. 
 
 .. code-block:: bash
 
@@ -88,7 +88,7 @@ Verify by running
 Prepare Your App
 ----------------
 
-If you have an existing app or want to use :bash:`mix phoenix.new`, follow the steps in :ref:`modifying existing app`. If you are starting a project from scratch, the easiest way to get started is to clone the the `gigalixir-getting-started`_ repo.
+If you have an existing app or want to use :bash:`mix phoenix.new`, follow the steps in :ref:`modifying existing app`. If you are starting a project from scratch, the easiest way to get started is to clone the `gigalixir-getting-started`_ repo.
 
 .. code-block:: bash
 
@@ -140,7 +140,7 @@ Your app does not have a database yet, let's create one.
 
     gigalixir create_database --free $APP_NAME 
 
-This may take a few minutes to become :bash:`AVAILABLE`. Run this to check the status.
+Verify by running
 
 .. code-block:: bash
 
