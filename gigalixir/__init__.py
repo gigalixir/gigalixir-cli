@@ -30,6 +30,7 @@ import json
 import netrc
 import os
 from functools import wraps
+import pkg_resources
 
 def report_errors(f):
     @wraps(f)
@@ -696,4 +697,10 @@ def observer(ctx, app_name, cookie):
     Launch remote production observer.
     """
     gigalixir_observer.observer(ctx, app_name, cookie)
+
+@cli.command()
+@click.pass_context
+@report_errors
+def version(ctx):
+    click.echo(pkg_resources.get_distribution("gigalixir").version)
 

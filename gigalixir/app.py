@@ -90,6 +90,13 @@ def scale(host, app_name, replicas, size):
         raise Exception(r.text)
 
 def ssh(host, app_name, *args):
+    ssh_helper(host, app_name, False, *args)
+
+# if using this from a script, and you want the return
+# value in a variable, use capture_output=True
+# capture_output needs to be False for remote_console
+# and regular ssh to work.
+def ssh_helper(host, app_name, capture_output, *args):
     # verify SSH keys exist
     keys = ssh_key.ssh_keys(host)
     if len(keys) == 0:
@@ -108,7 +115,10 @@ def ssh(host, app_name, *args):
         if len(args) > 0:
             escaped_args = [pipes.quote(arg) for arg in args]
             command = "gigalixir_run run %s" % " ".join(escaped_args)
-            cast("ssh -t root@%s %s" % (ssh_ip, command))
+            if capture_output:
+                return call("ssh -t root@%s %s" % (ssh_ip, command))
+            else:
+                cast("ssh -t root@%s %s" % (ssh_ip, command))
         else:
             cast("ssh -t root@%s" % (ssh_ip))
 
@@ -161,7 +171,7 @@ def run(host, app_name, module, function):
         raise Exception(r.text)
 
 def distillery_eval(host, app_name, expression):
-    ssh(host, app_name, "eval", expression)
+    return ssh_helper(host, app_name, True, "eval", expression)
 
 def migrate(host, app_name, migration_app_name):
     if migration_app_name == None:
@@ -178,7 +188,14 @@ def migrate(host, app_name, migration_app_name):
         raise Exception(r.text)
     else:
         command = json.loads(r.text)["data"]
-        distillery_eval(host, app_name, command)
+        try:
+            result = distillery_eval(host, app_name, command)
+            click.echo("Migration succeeded.")
+            click.echo("Migrations run: %s" % result)
+        except subprocess.CalledProcessError as e:
+            # tell the user why it failed
+            click.echo(e.output)
+            raise
 
 def logs(host, app_name):
     with closing(requests.get('%s/api/apps/%s/logs' % (host, urllib.quote(app_name.encode('utf-8'))), stream=True)) as r:
