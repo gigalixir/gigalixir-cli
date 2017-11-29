@@ -172,7 +172,7 @@ What's Next?
 Modifying an Existing App to Run on Gigalixir
 =============================================
 
-Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on port 4000, you should be good.
+Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine. Right now, :bash:`$PORT` is set to 4000, but that might change, you should be good.
 
 Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
@@ -236,7 +236,7 @@ Then add something like the following in :bash:`prod.exs`
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
        load_from_system_env: true,
-       url: [host: "example.com", port: 4000],
+       url: [host: "example.com", port: 80],
        cache_static_manifest: "priv/static/cache_manifest.json"
  
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
@@ -588,7 +588,7 @@ To install libcluster, add this to the deps list in :bash:`mix.exs`
 
     {:libcluster, "~> 2.0.3"}
 
-Then add :elixir`:libcluster` and :elixir:`:ssl` to your applications list. This may be different in Elixir 1.4. We'll update these instructions once we officially support Elixir 1.4. For a full example, see `gigalixir-getting-started's mix.exs file`_.
+If you are on Elixir 1.3 or lower, add :elixir`:libcluster` and :elixir:`:ssl` to your applications list. Elixir 1.4 and up detect your applications list for you.
 
 Your app configuration needs to have something like this in it. For a full example, see `gigalixir-getting-started's prod.exs file`_.
 
@@ -604,16 +604,27 @@ Your app configuration needs to have something like this in it. For a full examp
             kubernetes_node_basename: "${LIBCLUSTER_KUBERNETES_NODE_BASENAME}"]]]
     ...
 
-You also need to create a :bash:`rel/vm.args` file with something like this in it. For a full example, see `gigalixir-getting-started's vm.args file`_.
+Gigalixir handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run`_ for more details. 
+
+.. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
+.. _`gigalixir-getting-started's vm.args file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/vm.args
+.. _`gigalixir-getting-started's prod.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/config/prod.exs#L68
+.. _`gigalixir-getting-started's mix.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/mix.exs
+.. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/config.exs#L27
+.. _`gigalixir-run`: https://github.com/gigalixir/gigalixir-run
+
+How to use a custom vm.args
+===========================
+
+Gigalixir sets a default :bash:`vm.args` file for you using the :bash:`RELEASE_CONFIG_DIR`. By default, it is set to :bash:`/release-config`. If you want to use a custom :bash:`vm.args` or a custom :bash:`sys.config`, we recommend you follow these instructions.
+
+Unset :bash:`RELEASE_CONFIG_DIR`
 
 .. code-block:: bash
 
-    ## Name of the node
-    -name ${MY_NODE_NAME}
+    gigalixir set_config $APP_NAME RELEASE_CONFIG_DIR ""
 
-    ## Cookie for distributed erlang
-    -setcookie ${MY_COOKIE}
-    ...
+Create a :bash:`rel/vm.args` file in your repository. It might look something like `gigalixir-getting-started's vm.args file`_.
 
 Lastly, you need to modify your distillery config so it knows where to find your :bash:`vm.args` file. Something like this. For a full example, see `gigalixir-getting-started's rel/config.exs file`_.
 
@@ -628,14 +639,12 @@ Lastly, you need to modify your distillery config so it knows where to find your
     end
     ...
 
-Gigalixir handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run`_ for more details. 
+After a new deploy, verify by SSH'ing into your instance and inspecting your release's vm.arg file like this
 
-.. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
-.. _`gigalixir-getting-started's vm.args file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/vm.args
-.. _`gigalixir-getting-started's prod.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/config/prod.exs#L68
-.. _`gigalixir-getting-started's mix.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/mix.exs
-.. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/config.exs#L27
-.. _`gigalixir-run`: https://github.com/gigalixir/gigalixir-run
+.. code-block:: bash
+
+    gigalixir ssh $APP_NAME
+    cat /app/var/vm.args
 
 .. _`tiers`:
 
