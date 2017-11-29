@@ -184,7 +184,7 @@ These modifications are required to run on Gigalixir, but features such as node 
 Install Distillery to Build Releases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Distillery is currently the only supported release tool. We assume you have followed the `Distillery installation instructions`_. We use Distillery instead of bundling up your source code is to support hot upgrades. 
+Distillery is currently the only supported release tool. We assume you have followed the `Distillery installation instructions`_. We use Distillery instead of bundling up your source code to support hot upgrades. 
 
 In short, you'll need to add something like this to the :elixir:`deps` list in :bash:`mix.exs`
 
@@ -222,9 +222,9 @@ Configuration and Secrets
 
 By default, Phoenix creates a :bash:`prod.secret.exs` file to store secrets. If you want to continue using :bash:`prod.secret.exs` you'll have to commit it to version control so we can bundle it into your release. This is usually not a good idea, though. 
 
-Gigalixir prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`prod.exs` file, and modify the values to pull from environment variables. 
+Gigalixir prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`config/prod.exs` file, and modify the values to pull from environment variables. 
 
-Open your :bash:`prod.exs` file and delete the following line if it is there
+Open your :bash:`config/prod.exs` file and delete the following line if it is there
 
 .. code-block:: elixir
 
