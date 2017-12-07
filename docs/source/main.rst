@@ -174,6 +174,8 @@ Modifying an Existing App to Run on Gigalixir
 
 Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine. Right now, :bash:`$PORT` is set to 4000, but that might change, you should be good.
 
+Important: Although Gigalixir works with all versions of Phoenix, these guides assume you are running Phoenix 1.3. If you need help with Phoenix 1.2, please `contact us`_. The :bash:`prod.exs` can be tricky.
+
 Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
 Required Modifications
@@ -1723,7 +1725,7 @@ Running seeds in production is usually a one-time job, so our recommendation is 
 
 .. code-block:: elixir
 
-    Path.join([priv_dir(:my_app), "repo", "seeds.exs"])
+    Path.join(["#{:code.priv_dir(:myapp)}", "repo", "seeds.exs"])
     Code.eval_file(seed_script)
 
 .. _`the Distillery migration guide`: https://hexdocs.pm/distillery/running-migrations.html#content
