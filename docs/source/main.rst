@@ -1575,7 +1575,23 @@ To delete a database, run
 How to install a Postgres Extension
 ===================================
 
-First, make sure Google Cloud SQL supports your extension by checking `their list of extensions`_. If it is supported, `contact us`_ and we'll install it for you. We're working on automating this process, but in the meantime, we usuall respond within an hour or so.
+First, make sure Google Cloud SQL supports your extension by checking `their list of extensions`_. If it is supported, find your database url by running
+
+.. code-block:: bash
+
+    gigalixir databases $APP_NAME
+
+Then, get a psql console into your database
+
+.. code-block:: bash
+
+    psql $DATABASE_URL
+
+Then, install your extension
+
+.. code-block:: bash
+
+    CREATE EXTENSION foo;
 
 .. _`their list of extensions`: https://cloud.google.com/sql/docs/postgres/extensions
 
