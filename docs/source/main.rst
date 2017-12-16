@@ -897,6 +897,10 @@ Common Errors
 
         - When :bash:`git push gigalixir master` succeeds, it means your code was compiled and built without any problems, but there can still be problems during runtime. Other platforms will just let your app fail, but gigalixir performs tcp health checks on port 4000 on your new release before terminating the old release. So if your new release is failing health checks, it can appear as if nothing is happening because in a sense, nothing is. Check :bash:`gigalixir logs` for any startup errors.
 
+    - My app takes a long time to startup.
+
+        - Most likely, this is because your CPU reservation isn't enough and there isn't any extra CPU available on the machine to give you. Try scaling up your instance sizes. See :ref:`scale`.
+
     - failed to connect: ** (Postgrex.Error) FATAL 53300 (too_many_connections): too many connections for database
 
         - If you have a free tier database, the number of connections is limited to 1. Try lowering the :elixir:`pool_size` in your :bash:`prod.exs` to 1.
