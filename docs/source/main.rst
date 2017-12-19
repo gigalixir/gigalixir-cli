@@ -1738,6 +1738,21 @@ If you have a chicken-and-egg problem where your app will not start without migr
     MIX_ENV=prod mix release --env=prod
     MIX_ENV=prod DATABASE_URL="$YOUR_PRODUCTION_DATABASE_URL" mix ecto.migrate
 
+How to reset the database?
+==========================
+
+First, `drop into a remote console`_ and run this to "down" migrate. You may have to tweak the command depending on what your app is named and if you're running an umbrella app.
+
+.. code-block:: elixir
+
+    Ecto.Migrator.run(MyApp.Repo, Application.app_dir(:my_app, "priv/repo/migrations"), :down, [all: true])
+
+Then run this to "up" migrate.
+
+.. code-block:: elixir
+
+    Ecto.Migrator.run(MyApp.Repo, Application.app_dir(:my_app, "priv/repo/migrations"), :up, [all: true])
+
 How to run seeds?
 =================
 
