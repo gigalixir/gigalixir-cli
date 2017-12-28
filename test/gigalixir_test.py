@@ -37,7 +37,7 @@ machine localhost
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
 """)
-            os.chmod(".netrc", 0600)
+            os.chmod(".netrc", 0o600)
         result = runner.invoke(gigalixir.cli, ['logout'])
         assert result.output == ''
         assert result.exit_code == 0
@@ -561,7 +561,7 @@ def test_get_free_databases():
 """, content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['free_databases', 'fake-app-name'])
-    print result.output
+    print(result.output)
     assert result.output == """[
   {
     "app_name": "REDACTED", 
@@ -622,7 +622,7 @@ def test_get_databases():
 """, content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['databases', 'fake-app-name'])
-    print result.output
+    print(result.output)
     assert result.output == """[
   {
     "app_name": "REDACTED", 
@@ -728,7 +728,7 @@ def test_get_log_drains():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/drains', body='{"data":[{"url":"syslog+tls://foo.papertrailapp.com:12345","token":"fake-token1","id":1},{"url":"https://user:pass@logs.timber.io/frames","token":"fake-token2","id":2}]}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['log_drains', 'fake-app-name'])
-    print result.output
+    print(result.output)
     assert result.output == """[
   {
     "id": 1, 

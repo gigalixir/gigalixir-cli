@@ -6,6 +6,7 @@ import urllib
 import click
 import stripe
 import json
+from six.moves.urllib.parse import quote
 
 def create(host, email, password, accept_terms_of_service_and_privacy_policy):
     r = requests.post('%s/api/free_users' % host, headers = {
@@ -58,7 +59,7 @@ def logout():
     netrc.clear_netrc()
 
 def login(host, email, password, yes):
-    r = requests.get('%s/api/login' % host, auth = (urllib.quote(email.encode('utf-8')), urllib.quote(password.encode('utf-8'))))
+    r = requests.get('%s/api/login' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise Exception("Sorry, we could not authenticate you. If you need to reset your password, run `gigalixir send_reset_password_token --email=%s`." % email)
