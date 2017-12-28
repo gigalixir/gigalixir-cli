@@ -27,6 +27,14 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     pip install -e .[dev]
     python setup.py test
 
+    # for python3 
+    sudo apt-get install -y python3-venv
+    sudo apt-get install -y python3-pip
+    python3 -m venv venv3
+    source venv3/bin/activate
+    pip3 install -e .[dev]
+    python setup.py test
+
     # e2e tests
     source venv/bin/activate
     unset GIGALIXIR_ENV
