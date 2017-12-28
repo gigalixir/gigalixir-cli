@@ -33,9 +33,9 @@ def update_netrc(email, key):
                 os.utime(fname, None)
         netrc_file = netrc.netrc()
 
-    netrc_file.hosts['git.gigalixir.com'] = (email.encode('utf8'), None, key.encode('utf8'))
-    netrc_file.hosts['localhost'] = (email.encode('utf8'), None, key.encode('utf8'))
-    netrc_file.hosts['api.gigalixir.com'] = (email.encode('utf8'), None, key.encode('utf8'))
+    netrc_file.hosts['git.gigalixir.com'] = (email, None, key)
+    netrc_file.hosts['localhost'] = (email, None, key)
+    netrc_file.hosts['api.gigalixir.com'] = (email, None, key)
     file = os.path.join(os.environ['HOME'], ".netrc")
     with open(file, 'w') as fp:
         fp.write(netrc_repr(netrc_file))
