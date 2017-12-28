@@ -9,10 +9,11 @@ import sys
 import subprocess
 from .shell import cast, call
 from . import app as gigalixir_app
+from six.moves.urllib.parse import quote
 
 def observer(ctx, app_name, erlang_cookie=None):
     host = ctx.obj['host']
-    r = requests.get('%s/api/apps/%s/ssh_ip' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/ssh_ip' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:

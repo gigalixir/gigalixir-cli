@@ -47,7 +47,7 @@ def validate_password(host, password):
         raise Exception("Password should be at least 4 characters.")
 
 def change_password(host, email, current_password, new_password):
-    r = requests.patch('%s/api/users' % host, auth = (urllib.quote(email.encode('utf-8')), urllib.quote(current_password.encode('utf-8'))), json = {
+    r = requests.patch('%s/api/users' % host, auth = (quote(email.encode('utf-8')), quote(current_password.encode('utf-8'))), json = {
         "new_password": new_password
     })
     if r.status_code != 200:

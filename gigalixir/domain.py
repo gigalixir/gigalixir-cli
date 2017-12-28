@@ -4,9 +4,10 @@ from . import auth
 import urllib
 import json
 import click
+from six.moves.urllib.parse import quote
 
 def get(host, app_name):
-    r = requests.get('%s/api/apps/%s/domains' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/domains' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -18,7 +19,7 @@ def get(host, app_name):
         click.echo(json.dumps(data, indent=2, sort_keys=True))
 
 def create(host, app_name, fqdn):
-    r = requests.post('%s/api/apps/%s/domains' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.post('%s/api/apps/%s/domains' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "fqdn": fqdn,
@@ -32,7 +33,7 @@ def create(host, app_name, fqdn):
 
 
 def delete(host, app_name, fqdn):
-    r = requests.delete('%s/api/apps/%s/domains' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.delete('%s/api/apps/%s/domains' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "fqdn": fqdn,

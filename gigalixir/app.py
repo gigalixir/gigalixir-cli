@@ -10,6 +10,7 @@ from .shell import cast, call
 from . import auth
 from . import ssh_key
 from contextlib import closing
+from six.moves.urllib.parse import quote
 
 def get(host):
     r = requests.get('%s/api/apps' % host, headers = {
@@ -64,7 +65,7 @@ def create(host, unique_name):
         click.echo(unique_name)
 
 def status(host, app_name):
-    r = requests.get('%s/api/apps/%s/status' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/status' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -81,7 +82,7 @@ def scale(host, app_name, replicas, size):
         json["replicas"] = replicas
     if size != None:
         json["size"] = size 
-    r = requests.put('%s/api/apps/%s/scale' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.put('%s/api/apps/%s/scale' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = json)
     if r.status_code != 200:
@@ -102,7 +103,7 @@ def ssh_helper(host, app_name, capture_output, *args):
     if len(keys) == 0:
         raise Exception("You don't have any ssh keys yet. See `gigalixir add_ssh_key --help`")
 
-    r = requests.get('%s/api/apps/%s/ssh_ip' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/ssh_ip' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -124,7 +125,7 @@ def ssh_helper(host, app_name, capture_output, *args):
 
 
 def restart(host, app_name):
-    r = requests.put('%s/api/apps/%s/restart' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.put('%s/api/apps/%s/restart' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -135,7 +136,7 @@ def restart(host, app_name):
 def rollback(host, app_name, version):
     if version == None:
         version = second_most_recent_version(host, app_name)
-    r = requests.post('%s/api/apps/%s/releases/%s/rollback' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(str(version).encode('utf-8'))), headers = {
+    r = requests.post('%s/api/apps/%s/releases/%s/rollback' % (host, quote(app_name.encode('utf-8')), quote(str(version).encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -144,7 +145,7 @@ def rollback(host, app_name, version):
         raise Exception(r.text)
 
 def second_most_recent_version(host, app_name):
-    r = requests.get('%s/api/apps/%s/releases' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/releases' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -159,7 +160,7 @@ def second_most_recent_version(host, app_name):
             return data[1]["version"]
 
 def run(host, app_name, module, function):
-    r = requests.post('%s/api/apps/%s/run' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.post('%s/api/apps/%s/run' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "module": module,
@@ -175,11 +176,11 @@ def distillery_eval(host, app_name, expression):
 
 def migrate(host, app_name, migration_app_name):
     if migration_app_name == None:
-        r = requests.get('%s/api/apps/%s/migrate-command' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+        r = requests.get('%s/api/apps/%s/migrate-command' % (host, quote(app_name.encode('utf-8'))), headers = {
             'Content-Type': 'application/json',
         })
     else:
-        r = requests.get('%s/api/apps/%s/migrate-command?migration_app_name=%s' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(migration_app_name.encode('utf-8'))), headers = {
+        r = requests.get('%s/api/apps/%s/migrate-command?migration_app_name=%s' % (host, quote(app_name.encode('utf-8')), quote(migration_app_name.encode('utf-8'))), headers = {
             'Content-Type': 'application/json',
         })
     if r.status_code != 200:
@@ -198,7 +199,7 @@ def migrate(host, app_name, migration_app_name):
             raise
 
 def logs(host, app_name):
-    with closing(requests.get('%s/api/apps/%s/logs' % (host, urllib.quote(app_name.encode('utf-8'))), stream=True)) as r:
+    with closing(requests.get('%s/api/apps/%s/logs' % (host, quote(app_name.encode('utf-8'))), stream=True)) as r:
         if r.status_code != 200:
             if r.status_code == 401:
                 raise auth.AuthException()
@@ -209,7 +210,7 @@ def logs(host, app_name):
                     click.echo(chunk, nl=False)
 
 def delete(host, app_name):
-    r = requests.delete('%s/api/apps/%s' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.delete('%s/api/apps/%s' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:

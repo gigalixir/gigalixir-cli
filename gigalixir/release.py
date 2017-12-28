@@ -3,9 +3,10 @@ from . import auth
 import urllib
 import json
 import click
+from six.moves.urllib.parse import quote
 
 def get(host, app_name):
-    r = requests.get('%s/api/apps/%s/releases' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/releases' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:

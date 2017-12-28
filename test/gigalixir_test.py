@@ -15,7 +15,7 @@ def test_create_user():
     result = runner.invoke(gigalixir.cli, ['signup', '--email=foo@gigalixir.com'], input="y\npassword\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.httpretty.latest_requests[1].body).to.equal('{"password": "password", "email": "foo@gigalixir.com"}')
+    expect(httpretty.httpretty.latest_requests[1].body.decode()).to.equal('{"password": "password", "email": "foo@gigalixir.com"}')
 
 @httpretty.activate
 def test_logout():
@@ -108,7 +108,7 @@ def test_create_app():
 gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 """
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"unique_name": "fake-app-name"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"unique_name": "fake-app-name"}')
 
 def test_set_git_remote():
     runner = CliRunner()
@@ -128,7 +128,7 @@ def test_update_user():
     result = runner.invoke(gigalixir.cli, ['change_password', '--email=foo@gigalixir.com'], input="current_password\nnew_password\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"new_password": "new_password"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"new_password": "new_password"}')
 
 @httpretty.activate
 def test_get_apps():
@@ -174,7 +174,7 @@ def test_scale_replicas_only():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"replicas": 100}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"replicas": 100}')
 
 @httpretty.activate
 def test_scale():
@@ -184,7 +184,7 @@ def test_scale():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"size": 0.5, "replicas": 100}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"size": 0.5, "replicas": 100}')
 
 @httpretty.activate
 def test_restart():
@@ -203,7 +203,7 @@ def test_run():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"function": "migrate", "module": "Elixir.Tasks"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"function": "migrate", "module": "Elixir.Tasks"}')
 
 @httpretty.activate
 def test_get_configs():
@@ -224,7 +224,7 @@ def test_create_config():
     result = runner.invoke(gigalixir.cli, ['set_config', 'fake-app-name', 'FOO', 'bar'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"value": "bar", "key": "FOO"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"value": "bar", "key": "FOO"}')
 
 @httpretty.activate
 def test_delete_config():
@@ -233,7 +233,7 @@ def test_delete_config():
     result = runner.invoke(gigalixir.cli, ['delete_config', 'fake-app-name', 'FOO'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"key": "FOO"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"key": "FOO"}')
 
 @httpretty.activate
 def test_get_permissions():
@@ -250,7 +250,7 @@ def test_create_permission():
     result = runner.invoke(gigalixir.cli, ['add_permission', 'fake-app-name', 'foo@gigalixir.com'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"email": "foo@gigalixir.com"}')
 
 @httpretty.activate
 def test_delete_app():
@@ -267,7 +267,7 @@ def test_delete_permission():
     result = runner.invoke(gigalixir.cli, ['delete_permission', 'fake-app-name', 'foo@gigalixir.com'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"email": "foo@gigalixir.com"}')
 
 @httpretty.activate
 def test_create_api_key():
@@ -366,7 +366,7 @@ def test_create_ssh_key():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"ssh_key": "fake-ssh-key"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"ssh_key": "fake-ssh-key"}')
 
 @httpretty.activate
 def test_delete_ssh_key():
@@ -376,7 +376,7 @@ def test_delete_ssh_key():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"id": "3"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"id": "3"}')
 
 @httpretty.activate
 def test_get_payment_method():
@@ -402,7 +402,7 @@ def test_update_payment_method():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"stripe_token": "fake-stripe-token"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"stripe_token": "fake-stripe-token"}')
 
 
 @httpretty.activate
@@ -414,8 +414,8 @@ def test_update_payment_method_cvc_leading_zero():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.httpretty.latest_requests[0].body).to.equal('card%5Bnumber%5D=4111111111111111&card%5Bexp_year%5D=34&card%5Bcvc%5D=023&card%5Bexp_month%5D=12')
-    expect(httpretty.last_request().body).to.equal('{"stripe_token": "fake-stripe-token"}')
+    expect(httpretty.httpretty.latest_requests[0].body.decode()).to.equal('card%5Bnumber%5D=4111111111111111&card%5Bexp_year%5D=34&card%5Bcvc%5D=023&card%5Bexp_month%5D=12')
+    expect(httpretty.last_request().body.decode()).to.equal('{"stripe_token": "fake-stripe-token"}')
 
 @httpretty.activate
 def test_logs():
@@ -444,7 +444,7 @@ def test_delete_domain():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"fqdn": "www.example.com"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"fqdn": "www.example.com"}')
 
 @httpretty.activate
 def test_get_domains():
@@ -466,7 +466,7 @@ def test_create_domain():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"fqdn": "www.example.com"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"fqdn": "www.example.com"}')
 
 @httpretty.activate
 def test_resend_confirmation_token():
@@ -476,7 +476,7 @@ def test_resend_confirmation_token():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"email": "foo@gigalixir.com"}')
 
 @httpretty.activate
 def test_get_reset_password_token():
@@ -486,7 +486,7 @@ def test_get_reset_password_token():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"email": "foo@gigalixir.com"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"email": "foo@gigalixir.com"}')
 
 @httpretty.activate
 def test_reset_password():
@@ -495,7 +495,7 @@ def test_reset_password():
     result = runner.invoke(gigalixir.cli, ['set_password', '--token=fake-token'], input="password\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"token": "fake-token", "password": "password"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"token": "fake-token", "password": "password"}')
 
 @httpretty.activate
 def test_invoices():
@@ -659,7 +659,7 @@ def test_create_database():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"size": 4.0}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"size": 4.0}')
 
 @httpretty.activate
 def test_create_free_database():
@@ -704,7 +704,7 @@ def test_scale_database():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"size": 8.0}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"size": 8.0}')
 
 @httpretty.activate
 def test_account():
@@ -752,7 +752,7 @@ def test_add_log_drain():
     result = runner.invoke(gigalixir.cli, ['add_log_drain', 'fake-app-name', 'fake-url'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"url": "fake-url"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"url": "fake-url"}')
 
 @httpretty.activate
 def test_delete_log_drain():
@@ -761,4 +761,4 @@ def test_delete_log_drain():
     result = runner.invoke(gigalixir.cli, ['delete_log_drain', 'fake-app-name', "10"])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body).to.equal('{"drain_id": "10"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"drain_id": "10"}')

@@ -3,9 +3,10 @@ from . import auth
 import urllib
 import json
 import click
+from six.moves.urllib.parse import quote
 
 def get(host, app_name):
-    r = requests.get('%s/api/apps/%s/permissions' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/permissions' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -17,7 +18,7 @@ def get(host, app_name):
         click.echo(json.dumps(data, indent=2, sort_keys=True))
 
 def create(host, app_name, email):
-    r = requests.post('%s/api/apps/%s/permissions' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.post('%s/api/apps/%s/permissions' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "email": email,
@@ -28,7 +29,7 @@ def create(host, app_name, email):
         raise Exception(r.text)
 
 def delete(host, app_name, email):
-    r = requests.delete('%s/api/apps/%s/permissions' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.delete('%s/api/apps/%s/permissions' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "email": email,

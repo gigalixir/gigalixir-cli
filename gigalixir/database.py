@@ -4,9 +4,10 @@ from . import auth
 import urllib
 import json
 import click
+from six.moves.urllib.parse import quote
 
 def get(host, app_name):
-    r = requests.get('%s/api/apps/%s/databases' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -18,7 +19,7 @@ def get(host, app_name):
         click.echo(json.dumps(data, indent=2, sort_keys=True))
 
 def create(host, app_name, size):
-    r = requests.post('%s/api/apps/%s/databases' % (host, urllib.quote(app_name.encode('utf-8'))), headers = {
+    r = requests.post('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "size": size,
@@ -31,7 +32,7 @@ def create(host, app_name, size):
     logging.getLogger("gigalixir-cli").info("Please give us a few minutes provision the new database.")
 
 def delete(host, app_name, database_id):
-    r = requests.delete('%s/api/apps/%s/databases/%s' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(database_id.encode('utf-8'))), headers = {
+    r = requests.delete('%s/api/apps/%s/databases/%s' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
@@ -40,7 +41,7 @@ def delete(host, app_name, database_id):
         raise Exception(r.text)
 
 def scale(host, app_name, database_id, size):
-    r = requests.put('%s/api/apps/%s/databases/%s' % (host, urllib.quote(app_name.encode('utf-8')), urllib.quote(database_id.encode('utf-8'))), headers = {
+    r = requests.put('%s/api/apps/%s/databases/%s' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
         "size": size,
