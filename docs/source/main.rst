@@ -396,7 +396,7 @@ Concepts
 
   - *User*: The user is you. When you sign up, we create a user.
   - *API Key*: Every user has an API Key which is used to authenticate most API requests. You get one when you login and you can regenerate it at any time. It expires every 365 days.
-  - *SSH Key*: SSH keys are what we use to authenticate you when SSHing to your containers. We usethem for remote observer, remote console, etc.
+  - *SSH Key*: SSH keys are what we use to authenticate you when SSHing to your containers. We use them for remote observer, remote console, etc.
   - *App*: An app is your Elixir application.
   - *Release*: A release is a combination of a slug and a config which is deployed to a run container.
   - *Slug*: Each app is compiled and built into a slug. The slug is the actual code that is run in your containers. Each app will have many slugs, one for every deploy.
