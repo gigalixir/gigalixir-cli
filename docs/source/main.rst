@@ -618,13 +618,13 @@ Gigalixir handles permissions so that you have access to Kubernetes endpoints an
 How to use a custom vm.args
 ===========================
 
-Gigalixir sets a default :bash:`vm.args` file for you using the :bash:`RELEASE_CONFIG_DIR`. By default, it is set to :bash:`/release-config`. If you want to use a custom :bash:`vm.args` or a custom :bash:`sys.config`, we recommend you follow these instructions.
+Gigalixir generates a default :bash:`vm.args` file for you and tells Distillery to use it by settingthe :bash:`VMARGS_PATH` envionment variable. By default, it is set to :bash:`/release-config/vm.args`. If you want to use a custom :bash:`vm.args`, we recommend you follow these instructions.
 
-Unset :bash:`RELEASE_CONFIG_DIR`
+Disable Gigalixir's default vm.args
 
 .. code-block:: bash
 
-    gigalixir set_config $APP_NAME RELEASE_CONFIG_DIR ""
+    gigalixir set_config $APP_NAME GIGALIXIR_DEFAULT_VMARGS false
 
 Create a :bash:`rel/vm.args` file in your repository. It might look something like `gigalixir-getting-started's vm.args file`_.
 
