@@ -29,7 +29,7 @@ def observer(ctx, app_name, erlang_cookie=None):
         if erlang_cookie is None:
             # use FOO=$(gigalixir distillery bar eval 'erlang:get_cookie().') instead
             # ERLANG_COOKIE = call(" ".join(["ssh", "root@%s" % ssh_ip, "--", "cat", "/kube-env-vars/ERLANG_COOKIE"]))
-            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, "erlang:get_cookie().")
+            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, "erlang:get_cookie().").strip("'")
         else:
             ERLANG_COOKIE = erlang_cookie
         logging.getLogger("gigalixir-cli").info("Using erlang cookie: %s" % ERLANG_COOKIE)
