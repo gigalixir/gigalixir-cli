@@ -565,7 +565,7 @@ Heroku and others allow you to specify different types of processes under a sing
 *What if Gigalixir shuts down?*
 -------------------------------
 
-Gigalixir was built as a labor of love. We want to see Elixir grow and this is our way of helping make that happen. Although making money is nice, that is not our primary goal.
+Gigalixir is running profitably and has plenty of funding. There is no reason to think Gigalixir will shut down.
 
 *My git push was rejected*
 --------------------------
@@ -1256,8 +1256,6 @@ The release list is immutable so when you rollback, we create a new release on t
 
 How to Set Up a Custom Domain
 =============================
-
-Important! Right now, if you have multiple custom domains set for your app, all domain DNS entries must point to tls.gigalixir.com. Let's Encrypt issues a single certificate for all N domains on your app. If any single domain can not be authorized, the entire certificate fails to be provisioned. We're working on mitigating this issue.
 
 After your first deploy, you can see your app by visiting https://$APP_NAME.gigalixirapp.com/, but if you want, you can point your own domain such as www.example.com to your app. To do this, first modify your DNS records and point your domain to :bash:`tls.gigalixir.com` using a CNAME record. Then, run the following command to add a custom domain.
 
