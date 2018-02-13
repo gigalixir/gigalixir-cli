@@ -1877,9 +1877,15 @@ How to give another user permission to deploy my app
 How to specify which Distillery release, environment, or profile to build
 =========================================================================
 
+If you have multiple releases defined in :bash:`rel/config.exs`, which is common for umbrella apps, you can specify which release to build
+by setting a config variable on your app that controls the options passed to `mix release`. For example, you can pass the `--profile` option 
+using the command below.
+
 .. code-block:: bash
 
     gigalixir set_config $APP_NAME GIGALIXIR_RELEASE_OPTIONS -- --profile=$RELEASE_NAME:$RELEASE_ENVIRONMENT
+
+With this config variable set on each of your gigalixir apps, when you deploy the same repo to each app, you'll get a different release.
 
 How secure is Gigalixir?
 ========================
