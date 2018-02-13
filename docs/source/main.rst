@@ -411,7 +411,7 @@ Concepts
 Life of a Deploy
 ----------------
 
-When you run :bash:`git push gigalixir master`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in an isolated docker container which ultimately produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpack` file.
+When you run :bash:`git push gigalixir master`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in an isolated docker container which ultimately produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpacks` file.
 
 By default, the buildpacks we use include
 
@@ -1123,7 +1123,7 @@ Since deploys are just a normal :bash:`git push`, Gigalixir should work with any
 
     script:
       - git remote add gigalixir https://$GIGALIXIR_EMAIL:$GIGALIXIR_API_KEY@git.gigalixir.com/$GIGALIXIR_APP_NAME.git
-      - mix test && git push gigalixir HEAD:master
+      - mix test && git push -f gigalixir HEAD:refs/heads/master
     language: elixir
     elixir: 1.5.1
     otp_release: 20.0
@@ -1873,6 +1873,13 @@ How to give another user permission to deploy my app
 .. code-block:: bash
 
     gigalixir delete_permission $APP_NAME $USER_EMAIL
+
+How to specify which Distillery release, environment, or profile to build
+=========================================================================
+
+.. code-block:: bash
+
+    gigalixir set_config $APP_NAME GIGALIXIR_RELEASE_OPTIONS -- --profile=$RELEASE_NAME:$RELEASE_ENVIRONMENT
 
 How secure is Gigalixir?
 ========================
