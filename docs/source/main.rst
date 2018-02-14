@@ -1328,6 +1328,8 @@ In order to SSH, run remote observer, remote console, etc, you need to set up yo
 
     gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
 
+Note: the stuff inside the quotes should be whatever is in your :bash:`~/.ssh/id_rsa.pub` file. If you don't have one, follow `this guide <https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/>`_ to create one.
+
 To view your SSH keys
 
 .. code-block:: bash
