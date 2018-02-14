@@ -1140,7 +1140,7 @@ Add a :bash:`GIGALIXIR_API_KEY` environment variable which you can find in your 
 
 Finally, add a :bash:`GIGALIXIR_APP_NAME` environment variable with the name of your app e.g. :bash:`real-hasty-fruitbat`
 
-Using GitLab CI or any other CI/CD service should be very similar. 
+Using GitLab CI or any other CI/CD service should be very similar. For an example GitLab CI yaml file, see this `.gitlab-ci.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.gitlab-ci.yml>`_ file.
 
 If you want to automatically run migrations on each automatic deploy, you have two options
 
@@ -1152,6 +1152,15 @@ If you want to automatically run migrations on each automatic deploy, you have t
        gigalixir migrate $GIGALIXIR_APP_NAME
 
 2. Use a Distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/Running%20Migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/Boot%20Hooks.md
+
+How to Set Up Review Apps (Feature branch apps)
+===============================================
+
+Review Apps let you run a new instance for every branch and tear them down after the branch is deleted. For GitLab CI/CD Review Apps, all you have to do is create a :bash:`.gitlab-ci.yml` file that looks something like `this one <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.gitlab-ci.yml>`_.
+
+Be sure to create CI/CD secrets for :bash:`GIGALIXIR_EMAIL`, :bash:`GIGALIXIR_PASSWORD`, and :bash:`GIGALIXIR_APP_NAME`.
+
+For review apps run on something other than GitLab, the setup should be very similar.
 
 How to Set the Gigalixir Git Remote
 ===================================
