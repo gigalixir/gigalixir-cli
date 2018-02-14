@@ -69,7 +69,7 @@ def cli(ctx, env):
 
     ctx.obj['host'] = host
 
-    PLATFORM = call("uname -s").decode().lower() # linux or darwin
+    PLATFORM = call("uname -s").lower() # linux or darwin
     if PLATFORM == "linux":
         ctx.obj['router'] = LinuxRouter()
     elif PLATFORM == "darwin":
