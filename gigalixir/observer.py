@@ -11,7 +11,7 @@ from .shell import cast, call
 from . import app as gigalixir_app
 from six.moves.urllib.parse import quote
 
-def observer(ctx, app_name, erlang_cookie=None):
+def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
     host = ctx.obj['host']
     r = requests.get('%s/api/apps/%s/ssh_ip' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
@@ -27,24 +27,20 @@ def observer(ctx, app_name, erlang_cookie=None):
     try:
         logging.getLogger("gigalixir-cli").info("Fetching erlang cookie")
         if erlang_cookie is None:
-            # use FOO=$(gigalixir distillery bar eval 'erlang:get_cookie().') instead
-            # ERLANG_COOKIE = call(" ".join(["ssh", "root@%s" % ssh_ip, "--", "cat", "/kube-env-vars/ERLANG_COOKIE"]))
-            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, "erlang:get_cookie().").strip("'")
+            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, ssh_opts, "erlang:get_cookie().").strip("'")
         else:
             ERLANG_COOKIE = erlang_cookie
         logging.getLogger("gigalixir-cli").info("Using erlang cookie: %s" % ERLANG_COOKIE)
 
-        # use FOO=$(gigalixir distillery bar eval 'node().') instead
-        # MY_POD_IP = call("ssh root@%s cat /kube-env-vars/MY_POD_IP" % ssh_ip)
         logging.getLogger("gigalixir-cli").info("Fetching pod ip")
-        node_name = gigalixir_app.distillery_eval(host, app_name, "node().")
+        node_name = gigalixir_app.distillery_eval(host, app_name, ssh_opts, "node().")
         # node_name is surrounded with single quotes
         (sname, MY_POD_IP) = node_name.strip("'").split('@')
         logging.getLogger("gigalixir-cli").info("Using pod ip: %s" % MY_POD_IP)
         logging.getLogger("gigalixir-cli").info("Using node name: %s" % sname)
-        CUSTOMER_APP_NAME = call("ssh root@%s cat /kube-env-vars/APP" % ssh_ip)
+        CUSTOMER_APP_NAME = gigalixir_app.ssh_helper(host, app_name, ssh_opts, True, "cat", "/kube-env-vars/APP")
         logging.getLogger("gigalixir-cli").info("Fetching epmd port and app port.")
-        output = call("ssh root@%s -- epmd -names" % ssh_ip)
+        output = gigalixir_app.ssh_helper(host, app_name, ssh_opts, True, "--", "epmd", "-names")
         EPMD_PORT = None
         APP_PORT = None
         for line in output.splitlines():
@@ -68,7 +64,7 @@ def observer(ctx, app_name, erlang_cookie=None):
 
     try:
         logging.getLogger("gigalixir-cli").info("Setting up SSH tunnel for ports %s and %s" % (APP_PORT, EPMD_PORT))
-        cmd = "".join(["ssh -L %s" % APP_PORT, ":localhost:", "%s -L %s" % (APP_PORT, EPMD_PORT), ":localhost:", "%s root@%s -f -N" % (EPMD_PORT, ssh_ip)])
+        cmd = "".join(["ssh %s -L %s" % (ssh_opts, APP_PORT), ":localhost:", "%s -L %s" % (APP_PORT, EPMD_PORT), ":localhost:", "%s root@%s -f -N" % (EPMD_PORT, ssh_ip)])
         cast(cmd)
         # no need to route if pod ip is 127.0.0.1
         logging.getLogger("gigalixir-cli").info("Routing %s to 127.0.0.1" % MY_POD_IP)

@@ -131,34 +131,37 @@ def rollback(ctx, app_name, version):
 
 @cli.command()
 @click.argument('app_name')
+@click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.pass_context
 @report_errors
-def remote_console(ctx, app_name):
+def remote_console(ctx, app_name, ssh_opts):
     """
     Drop into a remote console on a live production node.
     """
-    gigalixir_app.ssh(ctx.obj['host'], app_name, 'remote_console')
+    gigalixir_app.distillery_command(ctx.obj['host'], app_name, ssh_opts, 'remote_console')
 
 @cli.command()
 @click.argument('app_name')
+@click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.pass_context
 @report_errors
-def ssh(ctx, app_name):
+def ssh(ctx, app_name, ssh_opts):
     """
     Ssh into app. Be sure you added your ssh key using gigalixir create ssh_key.
     """
-    gigalixir_app.ssh(ctx.obj['host'], app_name)
+    gigalixir_app.ssh(ctx.obj['host'], app_name, ssh_opts)
 
 @cli.command()
 @click.argument('app_name')
 @click.argument('distillery_command', nargs=-1)
+@click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.pass_context
 @report_errors
-def distillery(ctx, app_name, distillery_command):
+def distillery(ctx, app_name, ssh_opts, distillery_command):
     """
     Runs a distillery command to run on the remote container e.g. ping, remote_console. Be sure you've added your ssh key.
     """
-    gigalixir_app.ssh(ctx.obj['host'], app_name, *distillery_command)
+    gigalixir_app.distillery_command(ctx.obj['host'], app_name, ssh_opts, *distillery_command)
 
 @cli.command()
 @click.argument('app_name')
@@ -186,13 +189,14 @@ def run(ctx, app_name, module, function):
 @cli.command()
 @click.argument('app_name')
 @click.option('-m', '--migration_app_name', default=None, help='For umbrella apps, specify which inner app to migrate.')
+@click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.pass_context
 @report_errors
-def migrate(ctx, app_name, migration_app_name):
+def migrate(ctx, app_name, migration_app_name, ssh_opts):
     """
     Run Ecto Migrations on a production node.
     """
-    gigalixir_app.migrate(ctx.obj['host'], app_name, migration_app_name)
+    gigalixir_app.migrate(ctx.obj['host'], app_name, migration_app_name, ssh_opts)
 
 # @update.command()
 @cli.command()
@@ -690,13 +694,14 @@ def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
 @cli.command()
 @click.argument('app_name')
 @click.option('-c', '--cookie')
+@click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.pass_context
 @report_errors
-def observer(ctx, app_name, cookie):
+def observer(ctx, app_name, cookie, ssh_opts):
     """
     Launch remote production observer.
     """
-    gigalixir_observer.observer(ctx, app_name, cookie)
+    gigalixir_observer.observer(ctx, app_name, cookie, ssh_opts)
 
 @cli.command()
 @click.pass_context

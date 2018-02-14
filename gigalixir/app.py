@@ -90,14 +90,20 @@ def scale(host, app_name, replicas, size):
             raise auth.AuthException()
         raise Exception(r.text)
 
-def ssh(host, app_name, *args):
-    ssh_helper(host, app_name, False, *args)
+def distillery_eval(host, app_name, ssh_opts, expression):
+    return ssh_helper(host, app_name, ssh_opts, True, "gigalixir_run", "run", "eval", expression)
+
+def distillery_command(host, app_name, ssh_opts, *args):
+    ssh(host, app_name, ssh_opts, "gigalixir_run", "run", *args)
+
+def ssh(host, app_name, ssh_opts, *args):
+    ssh_helper(host, app_name, ssh_opts, False, *args)
 
 # if using this from a script, and you want the return
 # value in a variable, use capture_output=True
 # capture_output needs to be False for remote_console
 # and regular ssh to work.
-def ssh_helper(host, app_name, capture_output, *args):
+def ssh_helper(host, app_name, ssh_opts, capture_output, *args):
     # verify SSH keys exist
     keys = ssh_key.ssh_keys(host)
     if len(keys) == 0:
@@ -115,13 +121,13 @@ def ssh_helper(host, app_name, capture_output, *args):
         ssh_ip = data["ssh_ip"]
         if len(args) > 0:
             escaped_args = [pipes.quote(arg) for arg in args]
-            command = "gigalixir_run run %s" % " ".join(escaped_args)
+            command = " ".join(escaped_args)
             if capture_output:
-                return call("ssh -t root@%s %s" % (ssh_ip, command))
+                return call("ssh %s -t root@%s %s" % (ssh_opts, ssh_ip, command))
             else:
-                cast("ssh -t root@%s %s" % (ssh_ip, command))
+                cast("ssh %s -t root@%s %s" % (ssh_opts, ssh_ip, command))
         else:
-            cast("ssh -t root@%s" % (ssh_ip))
+            cast("ssh %s -t root@%s" % (ssh_opts, ssh_ip))
 
 
 def restart(host, app_name):
@@ -171,10 +177,7 @@ def run(host, app_name, module, function):
             raise auth.AuthException()
         raise Exception(r.text)
 
-def distillery_eval(host, app_name, expression):
-    return ssh_helper(host, app_name, True, "eval", expression)
-
-def migrate(host, app_name, migration_app_name):
+def migrate(host, app_name, migration_app_name, ssh_opts):
     if migration_app_name == None:
         r = requests.get('%s/api/apps/%s/migrate-command' % (host, quote(app_name.encode('utf-8'))), headers = {
             'Content-Type': 'application/json',
@@ -190,7 +193,7 @@ def migrate(host, app_name, migration_app_name):
     else:
         command = json.loads(r.text)["data"]
         try:
-            result = distillery_eval(host, app_name, command)
+            result = distillery_eval(host, app_name, ssh_opts, command)
             click.echo("Migration succeeded.")
             click.echo("Migrations run: %s" % result)
         except subprocess.CalledProcessError as e:
