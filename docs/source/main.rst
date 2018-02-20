@@ -1358,6 +1358,15 @@ containers, this will put you in a random container. We do not yet support speci
 
     gigalixir ssh $APP_NAME
 
+How to specify SSH key or other SSH options
+===========================================
+
+The :bash:`-o` option lets you pass in arbitrary options to :bash:`ssh`. Something like this will let you specify which SSH key to use.
+
+.. code-block:: bash
+
+    gigalixir ssh -o "-i ~/.ssh/id_rsa" $APP_NAME
+
 How to List Apps
 ================
 
