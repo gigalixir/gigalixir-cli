@@ -254,7 +254,13 @@ Then add something like the following in :bash:`prod.exs`
 :elixir:`server: true` **is very important and is commonly left out. Make sure you have this line.**
 
 1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
-2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like :bash:`grep -R 'defmodule.*Endpoint' lib/`. Phoenix 1.2 and 1.3 give different names so this is a common source of errors.
+2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like 
+
+   .. code-block:: bash
+
+     grep -R "defmodule.*Endpoint" lib/
+     
+   Phoenix 1.2 and 1.3 give different names so this is a common source of errors.
 3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
    
 You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
