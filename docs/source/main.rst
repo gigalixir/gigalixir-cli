@@ -238,24 +238,26 @@ Then add something like the following in :bash:`prod.exs`
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
        load_from_system_env: true,
+       # http: [port: {:system, "PORT"}], # Uncomment this line if you are running Phoenix 1.2
+       server: true, # Without this line, your app will not start the web server!
+       secret_key_base: "${SECRET_KEY_BASE}",
        url: [host: "example.com", port: 80],
        cache_static_manifest: "priv/static/cache_manifest.json"
  
-     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
-       server: true,
-       secret_key_base: "${SECRET_KEY_BASE}"
-
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
        url: "${DATABASE_URL}",
        database: "",
        ssl: true,
-       pool_size: 1
+       pool_size: 1 # Free tier db only allows 1 connection
 
-Important! Note the `server: true` above. That is required otherwise your app will not serve HTTP requests and will fail health checks.
-Important! In the free tier, :elixir:`pool_size` needs to be 1 because the free database limits your app to 1 connection.
+:elixir:`server: true` **is very important and is commonly left out. Make sure you have this line.**
 
-Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name, and take note that you need to keep the :elixir:`Web` suffix. You don't have to worry about setting your SECRET_KEY_BASE config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the DATABASE_URL yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
+1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
+2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like :bash:`grep -R "defmodule.*Endpoint" lib/`. Phoenix 1.2 and 1.3 give different names so this is a common source of errors.
+3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
+   
+You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
 
 .. code-block:: bash
 
@@ -1326,9 +1328,9 @@ In order to SSH, run remote observer, remote console, etc, you need to set up yo
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
 
-Note: the stuff inside the quotes should be whatever is in your :bash:`~/.ssh/id_rsa.pub` file. If you don't have one, follow `this guide <https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/>`_ to create one.
+If you don't have an :bash:`id_rsa.pub` file, follow `this guide <https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/>`_ to create one.
 
 To view your SSH keys
 
@@ -1340,7 +1342,7 @@ To delete an SSH key, find the key's id and then run delete the key by id.
 
 .. code-block:: bash
 
-    gigalixir delete_ssh_key 1
+    gigalixir delete_ssh_key $ID
 
 How to SSH into a Production Container
 ======================================
