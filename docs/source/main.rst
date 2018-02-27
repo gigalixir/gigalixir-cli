@@ -1786,7 +1786,7 @@ Running seeds in production is usually a one-time job, so our recommendation is 
 
 .. code-block:: elixir
 
-    Path.join(["#{:code.priv_dir(:myapp)}", "repo", "seeds.exs"])
+    seed_script = Path.join(["#{:code.priv_dir(:myapp)}", "repo", "seeds.exs"])
     Code.eval_file(seed_script)
 
 .. _`the Distillery migration guide`: https://hexdocs.pm/distillery/running-migrations.html#content
