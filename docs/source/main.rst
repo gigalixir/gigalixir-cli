@@ -1282,6 +1282,10 @@ After your first deploy, you can see your app by visiting https://$APP_NAME.giga
 
 This will do a few things. It registers your fully qualified domain name in the load balancer so that it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more information on how SSL/TLS works, see :ref:`how-tls-works`.
 
+If your DNS provider does not allow CNAME, which is common for naked/root domains, you can also use an A record. Use the IP address 104.198.47.241.
+
+Note that if you want both the naked/root domain and a subdomain such as www, be sure to run `gigalixir add_domain` for each one.
+
 How to Set Up SSL/TLS
 =====================
 
