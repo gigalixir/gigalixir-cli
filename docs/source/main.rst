@@ -1939,6 +1939,11 @@ Gigalixir takes security very, very seriously.
 .. _`Stripe`: https://stripe.com/
 .. _`set it up to use SSL`: http://erlang.org/doc/apps/ssl/ssl_distribution.html
 
+Are there any benchmarks?
+=========================
+
+Take a look at our `benchmark data <https://docs.google.com/spreadsheets/d/1KWES-cSH_qXZQN9y3yu6HDSTdweIbZQuL12qLvkJnBo/edit?usp=sharing>`_.
+
 Money-back Guarantee
 ====================
 
