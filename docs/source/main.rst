@@ -836,7 +836,7 @@ Then set the :bash:`MY_CONFIG` environment variable, by running
 
 .. code-block:: bash
 
-    gigalixir set_config MY_CONFIG foo
+    gigalixir set_config $APP_NAME MY_CONFIG foo
 
 In your app code, access the environment variable using 
 
