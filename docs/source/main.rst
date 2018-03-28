@@ -1867,7 +1867,7 @@ Then, to launch observer and connect it to a production node, run
 
     gigalixir observer $APP_NAME
 
-and follow the instructions. This connects to a random container using consistent hashing. We don't currently allow you to specify which container you want to connect to, but it will connect to the same container each time based on a hash of your ip address.
+and follow the instructions. It will prompt you for your sudo password. This connects to a random container using consistent hashing. We don't currently allow you to specify which container you want to connect to, but it will connect to the same container each time based on a hash of your ip address.
 
 How to see the current period's usage
 =====================================
