@@ -104,6 +104,8 @@ Set Up App for Deploys
     cd gigalixir-getting-started
     APP_NAME=$(gigalixir create)
 
+Use the :bash:`-n` flag to set a custom name: :bash:`gigalixir create -n YOUR_NAME`
+
 Verify that the app was created, by running
 
 .. code-block:: bash
