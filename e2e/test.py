@@ -68,6 +68,50 @@ def test_databases():
         elapsed = timeit.default_timer() - start_time
         logging.info("Elapsed time: %s" % elapsed)
 
+def test_ruby():
+    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
+
+    email = os.environ['GIGALIXIR_EMAIL']
+    password = os.environ['GIGALIXIR_PASSWORD']
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        os.environ['HOME'] = os.getcwd()
+        result = runner.invoke(gigalixir.cli, ['login', '--email=%s' % email], input="%s\ny\n" % password)
+        assert result.exit_code == 0
+        gigalixir.shell.cast("git clone https://github.com/heroku/ruby-getting-started.git")
+        with cd("ruby-getting-started"):
+            result = runner.invoke(gigalixir.cli, ['create'])
+            assert result.exit_code == 0
+            app_name = result.output.rstrip()
+            gigalixir.shell.cast("git push gigalixir master")
+        logging.info('Completed Deploy.')
+        start_time = timeit.default_timer()
+        url = 'https://%s.gigalixirapp.com/' % app_name
+        for i in range(30):
+            try:
+                logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                r = requests.get(url)
+                if r.status_code != 200:
+                    # wait 5 seconds
+                    logging.info('Received %s' % r.status_code)
+                    logging.info('Waiting 5 seconds to try again.')
+                    time.sleep(5)
+                else:
+                    logging.info('Pass.')
+                    break
+            except requests.exceptions.ConnectionError as e:
+                # wait 5 seconds
+                logging.info('ConnectionError: %s' % e)
+                logging.info('Waiting 5 seconds to try again.')
+                time.sleep(5)
+        else:
+            logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
+            assert False
+
+        elapsed = timeit.default_timer() - start_time
+        logging.info("Elapsed time: %s" % elapsed)
+
 def test_everything():
     logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 

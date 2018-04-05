@@ -525,6 +525,31 @@ All versions of Elixir and OTP. See :ref:`configure versions`. Some buildpacks d
 
 Yes! Just follow :ref:`custom domains` for each domain.
 
+*Do you support non-Elixir apps?*
+---------------------------------
+
+Yes, we support any language that has a buildpack, but hot upgrades, remote observer, etc probably won't work. Built-in buildpacks include
+
+- multi
+- ruby
+- nodejs
+- clojure
+- python
+- java
+- gradle
+- scala
+- play
+- php
+- go
+- erlang
+- static
+
+For details, see https://github.com/gliderlabs/herokuish/tree/v0.3.36/buildpacks
+
+If the buildpack you need is not built-in, you can specify the buildpack(s) you want by listing them in a :bash:`.buildpacks` file.
+
+For an example, see `How to deploy a Ruby app`_.
+
 *What is Elixir? What is Phoenix?*
 ----------------------------------
 
@@ -1907,6 +1932,20 @@ How to give another user permission to deploy my app
 .. code-block:: bash
 
     gigalixir delete_permission $APP_NAME $USER_EMAIL
+
+.. _`How to deploy a Ruby app`:
+
+How to deploy a Ruby app
+========================
+
+.. code-block:: bash
+
+    gigalixir login
+    git clone https://github.com/heroku/ruby-getting-started.git
+    cd ruby-getting-started
+    APP=$(gigalixir create)
+    git push gigalixir master
+    curl https://$APP.gigalixirapp.com/
 
 How to specify which Distillery release, environment, or profile to build
 =========================================================================
