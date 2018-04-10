@@ -68,6 +68,67 @@ def test_databases():
         elapsed = timeit.default_timer() - start_time
         logging.info("Elapsed time: %s" % elapsed)
 
+def test_mix():
+    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
+
+    email = os.environ['GIGALIXIR_EMAIL']
+    password = os.environ['GIGALIXIR_PASSWORD']
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        os.environ['HOME'] = os.getcwd()
+        result = runner.invoke(gigalixir.cli, ['login', '--email=%s' % email], input="%s\ny\n" % password)
+        assert result.exit_code == 0
+        with open(".tool-versions", "w") as text_file:
+            text_file.write("elixir 1.5.1\nerlang 20.0")
+        phx_new_process = subprocess.Popen(["mix", "phx.new", "gigalixir_scratch"], stdin=subprocess.PIPE)
+        phx_new_process.communicate(input=b'n\n')
+        with cd("gigalixir_scratch"):
+            gigalixir.shell.cast("git init")
+            gigalixir.shell.cast("git add .")
+            gigalixir.shell.cast("git config user.email jesse@gigalixir.com")
+            gigalixir.shell.cast("git config user.name Jesse")
+            gigalixir.shell.cast("git commit -m phxnew")
+            subprocess.check_call(["sed", "-i", "s/^\/config\/\*\.secret\.exs/# \/config\/*.secret.exs/", ".gitignore"])
+            gigalixir.shell.cast("git add .gitignore")
+            gigalixir.shell.cast("git add config/prod.secret.exs")
+            gigalixir.shell.cast("git commit -m secrets")
+            result = runner.invoke(gigalixir.cli, ['create'])
+            assert result.exit_code == 0
+            app_name = result.output.rstrip()
+            gigalixir.shell.cast("git push gigalixir master")
+
+        logging.info('Completed Deploy.')
+        start_time = timeit.default_timer()
+        url = 'https://%s.gigalixirapp.com/' % app_name
+        for i in range(30):
+            try:
+                logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                r = requests.get(url)
+                if r.status_code != 200:
+                    # wait 5 seconds
+                    logging.info('Received %s' % r.status_code)
+                    logging.info('Waiting 5 seconds to try again.')
+                    time.sleep(5)
+                else:
+                    logging.info('Pass.')
+                    break
+            except requests.exceptions.ConnectionError as e:
+                # wait 5 seconds
+                logging.info('ConnectionError: %s' % e)
+                logging.info('Waiting 5 seconds to try again.')
+                time.sleep(5)
+        else:
+            logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
+            assert False
+
+        elapsed = timeit.default_timer() - start_time
+        logging.info("Elapsed time: %s" % elapsed)
+
+        # scale down to 0
+        result = runner.invoke(gigalixir.cli, ['scale', app_name, '--replicas=0'])
+        assert result.exit_code == 0
+
 def test_ruby():
     logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 
@@ -111,6 +172,10 @@ def test_ruby():
 
         elapsed = timeit.default_timer() - start_time
         logging.info("Elapsed time: %s" % elapsed)
+
+        # scale down to 0
+        result = runner.invoke(gigalixir.cli, ['scale', app_name, '--replicas=0'])
+        assert result.exit_code == 0
 
 def test_everything():
     logging.basicConfig(format='%(message)s', level=logging.DEBUG)
