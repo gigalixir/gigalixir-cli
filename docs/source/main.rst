@@ -512,10 +512,12 @@ Yes! Just make sure you set :elixir:`server: true` in your :bash:`prod.exs` and 
 .. _`heroku-buildpack-phoenix-static configuration`: https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration
 
 *What versions of Phoenix do you support?*
+------------------------------------------
 
 All versions.
 
 *What versions of Elixir and OTP do you support?*
+-------------------------------------------------
 
 All versions of Elixir and OTP. See :ref:`configure versions`. Some buildpacks don't have the bleeding edge versions so those might not work, but they will eventually.
 
@@ -547,6 +549,12 @@ For details, see https://github.com/gliderlabs/herokuish/tree/v0.3.36/buildpacks
 If the buildpack you need is not built-in, you can specify the buildpack(s) you want by listing them in a :bash:`.buildpacks` file.
 
 For an example, see `How to deploy a Ruby app`_.
+
+*Can I deploy an app that isn't at the root of my repository?*
+--------------------------------------------------------------
+
+Yes. It's a bit tricky, but this pull request should help you.
+https://github.com/jesseshieh/nonroot/pull/1/files
 
 *What is Elixir? What is Phoenix?*
 ----------------------------------
