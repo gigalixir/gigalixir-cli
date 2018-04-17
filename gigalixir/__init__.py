@@ -142,14 +142,15 @@ def remote_console(ctx, app_name, ssh_opts):
 
 @cli.command()
 @click.argument('app_name')
+@click.argument('command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.pass_context
 @report_errors
-def ssh(ctx, app_name, ssh_opts):
+def ssh(ctx, app_name, ssh_opts, command):
     """
     Ssh into app. Be sure you added your ssh key using gigalixir create ssh_key.
     """
-    gigalixir_app.ssh(ctx.obj['host'], app_name, ssh_opts)
+    gigalixir_app.ssh(ctx.obj['host'], app_name, ssh_opts, *command)
 
 @cli.command()
 @click.argument('app_name')
