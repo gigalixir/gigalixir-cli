@@ -491,7 +491,7 @@ Once the slug is generated and uploaded, we execute an upgrade script on each ru
 .. _`configure versions`:
 
 How do I specify my Elixir, Erlang, Node, NPM, etc versions?
-==============================================
+============================================================
 
 Your Elixir and Erlang versions are handled by the heroku-buildpack-elixir buildpack. To configure, see the `heroku-buildpack-elixir configuration`_.
 
@@ -499,17 +499,27 @@ Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpa
 
 .. _`heroku-buildpack-elixir configuration`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 
-Frequently Asked Questions
-==========================
-
 .. _`umbrella`:
 
-*Do you support umbrella apps?*
--------------------------------
+How do I deploy an umbrella app?
+================================
 
-Yes! Just make sure you set :elixir:`server: true` in your :bash:`prod.exs` and when you run migrations, use the :bash:`--migration_app_name` flag to specify which inner app has your migrations. Also, for static assets, be sure to set your :bash:`phoenix_relative_path`, see the `heroku-buildpack-phoenix-static configuration`_. Also, if you set multiple Distillery releases in your :bash:`rel/config.exs` file, be sure your default release is set properly.
+Umbrella apps are deployed the same way, but the buildpacks need to know which internal app is your phoenix app. Set your :bash:`phoenix_relative_path` in your :bash:`phoenix_static_buildpack.config` file, see the `heroku-buildpack-phoenix-static configuration`_ for more details.
+
+When running migrations, we need to know which internal app contains your migrations. Use the :bash:`--migration_app_name` flag on :bash:`gigalixir migrate`.
+
+If you have multiple Distillery releases in your :bash:`rel/config.exs` file, be sure to set your default release to the one you want to deploy. See :ref:`gigalixir release options`.
 
 .. _`heroku-buildpack-phoenix-static configuration`: https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration
+
+Can I deploy an app that isn't at the root of my repository?
+============================================================
+
+Yes. It's a bit tricky, but this pull request should help you.
+https://github.com/jesseshieh/nonroot/pull/1/files
+
+Frequently Asked Questions
+==========================
 
 *What versions of Phoenix do you support?*
 ------------------------------------------
@@ -549,12 +559,6 @@ For details, see https://github.com/gliderlabs/herokuish/tree/v0.3.36/buildpacks
 If the buildpack you need is not built-in, you can specify the buildpack(s) you want by listing them in a :bash:`.buildpacks` file.
 
 For an example, see `How to deploy a Ruby app`_.
-
-*Can I deploy an app that isn't at the root of my repository?*
---------------------------------------------------------------
-
-Yes. It's a bit tricky, but this pull request should help you.
-https://github.com/jesseshieh/nonroot/pull/1/files
 
 *What is Elixir? What is Phoenix?*
 ----------------------------------
@@ -1723,7 +1727,7 @@ If you need to provision a database, Gigalixir provides Databases-as-a-Service. 
 .. _`How to set up a Google Cloud SQL PostgreSQL database`:
 
 How to manually set up a Google Cloud SQL PostgreSQL database
---------------------------------------------------
+-------------------------------------------------------------
 
 Note: You can also use Amazon RDS, but we do not have instructions provided yet.
 
@@ -1952,6 +1956,9 @@ How to deploy a Ruby app
     APP=$(gigalixir create)
     git push gigalixir master
     curl https://$APP.gigalixirapp.com/
+
+
+.. _`gigalixir release options`:
 
 How to specify which Distillery release, environment, or profile to build
 =========================================================================
