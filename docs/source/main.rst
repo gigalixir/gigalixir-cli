@@ -1189,14 +1189,18 @@ Using GitLab CI or any other CI/CD service should be very similar. For an exampl
 
 If you want to automatically run migrations on each automatic deploy, you have two options
 
-1. Install the gigalixir CLI in your CI environment and run 
+1. (Recommended) Use a Distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/guides/running_migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/plugins/boot_hooks.md
+
+2. Install the gigalixir CLI in your CI environment and run :bash:`gigalixir migrate`. For example,
 
    .. code-block:: bash
 
-       gigalixir login -e $GIGALIXIR_EMAIL -p $GIGALIXIR_PASSWORD -y
+       gigalixir login -e "$GIGALIXIR_EMAIL" -p "$GIGALIXIR_PASSWORD" -y
+       gigalixir set_git_remote $GIGALIXIR_APP_NAME
+       git push gigalixir master
+       # some code to wait for new release to go live
        gigalixir migrate $GIGALIXIR_APP_NAME
 
-2. Use a Distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/Running%20Migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/Boot%20Hooks.md
 
 How to Set Up Review Apps (Feature branch apps)
 ===============================================
