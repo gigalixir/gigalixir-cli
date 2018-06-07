@@ -1195,10 +1195,23 @@ If you want to automatically run migrations on each automatic deploy, you have t
 
    .. code-block:: bash
 
+       # install gigalixir-cli
+       sudo apt-get install -y python-pip
+       sudo pip install --upgrade setuptools
+       sudo pip install gigalixir
+
+       # deploy
        gigalixir login -e "$GIGALIXIR_EMAIL" -p "$GIGALIXIR_PASSWORD" -y
        gigalixir set_git_remote $GIGALIXIR_APP_NAME
        git push gigalixir master
        # some code to wait for new release to go live
+
+       # set up ssh so we can migrate
+       mkdir ~/.ssh
+       printf "Host *\n StrictHostKeyChecking no" > ~/.ssh/config
+       echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+
+       # migrate
        gigalixir migrate $GIGALIXIR_APP_NAME
 
 
