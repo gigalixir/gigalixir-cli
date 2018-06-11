@@ -172,7 +172,7 @@ What's Next?
 Modifying an Existing App to Run on Gigalixir
 =============================================
 
-Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine. Right now, :bash:`$PORT` is set to 4000, but that might change, you should be good.
+Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine.
 
 Important: Although Gigalixir works with all versions of Phoenix, these guides assume you are running Phoenix 1.3. If you need help with Phoenix 1.2, please `contact us`_. The :bash:`prod.exs` can be tricky.
 
@@ -319,7 +319,7 @@ Optional Modifications
 
 These modifications are not required, but are recommended if you want to use all of features Gigalixir offers. If you want to see the difference between :bash:`mix phoenix.new` and `gigalixir-getting-started`_ take a look at `the diff`.
 
-.. _`the diff`: https://github.com/gigalixir/gigalixir-getting-started/compare/fe3e06690ba926de817a48ae98bdf155f1cdb201...master
+.._`the diff`: https://github.com/gigalixir/gigalixir-getting-started/compare/fe3e06690ba926de817a48ae98bdf155f1cdb201...master
 
 Set up Node Clustering with Libcluster
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -337,41 +337,6 @@ Set Up Hot Upgrades with Git v2.9.0
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir master`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
-
-Use Cases
-=========
-
-TODO
-
-I'm learning Elixir and need access to all Elixir's features
-------------------------------------------------------------
-
-TODO
-
-I'm using Heroku, but I've run into limitations
------------------------------------------------
-
-TODO
-- Save money too
-
-I'm using AWS, but I'm spending too much time on infrastructure
----------------------------------------------------------------
-
-TODO
-- Distillery
-- Kubernetes
-
-Known Issues
-============
-
-  -  Warning: Multiple default buildpacks reported the ability to handle this app. The first buildpack in the list below will be used.
-
-      - This warning is safe to ignore. It is a temporary warning due to a workaround. 
-
-  - curl: (56) GnuTLS recv error (-110): The TLS connection was non-properly terminated.
-
-      - Currently, the load balancer for domains under gigalixirapp.com has a request timeout of 30 seconds. If your request takes longer than 30 seconds to respond, the load balancer cuts the connection. Often, the cryptic error message you will see when using curl is the above. The load balancer for custom domains does not have this problem.
-
 
 How Does Gigalixir Work?
 ========================
@@ -463,16 +428,6 @@ We use kube-lego for automatic TLS certificate generation with Let's Encrypt. Fo
 
 .. _`kube-lego's documentation`: https://github.com/jetstack/kube-lego
 
-Cleaning Your Cache
--------------------
-
-There is an extra flag you can pass to clean your cache before building in case you need it, but you need git 2.9.0 or higher for it to work. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_.
-
-.. code-block:: bash
-
-    git -c http.extraheader="GIGALIXIR-CLEAN: true" push gigalixir master
-
-
 .. _life-of-a-hot-upgrade:
 
 Life of a Hot Upgrade
@@ -489,6 +444,28 @@ A hot upgrade follows the same steps as a regular deploy, except for a few diffe
 Once the slug is generated and uploaded, we execute an upgrade script on each run container instead of restarting. The upgrade script downloads the new slug, and calls `Distillery's upgrade command`_. Your app should now be upgraded in place without any downtime, dropped connections, or loss of in-memory state.
 
 .. _`configure versions`:
+
+How to clean your build cache
+=============================
+
+There is an extra flag you can pass to clean your cache before building in case you need it, but you need git 2.9.0 or higher for it to work. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_.
+
+.. code-block:: bash
+
+    git -c http.extraheader="GIGALIXIR-CLEAN: true" push gigalixir master
+
+Known Issues
+============
+
+  -  Warning: Multiple default buildpacks reported the ability to handle this app. The first buildpack in the list below will be used.
+
+      - This warning is safe to ignore. It is a temporary warning due to a workaround. 
+
+  - curl: (56) GnuTLS recv error (-110): The TLS connection was non-properly terminated.
+
+      - Currently, the load balancer for domains under gigalixirapp.com has a request timeout of 30 seconds. If your request takes longer than 30 seconds to respond, the load balancer cuts the connection. Often, the cryptic error message you will see when using curl is the above. The load balancer for custom domains does not have this problem.
+
+
 
 How do I specify my Elixir, Erlang, Node, NPM, etc versions?
 ============================================================
