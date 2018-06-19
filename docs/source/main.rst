@@ -492,7 +492,13 @@ If you have multiple Distillery releases in your :bash:`rel/config.exs` file, be
 Can I deploy an app that isn't at the root of my repository?
 ============================================================
 
-Yes. It's a bit tricky, but this pull request should help you.
+If you just want to push a subtree, try 
+
+.. code-block:: bash
+
+    git subtree push --prefix my-sub-folder gigalixir master
+
+If you want to push the entire repo, but run the app from a subfolder, it becomes a bit trickier, but this pull request should help you.
 https://github.com/jesseshieh/nonroot/pull/1/files
 
 Frequently Asked Questions
