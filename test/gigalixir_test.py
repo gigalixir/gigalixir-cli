@@ -460,7 +460,7 @@ def test_get_domains():
 
 @httpretty.activate
 def test_create_domain():
-    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/domains', body='{}', content_type='application/json', status=201)
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/domains', body='{"data": {"cname": "www.example.com.gigalixirdns.com"}}', content_type='application/json', status=201)
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['add_domain', 'fake-app-name', 'www.example.com'])
     assert result.output == ''
