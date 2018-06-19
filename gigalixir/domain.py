@@ -28,7 +28,10 @@ def create(host, app_name, fqdn):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    data = json.loads(r.text)["data"]
+    cname = data["cname"]
     logging.getLogger("gigalixir-cli").info("Added %s." % fqdn)
+    logging.getLogger("gigalixir-cli").info("Create a CNAME record with your DNS provider pointing to %s" % cname)
     logging.getLogger("gigalixir-cli").info("Please give us a few minutes to set up a new TLS certificate.")
 
 
