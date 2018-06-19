@@ -36,7 +36,7 @@ def set_git_remote(host, app_name):
     cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % app_name)
     logging.getLogger("gigalixir-cli").info("Set git remote: gigalixir.")
 
-def create(host, unique_name):
+def create(host, unique_name, cloud, region):
     try:
         # check for git folder
         with open(os.devnull, 'w') as FNULL:
@@ -46,9 +46,11 @@ def create(host, unique_name):
 
     body = {}
     if unique_name != None:
-        body = {
-            "unique_name": unique_name.lower()
-        }
+        body["unique_name"] = unique_name.lower()
+    if cloud != None:
+        body["cloud"] = cloud
+    if region != None:
+        body["region"] = region
     r = requests.post('%s/api/apps' % host, headers = {
         'Content-Type': 'application/json',
     }, json = body)

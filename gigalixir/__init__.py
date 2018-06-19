@@ -639,13 +639,15 @@ def set_git_remote(ctx, app_name):
 # @create.command()
 @cli.command()
 @click.option('-n', '--name')
+@click.option('-c', '--cloud')
+@click.option('-r', '--region')
 @click.pass_context
 @report_errors
-def create(ctx, name):
+def create(ctx, name, cloud, region):
     """
     Create a new app.
     """
-    gigalixir_app.create(ctx.obj['host'], name)
+    gigalixir_app.create(ctx.obj['host'], name, cloud, region)
 
 @cli.command()
 @click.pass_context
