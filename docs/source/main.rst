@@ -824,11 +824,12 @@ One common pitfall for beginners is how releases differ from running apps with `
 Limits
 ======
 
-Gigalixir is designed for Elixir/Phoenix apps and it is common for Elixir/Phoenix apps to have many connections open at a time and to have connections open for long periods of time. Because of this, we do not limit the number of concurrent connections or the duration of each connection[1]. 
+Gigalixir is designed for Elixir/Phoenix apps and it is common for Elixir/Phoenix apps to have many connections open at a time and to have connections open for long periods of time. Because of this, we do not limit the number of concurrent connections or the duration of each connection[1][2].
 
 We also know that Elixir/Phoenix apps are designed to be long-lived and potentially store state in-memory so we do not restart replicas arbitrarily. In fact, replicas should not restart at all, unless there is an extenuating circumstance that requires it.  For apps that require extreme high availability, we suggest that your app be able to handle node restarts just as you would for any app not running on Gigalixir.
 
 [1] Because Gigalixir runs on Google Compute Engine, you may bump into an issue with connections that stay idle for 10m. For more information and how to work around it, see https://cloud.google.com/compute/docs/troubleshooting
+[2] We do have a timeout of 60 minutes for connections after an nginx configuration reload. If you have a long-lived websocket connection and our nginx configuration is reloaded, the connection will be dropped 60 minutes later. Unfortunately, nginx reloads happen frequently under Kubernetes.
 
 Monitoring
 ==========
@@ -1398,7 +1399,7 @@ To SSH into a running production container, first, add your public SSH keys to y
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
 
 Then use the following command to SSH into a live production container. If you are running multiple 
 containers, this will put you in a random container. We do not yet support specifying which container you want to SSH to. In order for this work, you must add your public SSH keys to your account.
@@ -1768,7 +1769,7 @@ In order to run migrations, you need to set up your SSH keys. It could take up t
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
 
 We provide a special command to run migrations.
 
@@ -1844,7 +1845,7 @@ To get a console on a running production container, first, add your public SSH k
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
 
 Then run this command to drop into a remote console.
 
@@ -1892,11 +1893,13 @@ In order to run a remote observer, you need to set up your SSH keys. It could ta
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "ssh-rsa <REDACTED> foo@gigalixir.com"
+    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
 
 Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have clustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`clustering`.
 
 You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file. Phoenix 1.3 adds it by default, but you have to add it youself in Phoenix 1.2.
+
+Your local machine also needs to have :bash:`lsof`.
 
 Then, to launch observer and connect it to a production node, run
 
@@ -1904,7 +1907,7 @@ Then, to launch observer and connect it to a production node, run
 
     gigalixir observer $APP_NAME
 
-and follow the instructions. It will prompt you for your sudo password. This connects to a random container using consistent hashing. We don't currently allow you to specify which container you want to connect to, but it will connect to the same container each time based on a hash of your ip address.
+and follow the instructions. It will prompt you for your local sudo password so it can modify iptables rules. This connects to a random container using consistent hashing. We don't currently allow you to specify which container you want to connect to, but it will connect to the same container each time based on a hash of your ip address.
 
 How to see the current period's usage
 =====================================
