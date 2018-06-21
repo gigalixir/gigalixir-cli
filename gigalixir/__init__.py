@@ -295,13 +295,15 @@ def login(ctx, email, password, yes):
 # @get.command()
 @cli.command()
 @click.argument('app_name')
+@click.option('-n', '--num')
+@click.option('-t', '--no_tail', is_flag=True)
 @click.pass_context
 @report_errors
-def logs(ctx, app_name):
+def logs(ctx, app_name, num, no_tail):
     """
     Stream logs from app.
     """
-    gigalixir_app.logs(ctx.obj['host'], app_name)
+    gigalixir_app.logs(ctx.obj['host'], app_name, num, no_tail)
 
 # @get.command()
 @cli.command()

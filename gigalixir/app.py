@@ -22,11 +22,6 @@ def get(host):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        data = [{
-            "name": datum["unique_name"],
-            "size": datum["size"],
-            "replicas": datum["replicas"],
-        } for datum in data]
         click.echo(json.dumps(data, indent=2, sort_keys=True))
 
 def set_git_remote(host, app_name):
@@ -203,8 +198,12 @@ def migrate(host, app_name, migration_app_name, ssh_opts):
             click.echo(e.output)
             raise
 
-def logs(host, app_name):
-    with closing(requests.get('%s/api/apps/%s/logs' % (host, quote(app_name.encode('utf-8'))), stream=True)) as r:
+def logs(host, app_name, num, no_tail):
+    payload = {
+        "num_lines": num,
+        "follow": not no_tail
+    }
+    with closing(requests.get('%s/api/apps/%s/logs' % (host, quote(app_name.encode('utf-8'))), stream=True, params=payload)) as r:
         if r.status_code != 200:
             if r.status_code == 401:
                 raise auth.AuthException()
