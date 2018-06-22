@@ -201,6 +201,8 @@ Then, run
     mix deps.get
     mix release.init
 
+Note that if you have a Procfile in your root folder, gigalixir will use it. If your Procfile has something like :bash:`mix phx.server` in it, then that won't work here with Distillery. It's recommended you delete the Procfile and let gigalixir use it's `default one <https://github.com/gigalixir/gigalixir-run/blob/master/Procfile>`_ instead.
+
 .. _`Distillery installation instructions`: https://hexdocs.pm/distillery/getting-started.html#installation-setup
 
 .. _`buildpacks`:
@@ -1312,7 +1314,7 @@ The release list is immutable so when you rollback, we create a new release on t
 How to Set Up a Custom Domain
 =============================
 
-After your first deploy, you can see your app by visiting https://$APP_NAME.gigalixirapp.com/, but if you want, you can point your own domain such as www.example.com to your app. To do this, first modify your DNS records and point your domain to :bash:`tls.gigalixir.com` using a CNAME record. Then, run the following command to add a custom domain.
+After your first deploy, you can see your app by visiting https://$APP_NAME.gigalixirapp.com/, but if you want, you can point your own domain such as www.example.com to your app. To do this, run the following command and follow the instructions.
 
 .. code-block:: bash
 
@@ -1320,7 +1322,7 @@ After your first deploy, you can see your app by visiting https://$APP_NAME.giga
 
 This will do a few things. It registers your fully qualified domain name in the load balancer so that it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more information on how SSL/TLS works, see :ref:`how-tls-works`.
 
-If your DNS provider does not allow CNAME, which is common for naked/root domains, you can also use an A record. Use the IP address 104.198.47.241.
+If your DNS provider does not allow CNAME, which is common for naked/root domains, and you are using the gcp us-central1 region, you can also use an A record. Use the IP address 104.198.47.241. For AWS, unfortunately, you have to use a CNAME so the only option is to change DNS providers.
 
 Note that if you want both the naked/root domain and a subdomain such as www, be sure to run `gigalixir add_domain` for each one.
 
