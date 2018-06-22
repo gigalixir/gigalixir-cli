@@ -962,6 +962,11 @@ Common Errors
 
           For more, see https://github.com/bitwalker/distillery/blob/master/docs/Overlays.md
 
+    - SMTP/Email Network Failures e.g. {:network_failure, 'smtp.mailgun.org', {:error, :timeout}}
+
+        - Google Cloud Engine does not allow certain email ports like 587. See https://cloud.google.com/compute/docs/tutorials/sending-mail/
+          Try using port 2525. See https://cloud.google.com/compute/docs/tutorials/sending-mail/using-mailgun
+
 .. _`contact us for help`:
 .. _`contact us`:
 .. _`help`:
