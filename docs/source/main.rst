@@ -201,8 +201,6 @@ Then, run
     mix deps.get
     mix release.init
 
-Note that if you have a Procfile in your root folder, gigalixir will use it. If your Procfile has something like :bash:`mix phx.server` in it, then that won't work here with Distillery. It's recommended you delete the Procfile and let gigalixir use it's `default one <https://github.com/gigalixir/gigalixir-run/blob/master/Procfile>`_ instead.
-
 .. _`Distillery installation instructions`: https://hexdocs.pm/distillery/getting-started.html#installation-setup
 
 .. _`buildpacks`:
