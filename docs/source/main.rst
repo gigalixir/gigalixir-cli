@@ -960,6 +960,10 @@ Common Errors
 
           For more, see https://github.com/bitwalker/distillery/blob/master/docs/Overlays.md
 
+    - cd: /tmp/build/./assets: No such file or directory
+
+        - This means the phoenix static buildpack could not find your assets folder. Either specify where it is or remove the buildpack. To specify, configure the buildpack following https://github.com/gjaldon/heroku-buildpack-phoenix-static. To remove, create a :bash:`.buildpacks` file with the buildpacks you need. For example, just :bash:`https://github.com/HashNuke/heroku-buildpack-elixir`
+
     - SMTP/Email Network Failures e.g. {:network_failure, 'smtp.mailgun.org', {:error, :timeout}}
 
         - Google Cloud Engine does not allow certain email ports like 587. See https://cloud.google.com/compute/docs/tutorials/sending-mail/
