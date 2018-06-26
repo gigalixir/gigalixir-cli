@@ -465,7 +465,10 @@ Known Issues
 
       - Currently, the load balancer for domains under gigalixirapp.com has a request timeout of 30 seconds. If your request takes longer than 30 seconds to respond, the load balancer cuts the connection. Often, the cryptic error message you will see when using curl is the above. The load balancer for custom domains does not have this problem.
 
+Can I run my app in AWS instead of Google Cloud Platform?
+=========================================================
 
+Yes, we currently support GCP us-central1 as well as AWS us-east-1 and AWS us-west-2. When creating your app with :bash:`gigalixir create` simply specify the :bash:`--cloud=aws` and :bash:`--region=us-east-1` options.
 
 How do I specify my Elixir, Erlang, Node, NPM, etc versions?
 ============================================================
