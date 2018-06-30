@@ -989,8 +989,8 @@ The Gigalixir Command-Line Interface
 
 The Gigalixir Command-Line Interface or CLI is a tool you install on your local machine to control Gigalixir.
 
-Installation
-------------
+How to Install the CLI
+----------------------
 
 Install :bash:`gigalixir` using 
 
@@ -1000,8 +1000,8 @@ Install :bash:`gigalixir` using
 
 If you don't have pip installed, take a look at the `pip documentation`_.
 
-Upgrade
--------
+How to Upgrade the CLI
+----------------------
 
 To upgrade the Gigalixir CLI, run
 
