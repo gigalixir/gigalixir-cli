@@ -162,7 +162,18 @@ def second_most_recent_version(host, app_name):
         else:
             return data[1]["version"]
 
-def run(host, app_name, module, function):
+def run(host, app_name, command):
+    r = requests.post('%s/api/apps/%s/run' % (host, quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    }, json = {
+        "command": command,
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+
+def apply(host, app_name, module, function):
     r = requests.post('%s/api/apps/%s/run' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {

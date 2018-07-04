@@ -137,29 +137,29 @@ def test_get_apps():
     result = runner.invoke(gigalixir.cli, ['apps'])
     assert result.output == """[
   {
-    "name": "one", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "one"
   }, 
   {
-    "name": "two", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "two"
   }, 
   {
-    "name": "three", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "three"
   }, 
   {
-    "name": "four", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "four"
   }, 
   {
-    "name": "five", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "five"
   }
 ]
 """
@@ -199,7 +199,17 @@ def test_restart():
 def test_run():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/run', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['run', 'fake-app-name', 'Elixir.Tasks', 'migrate'])
+    result = runner.invoke(gigalixir.cli, ['run', 'fake-app-name', 'mix', 'ecto.migrate'])
+    assert result.output == ''
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body.decode()).to.equal('{"command": ["mix", "ecto.migrate"]}')
+
+@httpretty.activate
+def test_apply():
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/run', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['run:apply', 'fake-app-name', 'Elixir.Tasks', 'migrate'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
