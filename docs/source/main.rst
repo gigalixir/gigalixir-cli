@@ -1330,6 +1330,8 @@ After your first deploy, you can see your app by visiting https://$APP_NAME.giga
 
     gigalixir add_domain $APP_NAME www.example.com
 
+If you have version 0.27.0 or later of the CLI, you'll be given instructions on what to do next. If not, run :bash:`gigalixir domains $APP_NAME` and use the :bash:`cname` value to point your domain at.
+
 This will do a few things. It registers your fully qualified domain name in the load balancer so that it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more information on how SSL/TLS works, see :ref:`how-tls-works`.
 
 If your DNS provider does not allow CNAME, which is common for naked/root domains, and you are using the gcp us-central1 region, you can also use an A record. Use the IP address 104.198.47.241. For AWS, unfortunately, you have to use a CNAME so the only option is to change DNS providers.
@@ -1945,6 +1947,8 @@ To see all your previous period's invoices, run
 
 How to give another user permission to deploy my app
 ====================================================
+
+Gigalixir has a way to add permissions so many users can deploy the same app, but giving another user permissions also grants them access to managing config vars, rollbacks, and gives them access to ssh, remote_console, observer, etc.
 
 .. code-block:: bash
 
