@@ -8,6 +8,7 @@ import requests
 import click
 from .shell import cast, call
 from . import auth
+from . import presenter
 from . import ssh_key
 from contextlib import closing
 from six.moves.urllib.parse import quote
@@ -22,7 +23,7 @@ def get(host):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        presenter.echo_json(data)
 
 def set_git_remote(host, app_name):
     remotes = call('git remote').splitlines()
@@ -71,7 +72,7 @@ def status(host, app_name):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        presenter.echo_json(data)
 
 def scale(host, app_name, replicas, size):
     json = {}

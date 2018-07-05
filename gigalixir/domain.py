@@ -1,6 +1,7 @@
 import requests
 import logging
 from . import auth
+from . import presenter
 import urllib
 import json
 import click
@@ -16,7 +17,7 @@ def get(host, app_name):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        presenter.echo_json(data)
 
 def create(host, app_name, fqdn):
     r = requests.post('%s/api/apps/%s/domains' % (host, quote(app_name.encode('utf-8'))), headers = {

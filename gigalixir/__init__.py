@@ -503,13 +503,16 @@ def config_set(ctx, app_name, assignments):
     Set configuration variables.
     """
     colored_keys = []
+    configs = {}
     for assignment in assignments:
         key, value = assignment.split('=', 1)
+        configs[key] = value
         colored_key = click.style(key, fg='green')
         colored_keys.append(colored_key)
         click.echo("%s: %s" % (colored_key, value))
     colored_app_name = click.style(app_name, fg='blue')
     click.echo("Setting %s and restarting %s" % (', '.join(colored_keys), colored_app_name))
+    gigalixir_config.create_multiple(ctx.obj['host'], app_name, configs)
 
 # @get.command()
 @cli.command(name='account:confirmation:resend')

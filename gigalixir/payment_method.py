@@ -2,6 +2,7 @@ import logging
 import requests
 import stripe
 from . import auth
+from . import presenter
 import urllib
 import json
 import click
@@ -18,7 +19,7 @@ def get(host):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        presenter.echo_json(data)
 
 def update(host, card_number, card_exp_month, card_exp_year, card_cvc):
     token = stripe.Token.create(

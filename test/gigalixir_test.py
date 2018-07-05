@@ -162,6 +162,7 @@ def test_get_apps():
     "unique_name": "five"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -223,6 +224,7 @@ def test_get_configs():
     assert result.output == """{
   "DATABASE_URL": "ecto://user:pass@host:5432/db"
 }
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -311,18 +313,19 @@ def test_get_releases():
     expect(httpretty.has_request()).to.be.true
     assert result.output == """[
   {
-    "created_at": "2017-03-29T17:28:28.000+00:00", 
-    "sha": "fake-sha", 
-    "summary": "fake summary", 
-    "version": 2
-  }, 
-  {
     "created_at": "2017-03-29T17:28:29.000+00:00", 
     "sha": "another-fake-sha", 
     "summary": "fake summary", 
     "version": 1
+  }, 
+  {
+    "created_at": "2017-03-29T17:28:28.000+00:00", 
+    "sha": "fake-sha", 
+    "summary": "fake summary", 
+    "version": 2
   }
 ]
+
 """
 
 @httpretty.activate
@@ -364,6 +367,7 @@ def test_get_ssh_keys():
     "key": "fake-ssh-key"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -399,6 +403,7 @@ def test_get_payment_method():
   "exp_year": 2018, 
   "last4": 4242
 }
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -464,6 +469,7 @@ def test_get_domains():
     assert result.output == """[
   "www.example.com"
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -568,6 +574,7 @@ def test_get_free_databases():
     }
   ]
 }
+
 """, content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['free_databases', 'fake-app-name'])
@@ -596,6 +603,7 @@ def test_get_free_databases():
     "username": "app"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -629,6 +637,7 @@ def test_get_databases():
     }
   ]
 }
+
 """, content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['databases', 'fake-app-name'])
@@ -657,6 +666,7 @@ def test_get_databases():
     "username": "app"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -687,6 +697,7 @@ def test_create_free_database():
     "app_name": "REDACTED"
   }
 }
+
 """, content_type='application/json', status=201)
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['create_free_database', 'fake-app-name'])
@@ -702,6 +713,7 @@ def test_create_free_database():
   "url": "REDACTED", 
   "username": "app"
 }
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -721,7 +733,7 @@ def test_account():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/users', body='{"data":{}}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['account'])
-    assert result.output == "{}\n"
+    assert result.output == "{}\n\n"
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -751,6 +763,7 @@ def test_get_log_drains():
     "url": "https://user:pass@logs.timber.io/frames"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true

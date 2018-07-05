@@ -1,5 +1,6 @@
 import requests
 from . import auth
+from . import presenter
 import urllib
 import json
 import click
@@ -15,5 +16,5 @@ def get(host, app_name):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(list(reversed(data)), indent=2, sort_keys=True))
+        presenter.echo_json(data)
 

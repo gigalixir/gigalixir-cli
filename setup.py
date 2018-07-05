@@ -13,6 +13,7 @@ setup(
         'requests~=2.13.0',
         'stripe~=1.51.0',
         'rollbar~=0.13.11',
+        'pygments~=2.2.0',
     ],
     entry_points='''
         [console_scripts]
