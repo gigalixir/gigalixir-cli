@@ -89,10 +89,10 @@ def scale(host, app_name, replicas, size):
         raise Exception(r.text)
 
 def distillery_eval(host, app_name, ssh_opts, expression):
-    return ssh_helper(host, app_name, ssh_opts, True, "gigalixir_run", "run", "eval", expression)
+    return ssh_helper(host, app_name, ssh_opts, True, "gigalixir_run", "run", "--", "eval", expression)
 
 def distillery_command(host, app_name, ssh_opts, *args):
-    ssh(host, app_name, ssh_opts, "gigalixir_run", "run", *args)
+    ssh(host, app_name, ssh_opts, "gigalixir_run", "run", "--", *args)
 
 def ssh(host, app_name, ssh_opts, *args):
     ssh_helper(host, app_name, ssh_opts, False, *args)
