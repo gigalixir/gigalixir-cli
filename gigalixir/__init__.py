@@ -736,15 +736,15 @@ def delete_config(ctx, app_name, key):
 
 # @create.command()
 @cli.command(name='access:add')
-@click.argument('unique_name')
+@click.option('-a', '--app_name')
 @click.argument('email')
 @click.pass_context
 @report_errors
-def add_permission(ctx, unique_name, email):
+def add_permission(ctx, app_name, email):
     """
     Grants a user permission to deploy an app.
     """
-    gigalixir_permission.create(ctx.obj['host'], unique_name, email)
+    gigalixir_permission.create(ctx.obj['host'], app_name, email)
 
 
 @cli.command(name='pg:create')

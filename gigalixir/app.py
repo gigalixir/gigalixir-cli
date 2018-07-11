@@ -192,7 +192,7 @@ def run(host, app_name, command):
             raise auth.AuthException()
         raise Exception(r.text)
     else:
-        click.echo("Starting new container to run: %s." % ' '.join(command))
+        click.echo("Starting new container to run: `%s`." % ' '.join(command))
         click.echo("See `gigalixir logs %s` for any output." % app_name)
         click.echo("See `gigalixir status %s` for job info." % app_name)
 
