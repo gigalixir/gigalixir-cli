@@ -88,7 +88,7 @@ Verify by running
 Prepare Your App
 ----------------
 
-If you have an existing app or want to use :bash:`mix phoenix.new`, follow the steps in :ref:`modifying existing app`. If you are starting a project from scratch, the easiest way to get started is to clone the `gigalixir-getting-started`_ repo.
+If you have an existing app or want to use :bash:`mix phx.new`, follow the steps in :ref:`modifying existing app`. If you are starting a project from scratch, the easiest way to get started is to clone the `gigalixir-getting-started`_ repo.
 
 .. code-block:: bash
 
@@ -172,7 +172,7 @@ What's Next?
 Modifying an Existing App to Run on Gigalixir
 =============================================
 
-Whether you have an existing app or you just ran :bash:`mix phoenix.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine.
+Whether you have an existing app or you just ran :bash:`mix phx.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine.
 
 Important: Although Gigalixir works with all versions of Phoenix, these guides assume you are running Phoenix 1.3. If you need help with Phoenix 1.2, please `contact us`_. The :bash:`prod.exs` can be tricky.
 
@@ -285,7 +285,7 @@ First, try generating building static assets
     npm install
     node_modules/brunch/bin/brunch build --production
     cd ..
-    mix phoenix.digest
+    mix phx.digest
 
 and building a Distillery release locally
 
@@ -317,7 +317,7 @@ If it still doesn't work, don't hesitate to `contact us`_.
 Optional Modifications
 ----------------------
 
-These modifications are not required, but are recommended if you want to use all of features Gigalixir offers. If you want to see the difference between :bash:`mix phoenix.new` and `gigalixir-getting-started`_ take a look at `the diff`.
+These modifications are not required, but are recommended if you want to use all of features Gigalixir offers. If you want to see the difference between :bash:`mix phx.new` and `gigalixir-getting-started`_ take a look at `the diff`.
 
 .._`the diff`: https://github.com/gigalixir/gigalixir-getting-started/compare/fe3e06690ba926de817a48ae98bdf155f1cdb201...master
 
@@ -399,7 +399,7 @@ By default, the buildpacks we use include
 
   - https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
 
-    - To run mix phoenix.digest
+    - To run mix phx.digest
 
   - https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
@@ -900,7 +900,7 @@ In case static assets don't show up, you can try the following and then re-run t
     npm install
     node_modules/brunch/bin/brunch build --production
     cd ..
-    mix phoenix.digest
+    mix phx.digest
 
 If your problem is with one of the buildpacks, try running the full build using Docker and Herokuish by running
 
