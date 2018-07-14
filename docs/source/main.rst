@@ -329,7 +329,7 @@ If you want to cluster nodes, you should install libcluster. For more informatio
 Set Up Migrations
 ^^^^^^^^^^^^^^^^^
 
-In development, you use `Mix`_ to run database migrations. In production, `Mix`_ is not available so you need a different approach. Instructions on how to set up and run migrations are described in more detail in :ref:`migrations`.
+In development, you use :bash:`mix ecto.migrate` to run database migrations. If you are using distillery releases, `Mix`_ is not available so you need a different approach. Instructions on how to set up and run migrations are described in more detail in :ref:`migrations`.
 
 .. _`Mix`: https://hexdocs.pm/mix/Mix.html
 
@@ -1779,21 +1779,25 @@ We hope to provide a database-as-a-service soon and automate the process you jus
 How to Run Migrations
 =====================
 
-In order to run migrations, you need to set up your SSH keys. It could take up to a minute for the SSH keys to update in your containers.
+If you deployed your app without distillery, you can run migrations as a job in a new container.
+
+.. code-block:: bash
+
+    gigalixir run mix ecto.migrate
+
+If you deployed your app as a distillery release, :bash:`mix` isn't available. We try to make it easy by providing a special command, but the command runs on your existing app container so you'll need to make sure your app is running first and set up SSH keys.
 
 .. code-block:: bash
 
     gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
 
-We provide a special command to run migrations.
+Then run
 
 .. code-block:: bash
 
     gigalixir migrate $APP_NAME
 
-Since Mix is not available in production with Distillery, this command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. 
-
-Also note that because we don't spin up an entire new node just to run your migrations, migrations are free. Also, this doesn't yet work if you have an umbrella app and the app the migrations are in is a different name from your release name.
+This command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. 
 
 If you are running an umbrella app, you will probably need to specify which "inner app" within your umbrella to migrate. Do this by passing the :bash:`--migration_app_name` flag like so
 
@@ -1801,7 +1805,9 @@ If you are running an umbrella app, you will probably need to specify which "inn
 
     gigalixir migrate $APP_NAME --migration_app_name=$MIGRATION_APP_NAME
 
-If you need to tweak the migration command, all we are doing is dropping into a remote_console and running the following. For information on how to open a remote console, see :ref:`remote console`.
+More details:
+
+If you need to tweak the migration command to run yourself, all we are doing is dropping into a remote_console and running the following. For information on how to open a remote console, see :ref:`remote console`.
 
 .. code-block:: elixir
 
@@ -1809,7 +1815,7 @@ If you need to tweak the migration command, all we are doing is dropping into a 
     app_dir = Application.app_dir(:gigalixir_getting_started, "priv/repo/migrations")
     Ecto.Migrator.run(repo, app_dir, :up, all: true)
 
-So for example, if you have more than one app, you may not want to use :elixir:`List.first` to find the app that contains the migrations.
+So for example, a tweak you might make is, if you have more than one app, you may not want to use :elixir:`List.first` to find the app that contains the migrations.
 
 .. _`the source code`: https://github.com/gigalixir/gigalixir-cli/blob/master/gigalixir/app.py#L160
 
