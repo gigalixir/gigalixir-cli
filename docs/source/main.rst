@@ -972,6 +972,11 @@ Common Errors
         - Google Cloud Engine does not allow certain email ports like 587. See https://cloud.google.com/compute/docs/tutorials/sending-mail/
           Try using port 2525. See https://cloud.google.com/compute/docs/tutorials/sending-mail/using-mailgun
 
+    - init terminating in do_boot ({cannot get bootfile,no_dot_erlang.boot})
+
+        - This is an issue described here: https://github.com/bitwalker/distillery/issues/426
+          Try either upgrading Distillery to 1.5.3 or downgrading OTP below 21.
+
 .. _`contact us for help`:
 .. _`contact us`:
 .. _`help`:

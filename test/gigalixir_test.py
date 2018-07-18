@@ -778,3 +778,4 @@ def test_delete_log_drain():
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"drain_id": "10"}')
+
