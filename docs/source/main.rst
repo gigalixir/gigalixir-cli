@@ -1086,6 +1086,9 @@ How to Create an App
 
     gigalixir create 
 
+
+.. _`delete-app`:
+
 How to Delete an App
 ====================
 
@@ -1475,15 +1478,10 @@ To change your credit card, run
 
     gigalixir set_payment_method
 
-How to Delete an App
-====================
-
-There is currently no way to completely delete an app, but if you scale the replicas down to 0, you will not incur any charges. We are working on implementing this feature.
-
 How to Delete your Account
 ==========================
 
-There is currently no way to completely delete an account. We are working on implementing this feature.
+There is currently no way to completely delete an account. We are working on implementing this feature. You can delete apps though. See :ref:`delete-app`_.
 
 .. _`restart`:
 
