@@ -89,7 +89,7 @@ def scale(host, app_name, replicas, size):
         raise Exception(r.text)
 
 def customer_app_name(host, app_name):
-    r = requests.get('%s/api/apps/%s/releases/current' % (host, quote(app_name.encode('utf-8'))), headers = {
+    r = requests.get('%s/api/apps/%s/releases/latest' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
     if r.status_code != 200:
