@@ -178,10 +178,70 @@ Important: Although Gigalixir works with all versions of Phoenix, these guides a
 
 Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
-Required Modifications
-----------------------
+Mix vs Distillery
+-----------------
 
-These modifications are required to run on Gigalixir, but features such as node clustering probably won't work unless you make some optional modifications described in the next section.
+It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also just use mix which you're probably already used to from development. Deploying with mix is simpler and easier, but you can't do hot upgrades, clustering, remote observer, and maybe a few other things. 
+
+On the other hand, if you deploy with distillery, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be more confusing in some cases. 
+
+If you don't know which to choose, we generally recommend going with distillery because.. why use elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir migrate`, that makes it easy to run migrations without mix. 
+
+If you choose mix, see :ref:`modifying existing app with mix`.
+
+If you choose distillery, see :ref:`modifying existing app with distillery`.
+
+.. _`modifying existing app with mix`:
+
+Using Mix
+---------
+
+Configuration and Secrets
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, Phoenix creates a :bash:`prod.secret.exs` file to store secrets. If you want to continue using :bash:`prod.secret.exs` you'll have to commit it to version control. This is usually not a good idea, though. 
+
+Gigalixir prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`config/prod.exs` file, and modify the values to pull from environment variables. 
+
+Open your :bash:`config/prod.exs` file and delete the following line if it is there
+
+.. code-block:: elixir
+
+    import_config "prod.secret.exs"
+
+Then add something like the following in :bash:`prod.exs`
+
+.. code-block:: elixir
+
+     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
+       secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
+ 
+     config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
+       adapter: Ecto.Adapters.Postgres,
+       url: System.get_env("DATABASE_URL"),
+       ssl: true,
+       pool_size: 1 # Free tier db only allows 1 connection
+
+1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
+2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like 
+
+   .. code-block:: bash
+
+     grep -R "defmodule.*Endpoint" lib/
+     
+   Phoenix 1.2 and 1.3 give different names so this is a common source of errors.
+3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
+   
+You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
+
+.. code-block:: bash
+
+    gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
+
+.. _`modifying existing app with distillery`:
+
+Using Distillery
+----------------
 
 Install Distillery to Build Releases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -314,22 +374,10 @@ Also check out :ref:`troubleshooting`.
 
 If it still doesn't work, don't hesitate to `contact us`_.
 
-Optional Modifications
-----------------------
-
-These modifications are not required, but are recommended if you want to use all of features Gigalixir offers. If you want to see the difference between :bash:`mix phoenix.new` and `gigalixir-getting-started`_ take a look at `the diff`.
-
-.._`the diff`: https://github.com/gigalixir/gigalixir-getting-started/compare/fe3e06690ba926de817a48ae98bdf155f1cdb201...master
-
-Set up Node Clustering with Libcluster
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Set up Node Clustering with Libcluster (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to cluster nodes, you should install libcluster. For more information about installing libcluster, see :ref:`cluster your nodes`.
-
-Set Up Migrations
-^^^^^^^^^^^^^^^^^
-
-In development, you use :bash:`mix ecto.migrate` to run database migrations. If you are using distillery releases, `Mix`_ is not available so you need a different approach. Instructions on how to set up and run migrations are described in more detail in :ref:`migrations`.
 
 .. _`Mix`: https://hexdocs.pm/mix/Mix.html
 

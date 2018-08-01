@@ -31,7 +31,7 @@ def test_databases():
         app_name = app['name']
 
         # ensure there is no available database at the start of the test.
-        result = runner.invoke(gigalixir.cli, ['databases', app_name])
+        result = runner.invoke(gigalixir.cli, ['pg'])
         assert result.exit_code == 0
         output = json.loads(result.output)
         for entry in output:
@@ -40,7 +40,7 @@ def test_databases():
                 raise "there already exists an AVAILABLE database."
 
         # create
-        result = runner.invoke(gigalixir.cli, ['create_database', app_name])
+        result = runner.invoke(gigalixir.cli, ['pg:create'])
         assert result.exit_code == 0
 
         database_id = None
@@ -52,7 +52,7 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
         # scale
-        result = runner.invoke(gigalixir.cli, ['scale_database', app_name, database_id, '--size=1.7'])
+        result = runner.invoke(gigalixir.cli, ['pg:scale', database_id, '--size=1.7'])
         assert result.exit_code == 0
         start_time = timeit.default_timer()
         wait_for_available_database(runner, app_name)
@@ -60,7 +60,7 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
         # delete
-        result = runner.invoke(gigalixir.cli, ['delete_database', app_name, database_id], input="y\n")
+        result = runner.invoke(gigalixir.cli, ['pg:destroy', database_id], input="y\n")
         assert result.exit_code == 0
 
         start_time = timeit.default_timer()
@@ -126,7 +126,7 @@ def test_mix():
         logging.info("Elapsed time: %s" % elapsed)
 
         # scale down to 0
-        result = runner.invoke(gigalixir.cli, ['scale', app_name, '--replicas=0'])
+        result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0'])
         assert result.exit_code == 0
 
 def test_ruby():
@@ -174,7 +174,7 @@ def test_ruby():
         logging.info("Elapsed time: %s" % elapsed)
 
         # scale down to 0
-        result = runner.invoke(gigalixir.cli, ['scale', app_name, '--replicas=0'])
+        result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0'])
         assert result.exit_code == 0
 
 def test_aws_us_east_1():
@@ -228,28 +228,28 @@ def __test_deploy_and_upgrade(cloud, region):
         logging.info("Elapsed time: %s" % elapsed)
 
         # check status
-        result = runner.invoke(gigalixir.cli, ['status', app_name])
+        result = runner.invoke(gigalixir.cli, ['ps'])
         assert result.exit_code == 0
         status = json.loads(result.output)
         assert status["replicas_desired"] == 1
         assert status["replicas_running"] == 1
 
         # set a config
-        result = runner.invoke(gigalixir.cli, ['set_config', app_name, "FOO", "foo"])
+        result = runner.invoke(gigalixir.cli, ['config:set', "FOO=foo"])
         assert result.exit_code == 0
 
         # get configs
-        result = runner.invoke(gigalixir.cli, ['configs', app_name])
+        result = runner.invoke(gigalixir.cli, ['config'])
         assert result.exit_code == 0
         configs = json.loads(result.output)
         assert configs == {"FOO": "foo"}
 
         # delete the config
-        result = runner.invoke(gigalixir.cli, ['delete_config', app_name, "FOO"])
+        result = runner.invoke(gigalixir.cli, ['config:unset', "FOO"])
         assert result.exit_code == 0
 
         # get configs
-        result = runner.invoke(gigalixir.cli, ['configs', app_name])
+        result = runner.invoke(gigalixir.cli, ['config'])
         assert result.exit_code == 0
         configs = json.loads(result.output)
         assert configs == {}
@@ -291,11 +291,11 @@ def __test_deploy_and_upgrade(cloud, region):
         logging.info("Elapsed time: %s" % elapsed)
 
         # scale down to 0
-        result = runner.invoke(gigalixir.cli, ['scale', app_name, '--replicas=0'])
+        result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0'])
         assert result.exit_code == 0
 
         # check status
-        result = runner.invoke(gigalixir.cli, ['status', app_name])
+        result = runner.invoke(gigalixir.cli, ['ps'])
         assert result.exit_code == 0
         status = json.loads(result.output)
         assert status["replicas_desired"] == 0
@@ -314,7 +314,7 @@ def cd(newdir, cleanup=lambda: True):
 def wait_for_available_database(runner, app_name):
     for i in range(30):
         logging.info('Attempt: %s/30' % (i))
-        result = runner.invoke(gigalixir.cli, ['databases', app_name])
+        result = runner.invoke(gigalixir.cli, ['pg'])
         assert result.exit_code == 0
         output = json.loads(result.output)
         for entry in output:
@@ -330,7 +330,7 @@ def wait_for_available_database(runner, app_name):
 def wait_for_deleted_database(runner, app_name, database_id):
     for i in range(30):
             logging.info('Attempt: %s/30' % (i))
-            result = runner.invoke(gigalixir.cli, ['databases', app_name])
+            result = runner.invoke(gigalixir.cli, ['pg'])
             assert result.exit_code == 0
             output = json.loads(result.output)
             for entry in output:
