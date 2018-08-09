@@ -31,7 +31,7 @@ def test_databases():
         app_name = app['unique_name']
 
         # ensure there is no available database at the start of the test.
-        result = runner.invoke(gigalixir.cli, ['pg'])
+        result = runner.invoke(gigalixir.cli, ['pg', '-a', app_name])
         assert result.exit_code == 0
         output = json.loads(result.output)
         for entry in output:
@@ -40,7 +40,7 @@ def test_databases():
                 raise "there already exists an AVAILABLE database."
 
         # create
-        result = runner.invoke(gigalixir.cli, ['pg:create'])
+        result = runner.invoke(gigalixir.cli, ['pg:create', '-a', app_name])
         assert result.exit_code == 0
 
         database_id = None
@@ -52,7 +52,7 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
         # scale
-        result = runner.invoke(gigalixir.cli, ['pg:scale', database_id, '--size=1.7'])
+        result = runner.invoke(gigalixir.cli, ['pg:scale', database_id, '--size=1.7', '-a', app_name])
         assert result.exit_code == 0
         start_time = timeit.default_timer()
         wait_for_available_database(runner, app_name)
@@ -60,7 +60,7 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
         # delete
-        result = runner.invoke(gigalixir.cli, ['pg:destroy', database_id], input="y\n")
+        result = runner.invoke(gigalixir.cli, ['pg:destroy', database_id, '-a', app_name], input="y\n")
         assert result.exit_code == 0
 
         start_time = timeit.default_timer()
@@ -316,7 +316,7 @@ def cd(newdir, cleanup=lambda: True):
 def wait_for_available_database(runner, app_name):
     for i in range(30):
         logging.info('Attempt: %s/30' % (i))
-        result = runner.invoke(gigalixir.cli, ['pg'])
+        result = runner.invoke(gigalixir.cli, ['pg', '-a', app_name])
         assert result.exit_code == 0
         output = json.loads(result.output)
         for entry in output:
@@ -332,7 +332,7 @@ def wait_for_available_database(runner, app_name):
 def wait_for_deleted_database(runner, app_name, database_id):
     for i in range(30):
             logging.info('Attempt: %s/30' % (i))
-            result = runner.invoke(gigalixir.cli, ['pg'])
+            result = runner.invoke(gigalixir.cli, ['pg', '-a', app_name])
             assert result.exit_code == 0
             output = json.loads(result.output)
             for entry in output:
