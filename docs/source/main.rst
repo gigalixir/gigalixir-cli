@@ -138,19 +138,19 @@ Your app does not have a database yet, let's create one.
 
 .. code-block:: bash
 
-    gigalixir create_database --free $APP_NAME 
+    gigalixir pg:create --free 
 
 Verify by running
 
 .. code-block:: bash
 
-    gigalixir databases $APP_NAME
+    gigalixir pg 
 
 Once the database is created, verify your configuration includes a :bash:`DATABASE_URL` by running
 
 .. code-block:: bash
 
-    gigalixir configs $APP_NAME
+    gigalixir config
     
 
 What's Next?
@@ -178,10 +178,70 @@ Important: Although Gigalixir works with all versions of Phoenix, these guides a
 
 Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
-Required Modifications
-----------------------
+Mix vs Distillery
+-----------------
 
-These modifications are required to run on Gigalixir, but features such as node clustering probably won't work unless you make some optional modifications described in the next section.
+It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also just use mix which you're probably already used to from development. Deploying with mix is simpler and easier, but you can't do hot upgrades, clustering, remote observer, and maybe a few other things. 
+
+On the other hand, if you deploy with distillery, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be more confusing in some cases. 
+
+If you don't know which to choose, we generally recommend going with distillery because.. why use elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir migrate`, that makes it easy to run migrations without mix. 
+
+If you choose mix, see :ref:`modifying existing app with mix`.
+
+If you choose distillery, see :ref:`modifying existing app with distillery`.
+
+.. _`modifying existing app with mix`:
+
+Using Mix
+---------
+
+Configuration and Secrets
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, Phoenix creates a :bash:`prod.secret.exs` file to store secrets. If you want to continue using :bash:`prod.secret.exs` you'll have to commit it to version control. This is usually not a good idea, though. 
+
+Gigalixir prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`config/prod.exs` file, and modify the values to pull from environment variables. 
+
+Open your :bash:`config/prod.exs` file and delete the following line if it is there
+
+.. code-block:: elixir
+
+    import_config "prod.secret.exs"
+
+Then add something like the following in :bash:`prod.exs`
+
+.. code-block:: elixir
+
+     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
+       secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
+ 
+     config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
+       adapter: Ecto.Adapters.Postgres,
+       url: System.get_env("DATABASE_URL"),
+       ssl: true,
+       pool_size: 1 # Free tier db only allows 1 connection
+
+1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
+2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like 
+
+   .. code-block:: bash
+
+     grep -R "defmodule.*Endpoint" lib/
+     
+   Phoenix 1.2 and 1.3 give different names so this is a common source of errors.
+3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
+   
+You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
+
+.. code-block:: bash
+
+    gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
+
+.. _`modifying existing app with distillery`:
+
+Using Distillery
+----------------
 
 Install Distillery to Build Releases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -267,7 +327,7 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 
 .. code-block:: bash
 
-    gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
+    gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
 
 Verify
 ^^^^^^
@@ -297,7 +357,7 @@ and running it locally
 
 .. code-block:: bash
 
-    DATABASE_URL="postgresql://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
+    MIX_ENV=prod SECRET_KEY_BASE="$(mix phx.gen.secret)" DATABASE_URL="postgresql://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
 
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
@@ -314,22 +374,10 @@ Also check out :ref:`troubleshooting`.
 
 If it still doesn't work, don't hesitate to `contact us`_.
 
-Optional Modifications
-----------------------
-
-These modifications are not required, but are recommended if you want to use all of features Gigalixir offers. If you want to see the difference between :bash:`mix phx.new` and `gigalixir-getting-started`_ take a look at `the diff`.
-
-.._`the diff`: https://github.com/gigalixir/gigalixir-getting-started/compare/fe3e06690ba926de817a48ae98bdf155f1cdb201...master
-
-Set up Node Clustering with Libcluster
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Set up Node Clustering with Libcluster (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to cluster nodes, you should install libcluster. For more information about installing libcluster, see :ref:`cluster your nodes`.
-
-Set Up Migrations
-^^^^^^^^^^^^^^^^^
-
-In development, you use `Mix`_ to run database migrations. In production, `Mix`_ is not available so you need a different approach. Instructions on how to set up and run migrations are described in more detail in :ref:`migrations`.
 
 .. _`Mix`: https://hexdocs.pm/mix/Mix.html
 
@@ -655,7 +703,7 @@ Disable Gigalixir's default vm.args
 
 .. code-block:: bash
 
-    gigalixir set_config $APP_NAME GIGALIXIR_DEFAULT_VMARGS false
+    gigalixir config:set GIGALIXIR_DEFAULT_VMARGS=false
 
 Create a :bash:`rel/vm.args` file in your repository. It might look something like `gigalixir-getting-started's vm.args file`_.
 
@@ -676,7 +724,7 @@ After a new deploy, verify by SSH'ing into your instance and inspecting your rel
 
 .. code-block:: bash
 
-    gigalixir ssh $APP_NAME
+    gigalixir ps:ssh 
     cat /app/var/vm.args
 
 .. _`tiers`:
@@ -860,7 +908,7 @@ Then set the :bash:`MY_CONFIG` environment variable, by running
 
 .. code-block:: bash
 
-    gigalixir set_config $APP_NAME MY_CONFIG foo
+    gigalixir config:set MY_CONFIG=foo
 
 In your app code, access the environment variable using 
 
@@ -971,6 +1019,11 @@ Common Errors
 
         - Google Cloud Engine does not allow certain email ports like 587. See https://cloud.google.com/compute/docs/tutorials/sending-mail/
           Try using port 2525. See https://cloud.google.com/compute/docs/tutorials/sending-mail/using-mailgun
+
+    - init terminating in do_boot ({cannot get bootfile,no_dot_erlang.boot})
+
+        - This is an issue described here: https://github.com/bitwalker/distillery/issues/426
+          Try either upgrading Distillery to 1.5.3 or downgrading OTP below 21.
 
 .. _`contact us for help`:
 .. _`contact us`:
@@ -1098,7 +1151,7 @@ To delete an app, run
 
 .. code-block:: bash
 
-    gigalixir delete_app $APP_NAME
+    gigalixir apps:destroy
 
 How to Rename an App
 ====================
@@ -1230,7 +1283,7 @@ If you have a Gigalixir app already created and want to push a git repository to
 
 .. code-block:: bash
 
-    gigalixir set_git_remote $APP_NAME
+    gigalixir git:remote $APP_NAME
 
 If you prefer to do it manually, run
 
@@ -1247,7 +1300,7 @@ You can scale your app by adding more memory and cpu to each container, also cal
 
 .. code-block:: bash
 
-    gigalixir scale $APP_NAME --replicas=2 --size=0.6
+    gigalixir ps:scale --replicas=2 --size=0.6
 
 .. _`configs`:
 
@@ -1258,9 +1311,9 @@ All app configuration is done through envirnoment variables. You can get, set, a
  
 .. code-block:: bash
 
-    gigalixir configs $APP_NAME
-    gigalixir set_config $APP_NAME FOO bar
-    gigalixir delete_config $APP_NAME FOO                                                               
+    gigalixir config
+    gigalixir config:set FOO=bar
+    gigalixir config:unset FOO                                                               
 
 .. _`hot-configure`:
 .. _`hot configuration updates`: 
@@ -1291,14 +1344,14 @@ To rollback one release, run the following command.
  
 .. code-block:: bash
 
-    gigalixir rollback $APP_NAME
+    gigalixir releases:rollback 
 
 To rollback to a specific release, find the :bash:`version` by listing all releases. You can see which SHA the release was built on and when it was built. This will also automatically restart your app
 with the new release.
 
 .. code-block:: bash
 
-    gigalixir releases $APP_NAME
+    gigalixir releases 
 
 You should see something like this
 
@@ -1318,7 +1371,7 @@ Then specify the version when rolling back.
 
 .. code-block:: bash
 
-    gigalixir rollback $APP_NAME --version=5
+    gigalixir releases:rollback --version=5
 
 The release list is immutable so when you rollback, we create a new release on top of the old releases, but the new release refers to the old slug. 
 
@@ -1331,9 +1384,9 @@ After your first deploy, you can see your app by visiting https://$APP_NAME.giga
 
 .. code-block:: bash
 
-    gigalixir add_domain $APP_NAME www.example.com
+    gigalixir domains:add www.example.com
 
-If you have version 0.27.0 or later of the CLI, you'll be given instructions on what to do next. If not, run :bash:`gigalixir domains $APP_NAME` and use the :bash:`cname` value to point your domain at.
+If you have version 0.27.0 or later of the CLI, you'll be given instructions on what to do next. If not, run :bash:`gigalixir domains` and use the :bash:`cname` value to point your domain at.
 
 This will do a few things. It registers your fully qualified domain name in the load balancer so that it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you. For more information on how SSL/TLS works, see :ref:`how-tls-works`.
 
@@ -1357,7 +1410,7 @@ You can tail logs in real-time aggregated across all containers using the follow
 
 .. code-block:: bash
 
-    gigalixir logs $APP_NAME
+    gigalixir logs 
  
 How to Forward Logs Externally
 ==============================
@@ -1366,21 +1419,21 @@ If you want to forward your logs to another service such as `Timber`_ or `PaperT
 
 .. code-block:: bash
 
-    gigalixir add_log_drain $APP_NAME $URL
-    # e.g. gigalixir add_log_drain $APP_NAME https://$TIMBER_API_KEY@logs.timber.io/frames
-    # e.g. gigalixir add_log_drain $APP_NAME syslog+tls://logs123.papertrailapp.com:12345
+    gigalixir drains:add $URL
+    # e.g. gigalixir drains:add https://$TIMBER_API_KEY@logs.timber.io/frames
+    # e.g. gigalixir drains:add syslog+tls://logs123.papertrailapp.com:12345
 
 To show all your drains, run
 
 .. code-block:: bash
 
-    gigalixir log_drains $APP_NAME
+    gigalixir drains
 
 To delete a drain, run
 
 .. code-block:: bash
 
-    gigalixir delete_log_drain $APP_NAME $DRAIN_ID
+    gigalixir drains:remove $DRAIN_ID
 
 .. _`Timber`: https://timber.io
 
@@ -1423,7 +1476,7 @@ containers, this will put you in a random container. We do not yet support speci
 
 .. code-block:: bash
 
-    gigalixir ssh $APP_NAME
+    gigalixir ps:ssh 
 
 How to specify SSH key or other SSH options
 ===========================================
@@ -1432,7 +1485,7 @@ The :bash:`-o` option lets you pass in arbitrary options to :bash:`ssh`. Somethi
 
 .. code-block:: bash
 
-    gigalixir ssh -o "-i ~/.ssh/id_rsa" $APP_NAME
+    gigalixir ps:ssh -o "-i ~/.ssh/id_rsa" 
 
 How to List Apps
 ================
@@ -1451,7 +1504,7 @@ Each time you deploy or rollback a new release is generated. To see all your pre
 
 .. code-block:: bash
 
-    gigalixir releases $APP_NAME
+    gigalixir releases 
  
 How to Change or Reset Your Password
 ====================================
@@ -1490,7 +1543,7 @@ How to Restart an App
 
 .. code-block:: bash
 
-    gigalixir restart $APP_NAME
+    gigalixir ps:restart 
 
 For hot upgrades, See :ref:`hot-upgrade`. We are working on adding custom health checks. 
 
@@ -1522,20 +1575,23 @@ Heroku opts for faster deploys and restarts instead of zero-downtime deploys.
 How to Run Jobs
 ===============
 
-There are many ways to run one-off jobs and tasks with Distillery. The approach described here uses Distillery's :bash:`command` command. As an alternative, you can also `drop into a remote console`_ and run code manually or use Distillery's custom commands, eval command, rpc command, pre-start hooks, and probably others.
+There are many ways to run one-off jobs and tasks. You can run them in the container your app is running or you can spin up a new container that runs the command and then destroys itself.
 
-To run one-off jobs, you'll need to write an Elixir function within your app somewhere, for example, :bash:`lib/tasks.ex` maybe. Gigalixir uses Distillery's :bash:`command` command to run your task.
+To run a command in your app container, run
 
-.. code-block:: bash
+.. code-block: bash
 
-    gigalixir run $APP_NAME $MODULE $FUNCTION
+    gigalixir ps:run $COMMAND
+    # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app command Elixir.Tasks migrate`
+    # if you're using mix, you'll probably want $COMMAND to be something like :bash:`mix ecto.migrate`
 
+To run a command in a separate container, run
 
-For example, the following command will run the :elixir:`Tasks.migrate/0` function.
+.. code-block: bash
 
-.. code-block:: bash
-
-    gigalixir run myapp Elixir.Tasks migrate
+    gigalixir run $COMMAND
+    # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app command Elixir.Tasks migrate`
+    # if you're using mix, you'll probably want $COMMAND to be something like :bash:`mix ecto.migrate`
 
 .. For an example task, see `gigalixir-getting-started's migrate task`_. 
 
@@ -1591,19 +1647,19 @@ The following command will provision a free database for you and set your :bash:
 
 .. code-block:: bash
 
-    gigalixir create_database --free $APP_NAME
+    gigalixir pg:create --free 
 
 List databases by running
 
 .. code-block:: bash
 
-    gigalixir databases $APP_NAME
+    gigalixir pg 
 
 Delete by running
 
 .. code-block:: bash
 
-    gigalixir delete_database $APP_NAME $DATABASE_ID
+    gigalixir pg:destroy $DATABASE_ID
 
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
@@ -1620,13 +1676,13 @@ The following command will provision a database for you and set your :bash:`DATA
 
 .. code-block:: bash
 
-    gigalixir create_database $APP_NAME --size=0.6
+    gigalixir pg:create --size=0.6
 
 It takes a few minutes to provision. You can check the status by running
 
 .. code-block:: bash
 
-    gigalixir databases $APP_NAME
+    gigalixir pg 
 
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
@@ -1641,7 +1697,7 @@ To change the size of your database, run
 
 .. code-block:: bash
 
-    gigalixir scale_database $APP_NAME $DATABASE_ID --size=1.7
+    gigalixir pg:scale $DATABASE_ID --size=1.7
 
 Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. For more information about databases sizes, see :ref:`database sizes`.
 
@@ -1654,7 +1710,7 @@ To delete a database, run
 
 .. code-block:: bash
 
-    gigalixir delete_database $APP_NAME $DATABASE_ID
+    gigalixir pg:destroy $DATABASE_ID
 
 How to install a Postgres Extension
 ===================================
@@ -1663,7 +1719,7 @@ First, make sure Google Cloud SQL supports your extension by checking `their lis
 
 .. code-block:: bash
 
-    gigalixir databases $APP_NAME
+    gigalixir pg
 
 Then, get a psql console into your database
 
@@ -1725,7 +1781,7 @@ Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarte
 
 .. code-block:: bash
 
-    gigalixir set_config $APP_NAME DATABASE_URL "ecto://user:pass@host:port/db"
+    gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
 
 If you need to provision a database, Gigalixir provides Databases-as-a-Service. See :ref:`provisioning database`. If you prefer to provision your database manually, follow `How to set up a Google Cloud SQL PostgreSQL database`_.
 
@@ -1765,9 +1821,9 @@ Note: You can also use Amazon RDS, but we do not have instructions provided yet.
    
    .. code-block:: bash
    
-       gigalixir set_config $APP_NAME DATABASE_URL "ecto://postgres:$PASSWORD@$EXTERNAL_IP:5432/$DB_NAME"
+       gigalixir config:set DATABASE_URL="ecto://postgres:$PASSWORD@$EXTERNAL_IP:5432/$DB_NAME"
     
-   with $APP_NAME, $PASSWORD, $EXTERNAL_IP, and $DB_NAME replaced with values from the previous steps.
+   with $PASSWORD, $EXTERNAL_IP, and $DB_NAME replaced with values from the previous steps.
 #. Make sure you have :elixir:`ssl:true` in your :bash:`prod.exs` database configuration. Cloud SQL supports TLS out of the boxso your database traffic should be encrypted.
 
 We hope to provide a database-as-a-service soon and automate the process you just went through. Stay tuned.
@@ -1777,29 +1833,35 @@ We hope to provide a database-as-a-service soon and automate the process you jus
 How to Run Migrations
 =====================
 
-In order to run migrations, you need to set up your SSH keys. It could take up to a minute for the SSH keys to update in your containers.
+If you deployed your app without distillery, you can run migrations as a job in a new container.
+
+.. code-block:: bash
+
+    gigalixir run mix ecto.migrate
+
+If you deployed your app as a distillery release, :bash:`mix` isn't available. We try to make it easy by providing a special command, but the command runs on your existing app container so you'll need to make sure your app is running first and set up SSH keys.
 
 .. code-block:: bash
 
     gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
 
-We provide a special command to run migrations.
+Then run
 
 .. code-block:: bash
 
-    gigalixir migrate $APP_NAME
+    gigalixir ps:migrate 
 
-Since Mix is not available in production with Distillery, this command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. 
-
-Also note that because we don't spin up an entire new node just to run your migrations, migrations are free. Also, this doesn't yet work if you have an umbrella app and the app the migrations are in is a different name from your release name.
+This command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_. 
 
 If you are running an umbrella app, you will probably need to specify which "inner app" within your umbrella to migrate. Do this by passing the :bash:`--migration_app_name` flag like so
 
 .. code-block:: bash
 
-    gigalixir migrate $APP_NAME --migration_app_name=$MIGRATION_APP_NAME
+    gigalixir ps:migrate --migration_app_name=$MIGRATION_APP_NAME
 
-If you need to tweak the migration command, all we are doing is dropping into a remote_console and running the following. For information on how to open a remote console, see :ref:`remote console`.
+More details:
+
+If you need to tweak the migration command to run yourself, all we are doing is dropping into a remote_console and running the following. For information on how to open a remote console, see :ref:`remote console`.
 
 .. code-block:: elixir
 
@@ -1807,7 +1869,7 @@ If you need to tweak the migration command, all we are doing is dropping into a 
     app_dir = Application.app_dir(:gigalixir_getting_started, "priv/repo/migrations")
     Ecto.Migrator.run(repo, app_dir, :up, all: true)
 
-So for example, if you have more than one app, you may not want to use :elixir:`List.first` to find the app that contains the migrations.
+So for example, a tweak you might make is, if you have more than one app, you may not want to use :elixir:`List.first` to find the app that contains the migrations.
 
 .. _`the source code`: https://github.com/gigalixir/gigalixir-cli/blob/master/gigalixir/app.py#L160
 
@@ -1863,7 +1925,7 @@ Then run this command to drop into a remote console.
 
 .. code-block:: bash
 
-    gigalixir remote_console $APP_NAME 
+    gigalixir ps:remote_console 
 
 How to Run Distillery Commands
 ==============================
@@ -1872,7 +1934,7 @@ Since we use Distillery to build releases, we also get all the commands Distille
 
 .. code-block:: bash
 
-    gigalixir distillery $APP_NAME $COMMAND
+    gigalixir ps:distillery $COMMAND
 
 .. _`Distillery's boot.eex`: https://github.com/bitwalker/distillery/blob/master/priv/templates/boot.eex#L417
 
@@ -1885,7 +1947,7 @@ To see how many replicas are actually running in production compared to how many
 
 .. code-block:: bash
 
-    gigalixir status $APP_NAME
+    gigalixir ps 
 
 How to Check Account Status
 ===========================
@@ -1917,7 +1979,7 @@ Then, to launch observer and connect it to a production node, run
 
 .. code-block:: bash
 
-    gigalixir observer $APP_NAME
+    gigalixir ps:observer 
 
 and follow the instructions. It will prompt you for your local sudo password so it can modify iptables rules. This connects to a random container using consistent hashing. We don't currently allow you to specify which container you want to connect to, but it will connect to the same container each time based on a hash of your ip address.
 
@@ -1950,15 +2012,15 @@ Gigalixir has a way to add permissions so many users can deploy the same app, bu
 
 .. code-block:: bash
 
-    gigalixir add_permission $APP_NAME $USER_EMAIL
+    gigalixir access:add $USER_EMAIL
 
 .. code-block:: bash
 
-    gigalixir permissions $APP_NAME 
+    gigalixir access
 
 .. code-block:: bash
 
-    gigalixir delete_permission $APP_NAME $USER_EMAIL
+    gigalixir access:remove $USER_EMAIL
 
 .. _`How to deploy a Ruby app`:
 
@@ -1986,7 +2048,7 @@ using the command below.
 
 .. code-block:: bash
 
-    gigalixir set_config $APP_NAME GIGALIXIR_RELEASE_OPTIONS -- --profile=$RELEASE_NAME:$RELEASE_ENVIRONMENT
+    gigalixir config:set GIGALIXIR_RELEASE_OPTIONS="--profile=$RELEASE_NAME:$RELEASE_ENVIRONMENT"
 
 With this config variable set on each of your gigalixir apps, when you deploy the same repo to each app, you'll get a different release.
 

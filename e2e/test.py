@@ -28,10 +28,10 @@ def test_databases():
         # assumes this account already has an app created
         app = json.loads(result.output)[-1]
         assert app['replicas'] == 0
-        app_name = app['name']
+        app_name = app['unique_name']
 
         # ensure there is no available database at the start of the test.
-        result = runner.invoke(gigalixir.cli, ['databases', app_name])
+        result = runner.invoke(gigalixir.cli, ['pg'])
         assert result.exit_code == 0
         output = json.loads(result.output)
         for entry in output:
@@ -40,7 +40,7 @@ def test_databases():
                 raise "there already exists an AVAILABLE database."
 
         # create
-        result = runner.invoke(gigalixir.cli, ['create_database', app_name])
+        result = runner.invoke(gigalixir.cli, ['pg:create'])
         assert result.exit_code == 0
 
         database_id = None
@@ -52,7 +52,7 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
         # scale
-        result = runner.invoke(gigalixir.cli, ['scale_database', app_name, database_id, '--size=1.7'])
+        result = runner.invoke(gigalixir.cli, ['pg:scale', database_id, '--size=1.7'])
         assert result.exit_code == 0
         start_time = timeit.default_timer()
         wait_for_available_database(runner, app_name)
@@ -60,7 +60,7 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
         # delete
-        result = runner.invoke(gigalixir.cli, ['delete_database', app_name, database_id], input="y\n")
+        result = runner.invoke(gigalixir.cli, ['pg:destroy', database_id], input="y\n")
         assert result.exit_code == 0
 
         start_time = timeit.default_timer()
@@ -98,36 +98,36 @@ def test_mix():
             app_name = result.output.rstrip()
             gigalixir.shell.cast("git push gigalixir master")
 
-        logging.info('Completed Deploy.')
-        start_time = timeit.default_timer()
-        url = 'https://%s.gigalixirapp.com/' % app_name
-        for i in range(30):
-            try:
-                logging.info('Attempt: %s/30: Checking %s' % (i, url))
-                r = requests.get(url)
-                if r.status_code != 200:
+            logging.info('Completed Deploy.')
+            start_time = timeit.default_timer()
+            url = 'https://%s.gigalixirapp.com/' % app_name
+            for i in range(30):
+                try:
+                    logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                    r = requests.get(url)
+                    if r.status_code != 200:
+                        # wait 5 seconds
+                        logging.info('Received %s' % r.status_code)
+                        logging.info('Waiting 5 seconds to try again.')
+                        time.sleep(5)
+                    else:
+                        logging.info('Pass.')
+                        break
+                except requests.exceptions.ConnectionError as e:
                     # wait 5 seconds
-                    logging.info('Received %s' % r.status_code)
+                    logging.info('ConnectionError: %s' % e)
                     logging.info('Waiting 5 seconds to try again.')
                     time.sleep(5)
-                else:
-                    logging.info('Pass.')
-                    break
-            except requests.exceptions.ConnectionError as e:
-                # wait 5 seconds
-                logging.info('ConnectionError: %s' % e)
-                logging.info('Waiting 5 seconds to try again.')
-                time.sleep(5)
-        else:
-            logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
-            assert False
+            else:
+                logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
+                assert False
 
-        elapsed = timeit.default_timer() - start_time
-        logging.info("Elapsed time: %s" % elapsed)
+            elapsed = timeit.default_timer() - start_time
+            logging.info("Elapsed time: %s" % elapsed)
 
-        # scale down to 0
-        result = runner.invoke(gigalixir.cli, ['scale', app_name, '--replicas=0'])
-        assert result.exit_code == 0
+            # scale down to 0
+            result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0'])
+            assert result.exit_code == 0
 
 def test_ruby():
     logging.basicConfig(format='%(message)s', level=logging.DEBUG)
@@ -146,36 +146,37 @@ def test_ruby():
             assert result.exit_code == 0
             app_name = result.output.rstrip()
             gigalixir.shell.cast("git push gigalixir master")
-        logging.info('Completed Deploy.')
-        start_time = timeit.default_timer()
-        url = 'https://%s.gigalixirapp.com/' % app_name
-        for i in range(30):
-            try:
-                logging.info('Attempt: %s/30: Checking %s' % (i, url))
-                r = requests.get(url)
-                if r.status_code != 200:
+
+            logging.info('Completed Deploy.')
+            start_time = timeit.default_timer()
+            url = 'https://%s.gigalixirapp.com/' % app_name
+            for i in range(30):
+                try:
+                    logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                    r = requests.get(url)
+                    if r.status_code != 200:
+                        # wait 5 seconds
+                        logging.info('Received %s' % r.status_code)
+                        logging.info('Waiting 5 seconds to try again.')
+                        time.sleep(5)
+                    else:
+                        logging.info('Pass.')
+                        break
+                except requests.exceptions.ConnectionError as e:
                     # wait 5 seconds
-                    logging.info('Received %s' % r.status_code)
+                    logging.info('ConnectionError: %s' % e)
                     logging.info('Waiting 5 seconds to try again.')
                     time.sleep(5)
-                else:
-                    logging.info('Pass.')
-                    break
-            except requests.exceptions.ConnectionError as e:
-                # wait 5 seconds
-                logging.info('ConnectionError: %s' % e)
-                logging.info('Waiting 5 seconds to try again.')
-                time.sleep(5)
-        else:
-            logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
-            assert False
+            else:
+                logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
+                assert False
 
-        elapsed = timeit.default_timer() - start_time
-        logging.info("Elapsed time: %s" % elapsed)
+            elapsed = timeit.default_timer() - start_time
+            logging.info("Elapsed time: %s" % elapsed)
 
-        # scale down to 0
-        result = runner.invoke(gigalixir.cli, ['scale', app_name, '--replicas=0'])
-        assert result.exit_code == 0
+            # scale down to 0
+            result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0'])
+            assert result.exit_code == 0
 
 def test_aws_us_east_1():
     __test_deploy_and_upgrade("aws", "us-east-1")
@@ -200,106 +201,107 @@ def __test_deploy_and_upgrade(cloud, region):
             assert result.exit_code == 0
             app_name = result.output.rstrip()
             gigalixir.shell.cast("git push gigalixir master")
-        logging.info('Completed Deploy.')
-        start_time = timeit.default_timer()
-        url = 'https://%s.gigalixirapp.com/' % app_name
-        for i in range(30):
-            try:
-                logging.info('Attempt: %s/30: Checking %s' % (i, url))
-                r = requests.get(url)
-                if r.status_code != 200:
-                    # wait 5 seconds
-                    logging.info('Received %s' % r.status_code)
-                    logging.info('Waiting 5 seconds to try again.')
-                    time.sleep(5)
-                else:
-                    logging.info('Pass.')
-                    break
-            except requests.exceptions.ConnectionError as e:
-                # wait 5 seconds
-                logging.info('ConnectionError: %s' % e)
-                logging.info('Waiting 5 seconds to try again.')
-                time.sleep(5)
-        else:
-            logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
-            assert False
 
-        elapsed = timeit.default_timer() - start_time
-        logging.info("Elapsed time: %s" % elapsed)
-
-        # check status
-        result = runner.invoke(gigalixir.cli, ['status', app_name])
-        assert result.exit_code == 0
-        status = json.loads(result.output)
-        assert status["replicas_desired"] == 1
-        assert status["replicas_running"] == 1
-
-        # set a config
-        result = runner.invoke(gigalixir.cli, ['set_config', app_name, "FOO", "foo"])
-        assert result.exit_code == 0
-
-        # get configs
-        result = runner.invoke(gigalixir.cli, ['configs', app_name])
-        assert result.exit_code == 0
-        configs = json.loads(result.output)
-        assert configs == {"FOO": "foo"}
-
-        # delete the config
-        result = runner.invoke(gigalixir.cli, ['delete_config', app_name, "FOO"])
-        assert result.exit_code == 0
-
-        # get configs
-        result = runner.invoke(gigalixir.cli, ['configs', app_name])
-        assert result.exit_code == 0
-        configs = json.loads(result.output)
-        assert configs == {}
-
-        # hot upgrade
-        with cd("gigalixir-getting-started"):
-            gigalixir.shell.cast("""git rebase origin/v0.0.2""")
-            subprocess.check_call(["git", "-c", "http.extraheader=GIGALIXIR-HOT:true","push","gigalixir","master"])
-        logging.info('Completed Hot Upgrade.')
-        start_time = timeit.default_timer()
-        url = 'https://%s.gigalixirapp.com/' % app_name
-        for i in range(30):
-            try:
-                logging.info('Attempt: %s/30: Checking %s' % (i, url))
-                r = requests.get(url)
-                if r.status_code != 200:
-                    # wait 5 seconds
-                    logging.info('Received %s' % r.status_code)
-                    logging.info('Waiting 5 seconds to try again.')
-                    time.sleep(5)
-                else:
-                    if "0.0.2" not in r.text:
+            logging.info('Completed Deploy.')
+            start_time = timeit.default_timer()
+            url = 'https://%s.gigalixirapp.com/' % app_name
+            for i in range(30):
+                try:
+                    logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                    r = requests.get(url)
+                    if r.status_code != 200:
                         # wait 5 seconds
-                        logging.info('0.0.2 not found.')
+                        logging.info('Received %s' % r.status_code)
                         logging.info('Waiting 5 seconds to try again.')
                         time.sleep(5)
                     else:
                         logging.info('Pass.')
                         break
-            except requests.exceptions.ConnectionError as e:
-                # wait 5 seconds
-                logging.info('ConnectionError: %s' % e)
-                logging.info('Waiting 5 seconds to try again.')
-                time.sleep(5)
-        else:
-            logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
-            assert False
-        elapsed = timeit.default_timer() - start_time
-        logging.info("Elapsed time: %s" % elapsed)
+                except requests.exceptions.ConnectionError as e:
+                    # wait 5 seconds
+                    logging.info('ConnectionError: %s' % e)
+                    logging.info('Waiting 5 seconds to try again.')
+                    time.sleep(5)
+            else:
+                logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
+                assert False
 
-        # scale down to 0
-        result = runner.invoke(gigalixir.cli, ['scale', app_name, '--replicas=0'])
-        assert result.exit_code == 0
+            elapsed = timeit.default_timer() - start_time
+            logging.info("Elapsed time: %s" % elapsed)
 
-        # check status
-        result = runner.invoke(gigalixir.cli, ['status', app_name])
-        assert result.exit_code == 0
-        status = json.loads(result.output)
-        assert status["replicas_desired"] == 0
-        assert status["replicas_running"] == 0
+            # check status
+            result = runner.invoke(gigalixir.cli, ['ps'])
+            assert result.exit_code == 0
+            status = json.loads(result.output)
+            assert status["replicas_desired"] == 1
+            assert status["replicas_running"] == 1
+
+            # set a config
+            result = runner.invoke(gigalixir.cli, ['config:set', "FOO=foo"])
+            assert result.exit_code == 0
+
+            # get configs
+            result = runner.invoke(gigalixir.cli, ['config'])
+            assert result.exit_code == 0
+            configs = json.loads(result.output)
+            assert configs == {"FOO": "foo"}
+
+            # delete the config
+            result = runner.invoke(gigalixir.cli, ['config:unset', "FOO"])
+            assert result.exit_code == 0
+
+            # get configs
+            result = runner.invoke(gigalixir.cli, ['config'])
+            assert result.exit_code == 0
+            configs = json.loads(result.output)
+            assert configs == {}
+
+            # hot upgrade
+            gigalixir.shell.cast("""git rebase origin/v0.0.2""")
+            subprocess.check_call(["git", "-c", "http.extraheader=GIGALIXIR-HOT:true","push","gigalixir","master"])
+
+            logging.info('Completed Hot Upgrade.')
+            start_time = timeit.default_timer()
+            url = 'https://%s.gigalixirapp.com/' % app_name
+            for i in range(30):
+                try:
+                    logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                    r = requests.get(url)
+                    if r.status_code != 200:
+                        # wait 5 seconds
+                        logging.info('Received %s' % r.status_code)
+                        logging.info('Waiting 5 seconds to try again.')
+                        time.sleep(5)
+                    else:
+                        if "0.0.2" not in r.text:
+                            # wait 5 seconds
+                            logging.info('0.0.2 not found.')
+                            logging.info('Waiting 5 seconds to try again.')
+                            time.sleep(5)
+                        else:
+                            logging.info('Pass.')
+                            break
+                except requests.exceptions.ConnectionError as e:
+                    # wait 5 seconds
+                    logging.info('ConnectionError: %s' % e)
+                    logging.info('Waiting 5 seconds to try again.')
+                    time.sleep(5)
+            else:
+                logging.info('Exhausted retries. Be sure to scale down your app manually and other necessary cleanup since we are aborting now.')
+                assert False
+            elapsed = timeit.default_timer() - start_time
+            logging.info("Elapsed time: %s" % elapsed)
+
+            # scale down to 0
+            result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0'])
+            assert result.exit_code == 0
+
+            # check status
+            result = runner.invoke(gigalixir.cli, ['ps'])
+            assert result.exit_code == 0
+            status = json.loads(result.output)
+            assert status["replicas_desired"] == 0
+            assert status["replicas_running"] == 0
 
 @contextlib.contextmanager
 def cd(newdir, cleanup=lambda: True):
@@ -314,7 +316,7 @@ def cd(newdir, cleanup=lambda: True):
 def wait_for_available_database(runner, app_name):
     for i in range(30):
         logging.info('Attempt: %s/30' % (i))
-        result = runner.invoke(gigalixir.cli, ['databases', app_name])
+        result = runner.invoke(gigalixir.cli, ['pg'])
         assert result.exit_code == 0
         output = json.loads(result.output)
         for entry in output:
@@ -330,7 +332,7 @@ def wait_for_available_database(runner, app_name):
 def wait_for_deleted_database(runner, app_name, database_id):
     for i in range(30):
             logging.info('Attempt: %s/30' % (i))
-            result = runner.invoke(gigalixir.cli, ['databases', app_name])
+            result = runner.invoke(gigalixir.cli, ['pg'])
             assert result.exit_code == 0
             output = json.loads(result.output)
             for entry in output:

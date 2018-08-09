@@ -1,5 +1,6 @@
 import requests
 from . import auth
+from . import presenter
 import json
 import click
 import logging
@@ -17,7 +18,7 @@ def ssh_keys(host):
 
 def get(host):
     data = ssh_keys(host)
-    click.echo(json.dumps(data, indent=2, sort_keys=True))
+    presenter.echo_json(data)
 
 def create(host, key):
     r = requests.post('%s/api/ssh_keys' % host, headers = {

@@ -8,6 +8,7 @@ import requests
 import click
 from .shell import cast, call
 from . import auth
+from . import presenter
 from . import ssh_key
 from contextlib import closing
 from six.moves.urllib.parse import quote
@@ -22,7 +23,7 @@ def get(host):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        presenter.echo_json(data)
 
 def set_git_remote(host, app_name):
     remotes = call('git remote').splitlines()
@@ -71,7 +72,7 @@ def status(host, app_name):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        presenter.echo_json(data)
 
 def scale(host, app_name, replicas, size):
     json = {}
@@ -87,13 +88,30 @@ def scale(host, app_name, replicas, size):
             raise auth.AuthException()
         raise Exception(r.text)
 
+def customer_app_name(host, app_name):
+    r = requests.get('%s/api/apps/%s/releases/latest' % (host, quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        return data["customer_app_name"]
+
 def distillery_eval(host, app_name, ssh_opts, expression):
-    return ssh_helper(host, app_name, ssh_opts, True, "gigalixir_run", "run", "eval", expression)
+    # capture_output == True as this isn't interactive
+    # and we want to return the result as a string rather than
+    # print it out to the screen
+    return ssh_helper(host, app_name, ssh_opts, True, "gigalixir_run", "distillery_eval", "--", expression)
 
 def distillery_command(host, app_name, ssh_opts, *args):
-    ssh(host, app_name, ssh_opts, "gigalixir_run", "run", *args)
+    ssh(host, app_name, ssh_opts, "gigalixir_run", "shell", "--", "bin/%s" % customer_app_name(host, app_name), *args)
 
 def ssh(host, app_name, ssh_opts, *args):
+    # capture_output == False for interactive mode which is
+    # used by ssh, remote_console, distillery_command
     ssh_helper(host, app_name, ssh_opts, False, *args)
 
 # if using this from a script, and you want the return
@@ -162,17 +180,28 @@ def second_most_recent_version(host, app_name):
         else:
             return data[1]["version"]
 
-def run(host, app_name, module, function):
+def run(host, app_name, command):
+    # runs command in a new container
     r = requests.post('%s/api/apps/%s/run' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
-        "module": module,
-        "function": function
+        "command": command,
     })
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    else:
+        click.echo("Starting new container to run: `%s`." % ' '.join(command))
+        click.echo("See `gigalixir logs %s` for any output." % app_name)
+        click.echo("See `gigalixir status %s` for job info." % app_name)
+
+def ps_run(host, app_name, ssh_opts, *command):
+    # runs command in same container app is running
+    ssh(host, app_name, ssh_opts, "gigalixir_run", "shell", "--", *command)
+
+def remote_console(host, app_name, ssh_opts):
+    ssh(host, app_name, ssh_opts, "gigalixir_run", "remote_console")
 
 def migrate(host, app_name, migration_app_name, ssh_opts):
     if migration_app_name == None:
@@ -221,3 +250,4 @@ def delete(host, app_name):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+

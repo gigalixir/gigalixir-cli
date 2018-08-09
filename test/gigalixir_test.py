@@ -137,31 +137,32 @@ def test_get_apps():
     result = runner.invoke(gigalixir.cli, ['apps'])
     assert result.output == """[
   {
-    "name": "one", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "one"
   }, 
   {
-    "name": "two", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "two"
   }, 
   {
-    "name": "three", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "three"
   }, 
   {
-    "name": "four", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "four"
   }, 
   {
-    "name": "five", 
     "replicas": 1, 
-    "size": 0.5
+    "size": 0.5, 
+    "unique_name": "five"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -170,7 +171,7 @@ def test_get_apps():
 def test_scale_replicas_only():
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/scale', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['scale', 'fake-app-name', '--replicas=100'])
+    result = runner.invoke(gigalixir.cli, ['scale', '-a', 'fake-app-name', '--replicas=100'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -180,7 +181,7 @@ def test_scale_replicas_only():
 def test_scale():
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/scale', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['scale', 'fake-app-name', '--replicas=100', '--size=0.5'])
+    result = runner.invoke(gigalixir.cli, ['scale', '-a', 'fake-app-name', '--replicas=100', '--size=0.5'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -190,7 +191,7 @@ def test_scale():
 def test_restart():
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/restart', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['restart', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['restart', '-a', 'fake-app-name'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -199,20 +200,24 @@ def test_restart():
 def test_run():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/run', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['run', 'fake-app-name', 'Elixir.Tasks', 'migrate'])
-    assert result.output == ''
+    result = runner.invoke(gigalixir.cli, ['run', '-a', 'fake-app-name', 'mix', 'ecto.migrate'])
+    assert result.output == """Starting new container to run: `mix ecto.migrate`.
+See `gigalixir logs fake-app-name` for any output.
+See `gigalixir status fake-app-name` for job info.
+"""
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body.decode()).to.equal('{"function": "migrate", "module": "Elixir.Tasks"}')
+    expect(httpretty.last_request().body.decode()).to.equal('{"command": ["mix", "ecto.migrate"]}')
 
 @httpretty.activate
 def test_get_configs():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/configs', body='{"data":{"DATABASE_URL":"ecto://user:pass@host:5432/db"}}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['configs', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['configs', '-a', 'fake-app-name'])
     assert result.output == """{
   "DATABASE_URL": "ecto://user:pass@host:5432/db"
 }
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -221,7 +226,7 @@ def test_get_configs():
 def test_create_config():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/configs', body='{}', content_type='application/json', status=201)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['set_config', 'fake-app-name', 'FOO', 'bar'])
+    result = runner.invoke(gigalixir.cli, ['set_config', '-a', 'fake-app-name', 'FOO', 'bar'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"value": "bar", "key": "FOO"}')
@@ -230,7 +235,7 @@ def test_create_config():
 def test_delete_config():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/configs', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_config', 'fake-app-name', 'FOO'])
+    result = runner.invoke(gigalixir.cli, ['delete_config', '-a', 'fake-app-name', 'FOO'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"key": "FOO"}')
@@ -239,7 +244,7 @@ def test_delete_config():
 def test_get_permissions():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/permissions', body='{"data":["foo@gigalixir.com"]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['permissions', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['permissions', '-a', 'fake-app-name'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -247,7 +252,7 @@ def test_get_permissions():
 def test_create_permission():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/permissions', body='{}', content_type='application/json', status=201)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['add_permission', 'fake-app-name', 'foo@gigalixir.com'])
+    result = runner.invoke(gigalixir.cli, ['add_permission', '-a', 'fake-app-name', 'foo@gigalixir.com'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"email": "foo@gigalixir.com"}')
@@ -256,7 +261,7 @@ def test_create_permission():
 def test_delete_app():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_app', 'fake-app-name'], input="y\n")
+    result = runner.invoke(gigalixir.cli, ['delete_app', '-a', 'fake-app-name'], input="y\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -264,7 +269,7 @@ def test_delete_app():
 def test_delete_permission():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/permissions', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_permission', 'fake-app-name', 'foo@gigalixir.com'])
+    result = runner.invoke(gigalixir.cli, ['delete_permission', '-a', 'fake-app-name', 'foo@gigalixir.com'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"email": "foo@gigalixir.com"}')
@@ -296,30 +301,31 @@ machine localhost
 def test_get_releases():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"sha":"another-fake-sha","version":1,"created_at":"2017-03-29T17:28:29.000+00:00","summary":"fake summary"},{"sha":"fake-sha","version":2,"created_at":"2017-03-29T17:28:28.000+00:00","summary":"fake summary"}]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['releases', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['releases', '-a', 'fake-app-name'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     assert result.output == """[
-  {
-    "created_at": "2017-03-29T17:28:28.000+00:00", 
-    "sha": "fake-sha", 
-    "summary": "fake summary", 
-    "version": 2
-  }, 
   {
     "created_at": "2017-03-29T17:28:29.000+00:00", 
     "sha": "another-fake-sha", 
     "summary": "fake summary", 
     "version": 1
+  }, 
+  {
+    "created_at": "2017-03-29T17:28:28.000+00:00", 
+    "sha": "fake-sha", 
+    "summary": "fake summary", 
+    "version": 2
   }
 ]
+
 """
 
 @httpretty.activate
 def test_rollback_without_eligible_release():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"sha":"another-fake-sha","version":1,"created_at":"2017-03-29T17:28:29.000+00:00","summary":"fake summary"}]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['rollback', '-a', 'fake-app-name'])
     assert result.exit_code != 0
     # expect(httpretty.has_request()).to.be.true
     expect(len(httpretty.httpretty.latest_requests)).to.equal(1)
@@ -329,7 +335,7 @@ def test_rollback_without_version():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/releases', body='{"data":[{"sha":"another-fake-sha","version":3,"created_at":"2017-03-29T17:28:29.000+00:00","summary":"fake summary"},{"sha":"fake-sha","version":2,"created_at":"2017-03-29T17:28:28.000+00:00","summary":"fake summary"}]}', content_type='application/json')
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/releases/2/rollback', body='', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['rollback', '-a', 'fake-app-name'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -338,7 +344,7 @@ def test_rollback_without_version():
 def test_rollback():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/releases/1/rollback', body='', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['rollback', 'fake-app-name', '-r', '1'])
+    result = runner.invoke(gigalixir.cli, ['rollback', '-a', 'fake-app-name', '-r', '1'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -354,6 +360,7 @@ def test_get_ssh_keys():
     "key": "fake-ssh-key"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -389,6 +396,7 @@ def test_get_payment_method():
   "exp_year": 2018, 
   "last4": 4242
 }
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -426,7 +434,7 @@ def test_logs():
 
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/logs', body=log_response(), streaming=True)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['logs', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['logs', '-a', 'fake-app-name'])
     assert result.output == u"\n".join([
         u"0 18:14:58.885 request_id=406arqcek0jjs7uo29o34o55sr841jec [info] Sent 200 in 197µs",
         u"1 18:14:58.885 request_id=406arqcek0jjs7uo29o34o55sr841jec [info] Sent 200 in 197µs",
@@ -440,7 +448,7 @@ def test_logs():
 def test_delete_domain():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/domains', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_domain', 'fake-app-name', 'www.example.com'])
+    result = runner.invoke(gigalixir.cli, ['delete_domain', '-a', 'fake-app-name', 'www.example.com'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -450,10 +458,11 @@ def test_delete_domain():
 def test_get_domains():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/domains', body='{"data":["www.example.com"]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['domains', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['domains', '-a', 'fake-app-name'])
     assert result.output == """[
   "www.example.com"
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -462,7 +471,7 @@ def test_get_domains():
 def test_create_domain():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/domains', body='{"data": {"cname": "www.example.com.gigalixirdns.com"}}', content_type='application/json', status=201)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['add_domain', 'fake-app-name', 'www.example.com'])
+    result = runner.invoke(gigalixir.cli, ['add_domain', '-a', 'fake-app-name', 'www.example.com'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -517,7 +526,7 @@ def test_current_period_usage():
 def test_delete_database():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_database', 'fake-app-name', 'fake-database-id'], input="y\n")
+    result = runner.invoke(gigalixir.cli, ['delete_database', '-a', 'fake-app-name', 'fake-database-id'], input="y\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -525,7 +534,7 @@ def test_delete_database():
 def test_delete_free_database():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/free_databases/fake-database-id', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_free_database', 'fake-app-name', 'fake-database-id'], input="y\n")
+    result = runner.invoke(gigalixir.cli, ['delete_free_database', '-a', 'fake-app-name', 'fake-database-id'], input="y\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -558,9 +567,10 @@ def test_get_free_databases():
     }
   ]
 }
+
 """, content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['free_databases', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['free_databases', '-a', 'fake-app-name'])
     print(result.output)
     assert result.output == """[
   {
@@ -586,6 +596,7 @@ def test_get_free_databases():
     "username": "app"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -619,9 +630,10 @@ def test_get_databases():
     }
   ]
 }
+
 """, content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['databases', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['databases', '-a', 'fake-app-name'])
     print(result.output)
     assert result.output == """[
   {
@@ -647,6 +659,7 @@ def test_get_databases():
     "username": "app"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -655,7 +668,7 @@ def test_get_databases():
 def test_create_database():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/databases', body='{}', content_type='application/json', status=201)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['create_database', 'fake-app-name', '--size=4'])
+    result = runner.invoke(gigalixir.cli, ['create_database', '-a', 'fake-app-name', '--size=4'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -677,9 +690,10 @@ def test_create_free_database():
     "app_name": "REDACTED"
   }
 }
+
 """, content_type='application/json', status=201)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['create_free_database', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['create_free_database', '-a', 'fake-app-name'])
     # mind the trailing spaces!!
     assert result.output == """{
   "app_name": "REDACTED", 
@@ -692,6 +706,7 @@ def test_create_free_database():
   "url": "REDACTED", 
   "username": "app"
 }
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -700,7 +715,7 @@ def test_create_free_database():
 def test_scale_database():
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['scale_database', 'fake-app-name', 'fake-database-id', '--size=8'])
+    result = runner.invoke(gigalixir.cli, ['scale_database', '-a', 'fake-app-name', 'fake-database-id', '--size=8'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -711,7 +726,7 @@ def test_account():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/users', body='{"data":{}}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['account'])
-    assert result.output == "{}\n"
+    assert result.output == "{}\n\n"
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -727,7 +742,7 @@ def test_upgrade():
 def test_get_log_drains():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/drains', body='{"data":[{"url":"syslog+tls://foo.papertrailapp.com:12345","token":"fake-token1","id":1},{"url":"https://user:pass@logs.timber.io/frames","token":"fake-token2","id":2}]}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['log_drains', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['log_drains', '-a', 'fake-app-name'])
     print(result.output)
     assert result.output == """[
   {
@@ -741,6 +756,7 @@ def test_get_log_drains():
     "url": "https://user:pass@logs.timber.io/frames"
   }
 ]
+
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -749,7 +765,7 @@ def test_get_log_drains():
 def test_add_log_drain():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/drains', body='{}', content_type='application/json', status=201)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['add_log_drain', 'fake-app-name', 'fake-url'])
+    result = runner.invoke(gigalixir.cli, ['add_log_drain', '-a', 'fake-app-name', 'fake-url'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"url": "fake-url"}')
@@ -758,7 +774,8 @@ def test_add_log_drain():
 def test_delete_log_drain():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/drains', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_log_drain', 'fake-app-name', "10"])
+    result = runner.invoke(gigalixir.cli, ['delete_log_drain', '-a', 'fake-app-name', "10"])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"drain_id": "10"}')
+

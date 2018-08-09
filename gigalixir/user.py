@@ -1,6 +1,7 @@
 import requests
 from . import auth
 from . import netrc
+from . import presenter
 import logging
 import urllib
 import click
@@ -114,4 +115,4 @@ def account(host):
         raise Exception(r.text)
     else:
         data = json.loads(r.text)["data"]
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        presenter.echo_json(data)
