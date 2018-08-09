@@ -296,7 +296,7 @@ def run(ctx, app_name, command):
 @click.pass_context
 @report_errors
 @detect_app_name
-def migrate(ctx, app_name, migration_app_name, ssh_opts):
+def ps_migrate(ctx, app_name, migration_app_name, ssh_opts):
     """
     Run Ecto Migrations on a production node.
     """
