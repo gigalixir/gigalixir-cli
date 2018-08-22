@@ -122,7 +122,7 @@ def ssh_helper(host, app_name, ssh_opts, capture_output, *args):
     # verify SSH keys exist
     keys = ssh_key.ssh_keys(host)
     if len(keys) == 0:
-        raise Exception("You don't have any ssh keys yet. See `gigalixir add_ssh_key --help`")
+        raise Exception("You don't have any ssh keys yet. See `gigalixir account:ssh_keys:add --help`")
 
     r = requests.get('%s/api/apps/%s/ssh_ip' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
@@ -193,8 +193,8 @@ def run(host, app_name, command):
         raise Exception(r.text)
     else:
         click.echo("Starting new container to run: `%s`." % ' '.join(command))
-        click.echo("See `gigalixir logs %s` for any output." % app_name)
-        click.echo("See `gigalixir status %s` for job info." % app_name)
+        click.echo("See `gigalixir logs` for any output.")
+        click.echo("See `gigalixir ps` for job info.")
 
 def ps_run(host, app_name, ssh_opts, *command):
     # runs command in same container app is running

@@ -202,8 +202,8 @@ def test_run():
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['run', '-a', 'fake-app-name', 'mix', 'ecto.migrate'])
     assert result.output == """Starting new container to run: `mix ecto.migrate`.
-See `gigalixir logs fake-app-name` for any output.
-See `gigalixir status fake-app-name` for job info.
+See `gigalixir logs` for any output.
+See `gigalixir ps` for job info.
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
