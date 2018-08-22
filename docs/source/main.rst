@@ -241,8 +241,9 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 .. _`modifying existing app with distillery`:
 
 When removing brunch and using webpack instead, in order to use React instead of static assets, it is important to
-1. make sure the Phoenix static buildpack is not included in your project
-2. add `server:true` to the settings in `config/prod.exs` as shown in the block below   
+
+1. make sure the Phoenix static buildpack is not included in your project  
+2. add `server:true` to the settings in `config/prod.exs` as shown in the block below     
 
 .. code-block:: elixir
 
