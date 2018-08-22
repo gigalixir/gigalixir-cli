@@ -240,6 +240,22 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 
 .. _`modifying existing app with distillery`:
 
+When removing brunch and using webpack instead, in order to use React instead of static assets, it is important to
+1. make sure the Phoenix static buildpack is not included in your project
+2. add `server:true` to the settings in `config/prod.exs` as shown in the block below   
+
+.. code-block:: elixir
+
+     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
+       secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
+       server: true
+ 
+     config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
+       adapter: Ecto.Adapters.Postgres,
+       url: System.get_env("DATABASE_URL"),
+       ssl: true,
+       pool_size: 1 # Free tier db only allows 1 connection
+
 Using Distillery
 ----------------
 
