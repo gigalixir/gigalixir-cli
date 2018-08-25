@@ -740,6 +740,7 @@ def delete_config(ctx, app_name, key):
 @click.argument('email')
 @click.pass_context
 @report_errors
+@detect_app_name
 def add_permission(ctx, app_name, email):
     """
     Grants a user permission to deploy an app.
