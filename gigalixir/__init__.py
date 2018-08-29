@@ -119,8 +119,17 @@ def detect_app():
         # check for git folder
         with open(os.devnull, 'w') as FNULL:
             subprocess.check_call('git rev-parse --is-inside-git-dir'.split(), stdout=FNULL, stderr=subprocess.STDOUT)
-        remote = call("git remote show gigalixir")
-        return re.search('https://git.gigalixir.com/(.*)\.git', remote).group(1)
+        remote = call("git remote -v")
+        # matches first instance of
+        # git.gigalixir.com/foo.git
+        # git.gigalixir.com/foo.git/
+        # git.gigalixir.com/foo
+        repo_name = re.search('git.gigalixir.com/(.*) ', remote).group(1)
+        # strip trailing .git stuff if it is there
+        git_pos = repo_name.find(".git")
+        if git_pos >= 0:
+            repo_name = repo_name[:git_pos]
+        return repo_name
     except (AttributeError, subprocess.CalledProcessError):
         raise Exception("Could not detect app name. Try passing the app name explicitly with the `-a` flag.")
 
