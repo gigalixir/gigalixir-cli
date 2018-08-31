@@ -254,7 +254,7 @@ In short, you'll need to add something like this to the :elixir:`deps` list in :
 
     {:distillery, "~> 1.0.0"}
 
-Note: Distillery 2.0 will deploy fine, but `gigalixir migrate` and `giglaixir observer` don't work yet. We're working on it.
+Note: Distillery 2.0 will deploy fine, but :bash:`gigalixir migrate` and :bash:`giglaixir observer` don't work yet. We're working on it.
 
 Then, run
 
