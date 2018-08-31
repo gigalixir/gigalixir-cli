@@ -958,6 +958,7 @@ If your problem is with one of the buildpacks, try running the full build using 
 
     APP_ROOT=$(pwd)
     rm -rf /tmp/gigalixir/cache
+    rm -rf _build
     mkdir -p /tmp/gigalixir/cache
     docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish 
 
