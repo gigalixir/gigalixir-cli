@@ -959,7 +959,7 @@ If your problem is with one of the buildpacks, try running the full build using 
     APP_ROOT=$(pwd)
     rm -rf /tmp/gigalixir/cache
     mkdir -p /tmp/gigalixir/cache
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish /bin/herokuish buildpack build
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish 
 
 Or to inspect closer, run
 
@@ -968,7 +968,10 @@ Or to inspect closer, run
     docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/herokuish
 
     # and then inside the container run
-    /bin/herokuish buildpack build
+    build-slug
+
+    # inspect /app folder
+    # check /tmp/cache
 
 If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
 
