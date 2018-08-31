@@ -965,7 +965,7 @@ Or to inspect closer, run
 
 .. code-block:: bash
 
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish /bin/bash
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/herokuish
 
     # and then inside the container run
     /bin/herokuish buildpack build
