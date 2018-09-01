@@ -265,22 +265,6 @@ Then, run
 
 .. _`Distillery installation instructions`: https://hexdocs.pm/distillery/getting-started.html#installation-setup
 
-.. _`buildpacks`:
-
-Specify Buildpacks to Compile and Build Releases
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-We rely on buildpacks to compile and build your release. Create a :bash:`.buildpacks` file with the following contents.
-
-.. code-block:: bash
-
-    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
-    https://github.com/HashNuke/heroku-buildpack-elixir
-    https://github.com/gjaldon/heroku-buildpack-phoenix-static
-    https://github.com/gigalixir/gigalixir-buildpack-distillery.git
-
-If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your Gigalixir build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
-
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -375,6 +359,23 @@ If that didn't work, the first place to check is :bash:`prod.exs`. Make sure you
 Also check out :ref:`troubleshooting`.
 
 If it still doesn't work, don't hesitate to `contact us`_.
+
+.. _`buildpacks`:
+
+Specify Buildpacks (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We rely on buildpacks to compile and build your release. We auto-detect a variety of buildpacks so you probably don't need this, but if you want
+to specify your own buildpacks create a :bash:`.buildpacks` file with the buildpacks you want. For example,
+
+.. code-block:: bash
+
+    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-distillery.git
+
+If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your Gigalixir build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
 Set up Node Clustering with Libcluster (optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -523,11 +524,23 @@ Yes, we currently support GCP us-central1 and GCP europe-west1 as well as AWS us
 How do I specify my Elixir, Erlang, Node, NPM, etc versions?
 ============================================================
 
-Your Elixir and Erlang versions are handled by the heroku-buildpack-elixir buildpack. To configure, see the `heroku-buildpack-elixir configuration`_.
+Your Elixir and Erlang versions are handled by the heroku-buildpack-elixir buildpack. To configure, see the `heroku-buildpack-elixir configuration`_. In short, you specify them in a :bash:`elixir_buildpack.config` file.
 
-Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpack. To configure, see the `heroku-buildpack-phoenix-static configuration`_.
+Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpack. To configure, see the `heroku-buildpack-phoenix-static configuration`_. In short, you specify them in a :bash:`phoenix_static_buildpack.config` file.
 
 .. _`heroku-buildpack-elixir configuration`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
+
+How do I specify which buildpacks I want to use?
+================================================
+
+Normally, the buildpack you need is auto-detected for you, but in some cases, you may want to specify which buildpacks you want to use. To do this, create a :bash:`.buildpacks` file and list each buildpack you want to use. For example, the default buildpacks for elixir apps would look like this
+
+.. code-block:: bash
+
+    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
 .. _`umbrella`:
 
