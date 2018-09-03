@@ -251,7 +251,7 @@ Let's make sure everything works.
 
 .. code-block:: bash
 
-    SECRET_KEY_BASE="$(mix phx.gen.secret)" MIX_ENV=prod DATABASE_URL="postgresql:user:pass@localhost:5432/foo" PORT=4000 mix phx.server
+    SECRET_KEY_BASE="$(mix phx.gen.secret)" MIX_ENV=prod DATABASE_URL="postgresql://user:pass@localhost:5432/foo" PORT=4000 mix phx.server
 
 Check it out.
 
