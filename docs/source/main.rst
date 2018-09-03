@@ -199,6 +199,8 @@ If you choose distillery, see :ref:`modifying existing app with distillery`.
 Using Mix
 ---------
 
+For an example app that uses mix and works on gigalixir, see https://github.com/gigalixir/gigalixir-getting-started/tree/js/mix
+
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
