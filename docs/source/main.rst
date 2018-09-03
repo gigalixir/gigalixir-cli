@@ -94,6 +94,9 @@ If you have an existing app or want to use :bash:`mix phx.new`, follow the steps
 
     git clone https://github.com/gigalixir/gigalixir-getting-started.git
 
+
+.. _`set up deploys`:
+
 Set Up App for Deploys
 ----------------------
 
@@ -214,7 +217,8 @@ Then add something like the following in :bash:`prod.exs`
 .. code-block:: elixir
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
-       secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
+       secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
+       server: true
  
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
@@ -238,10 +242,29 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 
     gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
 
+Verify
+^^^^^^
+
+Let's make sure everything works. 
+
+.. code-block:: bash
+
+    SECRET_KEY_BASE="$(mix phx.gen.secret)" MIX_ENV=prod DATABASE_URL="postgresql:user:pass@localhost:5432/foo" PORT=4000 mix phx.server
+
+Check it out.
+
+.. code-block:: bash
+
+    curl localhost:4000
+
+If everything works, continue to :ref:`set up deploys`.
+
 .. _`modifying existing app with distillery`:
 
 Using Distillery
 ----------------
+
+For an example app that uses distillery and works on gigalixir, see https://github.com/gigalixir/gigalixir-getting-started
 
 Install Distillery to Build Releases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -359,6 +382,8 @@ If that didn't work, the first place to check is :bash:`prod.exs`. Make sure you
 Also check out :ref:`troubleshooting`.
 
 If it still doesn't work, don't hesitate to `contact us`_.
+
+If everything works, continue to :ref:`set up deploys`.
 
 .. _`buildpacks`:
 
