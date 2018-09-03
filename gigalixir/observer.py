@@ -13,6 +13,18 @@ from six.moves.urllib.parse import quote
 
 def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
     host = ctx.obj['host']
+    r = requests.get('%s/api/apps/%s/observer-commands' % (host, quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        command = json.loads(r.text)["data"]
+        get_cookie_command = command["get_cookie"]
+        get_node_name_command = command["get_node_name"]
+
     r = requests.get('%s/api/apps/%s/ssh_ip' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
@@ -27,13 +39,13 @@ def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
     try:
         logging.getLogger("gigalixir-cli").info("Fetching erlang cookie")
         if erlang_cookie is None:
-            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, ssh_opts, "erlang:get_cookie().").strip("'")
+            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, ssh_opts, get_cookie_command).strip("'")
         else:
             ERLANG_COOKIE = erlang_cookie
         logging.getLogger("gigalixir-cli").info("Using erlang cookie: %s" % ERLANG_COOKIE)
 
         logging.getLogger("gigalixir-cli").info("Fetching pod ip")
-        node_name = gigalixir_app.distillery_eval(host, app_name, ssh_opts, "node().")
+        node_name = gigalixir_app.distillery_eval(host, app_name, ssh_opts, get_node_name_command)
         # node_name is surrounded with single quotes
         (sname, MY_POD_IP) = node_name.strip("'").split('@')
         logging.getLogger("gigalixir-cli").info("Using pod ip: %s" % MY_POD_IP)
