@@ -38,4 +38,3 @@ class GigalixirShellError(subprocess.CalledProcessError):
                     self.cmd, self.returncode, self.output, self.stderr)
 
 
-

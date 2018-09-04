@@ -1,4 +1,6 @@
 import logging
+import signal
+import os
 import urllib
 import json
 import re
@@ -7,6 +9,7 @@ import requests
 import rollbar
 import sys
 import subprocess
+import time
 from .shell import cast, call
 from . import app as gigalixir_app
 from six.moves.urllib.parse import quote
@@ -36,7 +39,18 @@ def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
         data = json.loads(r.text)["data"]
         ssh_ip = data["ssh_ip"]
 
-    try:
+    ssh_master_pid = None
+    control_path = "/tmp/gigalixir-cm-%s" % uuid.uuid4()
+    ssh_opts += " -S %s" % control_path
+    try: 
+        logging.getLogger("gigalixir-cli").info("Setting up SSH multiplexing master")
+        cmd = "".join(["ssh %s" % (ssh_opts), " root@%s -N -M" % (ssh_ip)])
+        ssh_master_pid = subprocess.Popen(cmd.split()).pid
+
+        # wait for ssh master to connect
+        logging.getLogger("gigalixir-cli").info("Waiting for SSH multiplexing master")
+        time.sleep(5)
+
         logging.getLogger("gigalixir-cli").info("Fetching erlang cookie")
         if erlang_cookie is None:
             ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, ssh_opts, get_cookie_command).strip("'")
@@ -50,11 +64,10 @@ def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
         (sname, MY_POD_IP) = node_name.strip("'").split('@')
         logging.getLogger("gigalixir-cli").info("Using pod ip: %s" % MY_POD_IP)
         logging.getLogger("gigalixir-cli").info("Using node name: %s" % sname)
-        CUSTOMER_APP_NAME = gigalixir_app.ssh_helper(host, app_name, ssh_opts, True, "cat", "/kube-env-vars/APP")
         logging.getLogger("gigalixir-cli").info("Fetching epmd port and app port.")
         output = gigalixir_app.ssh_helper(host, app_name, ssh_opts, True, "--", "epmd", "-names")
-        EPMD_PORT = None
-        APP_PORT = None
+        EPMD_PORT=None
+        APP_PORT=None
         for line in output.splitlines():
             match = re.match("^epmd: up and running on port (\d+) with data:$", line)
             if match:
@@ -66,50 +79,64 @@ def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
             raise Exception("EPMD_PORT not found.")
         if APP_PORT == None:
             raise Exception("APP_PORT not found.")
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
 
-    ensure_port_free(EPMD_PORT)
-    ensure_port_free(APP_PORT)
+        ensure_port_free(EPMD_PORT)
+        ensure_port_free(APP_PORT)
 
-    try:
-        logging.getLogger("gigalixir-cli").info("Setting up SSH tunnel for ports %s and %s" % (APP_PORT, EPMD_PORT))
-        cmd = "".join(["ssh %s -L %s" % (ssh_opts, APP_PORT), ":localhost:", "%s -L %s" % (APP_PORT, EPMD_PORT), ":localhost:", "%s root@%s -f -N" % (EPMD_PORT, ssh_ip)])
-        cast(cmd)
-        # no need to route if pod ip is 127.0.0.1
-        logging.getLogger("gigalixir-cli").info("Routing %s to 127.0.0.1" % MY_POD_IP)
-        ctx.obj['router'].route_to_localhost(MY_POD_IP, EPMD_PORT, APP_PORT)
-        name = uuid.uuid4()
-        # cmd = "iex --name %(name)s@%(MY_POD_IP)s --cookie %(ERLANG_COOKIE)s --hidden -e ':observer.start()'" % {"name": name, "MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
-        cmd = "erl -name %(name)s@%(MY_POD_IP)s -setcookie %(ERLANG_COOKIE)s -hidden -run observer" % {"name": name, "MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
-        logging.getLogger("gigalixir-cli").info("Running observer using: %s" % cmd)
-        logging.getLogger("gigalixir-cli").info("")
-        logging.getLogger("gigalixir-cli").info("")
-        logging.getLogger("gigalixir-cli").info("============")
-        logging.getLogger("gigalixir-cli").info("Instructions")
-        logging.getLogger("gigalixir-cli").info("============")
+        try:
+            logging.getLogger("gigalixir-cli").info("Setting up SSH tunnel for ports %s and %s" % (APP_PORT, EPMD_PORT))
+            cmd = "".join(["ssh %s -O forward -L %s" % (ssh_opts, APP_PORT), ":localhost:", "%s -L %s" % (APP_PORT, EPMD_PORT), ":localhost:", "%s root@%s" % (EPMD_PORT, ssh_ip)])
 
-        logging.getLogger("gigalixir-cli").info("In the 'Node' menu, click 'Connect Node'" )
-        logging.getLogger("gigalixir-cli").info("enter: %(sname)s@%(MY_POD_IP)s" % {"sname": sname, "MY_POD_IP": MY_POD_IP})
-        logging.getLogger("gigalixir-cli").info("and press OK.")
-        logging.getLogger("gigalixir-cli").info("")
-        logging.getLogger("gigalixir-cli").info("")
-        cast(cmd)
+            cast(cmd)
+            # no need to route if pod ip is 127.0.0.1
+            logging.getLogger("gigalixir-cli").info("Routing %s to 127.0.0.1" % MY_POD_IP)
+
+            ctx.obj['router'].route_to_localhost(MY_POD_IP, EPMD_PORT, APP_PORT)
+            name = uuid.uuid4()
+            # cmd = "iex --name %(name)s@%(MY_POD_IP)s --cookie %(ERLANG_COOKIE)s --hidden -e ':observer.start()'" % {"name": name, "MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
+            cmd = "erl -name %(name)s@%(MY_POD_IP)s -setcookie %(ERLANG_COOKIE)s -hidden -run observer" % {"name": name, "MY_POD_IP": MY_POD_IP, "ERLANG_COOKIE": ERLANG_COOKIE}
+            logging.getLogger("gigalixir-cli").info("Running observer using: %s" % cmd)
+            logging.getLogger("gigalixir-cli").info("")
+            logging.getLogger("gigalixir-cli").info("")
+            logging.getLogger("gigalixir-cli").info("============")
+            logging.getLogger("gigalixir-cli").info("Instructions")
+            logging.getLogger("gigalixir-cli").info("============")
+
+            logging.getLogger("gigalixir-cli").info("In the 'Node' menu, click 'Connect Node'" )
+            logging.getLogger("gigalixir-cli").info("enter: %(sname)s@%(MY_POD_IP)s" % {"sname": sname, "MY_POD_IP": MY_POD_IP})
+            logging.getLogger("gigalixir-cli").info("and press OK.")
+            logging.getLogger("gigalixir-cli").info("")
+            logging.getLogger("gigalixir-cli").info("")
+            cast(cmd)
+        except:
+            # re-raise and let the outer except block handle it. this is just here so the
+            # finally block will run
+            raise
+        finally:
+            logging.getLogger("gigalixir-cli").info("Cleaning up route from %s to 127.0.0.1" % MY_POD_IP)
+            ctx.obj['router'].unroute_to_localhost(MY_POD_IP)
     except:
         logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
         rollbar.report_exc_info()
         sys.exit(1)
     finally:
-        clean_up(ctx.obj['router'], MY_POD_IP, EPMD_PORT, APP_PORT)
-
-def clean_up(router, MY_POD_IP, EPMD_PORT, APP_PORT):
-    logging.getLogger("gigalixir-cli").info("Cleaning up route from %s to 127.0.0.1" % MY_POD_IP)
-    router.unroute_to_localhost(MY_POD_IP)
-    logging.getLogger("gigalixir-cli").info("Cleaning up SSH tunnel")
-    pid = call("lsof -wni tcp:%(APP_PORT)s -t" % {"APP_PORT": APP_PORT})
-    cast("kill -9 %s" % pid)
+        if ssh_master_pid:
+            # Needed because Ctrl-G -> q leaves it orphaned for some reason. is the subprocess
+            # not sent a signal on graceful termination?
+            logging.getLogger("gigalixir-cli").info("Cleaning up SSH multiplexing master")
+            try:
+                os.kill(ssh_master_pid, signal.SIGTERM)
+            except OSError:
+                # race condition if parent process tries to clean up subprocesses at the same
+                # time
+                pass
+        if os.path.exists(control_path):
+            logging.getLogger("gigalixir-cli").info("Deleting SSH multiplexing file")
+            try:
+                os.remove(control_path)
+            except OSError:
+                # race condition if ssh and we try to clean up the file at the same time
+                pass
 
 def ensure_port_free(port):
     try:
