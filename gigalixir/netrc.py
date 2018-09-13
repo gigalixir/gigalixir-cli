@@ -15,7 +15,6 @@ def clear_netrc():
         netrc_file = netrc.netrc()
 
     del netrc_file.hosts['git.gigalixir.com'] 
-    del netrc_file.hosts['localhost']
     del netrc_file.hosts['api.gigalixir.com']
     file = os.path.join(os.environ['HOME'], ".netrc")
     with open(file, 'w') as fp:
@@ -34,7 +33,6 @@ def update_netrc(email, key):
         netrc_file = netrc.netrc()
 
     netrc_file.hosts['git.gigalixir.com'] = (email, None, key)
-    netrc_file.hosts['localhost'] = (email, None, key)
     netrc_file.hosts['api.gigalixir.com'] = (email, None, key)
     file = os.path.join(os.environ['HOME'], ".netrc")
     with open(file, 'w') as fp:

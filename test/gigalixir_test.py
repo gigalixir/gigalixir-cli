@@ -33,9 +33,6 @@ machine git.gigalixir.com
 machine github.com
 \tlogin foo
 \tpassword fake-password
-machine localhost
-\tlogin foo@gigalixir.com
-\tpassword fake-api-key
 """)
             os.chmod(".netrc", 0o600)
         result = runner.invoke(gigalixir.cli, ['logout'])
@@ -64,9 +61,6 @@ def test_login():
 machine git.gigalixir.com
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
-machine localhost
-\tlogin foo@gigalixir.com
-\tpassword fake-api-key
 """
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwYXNzd29yZA==\r\n')
@@ -86,9 +80,6 @@ def test_login_escaping():
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
 machine git.gigalixir.com
-\tlogin foo@gigalixir.com
-\tpassword fake-api-key
-machine localhost
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
 """
@@ -288,9 +279,6 @@ def test_create_api_key():
 \tlogin foo@gigalixir.com
 \tpassword another-fake-api-key
 machine git.gigalixir.com
-\tlogin foo@gigalixir.com
-\tpassword another-fake-api-key
-machine localhost
 \tlogin foo@gigalixir.com
 \tpassword another-fake-api-key
 """
