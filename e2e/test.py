@@ -182,7 +182,7 @@ def test_aws_us_east_1():
     __test_deploy_and_upgrade("aws", "us-east-1")
 
 def test_deploy_and_upgrade():
-    __test_deploy_and_upgrade("gcp", "us-central1")
+    __test_deploy_and_upgrade(None, None)
 
 def __test_deploy_and_upgrade(cloud, region):
     logging.basicConfig(format='%(message)s', level=logging.DEBUG)
@@ -197,7 +197,12 @@ def __test_deploy_and_upgrade(cloud, region):
         assert result.exit_code == 0
         gigalixir.shell.cast("git clone https://github.com/gigalixir/gigalixir-getting-started.git")
         with cd("gigalixir-getting-started"):
-            result = runner.invoke(gigalixir.cli, ['create', '--cloud=%s' % cloud, '--region=%s' % region])
+            args = ['create']
+            if cloud:
+                args += ['--cloud=%s' % cloud]
+            if region:
+                args += ['--region=%s' % region]
+            result = runner.invoke(gigalixir.cli, args)
             assert result.exit_code == 0
             app_name = result.output.rstrip()
             gigalixir.shell.cast("git push gigalixir master")
