@@ -32,6 +32,19 @@ import os
 from functools import wraps
 import pkg_resources
 
+ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
+# kinda sorta duplicated in this file as an option to cli Command.
+# we need this at the "top" level so that handle_exception has access to rollbar
+# when it was in cli(), it didn't work. I guess that gets run a bit later, after
+# the command not found exception is raised.
+env = os.environ.get("GIGALIXIR_ENV", "prod")
+if env == "prod":
+    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True)
+elif env == "dev":
+    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'development', enabled=False)
+else:
+    raise Exception("Invalid GIGALIXIR_ENV")
+
 def detect_app_name(f):
     @wraps(f)
     def wrapper(*args, **kwds):
@@ -57,6 +70,43 @@ def report_errors(f):
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
+# copied from https://stackoverflow.com/questions/52213375/python-click-exception-handling-under-setuptools/52214480#52214480
+def CatchAllExceptions(cls, handler):
+
+    class Cls(cls):
+
+        _original_args = None
+
+        def make_context(self, info_name, args, parent=None, **extra):
+
+            # grab the original command line arguments
+            self._original_args = ' '.join(args)
+
+            try:
+                return super(Cls, self).make_context(
+                    info_name, args, parent=parent, **extra)
+            except Exception as exc:
+                # call the handler
+                handler(self, info_name, exc)
+
+                # let the user see the original error
+                raise
+
+        def invoke(self, ctx):
+            try:
+                return super(Cls, self).invoke(ctx)
+            except Exception as exc:
+                # call the handler
+                handler(self, ctx.info_name, exc)
+
+                # let the user see the original error
+                raise
+
+    return Cls
+
+def handle_exception(cmd, info_name, exc):
+    msg = 'command:{} {} error:{}'.format(info_name, cmd._original_args, exc)
+    rollbar.report_message(msg, 'warning')
 
 class AliasedGroup(click.Group):
     def get_command(self, ctx, cmd_name):
@@ -133,22 +183,20 @@ def detect_app():
     except (AttributeError, subprocess.CalledProcessError):
         raise Exception("Could not detect app name. Try passing the app name explicitly with the `-a` flag.")
 
-@click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
+# @click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
+@click.group(cls=CatchAllExceptions(AliasedGroup, handler=handle_exception), context_settings=CONTEXT_SETTINGS)
 @click.option('--env', envvar='GIGALIXIR_ENV', default='prod', help="GIGALIXIR environment [prod, dev].")
 @click.pass_context
 def cli(ctx, env):
     ctx.obj = {}
     logging.basicConfig(format='%(message)s')
     logging.getLogger("gigalixir-cli").setLevel(logging.INFO)
-    ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
 
     if env == "prod":
         stripe.api_key = 'pk_live_45dmSl66k4xLy4X4yfF3RVpd'
-        rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True)
         host = "https://api.gigalixir.com"
     elif env == "dev":
         stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
-        rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'development', enabled=False)
         host = "http://localhost:4000"
     else:
         raise Exception("Invalid GIGALIXIR_ENV")
