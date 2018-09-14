@@ -178,13 +178,16 @@ def test_ruby():
             result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0'])
             assert result.exit_code == 0
 
+def test_no_assets():
+    __test_deploy_and_upgrade(None, None, "js/no-assets")
+
 def test_aws_us_east_1():
     __test_deploy_and_upgrade("aws", "us-east-1")
 
 def test_deploy_and_upgrade():
     __test_deploy_and_upgrade(None, None)
 
-def __test_deploy_and_upgrade(cloud, region):
+def __test_deploy_and_upgrade(cloud, region, branch="master"):
     logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 
     email = os.environ['GIGALIXIR_EMAIL']
@@ -197,6 +200,7 @@ def __test_deploy_and_upgrade(cloud, region):
         assert result.exit_code == 0
         gigalixir.shell.cast("git clone https://github.com/gigalixir/gigalixir-getting-started.git")
         with cd("gigalixir-getting-started"):
+            gigalixir.shell.cast("git checkout %s" % branch)
             args = ['create']
             if cloud:
                 args += ['--cloud=%s' % cloud]
@@ -205,7 +209,7 @@ def __test_deploy_and_upgrade(cloud, region):
             result = runner.invoke(gigalixir.cli, args)
             assert result.exit_code == 0
             app_name = result.output.rstrip()
-            gigalixir.shell.cast("git push gigalixir master")
+            gigalixir.shell.cast("git push gigalixir HEAD:master")
 
             logging.info('Completed Deploy.')
             start_time = timeit.default_timer()
@@ -262,8 +266,11 @@ def __test_deploy_and_upgrade(cloud, region):
             assert configs == {}
 
             # hot upgrade
-            gigalixir.shell.cast("""git rebase origin/v0.0.2""")
-            subprocess.check_call(["git", "-c", "http.extraheader=GIGALIXIR-HOT:true","push","gigalixir","master"])
+            gigalixir.shell.cast("""git config user.email e2e@gigalixir.com""")
+            gigalixir.shell.cast("""git config user.name e2e""")
+            gigalixir.shell.cast("""git checkout v0.0.2""")
+            gigalixir.shell.cast("""git rebase %s""" % branch)
+            subprocess.check_call(["git", "-c", "http.extraheader=GIGALIXIR-HOT:true","push","gigalixir","HEAD:master"])
 
             logging.info('Completed Hot Upgrade.')
             start_time = timeit.default_timer()
