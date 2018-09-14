@@ -404,6 +404,13 @@ to specify your own buildpacks create a :bash:`.buildpacks` file with the buildp
 
 If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your Gigalixir build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
+Note, that the command that gets run in production depends on what your last buildpack is.
+If the last buildpack is :bash:`gigalixir-buildpack-distillery`, then the command run will be :bash:`/app/bin/foo foreground`.
+If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
+If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`. 
+
+If your command is :bash:`mix run --no-halt`, but you are running phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
+
 Set up Node Clustering with Libcluster (optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -547,6 +554,17 @@ Can I run my app in AWS instead of Google Cloud Platform?
 =========================================================
 
 Yes, we currently support GCP us-central1 and GCP europe-west1 as well as AWS us-east-1 and AWS us-west-2. When creating your app with :bash:`gigalixir create` simply specify the :bash:`--cloud=aws` and :bash:`--region=us-east-1` options.
+
+Can I use a custom Procfile?
+============================
+
+Definitely! If you have a :bash:`Procfile` at the root of your repo, we'll use it instead of `the default one <https://github.com/gigalixir/gigalixir-run/blob/master/Procfile>`_.
+
+The only gotcha is that if you want remote console to work, you'll want to make sure the node name and cookie are set properly. For example, your :bash:`Procfile` should look something like this.
+
+.. code-block:: bash
+
+  web: elixir --name $MY_NODE_NAME --cookie $MY_COOKIE -S mix phoenix.server
 
 How do I specify my Elixir, Erlang, Node, NPM, etc versions?
 ============================================================
