@@ -32,10 +32,6 @@ import os
 from functools import wraps
 import pkg_resources
 
-# TODO: not sure why this can not be in cli() anymore.. after we added CatchAllExceptions
-# i think.
-logging.basicConfig(format='%(message)s')
-
 ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
 # kinda sorta duplicated in this file as an option to cli Command.
 # we need this at the "top" level so that handle_exception has access to rollbar
@@ -43,9 +39,9 @@ ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
 # the command not found exception is raised.
 env = os.environ.get("GIGALIXIR_ENV", "prod")
 if env == "prod":
-    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True)
+    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True, allow_logging_basic_config=False)
 elif env == "dev":
-    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'development', enabled=False)
+    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'development', enabled=False, allow_logging_basic_config=False)
 else:
     raise Exception("Invalid GIGALIXIR_ENV")
 
@@ -187,12 +183,13 @@ def detect_app():
     except (AttributeError, subprocess.CalledProcessError):
         raise Exception("Could not detect app name. Try passing the app name explicitly with the `-a` flag.")
 
-# @click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
-@click.group(cls=CatchAllExceptions(AliasedGroup, handler=handle_exception), context_settings=CONTEXT_SETTINGS)
+@click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
+# @click.group(cls=CatchAllExceptions(AliasedGroup, handler=handle_exception), context_settings=CONTEXT_SETTINGS)
 @click.option('--env', envvar='GIGALIXIR_ENV', default='prod', help="GIGALIXIR environment [prod, dev].")
 @click.pass_context
 def cli(ctx, env):
     ctx.obj = {}
+    logging.basicConfig(format='%(message)s')
     logging.getLogger("gigalixir-cli").setLevel(logging.INFO)
 
     if env == "prod":
