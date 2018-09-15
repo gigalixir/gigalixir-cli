@@ -32,6 +32,10 @@ import os
 from functools import wraps
 import pkg_resources
 
+# TODO: not sure why this can not be in cli() anymore.. after we added CatchAllExceptions
+# i think.
+logging.basicConfig(format='%(message)s')
+
 ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
 # kinda sorta duplicated in this file as an option to cli Command.
 # we need this at the "top" level so that handle_exception has access to rollbar
@@ -189,7 +193,6 @@ def detect_app():
 @click.pass_context
 def cli(ctx, env):
     ctx.obj = {}
-    logging.basicConfig(format='%(message)s')
     logging.getLogger("gigalixir-cli").setLevel(logging.INFO)
 
     if env == "prod":
