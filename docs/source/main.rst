@@ -188,7 +188,7 @@ It's typically recommended to use distillery when you're ready to deploy, but if
 
 On the other hand, if you deploy with distillery, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be more confusing in some cases. 
 
-If you don't know which to choose, we generally recommend going with distillery because.. why use elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir migrate`, that makes it easy to run migrations without mix. 
+If you don't know which to choose, we generally recommend going with distillery because.. why use elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir ps:migrate`, that makes it easy to run migrations without mix. 
 
 If you choose mix, see :ref:`modifying existing app with mix`.
 
@@ -594,7 +594,7 @@ How do I deploy an umbrella app?
 
 Umbrella apps are deployed the same way, but the buildpacks need to know which internal app is your phoenix app. Set your :bash:`phoenix_relative_path` in your :bash:`phoenix_static_buildpack.config` file, see the `heroku-buildpack-phoenix-static configuration`_ for more details.
 
-When running migrations, we need to know which internal app contains your migrations. Use the :bash:`--migration_app_name` flag on :bash:`gigalixir migrate`.
+When running migrations, we need to know which internal app contains your migrations. Use the :bash:`--migration_app_name` flag on :bash:`gigalixir ps:migrate`.
 
 If you have multiple Distillery releases in your :bash:`rel/config.exs` file, be sure to set your default release to the one you want to deploy. See :ref:`gigalixir release options`.
 
@@ -1055,7 +1055,7 @@ Common Errors
 
     - :bash:`git push gigalixir master` asks for my password
 
-        - First try running :bash:`gigalixir login` and try again. If that doesn't work, try resetting your git remote by running :bash:`gigalixir set_git_remote $APP` and trying again.
+        - First try running :bash:`gigalixir login` and try again. If that doesn't work, try resetting your git remote by running :bash:`gigalixir git:remote $APP` and trying again.
 
     - (File.Error) could not read file "foo/bar": no such file or directory
 
@@ -1186,13 +1186,13 @@ To upgrade with the CLI, first add a payment method
 
 .. code-block:: bash
 
-    gigalixir set_payment_method
+    gigalixir account:payment_method:set
 
 Then upgrade.
 
 .. code-block:: bash
 
-    gigalixir upgrade
+    gigalixir account:upgrade
 
 How to Create an App
 ====================
@@ -1307,7 +1307,7 @@ If you want to automatically run migrations on each automatic deploy, you have t
 
 1. (Recommended) Use a Distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/guides/running_migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/plugins/boot_hooks.md
 
-2. Install the gigalixir CLI in your CI environment and run :bash:`gigalixir migrate`. For example,
+2. Install the gigalixir CLI in your CI environment and run :bash:`gigalixir ps:migrate`. For example,
 
    .. code-block:: bash
 
@@ -1318,8 +1318,8 @@ If you want to automatically run migrations on each automatic deploy, you have t
 
        # deploy
        gigalixir login -e "$GIGALIXIR_EMAIL" -p "$GIGALIXIR_PASSWORD" -y
-       gigalixir set_git_remote $GIGALIXIR_APP_NAME
-       git push gigalixir master
+       gigalixir git:remote $GIGALIXIR_APP_NAME
+       git push -f gigalixir HEAD:refs/heads/master
        # some code to wait for new release to go live
 
        # set up ssh so we can migrate
@@ -1328,7 +1328,7 @@ If you want to automatically run migrations on each automatic deploy, you have t
        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
 
        # migrate
-       gigalixir migrate $GIGALIXIR_APP_NAME
+       gigalixir ps:migrate -a $GIGALIXIR_APP_NAME
 
 
 How to Set Up Review Apps (Feature branch apps)
@@ -1510,7 +1510,7 @@ In order to SSH, run remote observer, remote console, etc, you need to set up yo
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
+    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
 
 If you don't have an :bash:`id_rsa.pub` file, follow `this guide <https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/>`_ to create one.
 
@@ -1518,13 +1518,13 @@ To view your SSH keys
 
 .. code-block:: bash
 
-    gigalixir ssh_keys
+    gigalixir account:ssh_keys
 
 To delete an SSH key, find the key's id and then run delete the key by id.
 
 .. code-block:: bash
 
-    gigalixir delete_ssh_key $ID
+    gigalixir account:ssh_keys:remove $ID
 
 How to SSH into a Production Container
 ======================================
@@ -1533,7 +1533,7 @@ To SSH into a running production container, first, add your public SSH keys to y
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
+    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
 
 Then use the following command to SSH into a live production container. If you are running multiple 
 containers, this will put you in a random container. We do not yet support specifying which container you want to SSH to. In order for this work, you must add your public SSH keys to your account.
@@ -1578,13 +1578,13 @@ To change your password, run
 
 .. code-block:: bash
 
-    gigalixir change_password
+    gigalixir account:password:change
 
 If you forgot your password, send a reset token to your email address by running the following command and following the instructions in the email.
 
 .. code-block:: bash
 
-    gigalixir send_reset_password_token
+    gigalixir account:password:reset
 
 How to Change Your Credit Card
 ==============================
@@ -1593,7 +1593,7 @@ To change your credit card, run
 
 .. code-block:: bash
 
-    gigalixir set_payment_method
+    gigalixir account:payment_method:set
 
 How to Delete your Account
 ==========================
@@ -1679,7 +1679,7 @@ If you lost your API key or it has been stolen, you can reset it by running
 
 .. code-block:: bash
 
-    gigalixir reset_api_key
+    gigalixir account:api_key:reset
 
 Your old API key will no longer work and you may have to login again.
 
@@ -1907,7 +1907,7 @@ If you deployed your app as a distillery release, :bash:`mix` isn't available. W
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
+    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
 
 Then run
 
@@ -1983,7 +1983,7 @@ To get a console on a running production container, first, add your public SSH k
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
+    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
 
 Then run this command to drop into a remote console.
 
@@ -2031,7 +2031,7 @@ In order to run a remote observer, you need to set up your SSH keys. It could ta
 
 .. code-block:: bash
 
-    gigalixir add_ssh_key "$(cat ~/.ssh/id_rsa.pub)"
+    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
 
 Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have clustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`clustering`.
 
@@ -2054,7 +2054,7 @@ To see how many replica-size-seconds you've used so far this month, run
 
 .. code-block:: bash
 
-    gigalixir current_period_usage
+    gigalixir account:usage
 
 The amount you see here has probably not been charged yet since we do that at the end of the month.
 
@@ -2065,7 +2065,7 @@ To see all your previous period's invoices, run
 
 .. code-block:: bash
 
-    gigalixir invoices
+    gigalixir account:invoices
 
 .. _`money back guarantee`:
 
