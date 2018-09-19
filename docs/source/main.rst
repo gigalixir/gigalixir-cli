@@ -226,7 +226,7 @@ Then add something like the following in :bash:`prod.exs`
        adapter: Ecto.Adapters.Postgres,
        url: System.get_env("DATABASE_URL"),
        ssl: true,
-       pool_size: 1 # Free tier db only allows 1 connection
+       pool_size: 1 # Free tier db only allows 2 connections. Rolling deploys need n+1 connections. Also, save one for psql, jobs, etc.
 
 1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
 2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like 
@@ -320,7 +320,7 @@ Then add something like the following in :bash:`prod.exs`
        url: "${DATABASE_URL}",
        database: "",
        ssl: true,
-       pool_size: 1 # Free tier db only allows 1 connection
+       pool_size: 1 # Free tier db only allows 2 connections. Rolling deploys need n+1 connections. Also, save one for psql, jobs, etc.
 
 :elixir:`server: true` **is very important and is commonly left out. Make sure you have this line.**
 
@@ -1659,7 +1659,9 @@ To run a command in a separate container, run
 
 .. For an example task, see `gigalixir-getting-started's migrate task`_. 
 
-The task is not run on the same node that your app is running in. We start a separate container to run the job so if you need any applications started such as your :elixir:`Repo`, use :elixir:`Application.ensure_all_started/2`. Also, be sure to stop all applications when done, otherwise your job will never complete and just hang until it times out. Jobs are currently killed after 5 minutes. 
+The task is not run on the same node that your app is running in. Jobs are killed after 5 minutes. 
+
+If you're using the distillery, note that beacuse we start a separate container to run the job, if you need any applications started such as your :elixir:`Repo`, use :elixir:`Application.ensure_all_started/2`. Also, be sure to stop all applications when done, otherwise your job will never complete and just hang until it times out. 
 
 .. For more information about running migrations with Distillery, see `Distillery's Running Migrations`_. 
 
@@ -1727,7 +1729,7 @@ Delete by running
 
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
-In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 1 connection, 10,000 rows, and no backups. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
+In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 2 connections, 10,000 rows, and no backups. Idle connections are terminated after 5 minutes. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
 
 For information on upgrading your account, see :ref:`upgrade account`.
 
@@ -1804,7 +1806,7 @@ Then, install your extension
 Database Sizes & Pricing
 ========================
 
-In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 1 connection, 10,000 rows, and no backups. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
+In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 2 connections, 10,000 rows, and no backups. Idle connections are terminated after 5 minutes. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
 
 In the standard tier, database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically as needed. We currently do not set a limit for disk size, but we probably will later.
 
