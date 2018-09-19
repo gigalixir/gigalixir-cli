@@ -261,6 +261,31 @@ Check it out.
 
 If everything works, continue to :ref:`set up deploys`.
 
+Specify Buildpacks (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We rely on buildpacks to compile and build your release. We auto-detect a variety of buildpacks so you probably don't need this, but if you want
+to specify your own buildpacks create a :bash:`.buildpacks` file with the buildpacks you want. For example,
+
+.. code-block:: bash
+
+    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-mix.git
+
+If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your Gigalixir build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+
+Note, that the command that gets run in production depends on what your last buildpack is.
+
+- If the last buildpack is :bash:`gigalixir-buildpack-mix`, then the command run will be something like :bash:`elixir --name $MY_NODE_NAME --cookie $MY_COOKIE -S mix phx.server`.
+- If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
+- If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`. 
+
+If your command is :bash:`mix run --no-halt`, but you are running phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
+
+We highly recommend keeping :bash:`gigalixir-buildpack-mix` last so that your node name and cookie are set properly. Without those, remote_console, ps:migrate, observer, etc won't work.
+
 .. _`modifying existing app with distillery`:
 
 Using Distillery
@@ -405,9 +430,10 @@ to specify your own buildpacks create a :bash:`.buildpacks` file with the buildp
 If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your Gigalixir build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
 Note, that the command that gets run in production depends on what your last buildpack is.
-If the last buildpack is :bash:`gigalixir-buildpack-distillery`, then the command run will be :bash:`/app/bin/foo foreground`.
-If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
-If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`. 
+
+- If the last buildpack is :bash:`gigalixir-buildpack-distillery`, then the command run will be :bash:`/app/bin/foo foreground`.
+- If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
+- If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`. 
 
 If your command is :bash:`mix run --no-halt`, but you are running phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
 
@@ -485,10 +511,17 @@ By default, the buildpacks we use include
   - https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
 
     - To run mix phx.digest
+    - This is only included if you have an assets folder present.
 
   - https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
     - To run mix release
+    - This is only run if you have a rel/config.exs file present.
+
+  - https://github.com/gigalixir/gigalixir-buildpack-mix.git
+
+    - To set up your Procfile correctly
+    - This is only run if you *don't* have a rel/config.exs file present.
 
 We only build the master branch and ignore other branches. When building, we cache compiled files and dependencies so you do not have to repeat the work on every deploy. We support git submodules. 
 
@@ -578,7 +611,7 @@ Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpa
 How do I specify which buildpacks I want to use?
 ================================================
 
-Normally, the buildpack you need is auto-detected for you, but in some cases, you may want to specify which buildpacks you want to use. To do this, create a :bash:`.buildpacks` file and list each buildpack you want to use. For example, the default buildpacks for elixir apps would look like this
+Normally, the buildpack you need is auto-detected for you, but in some cases, you may want to specify which buildpacks you want to use. To do this, create a :bash:`.buildpacks` file and list each buildpack you want to use. For example, the default buildpacks for elixir apps using distillery would look like this
 
 .. code-block:: bash
 
@@ -586,6 +619,18 @@ Normally, the buildpack you need is auto-detected for you, but in some cases, yo
     https://github.com/HashNuke/heroku-buildpack-elixir
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-distillery.git
+
+
+The default buildpacks for elixir apps running mix looks like this
+
+.. code-block:: bash
+
+    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-mix.git
+
+Note the last buildpack. It's there to make sure your :bash:`Procfile` is set up correctly to run on gigalixir. It basically makes sure you have your node name and cookie set correctly so that remote console, migrate, observer, etc will work.
 
 .. _`umbrella`:
 
