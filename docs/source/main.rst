@@ -604,7 +604,7 @@ Yes, we currently support GCP us-central1 and GCP europe-west1 as well as AWS us
 Can I use a custom Procfile?
 ============================
 
-Definitely! If you have a :bash:`Procfile` at the root of your repo, we'll use it instead of `the default one <https://github.com/gigalixir/gigalixir-run/blob/master/Procfile>`_.
+Definitely! If you are using mix (not distillery) and you have a :bash:`Procfile` at the root of your repo, we'll use it instead of `the default one <https://github.com/gigalixir/gigalixir-run/blob/master/Procfile>`_. If you are using Distillery, you'll have to use distillery overlays to include the Procfile inside your release tarball i.e. slug.
 
 The only gotcha is that if you want remote console to work, you'll want to make sure the node name and cookie are set properly. For example, your :bash:`Procfile` should look something like this.
 
