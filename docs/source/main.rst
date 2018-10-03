@@ -315,7 +315,7 @@ In short, you'll need to add something like this to the :elixir:`deps` list in :
 
 .. code-block:: elixir
 
-    {:distillery, "~> 1.0.0"}
+    {:distillery, "~> 1.5.5"}
 
 Note: Distillery 2.0 will also work and we've done our best to test it thoroughly on gigalixir, but it's pretty new so there may still be some rough edges.
 
