@@ -204,28 +204,7 @@ def remote_console(host, app_name, ssh_opts):
     ssh(host, app_name, ssh_opts, "gigalixir_run", "remote_console")
 
 def migrate(host, app_name, migration_app_name, ssh_opts):
-    if migration_app_name == None:
-        r = requests.get('%s/api/apps/%s/migrate-command' % (host, quote(app_name.encode('utf-8'))), headers = {
-            'Content-Type': 'application/json',
-        })
-    else:
-        r = requests.get('%s/api/apps/%s/migrate-command?migration_app_name=%s' % (host, quote(app_name.encode('utf-8')), quote(migration_app_name.encode('utf-8'))), headers = {
-            'Content-Type': 'application/json',
-        })
-    if r.status_code != 200:
-        if r.status_code == 401:
-            raise auth.AuthException()
-        raise Exception(r.text)
-    else:
-        command = json.loads(r.text)["data"]
-        try:
-            result = distillery_eval(host, app_name, ssh_opts, command)
-            click.echo("Migration succeeded.")
-            click.echo("Migrations run: %s" % result)
-        except subprocess.CalledProcessError as e:
-            # tell the user why it failed
-            click.echo(e.output)
-            raise
+    ssh(host, app_name, ssh_opts, "gigalixir_run", "migrate")
 
 def logs(host, app_name, num, no_tail):
     payload = {
