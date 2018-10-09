@@ -1701,7 +1701,7 @@ There are many ways to run one-off jobs and tasks. You can run them in the conta
 
 To run a command in your app container, run
 
-.. code-block: bash
+.. code-block:: bash
 
     gigalixir ps:run $COMMAND
     # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app command Elixir.Tasks migrate`
@@ -1709,7 +1709,7 @@ To run a command in your app container, run
 
 To run a command in a separate container, run
 
-.. code-block: bash
+.. code-block:: bash
 
     gigalixir run $COMMAND
     # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app command Elixir.Tasks migrate`
