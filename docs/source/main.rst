@@ -1363,7 +1363,7 @@ Using GitLab CI or any other CI/CD service should be very similar. For an exampl
 
 If you want to automatically run migrations on each automatic deploy, you have two options
 
-1. (Recommended) Use a Distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/guides/running_migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/plugins/boot_hooks.md
+1. (Recommended) Use a Distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/guides/running_migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/extensibility/boot_hooks.md
 
 2. Install the gigalixir CLI in your CI environment and run :bash:`gigalixir ps:migrate`. For example,
 
