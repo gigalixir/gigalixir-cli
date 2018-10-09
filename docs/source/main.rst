@@ -1429,7 +1429,7 @@ You can scale your app by adding more memory and cpu to each container, also cal
 How to Configure an App
 =======================
 
-All app configuration is done through envirnoment variables. You can get, set, and delete configs using the following commands. Note that setting configs does not automatically restart your app so you may need to do that yourself. We do this to give you more control at the cost of simplicity. It also potentially enables hot config updates or updating your environment variables without restarting. For more information on hot configuration, see :ref:`hot-configure`. For more information about using environment variables for app configuration, see `The Twelve-Factor App's Config Factor`_. For more information about using environment variables in your Elixir app, see :ref:`distillery-replace-os-vars`.
+All app configuration is done through envirnoment variables. You can get, set, and delete configs using the following commands. Note that setting configs automatically restarts your app. 
  
 .. code-block:: bash
 
