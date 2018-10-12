@@ -6,6 +6,7 @@ import urllib
 import json
 import click
 from six.moves.urllib.parse import quote
+import os
 
 def get(host, app_name):
     r = requests.get('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
@@ -18,6 +19,23 @@ def get(host, app_name):
     else:
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
+
+def psql(host, app_name):
+    r = requests.get('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        urls = list(filter(lambda d: d["state"] == "AVAILABLE", data))
+        if len(urls) > 1:
+            # TODO: allow user to specify database
+            click.echo("Found more than one database, using: %s" % urls[0]["id"])
+        url = urls[0]["url"]
+        os.execlp("psql", "psql", url)
 
 def create(host, app_name, size):
     r = requests.post('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {

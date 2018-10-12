@@ -805,6 +805,17 @@ def add_permission(ctx, app_name, email):
     gigalixir_permission.create(ctx.obj['host'], app_name, email)
 
 
+@cli.command(name='pg:psql')
+@click.option('-a', '--app_name')
+@click.pass_context
+@report_errors
+@detect_app_name
+def pg_psql(ctx, app_name):
+    """
+    Connect to the database using psql
+    """
+    gigalixir_database.psql(ctx.obj['host'], app_name)
+
 @cli.command(name='pg:create')
 @click.option('-a', '--app_name')
 @click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
