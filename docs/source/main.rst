@@ -930,7 +930,9 @@ Autoscaling                                                                     
 Pricing Details
 ===============
 
-In the free tier, everything is no-credit-card free. Once you upgrade to the standard tier, you pay $10 for every 200MB of memory per month. CPU, bandwidth, and power are free. You get 1 CPU share per GB of memory. See :ref:`replica sizing` for more.
+In the free tier, everything is no-credit-card free. Once you upgrade to the standard tier, you pay $10 for every 200MB of memory per month. CPU, bandwidth, and power are free. 
+
+See our `cost estimator <https://gigalixir.com/pricing>`_ to calculate how much you should expect to pay each month. Keep reading for exactly how we compute your bill.
 
 Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card.
 
