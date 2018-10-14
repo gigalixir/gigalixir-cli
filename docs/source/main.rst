@@ -601,6 +601,8 @@ Can I run my app in AWS instead of Google Cloud Platform?
 
 Yes, we currently support GCP us-central1 and GCP europe-west1 as well as AWS us-east-1 and AWS us-west-2. When creating your app with :bash:`gigalixir create` simply specify the :bash:`--cloud=aws` and :bash:`--region=us-east-1` options.
 
+.. _`custom procfile`:
+
 Can I use a custom Procfile?
 ============================
 
@@ -1966,7 +1968,7 @@ We hope to provide a database-as-a-service soon and automate the process you jus
 How to Run Migrations
 =====================
 
-If you deployed your app without distillery, you can run migrations as a job in a new container.
+If you deployed your app without distillery, you can run migrations as a job in a new container with
 
 .. code-block:: bash
 
@@ -1992,9 +1994,17 @@ If you are running an umbrella app, you will probably need to specify which "inn
 
     gigalixir ps:migrate --migration_app_name=$MIGRATION_APP_NAME
 
-More details:
+If you want to run migrations automatically before each deploy, we suggest using a distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/guides/running_migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/extensibility/boot_hooks.md
 
-If you need to tweak the migration command to run yourself, all we are doing is dropping into a remote_console and running the following. For information on how to open a remote console, see :ref:`remote console`.
+If you aren't running distillery, you can try modifying your :bash:`Procfile` to something like this
+
+.. code-block:: bash
+
+    web: mix ecto.migrate && elixir --name $MY_NODE_NAME --cookie $MY_COOKIE -S mix phoenix.server
+
+For more details, see :ref:`custom procfile`.
+
+When running :bash:`gigalixir ps:migrate`, sometimes the migration doesn't do exactly what you want. If you need to tweak the migration command to fit your situation, all :bash:`gigalixir ps:migrate` is doing is dropping into a remote_console and running the following. For information on how to open a remote console, see :ref:`remote console`.
 
 .. code-block:: elixir
 
