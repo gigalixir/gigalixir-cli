@@ -2180,6 +2180,20 @@ How to deploy a Ruby app
     curl https://$APP.gigalixirapp.com/
 
 
+How do I use webpack, yarn, bower, gulp, etc instead of brunch?
+===============================================================
+
+You can use a custom compile script. For more details, see https://github.com/gjaldon/heroku-buildpack-phoenix-static#compile
+Here is an example script that we've used for webpack.
+
+.. code-block:: bash
+
+    cd $assets_dir
+    node_modules/.bin/webpack -p
+
+    cd $phoenix_dir
+    mix "${phoenix_ex}.digest"
+
 .. _`gigalixir release options`:
 
 How to specify which Distillery release, environment, or profile to build
