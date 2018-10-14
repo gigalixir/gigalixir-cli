@@ -1838,6 +1838,13 @@ To delete a database, run
 
     gigalixir pg:destroy $DATABASE_ID
 
+How to manage/restore Postgres backups
+======================================
+
+We use Google Cloud SQL under the hood for the standard tier postgres instances. This means we retain up to 7 automated backups for each database. For more information see `Cloud SQL for Postgres's Overview of Backups <https://cloud.google.com/sql/docs/postgres/backup-recovery/backups>`_.
+
+Cloud SQL gives us the capability to restore backups through the Google Cloud Console, but it doesn't expose an API so we haven't implemented a CLI command to help you manage backups and restores. If you need to restore from a backup or just want to see what backups you have, just `contact us`_ and we'll be happy to help you.
+
 How to install a Postgres Extension
 ===================================
 
