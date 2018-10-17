@@ -2020,7 +2020,6 @@ If you have a chicken-and-egg problem where your app will not start without migr
 
 .. code-block:: bash
 
-    MIX_ENV=prod mix release --env=prod
     MIX_ENV=prod DATABASE_URL="$YOUR_PRODUCTION_DATABASE_URL" mix ecto.migrate
 
 How to reset the database?
