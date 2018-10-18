@@ -1265,6 +1265,18 @@ How to Create an App
 
     gigalixir create 
 
+.. _`choose an app name`:
+
+How to choose a name for your app
+=================================
+
+Normally, gigalixir generates a unique name for you automatically, but if you want, you can specify your app name. You'll need to `install the CLI`_ and run something like this
+
+.. code-block:: bash
+
+    gigalixir create -n $APP_NAME
+
+That should do it. Once you deploy, you'll be able to access your app from :bash:`https://$APP_NAME.gigalixirapp.com`.
 
 .. _`delete-app`:
 
