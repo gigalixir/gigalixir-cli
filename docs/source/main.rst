@@ -1304,7 +1304,7 @@ Deploying an app is done using a git push, the same way you would push code to g
 .. code-block:: bash
 
     git push gigalixir master
- 
+
 How to Deploy a Branch
 ======================
 
@@ -1602,6 +1602,8 @@ To delete an SSH key, find the key's id and then run delete the key by id.
 
 How to SSH into a Production Container
 ======================================
+
+If your app is running, but not behaving, SSH'ing in might give you some insight into what is happening. A major caveat, though, is that the app has to be running. If it isn't running, then it isn't passing health checks, and we'll keep restarting the entire container. You won't be able to SSH into a container that is restarting non-stop. If your app isn't running, try taking a look at :ref:`troubleshooting`.
 
 To SSH into a running production container, first, add your public SSH keys to your account. For more information on managing SSH keys, see :ref:`managing-ssh-keys`.
 
