@@ -2164,15 +2164,21 @@ To see all your previous period's invoices, run
 How to give another user permission to deploy my app
 ====================================================
 
-Gigalixir has a way to add permissions so many users can deploy the same app, but giving another user permissions also grants them access to managing config vars, rollbacks, and gives them access to ssh, remote_console, observer, etc.
+If you work in a team, you'll probably want to give another user permission to deploy your app. With gigalixir's access permissions, you can grant access using the commands below. They'll be able to deploy & rollback, manage configs, ssh, remote_console, observer, hot upgrade, and scale.
+
+First, they need to sign up for their own gigalixir account. Then run the command below to give them access.
 
 .. code-block:: bash
 
     gigalixir access:add $USER_EMAIL
 
+To see, who has access, run
+
 .. code-block:: bash
 
     gigalixir access
+
+To deny access to a user, run
 
 .. code-block:: bash
 
