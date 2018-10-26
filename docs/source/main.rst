@@ -1832,8 +1832,10 @@ Under the hood, we use Google's Cloud SQL which provides reliability, security, 
 
 .. _`Google Cloud SQL for PostgreSQL Documentation`: https://cloud.google.com/sql/docs/postgres/
 
-How to upgrade a Free Tier DB to a Standard Tier DB
-===================================================
+.. _`upgrade db`:
+
+How to upgrade a Free DB to a Standard DB
+=========================================
 
 If you started out with a free tier database and then upgraded to the standard tier, we highly recommend you migrate to a standard tier database. The standard tier databases support encryption, backups, extensions, and dedicated cpu, memory, & disk. There are no row limits, connection limits, and they are automatically scalable. 
 
