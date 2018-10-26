@@ -1841,10 +1841,10 @@ If you started out with a free tier database and then upgraded to the standard t
 
 Unfortunatetly, we can't automatically migrate your free tier db to a standard tier db. You'll have to
 
-1. :bash:`pgdump` the free database
-1. Delete the free database with :bash:`gigalixir pg:destroy --help`. Note postgres may make you scale down to 0 app replicas to do this so you'll have some downtime.
-1. Create the standard tier database with :bash:`gigalixir pg:create`.
-1. Restore the data with :bash:`psql` or :bash:`pgrestore`. You can find the url to use with :bash:`gigalixir pg` once the standard tier database is created.
+  1. :bash:`pgdump` the free database
+  2. Delete the free database with :bash:`gigalixir pg:destroy --help`. Note postgres may make you scale down to 0 app replicas to do this so you'll have some downtime.
+  3. Create the standard tier database with :bash:`gigalixir pg:create`.
+  4. Restore the data with :bash:`psql` or :bash:`pgrestore`. You can find the url to use with :bash:`gigalixir pg` once the standard tier database is created.
 
 Please don't hesitate to `contact us`_ if you need help.
 
