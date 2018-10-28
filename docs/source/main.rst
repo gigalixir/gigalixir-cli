@@ -1530,7 +1530,7 @@ This will do a few things. It registers your fully qualified domain name in the 
 
 If your DNS provider does not allow CNAME, which is common for naked/root domains, and you are using the gcp v2018-us-central1 region, the default, you can also use an A record. Use the IP address 35.226.132.161. For gcp europe-west1, use 130.211.67.69. For AWS, unfortunately, you have to use a CNAME so the only option is to change DNS providers. While we have no plans to change these ip addresses, we highly recommend you use CNAMEs if at all possible.
 
-Note that if you want both the naked/root domain and a subdomain such as www, be sure to run `gigalixir add_domain` for each one.
+Note that if you want both the naked/root domain and a subdomain such as www, be sure to run `gigalixir domains:add` for each one.
 
 How to Set Up SSL/TLS
 =====================

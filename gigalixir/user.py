@@ -63,7 +63,7 @@ def login(host, email, password, yes):
     r = requests.get('%s/api/login' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
-            raise Exception("Sorry, we could not authenticate you. If you need to reset your password, run `gigalixir send_reset_password_token --email=%s`." % email)
+            raise Exception("Sorry, we could not authenticate you. If you need to reset your password, run `gigalixir account:password:reset --email=%s`." % email)
         raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
