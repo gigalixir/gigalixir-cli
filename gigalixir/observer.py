@@ -6,7 +6,6 @@ import json
 import re
 import uuid
 import requests
-import rollbar
 import sys
 import subprocess
 import time
@@ -108,17 +107,9 @@ def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
             logging.getLogger("gigalixir-cli").info("")
             logging.getLogger("gigalixir-cli").info("")
             cast(cmd)
-        except:
-            # re-raise and let the outer except block handle it. this is just here so the
-            # finally block will run
-            raise
         finally:
             logging.getLogger("gigalixir-cli").info("Cleaning up route from %s to 127.0.0.1" % MY_POD_IP)
             ctx.obj['router'].unroute_to_localhost(MY_POD_IP)
-    except:
-        logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-        rollbar.report_exc_info()
-        sys.exit(1)
     finally:
         if ssh_master_pid:
             # Needed because Ctrl-G -> q leaves it orphaned for some reason. is the subprocess
@@ -143,8 +134,7 @@ def ensure_port_free(port):
         # if the port is in use, then a pid is found, this "succeeds" and continues
         # if the port is free, then a pid is not found, this "fails" and raises a CalledProcessError
         pid = call("lsof -wni tcp:%(port)s -t" % {"port": port})
-        logging.getLogger("gigalixir-cli").info("It looks like process %s is using port %s. Please kill this process and try again. e.g. `kill %s`" % (pid, port, pid))
-        sys.exit(1)
+        raise Exception("It looks like process %s is using port %s. Please kill this process and try again. e.g. `kill %s`" % (pid, port, pid))
     except subprocess.CalledProcessError:
         # success! continue
         pass

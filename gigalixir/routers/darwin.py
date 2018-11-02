@@ -10,6 +10,8 @@ class DarwinRouter(object):
         My guess is, it's trying to find epmd to register itself, but can't due to
         something in this file.
         """
+        logging.getLogger("gigalixir-cli").info("Setting up pfctl")
+        logging.getLogger("gigalixir-cli").info("If prompted, please enter your sudo password:")
         ps = subprocess.Popen(('echo', """
 rdr pass on lo0 inet proto tcp from any to any port %s -> 127.0.0.1 port %s
 rdr pass on lo0 inet proto tcp from any to %s port %s -> 127.0.0.1 port %s
@@ -19,6 +21,8 @@ rdr pass on lo0 inet proto tcp from any to %s port %s -> 127.0.0.1 port %s
         cast("sudo ifconfig lo0 %s netmask 255.255.255.255 alias" % ip)
         
     def unroute_to_localhost(self, ip):
+        logging.getLogger("gigalixir-cli").info("Cleaning up pfctl")
+        logging.getLogger("gigalixir-cli").info("If prompted, please enter your sudo password:")
         cast("sudo ifconfig lo0 %s netmask 255.255.255.255 -alias" % ip)
         subprocess.call("sudo pfctl -ef /etc/pf.conf".split())
 
