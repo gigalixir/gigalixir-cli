@@ -1,6 +1,8 @@
 from .shell import cast, call
 from .routers.linux import LinuxRouter
 from .routers.darwin import DarwinRouter
+from .openers.linux import LinuxOpener
+from .openers.darwin import DarwinOpener
 from . import observer as gigalixir_observer
 from . import user as gigalixir_user
 from . import app as gigalixir_app
@@ -206,8 +208,10 @@ def cli(ctx, env):
     PLATFORM = call("uname -s").lower() # linux or darwin
     if PLATFORM == "linux":
         ctx.obj['router'] = LinuxRouter()
+        ctx.obj['opener'] = LinuxOpener()
     elif PLATFORM == "darwin":
         ctx.obj['router'] = DarwinRouter()
+        ctx.obj['opener'] = DarwinOpener()
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
 
@@ -940,3 +944,11 @@ def version(ctx):
     """
     click.echo(pkg_resources.get_distribution("gigalixir").version)
 
+
+@cli.command(name='open')
+@click.option('-a', '--app_name')
+@click.pass_context
+@report_errors
+@detect_app_name
+def open_app(ctx, app_name):
+    ctx.obj['opener'].open("https://%s.gigalixirapp.com" % app_name)
