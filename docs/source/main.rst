@@ -894,15 +894,17 @@ Data Encryption                     YES
 Dedicated CPU                       YES*
 Dedicated Memory                    YES
 Dedicated Disk                      YES
-No Connection Limits                YES
+No Connection Limits                YES*
 No Row Limits                       YES
 Backups                             YES
 Scalable/Upgradeable                YES
 Automatic Data Migration            YES
 Postgres Extensions                 YES
+Role Management                     YES
 ========================  ========= =============
 
-* Only sizes 4 and above have dedicated CPU. See :ref:`database sizes`.
+* Only size 4 and above have dedicated CPU. See :ref:`database sizes`.
+* Databases still have connection limits based on Google Cloud SQL limits. See https://cloud.google.com/sql/docs/postgres/quotas#fixed-limits
 
 .. _`gigalixir heroku feature comparison`:
 
@@ -1845,7 +1847,7 @@ Under the hood, we use Google's Cloud SQL which provides reliability, security, 
 How to upgrade a Free DB to a Standard DB
 =========================================
 
-If you started out with a free tier database and then upgraded to the standard tier, we highly recommend you migrate to a standard tier database. The standard tier databases support encryption, backups, extensions, and dedicated cpu, memory, & disk. There are no row limits, connection limits, and they are automatically scalable. 
+If you started out with a free tier database and then upgraded to the standard tier, we highly recommend you migrate to a standard tier database. The standard tier databases support encryption, backups, extensions, and dedicated cpu, memory, & disk. There are no row limits, connection limits*, and they are automatically scalable. 
 
 Unfortunatetly, we can't automatically migrate your free tier db to a standard tier db. You'll have to
 
@@ -1855,6 +1857,8 @@ Unfortunatetly, we can't automatically migrate your free tier db to a standard t
   4. Restore the data with :bash:`psql` or :bash:`pgrestore`. You can find the url to use with :bash:`gigalixir pg` once the standard tier database is created.
 
 Please don't hesitate to `contact us`_ if you need help.
+
+* Databases still have connection limits based on Google Cloud SQL limits. See https://cloud.google.com/sql/docs/postgres/quotas#fixed-limits
 
 How to scale a database
 =======================
