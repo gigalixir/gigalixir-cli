@@ -374,13 +374,14 @@ def set_payment_method(ctx, card_number, card_exp_month, card_exp_year, card_cvc
     gigalixir_payment_method.update(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc)
 
 @cli.command(name='account:upgrade')
+@click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
-def upgrade(ctx):
+def upgrade(ctx, yes):
     """
     Upgrade from free tier to standard tier.
     """
-    if click.confirm('Are you sure you want to upgrade to the standard tier?'):
+    if yes or click.confirm('Are you sure you want to upgrade to the standard tier?'):
         gigalixir_user.upgrade(ctx.obj['host'])
 
 # @reset.command()
@@ -706,15 +707,16 @@ def delete_ssh_key(ctx, key_id):
 
 @cli.command(name='apps:destroy')
 @click.option('-a', '--app_name')
+@click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
 @detect_app_name
-def delete_app(ctx, app_name):
+def delete_app(ctx, app_name, yes):
     """
     Deletes an app. Can not be undone. 
     """
-    logging.getLogger("gigalixir-cli").info("WARNING!! Deleting an app can not be undone and the name can not be reused.")
-    if click.confirm('Do you want to delete your app?'):
+    logging.getLogger("gigalixir-cli").info("WARNING: Deleting an app can not be undone and the name can not be reused.")
+    if yes or click.confirm('Do you want to delete your app?'):
         gigalixir_app.delete(ctx.obj['host'], app_name)
 
 # @delete.command()
@@ -733,36 +735,38 @@ def delete_permission(ctx, app_name, email):
 # @delete.command()
 @cli.command(name='pg:destroy')
 @click.option('-a', '--app_name')
+@click.option('-y', '--yes', is_flag=True)
 @click.argument('database_id')
 @click.pass_context
 @report_errors
 @detect_app_name
-def delete_database(ctx, app_name, database_id):
+def delete_database(ctx, app_name, yes, database_id):
     """
     Delete database.
     """
-    logging.getLogger("gigalixir-cli").info("WARNING!! Deleting your database will all your data and backups.")
-    logging.getLogger("gigalixir-cli").info("WARNING!! This can not be undone.")
-    logging.getLogger("gigalixir-cli").info("WARNING!! Please make sure you backup your data first.")
-    if click.confirm('Do you want to delete your database and all backups?'):
+    logging.getLogger("gigalixir-cli").info("WARNING: Deleting your database will all your data and backups.")
+    logging.getLogger("gigalixir-cli").info("WARNING: This can not be undone.")
+    logging.getLogger("gigalixir-cli").info("WARNING: Please make sure you backup your data first.")
+    if yes or click.confirm('Do you want to delete your database and all backups?'):
         gigalixir_database.delete(ctx.obj['host'], app_name, database_id)
 
 # @delete.command()
 # is this command still needed? i think delete_database/pg:destroy above can delete free databases?
 @cli.command(name='deprecated:delete_free_database')
 @click.option('-a', '--app_name')
+@click.option('-y', '--yes', is_flag=True)
 @click.argument('database_id')
 @click.pass_context
 @report_errors
 @detect_app_name
-def delete_free_database(ctx, app_name, database_id):
+def delete_free_database(ctx, app_name, yes, database_id):
     """
     Delete free database.
     """
-    logging.getLogger("gigalixir-cli").info("WARNING!! Deleting your database will destroy all your data.")
-    logging.getLogger("gigalixir-cli").info("WARNING!! This can not be undone.")
-    logging.getLogger("gigalixir-cli").info("WARNING!! Please make sure you backup your data first.")
-    if click.confirm('Do you want to delete your database?'):
+    logging.getLogger("gigalixir-cli").info("WARNING: Deleting your database will destroy all your data.")
+    logging.getLogger("gigalixir-cli").info("WARNING: This can not be undone.")
+    logging.getLogger("gigalixir-cli").info("WARNING: Please make sure you backup your data first.")
+    if yes or click.confirm('Do you want to delete your database?'):
         gigalixir_free_database.delete(ctx.obj['host'], app_name, database_id)
 
 # @delete.command()
@@ -820,15 +824,17 @@ def pg_psql(ctx, app_name):
 @click.option('-a', '--app_name')
 @click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
 @click.option('-f', '--free', is_flag=True)
+@click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
 @detect_app_name
-def create_database(ctx, app_name, size, free):
+def create_database(ctx, app_name, size, free, yes):
     """
     Create a new database for app.
     """
     if free:
-        gigalixir_free_database.create(ctx.obj['host'], app_name)
+        if yes or click.confirm("A word of caution: Free tier databases are not suitable for production and migrating from a free db to a standard db is not trivial. Do you wish to continue?"):
+            gigalixir_free_database.create(ctx.obj['host'], app_name)
     else:
         gigalixir_database.create(ctx.obj['host'], app_name, size)
 

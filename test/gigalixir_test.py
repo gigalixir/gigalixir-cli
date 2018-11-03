@@ -681,7 +681,7 @@ def test_create_free_database():
 
 """, content_type='application/json', status=201)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['create_free_database', '-a', 'fake-app-name'])
+    result = runner.invoke(gigalixir.cli, ['create_database', '-a', 'fake-app-name', '--free', '-y'])
     # mind the trailing spaces!!
     assert result.output == """{
   "app_name": "REDACTED", 
