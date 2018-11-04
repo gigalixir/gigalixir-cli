@@ -216,13 +216,22 @@ def cli(ctx, env):
         raise Exception("Unknown platform: %s" % PLATFORM)
 
 @cli.command()
+@click.argument('subcommand', required=False)
 @click.pass_context
 @report_errors
-def help(ctx):
+def help(ctx, subcommand):
     """
     Show commands and descriptions.
     """
-    click.echo(ctx.parent.get_help(), color=ctx.color)
+    if subcommand is None:
+	click.echo(ctx.parent.get_help(), color=ctx.color)
+    else:
+        subcommand_obj = cli.get_command(ctx, subcommand)
+        if subcommand_obj is None:
+            click.echo("command %s not found" % subcommand)
+        else:
+            ctx.info_name = subcommand
+            click.echo(subcommand_obj.get_help(ctx))
 
 @cli.command(name='ps')
 @click.option('-a', '--app_name')
