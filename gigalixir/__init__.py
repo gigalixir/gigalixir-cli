@@ -621,7 +621,7 @@ def set_config(ctx, app_name, key, value):
 def config_set(ctx, app_name, assignments):
     """
     Set configuration variables and restarts your app.
-    ASSIGNMENTS are of the form KEY=VALUE
+    ASSIGNMENTS are of the form KEY=VALUE.
     For example,
     gigalixir config:set KEY0=VALUE0 KEY1="VALUE 1"
     """
