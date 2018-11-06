@@ -34,6 +34,17 @@ import os
 from functools import wraps
 import pkg_resources
 
+def _show_usage_error(self, file=None):
+    if file is None:
+        file = click._compat.get_text_stderr()
+    color = None
+    if self.ctx is not None:
+        color = self.ctx.color
+        click.echo(self.ctx.get_help() + '\n', file=file, color=color)
+    click.echo('Error: %s' % self.format_message(), file=file, color=color)
+
+click.exceptions.UsageError.show = _show_usage_error
+
 ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
 # kinda sorta duplicated in this file as an option to cli Command.
 # we need this at the "top" level so that handle_exception has access to rollbar
@@ -609,7 +620,10 @@ def set_config(ctx, app_name, key, value):
 @detect_app_name
 def config_set(ctx, app_name, assignments):
     """
-    Set configuration variables.
+    Set configuration variables and restarts your app.
+    ASSIGNMENTS are of the form KEY=VALUE
+    For example,
+    gigalixir config:set KEY0=VALUE0 KEY1="VALUE 1"
     """
     colored_keys = []
     configs = {}
