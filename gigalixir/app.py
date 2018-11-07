@@ -204,7 +204,10 @@ def remote_console(host, app_name, ssh_opts):
     ssh(host, app_name, ssh_opts, "gigalixir_run", "remote_console")
 
 def migrate(host, app_name, migration_app_name, ssh_opts):
-    ssh(host, app_name, ssh_opts, "gigalixir_run", "migrate")
+    if migration_app_name is None:
+        ssh(host, app_name, ssh_opts, "gigalixir_run", "migrate")
+    else:
+        ssh(host, app_name, ssh_opts, "gigalixir_run", "migrate", "-m", migration_app_name)
 
 def logs(host, app_name, num, no_tail):
     payload = {
