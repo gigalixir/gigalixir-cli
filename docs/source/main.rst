@@ -328,7 +328,7 @@ Then, run
     mix deps.get
     mix release.init
 
-.. _`Distillery installation instructions`: https://hexdocs.pm/distillery/getting-started.html#installation-setup
+.. _`Distillery installation instructions`: https://hexdocs.pm/distillery/introduction/installation.html
 
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
