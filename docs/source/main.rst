@@ -1896,6 +1896,12 @@ Find the backup id you want and run
 
     gigalixir pg:backups:restore -d $DATABASE_ID -b $BACKUP_ID
 
+This can take a while. Sometimes over ten minutes. To check the status, run
+
+.. code-block:: bash
+
+    gigalixir pg
+
 How to delete a database
 ========================
 
