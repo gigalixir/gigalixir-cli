@@ -34,8 +34,11 @@ def psql(host, app_name):
         if len(urls) > 1:
             # TODO: allow user to specify database
             click.echo("Found more than one database, using: %s" % urls[0]["id"])
-        url = urls[0]["url"]
-        os.execlp("psql", "psql", url)
+        elif len(urls) < 1:
+            click.echo("Sorry, no databases found.")
+        else:
+            url = urls[0]["url"]
+            os.execlp("psql", "psql", url)
 
 def create(host, app_name, size):
     r = requests.post('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
