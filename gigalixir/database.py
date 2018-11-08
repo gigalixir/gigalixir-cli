@@ -69,3 +69,27 @@ def scale(host, app_name, database_id, size):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+
+def backups(host, app_name, database_id):
+    r = requests.get('%s/api/apps/%s/databases/%s/backups' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
+
+def restore(host, app_name, database_id, backup_id):
+    r = requests.post('%s/api/apps/%s/databases/%s/backups/%s/restore' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8')), quote(backup_id.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)

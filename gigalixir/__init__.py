@@ -257,7 +257,7 @@ def status(ctx, app_name):
 
 @cli.command(name='pg:scale')
 @click.option('-a', '--app_name')
-@click.argument('database_id')
+@click.option('-d', '--database_id', required=True)
 @click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
 @click.pass_context
 @report_errors
@@ -763,7 +763,7 @@ def delete_permission(ctx, app_name, email):
 @cli.command(name='pg:destroy')
 @click.option('-a', '--app_name')
 @click.option('-y', '--yes', is_flag=True)
-@click.argument('database_id')
+@click.option('-d', '--database_id', required=True)
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -782,7 +782,7 @@ def delete_database(ctx, app_name, yes, database_id):
 @cli.command(name='deprecated:delete_free_database')
 @click.option('-a', '--app_name')
 @click.option('-y', '--yes', is_flag=True)
-@click.argument('database_id')
+@click.option('-d', '--database_id', required=True)
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -975,3 +975,29 @@ def version(ctx):
 @detect_app_name
 def open_app(ctx, app_name):
     ctx.obj['opener'].open("https://%s.gigalixirapp.com" % app_name)
+
+@cli.command(name='pg:backups')
+@click.option('-a', '--app_name')
+@click.option('-d', '--database_id', required=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def pg_backups(ctx, app_name, database_id):
+    """
+    List available backups
+    """
+    gigalixir_database.backups(ctx.obj['host'], app_name, database_id)
+
+@cli.command(name='pg:backups:restore')
+@click.option('-a', '--app_name')
+@click.option('-d', '--database_id', required=True)
+@click.option('-b', '--backup_id', required=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def pg_backups_restore(ctx, app_name, database_id, backup_id):
+    """
+    Restore database from backup
+    """
+    gigalixir_database.restore(ctx.obj['host'], app_name, database_id, backup_id)
+
