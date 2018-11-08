@@ -1871,6 +1871,31 @@ To change the size of your database, run
 
 Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. For more information about databases sizes, see :ref:`database sizes`.
 
+How to restore a database backup
+================================
+
+We use Cloud SQL under the hood which takes automatic backups every day and keeps 7 backups available. For more, see https://cloud.google.com/sql/docs/postgres/backup-recovery/backups
+
+First, get your database id by running
+
+.. code-block:: bash
+
+    gigalixir pg
+
+View what backups you have available by running
+
+.. code-block:: bash
+
+    gigalixir pg:backups -d $DATABASE_ID
+
+Note: we required the database_id even though we could probably detect it automatically because these are sensitive operations and we prefer to be explicit.
+
+Find the backup id you want and run
+
+.. code-block:: bash
+
+    gigalixir pg:backups:restore -d $DATABASE_ID -b $BACKUP_ID
+
 How to delete a database
 ========================
 
