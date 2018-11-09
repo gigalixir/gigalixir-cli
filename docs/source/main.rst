@@ -1048,7 +1048,7 @@ In your app code, access the environment variable using
 
     Application.get_env(:myapp, :my_config) == "foo"
 
-.. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/runtime-configuration.html#content
+.. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/config/runtime.html
 
 .. _`troubleshooting`:
 
