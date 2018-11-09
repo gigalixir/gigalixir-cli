@@ -235,7 +235,7 @@ def help(ctx, subcommand):
     Show commands and descriptions.
     """
     if subcommand is None:
-	click.echo(ctx.parent.get_help(), color=ctx.color)
+        click.echo(ctx.parent.get_help(), color=ctx.color)
     else:
         subcommand_obj = cli.get_command(ctx, subcommand)
         if subcommand_obj is None:
