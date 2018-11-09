@@ -190,7 +190,7 @@ Modifying an Existing App to Run on Gigalixir
 
 Whether you have an existing app or you just ran :bash:`mix phx.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine.
 
-Important: Although Gigalixir works with all versions of Phoenix, these guides assume you are running Phoenix 1.3. If you need help with Phoenix 1.2, please `contact us`_. The :bash:`prod.exs` can be tricky.
+Important: Although Gigalixir works with all versions of Phoenix, these guides assume you are running Phoenix 1.3. If you need help with Phoenix 1.2 or 1.4, please `contact us`_. The :bash:`prod.exs` can be tricky.
 
 Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
@@ -250,7 +250,7 @@ Then add something like the following in :bash:`prod.exs`
 
      grep -R "defmodule.*Endpoint" lib/
      
-   Phoenix 1.2 and 1.3 give different names so this is a common source of errors.
+   Phoenix 1.2, 1.3, and 1.4 give different names so this is a common source of errors.
 3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
    
 You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
@@ -371,7 +371,7 @@ Then add something like the following in :bash:`prod.exs`
 
      grep -R "defmodule.*Endpoint" lib/
      
-   Phoenix 1.2 and 1.3 give different names so this is a common source of errors.
+   Phoenix 1.2, 1.3, and 1.4 give different names so this is a common source of errors.
 3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
    
 You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
