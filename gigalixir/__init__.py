@@ -524,6 +524,17 @@ def ssh_keys(ctx):
     """
     gigalixir_ssh_key.get(ctx.obj['host'])
 
+@cli.command(name="apps:info")
+@click.option('-a', '--app_name')
+@click.pass_context
+@report_errors
+@detect_app_name
+def app_info(ctx, app_name):
+    """
+    Get app info
+    """
+    gigalixir_app.info(ctx.obj['host'], app_name)
+
 # @get.command()
 @cli.command()
 @click.pass_context
