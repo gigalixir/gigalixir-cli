@@ -576,7 +576,7 @@ A hot upgrade follows the same steps as a regular deploy, except for a few diffe
 
 Once the slug is generated and uploaded, we execute an upgrade script on each run container instead of restarting. The upgrade script downloads the new slug, and calls `Distillery's upgrade command`_. Your app should now be upgraded in place without any downtime, dropped connections, or loss of in-memory state.
 
-.. _`configure versions`:
+.. _`cleaning your build cache`:
 
 How to clean your build cache
 =============================
@@ -619,6 +619,8 @@ The only gotcha is that if you want remote console to work, you'll want to make 
 .. code-block:: bash
 
   web: elixir --name $MY_NODE_NAME --cookie $MY_COOKIE -S mix phoenix.server
+
+.. _`configure versions`:
 
 How do I specify my Elixir, Erlang, Node, NPM, etc versions?
 ============================================================
@@ -1128,6 +1130,10 @@ Common Errors
     - :bash:`git push gigalixir master` asks for my password
 
         - First try running :bash:`gigalixir login` and try again. If that doesn't work, try resetting your git remote by running :bash:`gigalixir git:remote $APP` and trying again.
+
+    - remote: cp: cannot overwrite directory ‘/tmp/cache/node_modules/phoenix_html’ with non-directory
+
+        - Try `cleaning your build cache`_. Looks like something changed in your app that makes the cache non-overwritable. 
 
     - (File.Error) could not read file "foo/bar": no such file or directory
 
