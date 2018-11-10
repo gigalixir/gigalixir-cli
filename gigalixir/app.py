@@ -75,18 +75,21 @@ def status(host, app_name):
         presenter.echo_json(data)
 
 def scale(host, app_name, replicas, size):
-    json = {}
+    body = {}
     if replicas != None:
-        json["replicas"] = replicas
+        body["replicas"] = replicas
     if size != None:
-        json["size"] = size 
+        body["size"] = size 
     r = requests.put('%s/api/apps/%s/scale' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
-    }, json = json)
+    }, json = body)
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
 
 def customer_app_name(host, app_name):
     r = requests.get('%s/api/apps/%s/releases/latest' % (host, quote(app_name.encode('utf-8'))), headers = {
