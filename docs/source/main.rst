@@ -1409,6 +1409,11 @@ Deploying an app is done using a git push, the same way you would push code to g
 
     git push gigalixir master
 
+How to Get Zero-Downtime Deploys
+================================
+
+All deploys are automatically zero downtime. No need to do anything. The only exception is if your app serves really long-running requests, like over 30s. During a rolling restart, the old version in terminated about 30 seconds after the new version is healthy. If you need to keep those long-running requests safe, consider `hot upgrades`_.
+
 How to Deploy a Branch
 ======================
 
@@ -1565,6 +1570,7 @@ How to Hot Configure an App
 
 This feature is still a work in progress.
 
+.. _`hot upgrades`:
 .. _`hot-upgrade`:
 
 How to Hot Upgrade an App
