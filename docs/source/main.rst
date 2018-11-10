@@ -259,6 +259,31 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 
     gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
 
+Don't forget to commit your changes
+
+.. code-block:: bash
+
+    git add config/prod.exs
+    git commit -m "setup production deploys"
+
+Setup Static Assets
+^^^^^^^^^^^^^^^^^^^
+
+The `phoenix static buildpack <https://github.com/gjaldon/heroku-buildpack-phoenix-static>`_ still uses brunch at the moment until `this issue <https://github.com/gjaldon/heroku-buildpack-phoenix-static/issues/75>`_ closes. If you're on Phoenix 1.3 or lower, you should be fine. If you're on Phoenix 1.4, you need to configure it to use webpack by creating a file at the root of your repository called :bash:`compile` with these contents
+
+.. code-block:: bash
+
+    npm run deploy
+    cd $phoenix_dir
+    mix "${phoenix_ex}.digest"
+
+Don't forget to commit
+
+.. code-block:: bash
+
+    git add compile
+    git commit -m "use webpack for static assets instead of brunch"
+
 Verify
 ^^^^^^
 
@@ -328,6 +353,14 @@ Then, run
     mix deps.get
     mix release.init
 
+Don't forget to commit 
+
+.. code-block:: bash
+
+    git add mix.exs mix.lock rel/config.exs
+    git commit -m 'install distillery'
+
+
 .. _`Distillery installation instructions`: https://hexdocs.pm/distillery/introduction/installation.html
 
 Configuration and Secrets
@@ -394,7 +427,7 @@ First, try generating building static assets
     # generate static assets
     cd assets
     npm install
-    node_modules/brunch/bin/brunch build --production
+    npm run deploy
     cd ..
     mix phx.digest
 
@@ -412,6 +445,13 @@ and running it locally
 
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
+
+Commit the changes
+
+.. code-block:: bash
+
+    git add config/prod.exs assets/package-lock.json
+    git commit -m 'distillery configuration'
 
 Check it out.
 
@@ -607,7 +647,7 @@ Once the app is created, it's difficult to migrate to another region. If you wan
 
 One thing to keep in mind is that Gigalixir Postgres databases are as o right now only available in GCP/v2018-us-central1 so if you plan to use a Gigalixir-managed database, make sure your app lives in the default cloud and region.
 
-If you don't see the region you want, please _`contact us` and let us know. We open new regions based purely on demand.
+If you don't see the region you want, please `contact us`_ and let us know. We open new regions based purely on demand.
 
 .. _`custom procfile`:
 
@@ -1692,7 +1732,7 @@ To change your credit card, run
 How to Delete your Account
 ==========================
 
-There is currently no way to completely delete an account. We are working on implementing this feature. You can delete apps though. See :ref:`delete-app`_.
+There is currently no way to completely delete an account. We are working on implementing this feature. You can delete apps though. See :ref:`delete-app`.
 
 .. _`restart`:
 
