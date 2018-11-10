@@ -141,7 +141,13 @@ Finally, build and deploy.
 
     git push gigalixir master
 
-Wait a minute or two since this is the first deploy, then verify by running
+Wait a minute or two for the app to pass health checks. You can check the status by running
+
+.. code-block:: bash
+
+    gigalixir ps
+
+Once it's healthy, verify it works
 
 .. code-block:: bash
 
