@@ -146,6 +146,8 @@ Wait a minute or two since this is the first deploy, then verify by running
 .. code-block:: bash
 
     curl https://$APP_NAME.gigalixirapp.com/
+    # or you could also run
+    # gigalixir open
 
 Provision a Database
 --------------------
@@ -168,16 +170,37 @@ Once the database is created, verify your configuration includes a :bash:`DATABA
 
     gigalixir config
     
+Run Migrations
+--------------
+
+If you are using mix, the easiest way to run migrations is as a job.
+
+.. code-block:: bash
+
+    gigalixir run mix ecto.migrate
+    # this is run asynchronously as a job, so to see the progress, you need to run
+    gigalixir logs
+
+If you are using distillery, your app needs to be up and running, then run
+
+.. code-block:: bash
+
+    # pg:migrate runs migrations from your app node so you need to ssh in to run it
+    # we need to add ssh keys first
+    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
+    gigalixir ps:migrate 
+
+For more, see :ref:`migrations`.
 
 What's Next?
 ------------
 
-- :ref:`logging`
 - :ref:`configs`
+- :ref:`app-status`
+- :ref:`logging`
 - :ref:`scale`
 - :ref:`restart`
 - :ref:`rollback`
-- :ref:`migrations`
 - :ref:`remote console`
 - :ref:`remote observer`
 - :ref:`hot-upgrade`
@@ -241,7 +264,7 @@ Then add something like the following in :bash:`prod.exs`
        adapter: Ecto.Adapters.Postgres,
        url: System.get_env("DATABASE_URL"),
        ssl: true,
-       pool_size: 1 # Free tier db only allows 2 connections. Rolling deploys need n+1 connections. Also, save one for psql, jobs, etc.
+       pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections.
 
 1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
 2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like 
@@ -393,7 +416,7 @@ Then add something like the following in :bash:`prod.exs`
        url: "${DATABASE_URL}",
        database: "",
        ssl: true,
-       pool_size: 1 # Free tier db only allows 2 connections. Rolling deploys need n+1 connections. Also, save one for psql, jobs, etc.
+       pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections.
 
 :elixir:`server: true` **is very important and is commonly left out. Make sure you have this line.**
 
@@ -412,6 +435,24 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 .. code-block:: bash
 
     gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
+
+Setup Static Assets
+^^^^^^^^^^^^^^^^^^^
+
+The `phoenix static buildpack <https://github.com/gjaldon/heroku-buildpack-phoenix-static>`_ still uses brunch at the moment until `this issue <https://github.com/gjaldon/heroku-buildpack-phoenix-static/issues/75>`_ closes. If you're on Phoenix 1.3 or lower, you should be fine. If you're on Phoenix 1.4, you need to configure it to use webpack by creating a file at the root of your repository called :bash:`compile` with these contents
+
+.. code-block:: bash
+
+    npm run deploy
+    cd $phoenix_dir
+    mix "${phoenix_ex}.digest"
+
+Don't forget to commit
+
+.. code-block:: bash
+
+    git add compile
+    git commit -m "use webpack for static assets instead of brunch"
 
 Verify
 ^^^^^^
@@ -442,7 +483,6 @@ and running it locally
 .. code-block:: bash
 
     MIX_ENV=prod SECRET_KEY_BASE="$(mix phx.gen.secret)" DATABASE_URL="postgresql://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
-
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
 
@@ -1163,7 +1203,7 @@ Common Errors
 
     - failed to connect: ** (Postgrex.Error) FATAL 53300 (too_many_connections): too many connections for database
 
-        - If you have a free tier database, the number of connections is limited to 1. Try lowering the :elixir:`pool_size` in your :bash:`prod.exs` to 1.
+        - If you have a free tier database, the number of connections is limited. Try lowering the :elixir:`pool_size` in your :bash:`prod.exs` to 2.
 
     - ~/.netrc access too permissive: access permissions must restrict access to only the owner
 
@@ -1841,7 +1881,7 @@ This modifies your ~/.netrc file so that future API requests will be authenticat
 How to provision a Free PostgreSQL database
 ===========================================
 
-IMPORTANT: Make sure you set your :bash:`pool_size` in :bash:`prod.exs` to 1 beforehand. The free tier database only allows one connection.
+IMPORTANT: Make sure you set your :bash:`pool_size` in :bash:`prod.exs` to 2 beforehand. The free tier database only allows limited connections.
 
 The following command will provision a free database for you and set your :bash:`DATABASE_URL` environment variable appropriately. 
 
@@ -2031,7 +2071,7 @@ If you followed the :ref:`quick start`, then your database should already be con
        url: {:system, "DATABASE_URL"},
        database: "",
        ssl: true,
-       pool_size: 1
+       pool_size: 2
 
 Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`. If you provisioned your database using, :ref:`provisioning database`, then :bash:`DATABASE_URL` should be set for you automatically once the database in provisioned. Otherwise,
 
