@@ -1262,7 +1262,7 @@ Common Errors
 Support/Help
 ============
 
-Feel free to email help@gigalixir.com for any questions or issues, we generally respond within hours.
+Feel free to email help@gigalixir.com for any questions or issues, we generally respond quickly.
 
 .. _`Stack Overflow`: http://stackoverflow.com/
 .. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
@@ -2345,6 +2345,8 @@ To deny access to a user, run
 .. code-block:: bash
 
     gigalixir access:remove $USER_EMAIL
+
+If you don't have access to the CLI and want to modify access, `contact us`_ and we'll help you out.
 
 How do I change the owner of my app?
 ====================================
