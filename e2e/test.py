@@ -52,7 +52,7 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
         # scale
-        result = runner.invoke(gigalixir.cli, ['pg:scale', database_id, '--size=1.7', '-a', app_name])
+        result = runner.invoke(gigalixir.cli, ['pg:scale', '-d', database_id, '--size=1.7', '-a', app_name])
         assert result.exit_code == 0
         start_time = timeit.default_timer()
         wait_for_available_database(runner, app_name)
@@ -60,7 +60,7 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
         # delete
-        result = runner.invoke(gigalixir.cli, ['pg:destroy', database_id, '-a', app_name], input="y\n")
+        result = runner.invoke(gigalixir.cli, ['pg:destroy', '-d', database_id, '-a', app_name], input="y\n")
         assert result.exit_code == 0
 
         start_time = timeit.default_timer()
@@ -80,7 +80,10 @@ def test_mix():
         result = runner.invoke(gigalixir.cli, ['login', '--email=%s' % email], input="%s\ny\n" % password)
         assert result.exit_code == 0
         with open(".tool-versions", "w") as text_file:
-            text_file.write("elixir 1.5.1\nerlang 20.0")
+            text_file.write("elixir 1.7.0\nerlang 21.0")
+        # ensure these are up to date on your system under the .tool-versions above
+        # gigalixir.shell.cast("mix archive.uninstall phx_new 1.4.0")
+        # gigalixir.shell.cast("mix archive.install hex phx_new")
         phx_new_process = subprocess.Popen(["mix", "phx.new", "gigalixir_scratch"], stdin=subprocess.PIPE)
         phx_new_process.communicate(input=b'n\n')
         with cd("gigalixir_scratch"):
@@ -93,6 +96,14 @@ def test_mix():
             gigalixir.shell.cast("git add .gitignore")
             gigalixir.shell.cast("git add config/prod.secret.exs")
             gigalixir.shell.cast("git commit -m secrets")
+
+            # TODO: remove this when buildpack is fixed
+            with open("compile", "w") as text_file:
+                text_file.write("npm run deploy\ncd $phoenix_dir\nmix ${phoenix_ex}.digest")
+
+            gigalixir.shell.cast("git add compile")
+            gigalixir.shell.cast("git commit -m assets")
+
             result = runner.invoke(gigalixir.cli, ['create'])
             assert result.exit_code == 0
             app_name = result.output.rstrip()
@@ -326,8 +337,8 @@ def cd(newdir, cleanup=lambda: True):
         cleanup()
 
 def wait_for_available_database(runner, app_name):
-    for i in range(30):
-        logging.info('Attempt: %s/30' % (i))
+    for i in range(60):
+        logging.info('Attempt: %s/60' % (i))
         result = runner.invoke(gigalixir.cli, ['pg', '-a', app_name])
         assert result.exit_code == 0
         output = json.loads(result.output)
@@ -342,8 +353,8 @@ def wait_for_available_database(runner, app_name):
         assert False
 
 def wait_for_deleted_database(runner, app_name, database_id):
-    for i in range(30):
-            logging.info('Attempt: %s/30' % (i))
+    for i in range(60):
+            logging.info('Attempt: %s/60' % (i))
             result = runner.invoke(gigalixir.cli, ['pg', '-a', app_name])
             assert result.exit_code == 0
             output = json.loads(result.output)
