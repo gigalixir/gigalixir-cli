@@ -160,20 +160,20 @@ def test_get_apps():
 
 @httpretty.activate
 def test_scale_replicas_only():
-    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/scale', body='{}', content_type='application/json')
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/scale', body='{"data": {}}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['scale', '-a', 'fake-app-name', '--replicas=100'])
-    assert result.output == ''
+    assert result.output == '{}\n\n'
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"replicas": 100}')
 
 @httpretty.activate
 def test_scale():
-    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/scale', body='{}', content_type='application/json')
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/scale', body='{"data": {}}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['scale', '-a', 'fake-app-name', '--replicas=100', '--size=0.5'])
-    assert result.output == ''
+    assert result.output == "{}\n\n"
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"size": 0.5, "replicas": 100}')
@@ -514,7 +514,7 @@ def test_current_period_usage():
 def test_delete_database():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_database', '-a', 'fake-app-name', 'fake-database-id'], input="y\n")
+    result = runner.invoke(gigalixir.cli, ['delete_database', '-a', 'fake-app-name', '-d', 'fake-database-id'], input="y\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -522,7 +522,7 @@ def test_delete_database():
 def test_delete_free_database():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/free_databases/fake-database-id', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_free_database', '-a', 'fake-app-name', 'fake-database-id'], input="y\n")
+    result = runner.invoke(gigalixir.cli, ['delete_free_database', '-a', 'fake-app-name', '-d', 'fake-database-id'], input="y\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
@@ -703,7 +703,7 @@ def test_create_free_database():
 def test_scale_database():
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id', body='{}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['scale_database', '-a', 'fake-app-name', 'fake-database-id', '--size=8'])
+    result = runner.invoke(gigalixir.cli, ['scale_database', '-a', 'fake-app-name', '-d', 'fake-database-id', '--size=8'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
