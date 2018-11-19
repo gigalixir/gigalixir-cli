@@ -887,7 +887,7 @@ To install libcluster, add this to the deps list in :bash:`mix.exs`
 
     {:libcluster, "~> 2.0.3"}
 
-If you are on Elixir 1.3 or lower, add :elixir`:libcluster` and :elixir:`:ssl` to your applications list. Elixir 1.4 and up detect your applications list for you.
+If you are on Elixir 1.3 or lower, add :elixir:`libcluster` and :elixir:`:ssl` to your applications list. Elixir 1.4 and up detect your applications list for you.
 
 Your app configuration needs to have something like this in it. For a full example, see `gigalixir-getting-started's prod.exs file`_.
 
