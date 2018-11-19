@@ -6,3 +6,4 @@ gigalixir-cli
 .cache
 .eggs
 dist/
+secrets/
