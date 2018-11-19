@@ -1,4 +1,5 @@
 from gigalixir.shell import cast
+import logging
 import subprocess
 
 class DarwinRouter(object):
