@@ -38,6 +38,13 @@ def info(host, app_name):
         presenter.echo_json(data)
 
 def set_git_remote(host, app_name):
+    try:
+        # check for git folder
+        with open(os.devnull, 'w') as FNULL:
+            subprocess.check_call('git rev-parse --is-inside-git-dir'.split(), stdout=FNULL, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError:
+        raise Exception("You must call this from inside a git repository.")
+
     remotes = call('git remote').splitlines()
     if 'gigalixir' in remotes:
         cast('git remote rm gigalixir')
