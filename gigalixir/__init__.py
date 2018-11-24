@@ -75,9 +75,13 @@ def report_errors(f):
             f(*args, **kwds)
         except:
             logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-            rollbar.report_exc_info()
+            # rollbar.report_exc_info()
+            rollbar.report_exc_info(sys.exc_info(), payload_data={'fingerprint': rollbar_fingerprint(sys.exc_info())})
             sys.exit(1)
     return wrapper
+
+def rollbar_fingerprint(e):
+    return e[1].__str__()
 
 # TODO: remove localhost from .netrc file
 
@@ -225,6 +229,18 @@ def cli(ctx, env):
         ctx.obj['opener'] = DarwinOpener()
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
+
+# class TestException(Exception):
+#     pass
+
+# @cli.command(name="test")
+# @click.pass_context
+# @report_errors
+# def app_info(ctx):
+#     """
+#     Test command for debugging
+#     """
+#     raise TestException("Test Exception")
 
 @cli.command()
 @click.argument('subcommand', required=False)
