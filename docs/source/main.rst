@@ -2021,7 +2021,7 @@ To delete a database, run
 
 .. code-block:: bash
 
-    gigalixir pg:destroy $DATABASE_ID
+    gigalixir pg:destroy -d $DATABASE_ID
 
 How to install a Postgres Extension
 ===================================
