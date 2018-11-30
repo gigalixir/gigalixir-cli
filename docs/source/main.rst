@@ -313,6 +313,24 @@ Don't forget to commit
     git add compile
     git commit -m "use webpack for static assets instead of brunch"
 
+Specify Versions
+^^^^^^^^^^^^^^^^
+
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.0 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
+
+Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
+
+.. code-block:: bash
+
+    elixir_version=1.7.2
+
+Don't forget to commit
+
+.. code-block:: bash
+
+    git add elixir_buildpack.config
+    git commit -m "use elixir v1.7.2"
+
 Verify
 ^^^^^^
 
@@ -459,6 +477,24 @@ Don't forget to commit
 
     git add compile
     git commit -m "use webpack for static assets instead of brunch"
+
+Specify Versions
+^^^^^^^^^^^^^^^^
+
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.0 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
+
+Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
+
+.. code-block:: bash
+
+    elixir_version=1.7.2
+
+Don't forget to commit
+
+.. code-block:: bash
+
+    git add elixir_buildpack.config
+    git commit -m "use elixir v1.7.2"
 
 Verify
 ^^^^^^
@@ -1145,6 +1181,35 @@ In your app code, access the environment variable using
 Troubleshooting
 ===============
 
+If you're app isn't working, the most likely thing you're seeing is 504 responses. If you're seeing 504s, you're in the right place.
+
+A 504 means that our load balancer isn't able to reach your app. This is usually because the app isn't running. An app that isn't running
+is usually failing health checks and we constantly restart apps that fail health checks in hopes that it will become healthy.
+
+Health checks simply check that your app is listening on port $PORT. 
+
+If you are running Distillery, see further below. If you're using Mix, stay here.
+
+Mix
+---
+
+Let's verify that your app works locally.
+
+Run the following commands
+
+.. code-block:: bash
+
+    mix deps.get
+    SECRET_KEY_BASE="$(mix phx.gen.secret)" MIX_ENV=prod DATABASE_URL="postgresql://user:pass@localhost:5432/foo" PORT=4000 mix phx.server
+    curl localhost:4000
+
+If it doesn't work, the first thing to check is your :bash:`prod.exs` file. Often, it is missing an :elixir:`http` configuration or there is a typo in the :elixir:`FooWeb.Endpoint` module name.
+
+If everything works locally, you might be running a different version of elixir in production. See :ref:`configure versions`.
+
+Distillery
+----------
+
 If you're having trouble getting things working, you can verify a few things locally.
 
 First, try generating and running a Distillery release locally by running
@@ -1152,6 +1217,7 @@ First, try generating and running a Distillery release locally by running
 .. code-block:: bash
 
     mix deps.get
+    SECRET_KEY_BASE="$(mix phx.gen.secret)"
     MIX_ENV=prod mix release --env=prod
     DATABASE_URL="postgresql://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
     curl localhost:4000
