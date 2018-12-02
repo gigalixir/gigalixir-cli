@@ -280,7 +280,7 @@ def status(ctx, app_name):
 @detect_app_name
 def scale_database(ctx, app_name, database_id, size):
     """
-    Scale database.
+    Scale database. Find the database id by running `gigalixir pg`
     """
     gigalixir_database.scale(ctx.obj['host'], app_name, database_id, size)
 
@@ -796,7 +796,7 @@ def delete_permission(ctx, app_name, email):
 @detect_app_name
 def delete_database(ctx, app_name, yes, database_id):
     """
-    Delete database.
+    Delete database. Find the database id by running `gigalixir pg`
     """
     logging.getLogger("gigalixir-cli").info("WARNING: Deleting your database will all your data and backups.")
     logging.getLogger("gigalixir-cli").info("WARNING: This can not be undone.")
@@ -815,7 +815,7 @@ def delete_database(ctx, app_name, yes, database_id):
 @detect_app_name
 def delete_free_database(ctx, app_name, yes, database_id):
     """
-    Delete free database.
+    Delete free database. Find the database id by running `gigalixir pg`
     """
     logging.getLogger("gigalixir-cli").info("WARNING: Deleting your database will destroy all your data.")
     logging.getLogger("gigalixir-cli").info("WARNING: This can not be undone.")
@@ -1011,7 +1011,7 @@ def open_app(ctx, app_name):
 @detect_app_name
 def pg_backups(ctx, app_name, database_id):
     """
-    List available backups
+    List available backups. Find the database id by running `gigalixir pg`
     """
     gigalixir_database.backups(ctx.obj['host'], app_name, database_id)
 
@@ -1024,7 +1024,8 @@ def pg_backups(ctx, app_name, database_id):
 @detect_app_name
 def pg_backups_restore(ctx, app_name, database_id, backup_id):
     """
-    Restore database from backup
+    Restore database from backup. Find the database id by running `gigalixir pg`
+
     """
     gigalixir_database.restore(ctx.obj['host'], app_name, database_id, backup_id)
 
