@@ -1982,7 +1982,7 @@ Delete by running
 
 .. code-block:: bash
 
-    gigalixir pg:destroy $DATABASE_ID
+    gigalixir pg:destroy -d $DATABASE_ID
 
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
@@ -2038,7 +2038,13 @@ To change the size of your database, run
 
 .. code-block:: bash
 
-    gigalixir pg:scale $DATABASE_ID --size=1.7
+    gigalixir pg:scale -d $DATABASE_ID --size=1.7
+
+You can find your database id by running
+
+.. code-block:: bash
+
+    gigalixir pg
 
 Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. For more information about databases sizes, see :ref:`database sizes`.
 
