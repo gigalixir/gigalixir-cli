@@ -1207,6 +1207,8 @@ If it doesn't work, the first thing to check is your :bash:`prod.exs` file. Ofte
 
 If everything works locally, you might be running a different version of elixir in production. See :ref:`configure versions`.
 
+Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
+
 Distillery
 ----------
 
@@ -1259,6 +1261,10 @@ Or to inspect closer, run
 
     # inspect /app folder
     # check /tmp/cache
+
+If everything works locally, you might be running a different version of elixir in production. See :ref:`configure versions`.
+
+Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
 
 If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
 
@@ -1605,6 +1611,7 @@ If you prefer to do it manually, run
     git remote add gigalixir https://git.gigalixir.com/$APP_NAME.git
 
 .. _`scale`:
+.. _`scaling`:
 
 How to Scale an App
 ===================
