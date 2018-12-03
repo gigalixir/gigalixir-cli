@@ -258,7 +258,7 @@ Open your :bash:`config/prod.exs` file and delete the following line if it is th
 
     import_config "prod.secret.exs"
 
-Then add something like the following in :bash:`prod.exs`
+Then append something like the following in :bash:`prod.exs`. Don't replace what you already have, just add this to the bottom.
 
 .. code-block:: elixir
 
