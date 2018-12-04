@@ -1635,6 +1635,15 @@ All app configuration is done through envirnoment variables. You can get, set, a
     gigalixir config:set FOO=bar
     gigalixir config:unset FOO                                                               
 
+How to Copy Configuration Variables
+===================================
+
+.. code-block:: bash
+
+    gigalixir config:copy -s $SOURCE_APP -d $DESTINATION_APP
+
+Note, this will copy all configuration variables from the source to the destination. If there are duplicate keys, the destination config will be overwritten. Variables that only exist on the destination app will not be deleted.
+
 .. _`hot-configure`:
 .. _`hot configuration updates`: 
 

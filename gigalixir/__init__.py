@@ -639,6 +639,22 @@ def set_config(ctx, app_name, key, value):
     """
     gigalixir_config.create(ctx.obj['host'], app_name, key, value)
 
+@cli.command(name="config:copy")
+@click.option('-s', '--src_app_name', required=True)
+@click.option('-d', '--dst_app_name', required=True)
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+# no detecting app name for this one
+def config_copy(ctx, src_app_name, dst_app_name, yes):
+    """
+    Copy configuration variables from one app to another
+    and restarts your app.
+    """
+    logging.getLogger("gigalixir-cli").info("WARNING: This will copy all configs from %s to %s. This might overwrite some configs in %s." % (src_app_name, dst_app_name, dst_app_name))
+    if yes or click.confirm('Are you sure you want to continue?'):
+        gigalixir_config.copy(ctx.obj['host'], src_app_name, dst_app_name)
+
 @cli.command(name="config:set")
 @click.option('-a', '--app_name')
 @click.argument('assignments', nargs=-1)
