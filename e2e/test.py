@@ -87,6 +87,8 @@ def test_mix():
         phx_new_process = subprocess.Popen(["mix", "phx.new", "gigalixir_scratch"], stdin=subprocess.PIPE)
         phx_new_process.communicate(input=b'n\n')
         with cd("gigalixir_scratch"):
+            with open("elixir_buildpack.config", "w") as text_file:
+                text_file.write("elixir_version=1.7.0\nerlang_version=21.0")
             gigalixir.shell.cast("git init")
             gigalixir.shell.cast("git add .")
             gigalixir.shell.cast("git config user.email jesse@gigalixir.com")
