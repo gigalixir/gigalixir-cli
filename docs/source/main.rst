@@ -1186,7 +1186,9 @@ If you're app isn't working, the most likely thing you're seeing is 504 response
 A 504 means that our load balancer isn't able to reach your app. This is usually because the app isn't running. An app that isn't running
 is usually failing health checks and we constantly restart apps that fail health checks in hopes that it will become healthy.
 
-Health checks simply check that your app is listening on port $PORT. 
+If you've just deployed, and you're not seeing 504s, but you're still seeing the old version of your app instead of the new version, it's the same problem. This happens when the new version does not pass health checks. When the new version doesn't pass health checks, we don't route traffic to it and we don't terminate the old version. Take a look at `gigalixir ps` and `gigalixir logs` for clues as to what might be wrong.
+
+Our health checks simply check that your app is listening on port $PORT. If you're running a non-HTTP elixir app, but need to just get health checks to pass, take a look at https://github.com/jesseshieh/elixir-tcp-accept-and-close
 
 If you are running Distillery, see further below. If you're using Mix, stay here.
 
