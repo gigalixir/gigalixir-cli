@@ -790,6 +790,8 @@ When running migrations, we need to know which internal app contains your migrat
 
 If you have multiple Distillery releases in your :bash:`rel/config.exs` file, be sure to set your default release to the one you want to deploy. See :ref:`gigalixir release options`.
 
+If you have multiple phoenix apps in the umbrella, you'll need to use something like this `master_proxy <https://github.com/jesseshieh/master_proxy>`_ to proxy requests to the two apps.
+
 .. _`heroku-buildpack-phoenix-static configuration`: https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration
 
 Can I deploy an app that isn't at the root of my repository?
@@ -1559,6 +1561,8 @@ Add a :bash:`GIGALIXIR_API_KEY` environment variable which you can find in your 
 Finally, add a :bash:`GIGALIXIR_APP_NAME` environment variable with the name of your app e.g. :bash:`real-hasty-fruitbat`
 
 Using GitLab CI or any other CI/CD service should be very similar. For an example GitLab CI yaml file, see this `.gitlab-ci.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.gitlab-ci.yml>`_ file.
+
+Using CircleCI is also similar. For an example, see this `config.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.circleci/config.yml>`_.
 
 If you want to automatically run migrations on each automatic deploy, you have two options
 
@@ -2486,6 +2490,8 @@ using the command below.
     gigalixir config:set GIGALIXIR_RELEASE_OPTIONS="--profile=$RELEASE_NAME:$RELEASE_ENVIRONMENT"
 
 With this config variable set on each of your gigalixir apps, when you deploy the same repo to each app, you'll get a different release.
+
+If you have multiple phoenix apps in the umbrella, instead of deploying each as a separate distillery release, you could also consider something like this `master_proxy <https://github.com/jesseshieh/master_proxy>`_ to proxy requests to the two apps.
 
 How secure is Gigalixir?
 ========================
