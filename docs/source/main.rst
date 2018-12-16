@@ -1310,6 +1310,10 @@ Common Errors
 
         - Try `cleaning your build cache`_. Looks like something changed in your app that makes the cache non-overwritable. 
 
+    - :elixir:`conn.remote_ip` has :elixir:`127.0.0.1` instead of the real client ip
+
+        - Try using https://github.com/kbrw/plug_forwarded_peer or otherwise use the :elixir:`X-Forwarded-For` header instead. Gigalixir apps run behind load balancers which write the real client ip in that header.
+
     - (File.Error) could not read file "foo/bar": no such file or directory
 
         - Often, this means that Distillery did not package the :bash:`foo` directory into your release tarball. Try using Distillery Overlays to add the :bash:`foo` directory. For example, adjusting your :bash:`rel/config.exs` to something like this
