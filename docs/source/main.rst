@@ -1194,12 +1194,12 @@ In your app code, access the environment variable using
 Troubleshooting
 ===============
 
-If you're app isn't working, the most likely thing you're seeing is 504 responses. If you're seeing 504s, you're in the right place.
+If your app isn't working and you're seeing either 504s or an "unhealthy" message, you're in the right place. The first places to check for clues are `gigalixir logs` and `gigalixir ps`. If nothing pops out at you there, keep reading.
 
 A 504 means that our load balancer isn't able to reach your app. This is usually because the app isn't running. An app that isn't running
 is usually failing health checks and we constantly restart apps that fail health checks in hopes that it will become healthy.
 
-If you've just deployed, and you're not seeing 504s, but you're still seeing the old version of your app instead of the new version, it's the same problem. This happens when the new version does not pass health checks. When the new version doesn't pass health checks, we don't route traffic to it and we don't terminate the old version. Take a look at `gigalixir ps` and `gigalixir logs` for clues as to what might be wrong.
+If you've just deployed, and you're not seeing 504s, but you're still seeing the old version of your app instead of the new version, it's the same problem. This happens when the new version does not pass health checks. When the new version doesn't pass health checks, we don't route traffic to it and we don't terminate the old version. 
 
 Our health checks simply check that your app is listening on port $PORT. If you're running a non-HTTP elixir app, but need to just get health checks to pass, take a look at https://github.com/jesseshieh/elixir-tcp-accept-and-close
 
