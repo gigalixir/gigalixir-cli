@@ -1341,6 +1341,10 @@ Common Errors
         - Google Cloud Engine does not allow certain email ports like 587. See https://cloud.google.com/compute/docs/tutorials/sending-mail/
           Try using port 2525. See https://cloud.google.com/compute/docs/tutorials/sending-mail/using-mailgun
 
+    - unknown command: MIX_ENV=prod mix phx.server
+
+        - If you are you are using a custom Procfile with an environment variables at the front of the command, you'll get this error. Try adding :bash:`env` to the front of the command. See https://github.com/ddollar/foreman/issues/265. We use the most command Ruby Foreman which behaves differently from Heroku's for this situation.
+
     - init terminating in do_boot ({cannot get bootfile,no_dot_erlang.boot})
 
         - This is an issue described here: https://github.com/bitwalker/distillery/issues/426
