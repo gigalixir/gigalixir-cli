@@ -175,6 +175,9 @@ def restart(host, app_name):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
 
 def rollback(host, app_name, version):
     if version == None:
@@ -186,6 +189,9 @@ def rollback(host, app_name, version):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
 
 def second_most_recent_version(host, app_name):
     r = requests.get('%s/api/apps/%s/releases' % (host, quote(app_name.encode('utf-8'))), headers = {
@@ -254,4 +260,7 @@ def delete(host, app_name):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
 

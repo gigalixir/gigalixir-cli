@@ -29,6 +29,9 @@ def create(host, app_name, key, value):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
 
 def create_multiple(host, app_name, configs):
     r = requests.post('%s/api/apps/%s/configs' % (host, quote(app_name.encode('utf-8'))), headers = {
@@ -40,6 +43,9 @@ def create_multiple(host, app_name, configs):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
 
 def copy(host, src_app_name, dst_app_name):
     r = requests.post('%s/api/apps/%s/configs/copy' % (host, quote(dst_app_name.encode('utf-8'))), headers = {
@@ -65,3 +71,6 @@ def delete(host, app_name, key):
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
