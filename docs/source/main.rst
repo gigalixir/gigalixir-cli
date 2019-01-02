@@ -1393,6 +1393,8 @@ The Gigalixir Command-Line Interface
 
 The Gigalixir Command-Line Interface or CLI is a tool you install on your local machine to control Gigalixir.
 
+.. _`installation`:
+
 How to Install the CLI
 ----------------------
 
