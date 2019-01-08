@@ -219,8 +219,6 @@ Modifying an Existing App to Run on Gigalixir
 
 Whether you have an existing app or you just ran :bash:`mix phx.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine.
 
-Important: Although Gigalixir works with all versions of Phoenix, these guides assume you are running Phoenix 1.3. If you need help with Phoenix 1.2 or 1.4, please `contact us`_. The :bash:`prod.exs` can be tricky.
-
 Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
 .. _`mix vs distillery`:
@@ -318,11 +316,18 @@ Specify Versions
 
 The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.0 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
 
-Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
+Create a file :bash:`elixir_buildpack.config` at the root of your repo and add something like this. Make sure it matches what you have in development to ensure a smooth deploy.
 
 .. code-block:: bash
 
-    elixir_version=1.7.2
+    elixir_version=1.7.4
+    erlang_version=21.0
+
+If necessary, you can also specify your node and npm versions by created a file called :bash:`phoenix_static_buildpack.config` with something like
+
+.. code-block:: bash
+
+    node_version=11.1.0
 
 Don't forget to commit
 
