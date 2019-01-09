@@ -1152,7 +1152,7 @@ Replica Sizing
 ==============
 
   - A replica is a docker container that your app runs in.
-  - Replica sizes are available in increments of 0.1 between 0.2 and 16. 
+  - Replica sizes are available in increments of 0.1 between 0.2 and 384, but for the higher sizes you'll need to `contact us`_ first.
   - 1 size unit is 1GB memory and 1 CPU share.
   - 1 CPU share is 200m as defined using `Kubernetes CPU requests`_ or roughly 20% of a core guaranteed.
 
