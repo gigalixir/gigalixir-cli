@@ -1785,8 +1785,18 @@ Note that if you want both the naked/root domain and a subdomain such as www, be
 How to Set Up SSL/TLS
 =====================
 
-SSL/TLS certificates are set up for you automatically assuming your custom domain is set up properly. You
-shouldn't have to lift a finger. For more information on how this works, see :ref:`how-tls-works`.
+SSL/TLS certificates are set up for you automatically assuming your custom domain is set up properly.  Note that your application will continue to be served on http as well as https.  If you want to force your users to use https by redirecting any http requests, specificy that in your `config/prod.exs`:
+
+.. code-block:: elixir
+
+    config :my_app, MyAppWeb.Endpoint,
+       force_ssl: [rewrite_on: [:x_forwarded_proto]]
+
+This configures your app to `check the x-forwarded-proto header`_ set by Gigalixir, and redirect to https, if appropriate.
+
+For more information on how this works internally, see :ref:`how-tls-works`.
+
+.. _`check the x-forwarded-proto header`: https://hexdocs.pm/plug/Plug.SSL.html#module-x-forwarded-proto
 
 .. _`tail logs`:
 .. _`logging`:
