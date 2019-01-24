@@ -261,6 +261,8 @@ Then append something like the following in :bash:`prod.exs`. Don't replace what
 .. code-block:: elixir
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
+       http: [port: {:system, "PORT"}], # Possibly not needed, but doesn't hurt
+       url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 80],
        secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
        server: true
  
@@ -437,7 +439,7 @@ Then add something like the following in :bash:`prod.exs`
        http: [port: {:system, "PORT"}], # Needed for Phoenix 1.2 and 1.4. Doesn't hurt for 1.3.
        server: true, # Without this line, your app will not start the web server!
        secret_key_base: "${SECRET_KEY_BASE}",
-       url: [host: "example.com", port: 80],
+       url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
        cache_static_manifest: "priv/static/cache_manifest.json"
  
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
