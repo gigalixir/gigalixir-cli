@@ -760,6 +760,8 @@ Your Elixir and Erlang versions are handled by the heroku-buildpack-elixir build
 
 Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpack. To configure, see the `heroku-buildpack-phoenix-static configuration`_. In short, you specify them in a :bash:`phoenix_static_buildpack.config` file.
 
+Supported elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
+
 .. _`heroku-buildpack-elixir configuration`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 
 How do I specify which buildpacks I want to use?
