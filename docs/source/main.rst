@@ -2531,6 +2531,43 @@ With this config variable set on each of your gigalixir apps, when you deploy th
 
 If you have multiple phoenix apps in the umbrella, instead of deploying each as a separate distillery release, you could also consider something like this `master_proxy <https://github.com/jesseshieh/master_proxy>`_ to proxy requests to the two apps.
 
+How do I use a private git dependency?
+======================================
+
+If you want to use a private git repository as a dependency in :bash:`mix.exs`, our recommended approach is to use the netrc buildpack found at https://github.com/timshadel/heroku-buildpack-github-netrc
+
+To use the buildpack, insert it in your :bash:`.buildpacks` file above the elixir and phoenix buildpacks. For example, if you are using distillery, your :bash:`.buildpacks` file will look like this
+
+.. code-block:: bash
+
+    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
+    https://github.com/timshadel/heroku-buildpack-github-netrc.git
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-distillery.git
+
+Next, create a personal access token by following https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
+
+Just make sure you give the token "repo" access so that it can access your private repository.
+
+Add your personal access token as a config var by running
+
+.. code-block:: bash
+
+    gigalixir config:set -a $APP_NAME GITHUB_AUTH_TOKEN="$GITHUB_TOKEN"
+
+The last step is to add the dependency to your :bash:`mix.exs` file. Add it as you would any other git dependency, but be sure you use the https url and not the ssh url. For example, 
+
+.. code-block:: elixir
+
+    {:foo, git: "https://github.com/jesseshieh/foo.git", override: true}
+
+That should be it. 
+
+Alternatively, you could also put your github username and personal access token directly into the git url, but it's generally not a good idea to check in secrets to source control. You could use :elixir:`System.get_env` interpolated inside the git url, but then you run the risk of the secrets getting saved to :bash:`mix.lock`.
+
+
+
 How secure is Gigalixir?
 ========================
 
