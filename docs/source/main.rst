@@ -2568,7 +2568,27 @@ That should be it.
 
 Alternatively, you could also put your github username and personal access token directly into the git url, but it's generally not a good idea to check in secrets to source control. You could use :elixir:`System.get_env` interpolated inside the git url, but then you run the risk of the secrets getting saved to :bash:`mix.lock`.
 
+How can I get the current SHA my app is running?
+================================================
 
+There are a number of environment variables set in your app container. :bash:`SOURCE_VERSION` contains your current SHA. 
+
+What environment variables are available to by app?
+===================================================
+
+SOURCE_VERSION contains the current SHA
+TODO: fill this in. 
+
+Does Gigalixir have any web hooks?
+==================================
+
+We haven't built-in any web hooks, but most of what you need can be accomplished with buildpacks at build time and distillery hooks or modifying your Procfile.
+
+To hit a web hook when building your app, you can use https://github.com/jesseshieh/buildpack-webhook
+
+For runtime prestart hooks, see https://hexdocs.pm/distillery/extensibility/boot_hooks.html
+
+Or if you aren't using distillery, see :ref:`custom procfile`. You can add any command you like.
 
 How secure is Gigalixir?
 ========================
