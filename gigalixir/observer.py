@@ -134,7 +134,7 @@ def ensure_port_free(port):
         # if the port is in use, then a pid is found, this "succeeds" and continues
         # if the port is free, then a pid is not found, this "fails" and raises a CalledProcessError
         pid = call("lsof -wni tcp:%(port)s -t" % {"port": port})
-        raise Exception("It looks like process %s is using port %s. Please kill this process and try again. e.g. `kill %s`" % (pid, port, pid))
+        raise Exception("It looks like process %s is using port %s on your local machine. We need this port to be able to connect observer. Please kill this process on your local machine and try again. e.g. `kill %s`" % (pid, port, pid))
     except subprocess.CalledProcessError:
         # success! continue
         pass
