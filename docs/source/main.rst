@@ -86,7 +86,7 @@ If you already have an account, skip this step.
 Log In
 ------
 
-Next, log in. This will grant you an api key which expires in 365 days. It will also optionally modify your ~/.netrc file so that all future commands are authenticated.
+Next, log in. This will grant you an api key. It will also optionally modify your ~/.netrc file so that all future commands are authenticated.
 
 .. code-block:: bash
 
@@ -623,7 +623,7 @@ Concepts
 --------
 
   - *User*: The user is you. When you sign up, we create a user.
-  - *API Key*: Every user has an API Key which is used to authenticate most API requests. You get one when you login and you can regenerate it at any time. It expires every 365 days.
+  - *API Key*: Every user has an API Key which is used to authenticate most API requests. You get one when you login and you can regenerate it at any time. It never expires.
   - *SSH Key*: SSH keys are what we use to authenticate you when SSHing to your containers. We use them for remote observer, remote console, etc.
   - *App*: An app is your Elixir application.
   - *Release*: A release is a combination of a slug and a config which is deployed to a run container.
@@ -2044,7 +2044,7 @@ How to Log In
 
     gigalixir login
 
-This modifies your ~/.netrc file so that future API requests will be authenticated. API keys expire after 365 days, but if you login again, you will automatically receive an we API key.
+This modifies your ~/.netrc file so that future API requests will be authenticated. API keys never expire, but can be revoked.
 
 
 .. _`provisioning free database`:
