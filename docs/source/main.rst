@@ -2577,7 +2577,24 @@ What environment variables are available to by app?
 ===================================================
 
 SOURCE_VERSION contains the current SHA
-TODO: fill this in. 
+
+HOST_INDEX contains the index of the replica. The hostname for each replica is randomly generated which can be a problem for services like DataDog and NewRelic who charge by the host. We also keep a sort of ordered list of your replicas that you can use to report hostnames to keep your number of hosts low. Each replica currently running will have a different HOST_INDEX, but once a replica is terminated, its HOST_INDEX can be re-used in another replica.
+
+APP_NAME contains your gigalixir app name.
+
+APP_KEY contains the app specific key you need to fetch information about your app from inside the replica. You probably don't need to use this unless you're doing something really low level, but it's there if you need it. 
+
+ERLANG_COOKIE contains a randomly generated UUID that we use as your erlang distribution cookie. We set it for you automatically and it's used in your default vm.args file so you don't need to mess with anything, but it's here if you should want to use it.
+
+LOGPLEX_TOKEN contains the app specific token we use to send your app logs to logplex. Logplex is our central log router which handles aggregating, draining, and tailing your logs. You can use this if you want to do something custom with logs that can't be done by printing to stdout from your app.
+
+MY_POD_IP contains your replica/container/pod's ip address.
+
+PORT contains the port your app needs to listen on to pass health checks and receive traffic. It is almost always 4000, but we reserve the right to change or randomize it.
+
+SECRET_KEY_BASE contains a randomly generated string that we use as your Elixir app's secret key base.
+
+HOME contains the location of your app's home directly. It is almost always /app, but we reserve the right to change it.
 
 Does Gigalixir have any web hooks?
 ==================================
