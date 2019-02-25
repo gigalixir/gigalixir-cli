@@ -930,13 +930,14 @@ def set_git_remote(ctx, app_name):
 @click.option('-n', '--name')
 @click.option('-c', '--cloud')
 @click.option('-r', '--region')
+@click.option('-s', '--stack')
 @click.pass_context
 @report_errors
-def create(ctx, name, cloud, region):
+def create(ctx, name, cloud, region, stack):
     """
     Create a new app.
     """
-    gigalixir_app.create(ctx.obj['host'], name, cloud, region)
+    gigalixir_app.create(ctx.obj['host'], name, cloud, region, stack)
 
 @cli.command(name='account:invoices')
 @click.pass_context
@@ -1040,3 +1041,14 @@ def pg_backups_restore(ctx, app_name, database_id, backup_id):
     """
     gigalixir_database.restore(ctx.obj['host'], app_name, database_id, backup_id)
 
+@cli.command(name='stack:set')
+@click.option('-a', '--app_name')
+@click.option('-s', '--stack', required=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def set_stack(ctx, app_name, stack):
+    """
+    Set your app stack.
+    """
+    gigalixir_app.set_stack(ctx.obj['host'], app_name, stack)

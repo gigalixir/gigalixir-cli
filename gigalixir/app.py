@@ -51,7 +51,7 @@ def set_git_remote(host, app_name):
     cast('git remote add gigalixir https://git.gigalixir.com/%s.git/' % app_name)
     logging.getLogger("gigalixir-cli").info("Set git remote: gigalixir.")
 
-def create(host, unique_name, cloud, region):
+def create(host, unique_name, cloud, region, stack):
     try:
         # check for git folder
         with open(os.devnull, 'w') as FNULL:
@@ -66,6 +66,8 @@ def create(host, unique_name, cloud, region):
         body["cloud"] = cloud
     if region != None:
         body["region"] = region
+    if stack != None:
+        body["stack"] = stack
     r = requests.post('%s/api/apps' % host, headers = {
         'Content-Type': 'application/json',
     }, json = body)
@@ -256,6 +258,21 @@ def delete(host, app_name):
     r = requests.delete('%s/api/apps/%s' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
+
+def set_stack(host, app_name, stack):
+    body = {}
+    if stack != None:
+        body["stack"] = stack
+    r = requests.put('%s/api/apps/%s/stack' % (host, quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    }, json = body)
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
