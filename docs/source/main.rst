@@ -2607,6 +2607,28 @@ For runtime prestart hooks, see https://hexdocs.pm/distillery/extensibility/boot
 
 Or if you aren't using distillery, see :ref:`custom procfile`. You can add any command you like.
 
+Can I choose my operating system, stack, or image?
+==================================================
+
+We have 3 stacks you can choose from: gigalixir-14, gigalixir-16, and gigalixir-18.
+These stacks are based on Heroku's cedar-14, heroku-16, and heroku-18, respectively which are based on Ubuntu 14, 16, and 18 respectively.
+
+You can choose your stack when you create your app with 
+
+.. code-block:: bash
+
+    gigalixir create --stack gigalixir-18
+    
+or you can change it later on with
+
+.. code-block:: bash
+
+    gigalixir stack:set --stack gigalixir-18
+
+You can see what stack you are running with :bash:`gigalixir apps:info` or :bash:`gigalixir ps`.
+
+For information about what packages are available in each stack, see https://devcenter.heroku.com/articles/stack-packages as well as the Dockerfiles at https://github.com/gigalixir/gigalixir-run
+
 How secure is Gigalixir?
 ========================
 
