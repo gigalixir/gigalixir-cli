@@ -22,9 +22,10 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 ## Testing
 
     # set up a virtualenv, then
-    source venv/bin/activate
+    source cli/bin/activate
     unset GIGALIXIR_ENV
     pip install -e .[dev]
+    pip install -e .[test]
     python setup.py test
 
     # for python3 
@@ -33,6 +34,7 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     python3 -m venv venv3
     source venv3/bin/activate
     pip3 install -e .[dev]
+    pip3 install -e .[test]
     python setup.py test
 
     # e2e tests

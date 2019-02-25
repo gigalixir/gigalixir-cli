@@ -32,8 +32,10 @@ setup(
             'Sphinx',
             'sphinx_rtd_theme',
         ],
-        'e2e': [
+        'test': [
             'pytest',
+            'HTTPretty',
+            'sure',
         ],
     }
 )
