@@ -1492,6 +1492,23 @@ Then upgrade.
 
     gigalixir account:upgrade
 
+How to Delete an Account
+========================
+
+If you just want to make sure you won't be billed anymore, run
+
+.. code-block:: bash
+
+    gigalixir apps
+
+And for every app listed, run
+
+.. code-block:: bash
+
+    gigalixir apps:destroy
+
+This will make sure you've deleted all domains, databases, etc and you won't be charged in the future.
+
 How to Create an App
 ====================
 
