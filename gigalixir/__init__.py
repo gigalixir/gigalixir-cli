@@ -18,6 +18,7 @@ from . import invoice as gigalixir_invoice
 from . import usage as gigalixir_usage
 from . import database as gigalixir_database
 from . import free_database as gigalixir_free_database
+from . import canary as gigalixir_canary
 import click
 import requests
 import getpass
@@ -1052,3 +1053,40 @@ def set_stack(ctx, app_name, stack):
     Set your app stack.
     """
     gigalixir_app.set_stack(ctx.obj['host'], app_name, stack)
+
+@cli.command(name='canary')
+@click.option('-a', '--app_name')
+@click.pass_context
+@report_errors
+@detect_app_name
+def canary(ctx, app_name):
+    """
+    Get canary
+    """
+    gigalixir_canary.get(ctx.obj['host'], app_name)
+
+@cli.command(name='canary:set')
+@click.option('-a', '--app_name')
+@click.option('-c', '--canary_name')
+@click.option('-w', '--weight', type=int)
+@click.pass_context
+@report_errors
+@detect_app_name
+def set_canary(ctx, app_name, canary_name, weight):
+    """
+    Set a canary and weight for your app.
+    """
+    gigalixir_canary.set(ctx.obj['host'], app_name, canary_name, weight)
+
+@cli.command(name='canary:unset')
+@click.option('-a', '--app_name')
+@click.option('-c', '--canary_name', required=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def unset_canary(ctx, app_name, canary_name):
+    """
+    Unset a canary for your app.
+    """
+    gigalixir_canary.delete(ctx.obj['host'], app_name, canary_name)
+

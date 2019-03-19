@@ -1,5 +1,5 @@
 erl_crash.dump
-venv
+cli/
 gigalixir-cli
 *.egg-info
 *.pyc
