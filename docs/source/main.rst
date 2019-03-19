@@ -815,6 +815,58 @@ If you just want to push a subtree, try
 If you want to push the entire repo, but run the app from a subfolder, it becomes a bit trickier, but this pull request should help you.
 https://github.com/jesseshieh/nonroot/pull/1/files
 
+How to do blue-green or canary deploys?
+=======================================
+
+This feature is in beta as of 3/19/2019. You'll need the CLI v1.0.19 or later.
+
+Apps on Gigalixir can be assigned another app as its canary. An arbitrary weight can also be assigned to control the traffic between the two apps. For example, if you have :bash:`my-app` with a canary assigned to it called :bash:`my-app-canary` with weight of 10, then :bash:`my-app` will receive 90% of the traffic and :bash:`my-app-canary` will receive 10% of the traffic. If you want to do blue-green deploys, simply flip the traffic between 0 and 100 to control which app receives the traffic. For example,
+
+.. code-block:: bash
+
+    # create the "blue" app
+    gigalixir create --name my-app-blue
+    git remote rename gigalixir blue
+
+    # create the "green" app
+    gigalixir create --name my-app-green
+    git remote rename gigalixir green
+
+    # deploy the app to blue
+    git push blue master
+
+    # wait a few minutes and ensure the app is running
+    curl https://my-app-blue.gigalixirapp.com/
+
+    # deploy the app to green
+    git push green master
+
+    # wait a few minutes to ensure the app is running
+    curl https://my-app-green.gigalixirapp.com/
+
+    # watch the logs on both apps
+    gigalixir logs -a my-app-blue
+    gigalixir logs -a my-app-green
+
+    # set the canary, this should have no effect because the weight is 0
+    gigalixir canary:set -a my-app-blue -c my-app-green -w 0
+
+    # increase the weight to the canary
+    gigalixir canary:set -a my-app-blue -w 10
+
+    # ensure traffic is split as expected by watching the logs
+    # flip traffic completely to green
+    gigalixir canary:set -a my-app-blue -w 100
+
+    # ensure traffic is going totally to green by watching the logs
+    # to delete a canary, run
+    gigalixir canary:unset -a my-app-blue -c my-app-green
+
+Notice that with canaries, only the domain for :bash:`my-app-blue` gets redirected. Traffic to my-app-green.gigalixirapp.com goes entirely to :bash:`my-app-green`.
+
+If you have custom domains defined on :bash:`my-app-blue`, traffic to those will also be shaped by the canary, but custom domains on :bash:`my-app-green` will still go entirely to :bash:`my-app-green`.
+
+
 Frequently Asked Questions
 ==========================
 
