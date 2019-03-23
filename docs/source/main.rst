@@ -2492,9 +2492,11 @@ In order to run a remote observer, you need to set up your SSH keys. It could ta
 
 Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have clustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`clustering`.
 
-You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file. Phoenix 1.3 adds it by default, but you have to add it youself in Phoenix 1.2.
+You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file. Phoenix 1.3 and later adds it by default, but you have to add it youself in Phoenix 1.2.
 
 Your local machine also needs to have :bash:`lsof`.
+
+You should also make sure your app has enough memory. Even though observer itself is running on your local machine, the remote machine still needs quite a bit of memory. For a basic app, make sure you have at least 500mb memory (size 0.5).
 
 Then, to launch observer and connect it to a production node, run
 
@@ -2681,12 +2683,13 @@ Can I choose my operating system, stack, or image?
 
 We have 3 stacks you can choose from: gigalixir-14, gigalixir-16, and gigalixir-18.
 These stacks are based on Heroku's cedar-14, heroku-16, and heroku-18, respectively which are based on Ubuntu 14, 16, and 18 respectively.
+gigalixir-18 is the default.
 
 You can choose your stack when you create your app with 
 
 .. code-block:: bash
 
-    gigalixir create --stack gigalixir-18
+    gigalixir create --stack gigalixir-16
     
 or you can change it later on with
 
