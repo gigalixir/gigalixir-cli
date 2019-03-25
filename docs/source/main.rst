@@ -2484,6 +2484,8 @@ To see things like which account you are logged in as, what tier you are on, and
 How to Launch a Remote Observer
 ===============================
 
+To connect a remote observer, you need to be using Distillery. See :ref:`mix vs distillery`.
+
 In order to run a remote observer, you need to set up your SSH keys. It could take up to a minute for the SSH keys to update in your containers.
 
 .. code-block:: bash
