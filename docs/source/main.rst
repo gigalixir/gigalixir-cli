@@ -1338,7 +1338,7 @@ In case static assets don't show up, you can try the following and then re-run t
 
     cd assets
     npm install
-    node_modules/brunch/bin/brunch build --production
+    npm run deploy
     cd ..
     mix phx.digest
 
