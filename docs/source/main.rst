@@ -2646,7 +2646,7 @@ How can I get the current SHA my app is running?
 
 There are a number of environment variables set in your app container. :bash:`SOURCE_VERSION` contains your current SHA. 
 
-What environment variables are available to by app?
+What environment variables are available to my app?
 ===================================================
 
 SOURCE_VERSION contains the current SHA
