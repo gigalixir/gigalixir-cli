@@ -734,7 +734,7 @@ Yes, if your current infrastructure is on AWS, you'll probably want to run your 
 
 Once the app is created, it's difficult to migrate to another region. If you want to do this, Heroku's guide is a good overview of what you should consider. If you don't mind downtime, the transition could be easy, but unfortunately gigalixir isn't able to do it for you with a button press. See https://devcenter.heroku.com/articles/app-migration
 
-One thing to keep in mind is that Gigalixir Postgres databases are as o right now only available in GCP/v2018-us-central1 so if you plan to use a Gigalixir-managed database, make sure your app lives in the default cloud and region.
+One thing to keep in mind is that Gigalixir Postgres databases are as of right now only available in GCP/v2018-us-central1 so if you plan to use a Gigalixir-managed database, make sure your app lives in the default cloud and region.
 
 If you don't see the region you want, please `contact us`_ and let us know. We open new regions based purely on demand.
 
