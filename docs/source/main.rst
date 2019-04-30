@@ -2322,7 +2322,7 @@ Note: You can also use Amazon RDS, but we do not have instructions provided yet.
    #. Choose us-central1 as the Region.
    #. Choose how many cores, memory, and disk.
    #. In "Default user password", click "Generate" and save it somewhere secure.
-   #. In "Authorized networks", click "Add network" and enter "0.0.0.0/0" in the "Network" field. It will be encrypted with TLS and authenticated with a password so it should be okay to make the instance publically accessible. Click "Done".
+   #. In "Authorized networks", click "Add network" and enter "0.0.0.0/0" in the "Network" field. It will be encrypted with TLS and authenticated with a password so it should be okay to make the instance publicly accessible. Click "Done".
 
 #. Click "Create".
 #. Wait for the database to create.
