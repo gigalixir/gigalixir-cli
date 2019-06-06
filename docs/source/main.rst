@@ -1891,7 +1891,7 @@ If you want to forward your logs to another service such as `Timber`_ or `PaperT
 .. code-block:: bash
 
     gigalixir drains:add $URL
-    # e.g. gigalixir drains:add https://$TIMBER_API_KEY@logs.timber.io/frames
+    # e.g. gigalixir drains:add https://$TIMBER_USER:$TIMBER_API_KEY@logs.timber.io/sources/$TIMBER_SOURCE_ID/frames
     # e.g. gigalixir drains:add syslog+tls://logs123.papertrailapp.com:12345
 
 To show all your drains, run
