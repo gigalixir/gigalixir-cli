@@ -360,11 +360,13 @@ def wait_for_deleted_database(runner, app_name, database_id):
             result = runner.invoke(gigalixir.cli, ['pg', '-a', app_name])
             assert result.exit_code == 0
             output = json.loads(result.output)
+            found = False
             for entry in output:
                 if entry["id"] == database_id:
-                    if entry["state"] == "DELETED":
-                        logging.info('Pass.')
-                        return
+                    found = True
+            if not found:
+                logging.info('Pass.')
+                return
             logging.info('Waiting 30 seconds to try again.')
             time.sleep(30)
     else:
