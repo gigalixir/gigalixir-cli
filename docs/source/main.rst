@@ -2060,7 +2060,7 @@ To run a command in your app container, run
 .. code-block:: bash
 
     gigalixir ps:run $COMMAND
-    # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app command Elixir.Tasks migrate`
+    # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app eval 'IO.inspect Node.self'`
     # if you're using mix, you'll probably want $COMMAND to be something like :bash:`mix ecto.migrate`
 
 To run a command in a separate container, run
@@ -2068,7 +2068,7 @@ To run a command in a separate container, run
 .. code-block:: bash
 
     gigalixir run $COMMAND
-    # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app command Elixir.Tasks migrate`
+    # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app eval 'IO.inspect Node.self'`
     # if you're using mix, you'll probably want $COMMAND to be something like :bash:`mix ecto.migrate`
 
 .. For an example task, see `gigalixir-getting-started's migrate task`_.
