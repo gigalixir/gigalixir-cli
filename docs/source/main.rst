@@ -223,18 +223,24 @@ Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
 .. _`mix vs distillery`:
 
-Mix vs Distillery
------------------
+Mix vs Distillery vs Elixir Releases
+------------------------------------
 
-It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also just use mix which you're probably already used to from development. Deploying with mix is simpler and easier, but you can't do hot upgrades, clustering, remote observer, and maybe a few other things.
+It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also use mix or elixir releases (new in Elixir 1.9). 
 
-On the other hand, if you deploy with distillery, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be more confusing in some cases.
+You're probably already used to mix from development and deploying with mix is simpler and easier, but you can't do hot upgrades, clustering, remote observer, and maybe a few other things. 
+
+Elixir releases is still very new and doesn't support hot upgrades, but it is built-in to Elixir so you don't have to add an extra dependency such as distillery to get clustering, remote console, observer, etc.
+
+If you deploy with distillery, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be confusing in some cases.
 
 If you don't know which to choose, we generally recommend going with distillery because.. why use elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir ps:migrate`, that makes it easy to run migrations without mix.
 
 If you choose mix, see :ref:`modifying existing app with mix`.
 
 If you choose distillery, see :ref:`modifying existing app with distillery`.
+
+If you choose elixir releases, see :ref:`modifying existing app with elixir releases`.
 
 .. _`modifying existing app with mix`:
 
@@ -316,7 +322,7 @@ Don't forget to commit
 Specify Versions
 ^^^^^^^^^^^^^^^^
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.0 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
 
 Create a file :bash:`elixir_buildpack.config` at the root of your repo and add something like this. Make sure it matches what you have in development to ensure a smooth deploy.
 
@@ -488,7 +494,7 @@ Don't forget to commit
 Specify Versions
 ^^^^^^^^^^^^^^^^
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.0 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
 
 Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
 
@@ -592,6 +598,121 @@ Set Up Hot Upgrades with Git v2.9.0
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir master`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
+
+.. _`modifying existing app with elixir releases`:
+
+Using Elixir Releases
+---------------------
+
+Gigalixir auto-detects that you want to use Elixir Releases if you have a :bash:`config/releases.exs` file, so let's create one.
+
+.. code-block:: bash
+
+    echo "import Config" > config/releases.exs
+
+Configuration and Secrets
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
+
+The only configuration change we really need to do now is make sure the web server is started. Add the following to your :bash:`releases.exs`.
+
+.. code-block:: bash
+
+     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
+       server: true,
+       url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443]
+
+1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
+2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like
+
+   .. code-block:: bash
+
+     grep -R "defmodule.*Endpoint" lib/
+
+   Phoenix 1.2, 1.3, and 1.4 give different names so this is a common source of errors.
+
+If you're using a free tier database, be sure to also set your pool size to 2 in :bash:`prod.secret.exs`.
+
+You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
+
+.. code-block:: bash
+
+    gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
+
+Specify Versions
+^^^^^^^^^^^^^^^^
+
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. Since we're using Elixir Releases, we need to use 1.9 or higher and a compatible version of erlang such as 21.3.
+
+Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
+
+.. code-block:: bash
+
+    elixir_version=1.9
+    erlang_version=21.3
+
+Don't forget to commit
+
+.. code-block:: bash
+
+    git add elixir_buildpack.config
+    git commit -m "use elixir v1.9"
+
+Verify
+^^^^^^
+
+Let's make sure everything works.
+
+First, try generating building static assets
+
+.. code-block:: bash
+
+    mix deps.get
+
+    # generate static assets
+    cd assets
+    npm install
+    npm run deploy
+    cd ..
+    mix phx.digest
+
+and building a release locally
+
+.. code-block:: bash
+
+    export SECRET_KEY_BASE="$(mix phx.gen.secret)" 
+    export DATABASE_URL="postgresql://user:pass@localhost:5432/foo"
+    MIX_ENV=prod mix release 
+
+and running it locally
+
+.. code-block:: bash
+
+    MIX_ENV=prod APP_NAME=gigalixir_getting_started PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started start
+
+Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
+
+Check it out.
+
+.. code-block:: bash
+
+    curl localhost:4000
+
+If that didn't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
+
+Also check out :ref:`troubleshooting`.
+
+If it still doesn't work, don't hesitate to `contact us`_.
+
+If everything works, commit the changes
+
+.. code-block:: bash
+
+    git add config/prod.exs assets/package-lock.json config/releases.exs
+    git commit -m 'releases configuration'
+
+Continue to :ref:`set up deploys`.
 
 How Does Gigalixir Work?
 ========================
