@@ -544,14 +544,14 @@ To run hot upgrades, you send an extra http header when running :bash:`git push 
 Using Elixir Releases
 ---------------------
 
+Configuration and Secrets
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Gigalixir auto-detects that you want to use Elixir Releases if you have a :bash:`config/releases.exs` file, so let's create one.
 
 .. code-block:: bash
 
     echo "import Config" > config/releases.exs
-
-Configuration and Secrets
-^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
