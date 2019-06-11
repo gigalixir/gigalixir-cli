@@ -252,15 +252,7 @@ For an example app that uses mix and works on gigalixir, see https://github.com/
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, Phoenix creates a :bash:`prod.secret.exs` file to store secrets. If you want to continue using :bash:`prod.secret.exs` you'll have to commit it to version control. This is usually not a good idea, though.
-
-Gigalixir prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`config/prod.exs` file, and modify the values to pull from environment variables.
-
-Open your :bash:`config/prod.exs` file and delete the following line if it is there
-
-.. code-block:: elixir
-
-    import_config "prod.secret.exs"
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
 Then append something like the following in :bash:`prod.exs`. Don't replace what you already have, just add this to the bottom.
 
@@ -288,11 +280,7 @@ Then append something like the following in :bash:`prod.exs`. Don't replace what
    Phoenix 1.2, 1.3, and 1.4 give different names so this is a common source of errors.
 3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
 
-You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
-
-.. code-block:: bash
-
-    gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
+You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. 
 
 Don't forget to commit your changes
 
@@ -300,24 +288,6 @@ Don't forget to commit your changes
 
     git add config/prod.exs
     git commit -m "setup production deploys"
-
-Setup Static Assets
-^^^^^^^^^^^^^^^^^^^
-
-The `phoenix static buildpack <https://github.com/gjaldon/heroku-buildpack-phoenix-static>`_ still uses brunch at the moment until `this issue <https://github.com/gjaldon/heroku-buildpack-phoenix-static/issues/75>`_ closes. If you're on Phoenix 1.3 or lower, you should be fine. If you're on Phoenix 1.4, you need to configure it to use webpack by creating a file at the root of your repository called :bash:`compile` with these contents
-
-.. code-block:: bash
-
-    npm run deploy
-    cd $phoenix_dir
-    mix "${phoenix_ex}.digest"
-
-Don't forget to commit
-
-.. code-block:: bash
-
-    git add compile
-    git commit -m "use webpack for static assets instead of brunch"
 
 Specify Versions
 ^^^^^^^^^^^^^^^^
@@ -426,15 +396,7 @@ Don't forget to commit
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, Phoenix creates a :bash:`prod.secret.exs` file to store secrets. If you want to continue using :bash:`prod.secret.exs` you'll have to commit it to version control so we can bundle it into your release. This is usually not a good idea, though.
-
-Gigalixir prefers that you use environment variables for secrets and configuration. To do this, you'll want to delete your :bash:`prod.secret.exs` file, move the contents to your :bash:`config/prod.exs` file, and modify the values to pull from environment variables.
-
-Open your :bash:`config/prod.exs` file and delete the following line if it is there
-
-.. code-block:: elixir
-
-    import_config "prod.secret.exs"
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
 Then add something like the following in :bash:`prod.exs`
 
@@ -467,29 +429,7 @@ Then add something like the following in :bash:`prod.exs`
    Phoenix 1.2, 1.3, and 1.4 give different names so this is a common source of errors.
 3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
 
-You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
-
-.. code-block:: bash
-
-    gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
-
-Setup Static Assets
-^^^^^^^^^^^^^^^^^^^
-
-The `phoenix static buildpack <https://github.com/gjaldon/heroku-buildpack-phoenix-static>`_ still uses brunch at the moment until `this issue <https://github.com/gjaldon/heroku-buildpack-phoenix-static/issues/75>`_ closes. If you're on Phoenix 1.3 or lower, you should be fine. If you're on Phoenix 1.4, you need to configure it to use webpack by creating a file at the root of your repository called :bash:`compile` with these contents
-
-.. code-block:: bash
-
-    npm run deploy
-    cd $phoenix_dir
-    mix "${phoenix_ex}.digest"
-
-Don't forget to commit
-
-.. code-block:: bash
-
-    git add compile
-    git commit -m "use webpack for static assets instead of brunch"
+You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. 
 
 Specify Versions
 ^^^^^^^^^^^^^^^^
@@ -1411,7 +1351,13 @@ If you've just deployed, and you're not seeing 504s, but you're still seeing the
 
 Our health checks simply check that your app is listening on port $PORT. If you're running a non-HTTP elixir app, but need to just get health checks to pass, take a look at https://github.com/jesseshieh/elixir-tcp-accept-and-close
 
-If you are running Distillery, see further below. If you're using Mix, stay here.
+If you're using Mix, see `troubleshooting mix`_. 
+
+If you're using Distillery, see `troubleshooting distillery`_. 
+
+If you're using Elixir Releases, see `troubleshooting elixir releases`_. 
+
+.. _`troubleshooting mix`:
 
 Mix
 ---
@@ -1432,6 +1378,10 @@ If everything works locally, you might be running a different version of elixir 
 
 Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
 
+If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
+
+.. _`troubleshooting distillery`:
+
 Distillery
 ----------
 
@@ -1445,6 +1395,68 @@ First, try generating and running a Distillery release locally by running
     SECRET_KEY_BASE="$(mix phx.gen.secret)"
     MIX_ENV=prod mix release --env=prod
     DATABASE_URL="postgresql://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
+    curl localhost:4000
+
+Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
+
+You can safely ignore Kubernetes errors like :bash:`[libcluster:k8s_example]` errors because you probably aren't running inside Kubernetes.
+
+If they don't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
+
+In case static assets don't show up, you can try the following and then re-run the commands above.
+
+.. code-block:: bash
+
+    cd assets
+    npm install
+    npm run deploy
+    cd ..
+    mix phx.digest
+
+If your problem is with one of the buildpacks, try running the full build using Docker and Herokuish by running
+
+.. code-block:: bash
+
+    APP_ROOT=$(pwd)
+    rm -rf /tmp/gigalixir/cache
+    rm -rf _build
+    mkdir -p /tmp/gigalixir/cache
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish
+
+Or to inspect closer, run
+
+.. code-block:: bash
+
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/herokuish
+
+    # and then inside the container run
+    build-slug
+
+    # inspect /app folder
+    # check /tmp/cache
+
+If everything works locally, you might be running a different version of elixir in production. See :ref:`configure versions`.
+
+Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
+
+If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
+
+.. _`troubleshooting elixir releases`:
+
+Elixir Releases
+---------------
+
+If you're having trouble getting things working, you can verify a few things locally.
+
+First, try generating and running a release locally by running
+
+.. code-block:: bash
+
+    mix deps.get
+    SECRET_KEY_BASE="$(mix phx.gen.secret)"
+    DATABASE_URL="postgresql://user:pass@localhost:5432/foo" 
+    MIX_ENV=prod mix release
+    APP_NAME=gigalixir_getting_started PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started start
     curl localhost:4000
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
