@@ -199,7 +199,7 @@ def detect_app():
             repo_name = repo_name[:git_pos]
         return repo_name
     except (AttributeError, subprocess.CalledProcessError):
-        raise Exception("Could not detect app name. Try passing the app name explicitly with the `-a` flag.")
+        raise Exception("Could not detect app name. Try passing the app name explicitly with the `-a` flag or create an app with `gigalixir create`.")
 
 @click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
 # @click.group(cls=CatchAllExceptions(AliasedGroup, handler=handle_exception), context_settings=CONTEXT_SETTINGS)
