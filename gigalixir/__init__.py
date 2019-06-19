@@ -810,7 +810,7 @@ def delete_database(ctx, app_name, yes, database_id):
     """
     Delete database. Find the database id by running `gigalixir pg`
     """
-    logging.getLogger("gigalixir-cli").info("WARNING: Deleting your database will all your data and backups.")
+    logging.getLogger("gigalixir-cli").info("WARNING: Deleting your database will destroy all your data and backups.")
     logging.getLogger("gigalixir-cli").info("WARNING: This can not be undone.")
     logging.getLogger("gigalixir-cli").info("WARNING: Please make sure you backup your data first.")
     if yes or click.confirm('Do you want to delete your database and all backups?'):
