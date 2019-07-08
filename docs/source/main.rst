@@ -372,16 +372,15 @@ In short, you'll need to add something like this to the :elixir:`deps` list in :
 
 .. code-block:: elixir
 
-    {:distillery, "~> 1.5.5"}
-
-Note: Distillery 2.0 will also work and we've done our best to test it thoroughly on gigalixir, but it's pretty new so there may still be some rough edges.
+    {:distillery, "~> 2.0"}
 
 Then, run
 
 .. code-block:: bash
 
     mix deps.get
-    mix release.init
+    mix distillery.init
+    # if you are running distillery below verison 2.1, you'll want to run `mix release.init` instead
 
 Don't forget to commit
 
@@ -471,7 +470,8 @@ and building a Distillery release locally
 
 .. code-block:: bash
 
-    MIX_ENV=prod mix release --env=prod
+    MIX_ENV=prod mix distillery.release --env=prod
+    # if you are running distillery below version 2.1, you'll want to run this instead: MIX_ENV=prod mix release --env=prod
 
 and running it locally
 
@@ -623,7 +623,8 @@ and building a release locally
 
     export SECRET_KEY_BASE="$(mix phx.gen.secret)" 
     export DATABASE_URL="postgresql://user:pass@localhost:5432/foo"
-    MIX_ENV=prod mix release 
+    MIX_ENV=prod mix distillery.release 
+    # if you are running distillery below version 2.1, you'll want to run this instead: MIX_ENV=prod mix release 
 
 and running it locally
 
@@ -720,8 +721,13 @@ By default, the buildpacks we use include
 
   - https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
-    - To run mix release
+    - To run mix release or mix distillery.release
     - This is only run if you have a rel/config.exs file present.
+
+  - https://github.com/gigalixir/gigalixir-buildpack-releases
+
+    - To run mix release if you are running Elixir 1.9 and using the built-in releases
+    - This is only run if you have a config/releases.exs file present.
 
   - https://github.com/gigalixir/gigalixir-buildpack-mix.git
 
@@ -1393,7 +1399,8 @@ First, try generating and running a Distillery release locally by running
 
     mix deps.get
     SECRET_KEY_BASE="$(mix phx.gen.secret)"
-    MIX_ENV=prod mix release --env=prod
+    MIX_ENV=prod mix distillery.release --env=prod
+    # if you are a running distillery below version 2.1, then run: MIX_ENV=prod mix release --env=prod
     DATABASE_URL="postgresql://user:pass@localhost:5432/foo" APP_NAME=gigalixir_getting_started MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
     curl localhost:4000
 
@@ -2728,7 +2735,7 @@ How to specify which Distillery release, environment, or profile to build
 =========================================================================
 
 If you have multiple releases defined in :bash:`rel/config.exs`, which is common for umbrella apps, you can specify which release to build
-by setting a config variable on your app that controls the options passed to `mix release`. For example, you can pass the `--profile` option
+by setting a config variable on your app that controls the options passed to `mix distillery.release`. For example, you can pass the `--profile` option
 using the command below.
 
 .. code-block:: bash
