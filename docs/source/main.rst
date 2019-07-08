@@ -372,7 +372,9 @@ In short, you'll need to add something like this to the :elixir:`deps` list in :
 
 .. code-block:: elixir
 
-    {:distillery, "~> 2.0"}
+    {:distillery, "~> 2.1"}
+
+Important: If you are running elixir 1.9, then you *must* use distillery 2.1 or greater. Elixir 1.9 and distillery below 2.1 both use `mix release` and elixir's always takes precedence. Distillery 2.1 renames the task to `mix distillery.release`.
 
 Then, run
 
@@ -471,7 +473,7 @@ and building a Distillery release locally
 .. code-block:: bash
 
     MIX_ENV=prod mix distillery.release --env=prod
-    # if you are running distillery below version 2.1, you'll want to run this instead: MIX_ENV=prod mix release --env=prod
+    # if you are running distillery below 2.1, you'll want to run this instead: MIX_ENV=prod mix release --env=prod
 
 and running it locally
 
@@ -624,7 +626,7 @@ and building a release locally
     export SECRET_KEY_BASE="$(mix phx.gen.secret)" 
     export DATABASE_URL="postgresql://user:pass@localhost:5432/foo"
     MIX_ENV=prod mix distillery.release 
-    # if you are running distillery below version 2.1, you'll want to run this instead: MIX_ENV=prod mix release 
+    # if you are running distillery below 2.1, you'll want to run this instead: MIX_ENV=prod mix release 
 
 and running it locally
 
@@ -1400,7 +1402,7 @@ First, try generating and running a Distillery release locally by running
     mix deps.get
     SECRET_KEY_BASE="$(mix phx.gen.secret)"
     MIX_ENV=prod mix distillery.release --env=prod
-    # if you are a running distillery below version 2.1, then run: MIX_ENV=prod mix release --env=prod
+    # if you are a running distillery below 2.1, then run: MIX_ENV=prod mix release --env=prod
     DATABASE_URL="postgresql://user:pass@localhost:5432/foo" APP_NAME=gigalixir_getting_started MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
     curl localhost:4000
 
