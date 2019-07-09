@@ -38,7 +38,13 @@ def psql(host, app_name):
             click.echo("Sorry, no databases found.")
         else:
             url = urls[0]["url"]
-            os.execlp("psql", "psql", url)
+            try:
+                os.execlp("psql", "psql", url)
+            except OSError as e:
+                if e.errno == os.errno.ENOENT:
+                    raise Exception("Sorry, we could not find psql. Try installing it and try again.")
+                else:
+                    raise
 
 def create(host, app_name, size):
     r = requests.post('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {

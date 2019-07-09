@@ -10,6 +10,7 @@ from .shell import cast, call
 from . import auth
 from . import presenter
 from . import ssh_key
+from . import git
 from contextlib import closing
 from six.moves.urllib.parse import quote
 
@@ -38,12 +39,7 @@ def info(host, app_name):
         presenter.echo_json(data)
 
 def set_git_remote(host, app_name):
-    try:
-        # check for git folder
-        with open(os.devnull, 'w') as FNULL:
-            subprocess.check_call('git rev-parse --is-inside-git-dir'.split(), stdout=FNULL, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError:
-        raise Exception("You must call this from inside a git repository.")
+    git.check_for_git()
 
     remotes = call('git remote').splitlines()
     if 'gigalixir' in remotes:
@@ -52,12 +48,7 @@ def set_git_remote(host, app_name):
     logging.getLogger("gigalixir-cli").info("Set git remote: gigalixir.")
 
 def create(host, unique_name, cloud, region, stack):
-    try:
-        # check for git folder
-        with open(os.devnull, 'w') as FNULL:
-            subprocess.check_call('git rev-parse --is-inside-git-dir'.split(), stdout=FNULL, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError:
-        raise Exception("You must call this from inside a git repository.")
+    git.check_for_git()
 
     body = {}
     if unique_name != None:
