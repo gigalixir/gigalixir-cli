@@ -625,8 +625,7 @@ and building a release locally
 
     export SECRET_KEY_BASE="$(mix phx.gen.secret)" 
     export DATABASE_URL="postgresql://user:pass@localhost:5432/foo"
-    MIX_ENV=prod mix distillery.release 
-    # if you are running distillery below 2.1, you'll want to run this instead: MIX_ENV=prod mix release 
+    MIX_ENV=prod mix release 
 
 and running it locally
 
