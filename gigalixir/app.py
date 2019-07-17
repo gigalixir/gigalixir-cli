@@ -10,7 +10,7 @@ from .shell import cast, call
 from . import auth
 from . import presenter
 from . import ssh_key
-from . import git
+#from . import git
 from contextlib import closing
 from six.moves.urllib.parse import quote
 
@@ -39,7 +39,7 @@ def info(host, app_name):
         presenter.echo_json(data)
 
 def set_git_remote(host, app_name):
-    git.check_for_git()
+    #git.check_for_git()
 
     remotes = call('git remote').splitlines()
     if 'gigalixir' in remotes:
@@ -48,7 +48,7 @@ def set_git_remote(host, app_name):
     logging.getLogger("gigalixir-cli").info("Set git remote: gigalixir.")
 
 def create(host, unique_name, cloud, region, stack):
-    git.check_for_git()
+    #git.check_for_git()
 
     body = {}
     if unique_name != None:

@@ -1,8 +1,10 @@
 from .shell import cast, call
 from .routers.linux import LinuxRouter
 from .routers.darwin import DarwinRouter
+from .routers.windows import WindowsRouter
 from .openers.linux import LinuxOpener
 from .openers.darwin import DarwinOpener
+from .openers.windows import WindowsOpener
 from . import observer as gigalixir_observer
 from . import user as gigalixir_user
 from . import app as gigalixir_app
@@ -19,7 +21,7 @@ from . import usage as gigalixir_usage
 from . import database as gigalixir_database
 from . import free_database as gigalixir_free_database
 from . import canary as gigalixir_canary
-from . import git
+#from . import git
 import click
 import requests
 import getpass
@@ -33,6 +35,7 @@ import logging
 import json
 import netrc
 import os
+import platform
 from functools import wraps
 import pkg_resources
 
@@ -185,7 +188,7 @@ class AliasedGroup(click.Group):
 
 def detect_app():
     try:
-        git.check_for_git()
+        #git.check_for_git()
         remote = call("git remote -v")
         # matches first instance of
         # git.gigalixir.com/foo.git
@@ -220,13 +223,20 @@ def cli(ctx, env):
 
     ctx.obj['host'] = host
 
-    PLATFORM = call("uname -s").lower() # linux or darwin
+    PLATFORM = platform.system().lower() # linux, darwin, or windows
     if PLATFORM == "linux":
         ctx.obj['router'] = LinuxRouter()
         ctx.obj['opener'] = LinuxOpener()
     elif PLATFORM == "darwin":
         ctx.obj['router'] = DarwinRouter()
         ctx.obj['opener'] = DarwinOpener()
+    elif PLATFORM == "windows":
+        try:
+            os.environ['HOME']
+        except KeyError:
+            os.environ['HOME'] = os.environ['USERPROFILE']
+        ctx.obj['router'] = WindowsRouter()
+        ctx.obj['opener'] = WindowsOpener()
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
 

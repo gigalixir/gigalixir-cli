@@ -6,6 +6,13 @@ import gigalixir
 import click
 from click.testing import CliRunner
 import httpretty
+import platform
+
+def netrc_name():
+    if platform.system().lower() == 'windows':
+        return "_netrc"
+    else:
+        return ".netrc"
 
 @httpretty.activate
 def test_create_user():
@@ -23,7 +30,7 @@ def test_logout():
     # Make sure this test does not modify the user's netrc file.
     with runner.isolated_filesystem():
         os.environ['HOME'] = '.'
-        with open('.netrc', 'w') as f:
+        with open(netrc_name(), 'w') as f:
             f.write("""machine api.gigalixir.com
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
@@ -34,11 +41,11 @@ machine github.com
 \tlogin foo
 \tpassword fake-password
 """)
-            os.chmod(".netrc", 0o600)
+            os.chmod(netrc_name(), 0o600)
         result = runner.invoke(gigalixir.cli, ['logout'])
         assert result.output == ''
         assert result.exit_code == 0
-        with open('.netrc') as f:
+        with open(netrc_name()) as f:
             assert f.read() == """machine github.com
 \tlogin foo
 \tpassword fake-password
@@ -54,7 +61,7 @@ def test_login():
         os.environ['HOME'] = '.'
         result = runner.invoke(gigalixir.cli, ['login', '--email=foo@gigalixir.com'], input="password\ny\n")
         assert result.exit_code == 0
-        with open('.netrc') as f:
+        with open(netrc_name()) as f:
             assert f.read() == """machine api.gigalixir.com
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
@@ -75,7 +82,7 @@ def test_login_escaping():
         os.environ['HOME'] = '.'
         result = runner.invoke(gigalixir.cli, ['login', '--email=foo@gigalixir.com'], input="p:assword\ny\n")
         assert result.exit_code == 0
-        with open('.netrc') as f:
+        with open(netrc_name()) as f:
             assert f.read() == """machine api.gigalixir.com
 \tlogin foo@gigalixir.com
 \tpassword fake-api-key
@@ -274,7 +281,7 @@ def test_create_api_key():
         os.environ['HOME'] = '.'
         result = runner.invoke(gigalixir.cli, ['reset_api_key', '--email=foo@gigalixir.com'], input="password\ny\n")
         assert result.exit_code == 0
-        with open('.netrc') as f:
+        with open(netrc_name()) as f:
             assert f.read() == """machine api.gigalixir.com
 \tlogin foo@gigalixir.com
 \tpassword another-fake-api-key
