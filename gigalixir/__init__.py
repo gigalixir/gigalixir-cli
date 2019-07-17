@@ -21,7 +21,7 @@ from . import usage as gigalixir_usage
 from . import database as gigalixir_database
 from . import free_database as gigalixir_free_database
 from . import canary as gigalixir_canary
-#from . import git
+from . import git
 import click
 import requests
 import getpass
@@ -188,7 +188,7 @@ class AliasedGroup(click.Group):
 
 def detect_app():
     try:
-        #git.check_for_git()
+        git.check_for_git()
         remote = call("git remote -v")
         # matches first instance of
         # git.gigalixir.com/foo.git
