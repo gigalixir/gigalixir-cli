@@ -14,6 +14,9 @@ from . import app as gigalixir_app
 from six.moves.urllib.parse import quote
 
 def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
+    if not ctx.obj['router'].supports_multiplexing():
+        raise Exception("The observer command is not supported on this platform.")
+
     host = ctx.obj['host']
     r = requests.get('%s/api/apps/%s/observer-commands' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
@@ -134,6 +137,8 @@ def ensure_port_free(port):
         # if the port is in use, then a pid is found, this "succeeds" and continues
         # if the port is free, then a pid is not found, this "fails" and raises a CalledProcessError
         pid = call("lsof -wni tcp:%(port)s -t" % {"port": port})
+        # If multiplexing gets supported later, on Windows this command would be: 
+        #   pid = call("netstat -p tcp -n | find \"\"\":%(port)s\"\"\" % {"port": port})
         raise Exception("It looks like process %s is using port %s on your local machine. We need this port to be able to connect observer. Please kill this process on your local machine and try again. e.g. `kill %s`" % (pid, port, pid))
     except subprocess.CalledProcessError:
         # success! continue
