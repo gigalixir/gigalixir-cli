@@ -1,8 +1,10 @@
 from .shell import cast, call
 from .routers.linux import LinuxRouter
 from .routers.darwin import DarwinRouter
+from .routers.windows import WindowsRouter
 from .openers.linux import LinuxOpener
 from .openers.darwin import DarwinOpener
+from .openers.windows import WindowsOpener
 from . import observer as gigalixir_observer
 from . import user as gigalixir_user
 from . import app as gigalixir_app
@@ -33,6 +35,7 @@ import logging
 import json
 import netrc
 import os
+import platform
 from functools import wraps
 import pkg_resources
 
@@ -220,13 +223,20 @@ def cli(ctx, env):
 
     ctx.obj['host'] = host
 
-    PLATFORM = call("uname -s").lower() # linux or darwin
+    PLATFORM = platform.system().lower() # linux, darwin, or windows
     if PLATFORM == "linux":
         ctx.obj['router'] = LinuxRouter()
         ctx.obj['opener'] = LinuxOpener()
     elif PLATFORM == "darwin":
         ctx.obj['router'] = DarwinRouter()
         ctx.obj['opener'] = DarwinOpener()
+    elif PLATFORM == "windows":
+        try:
+            os.environ['HOME']
+        except KeyError:
+            os.environ['HOME'] = os.environ['USERPROFILE']
+        ctx.obj['router'] = WindowsRouter()
+        ctx.obj['opener'] = WindowsOpener()
     else:
         raise Exception("Unknown platform: %s" % PLATFORM)
 
