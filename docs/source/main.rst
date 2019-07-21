@@ -39,7 +39,7 @@ Prequisites
 #. :bash:`python2.7`, not :bash:`python3`. Most OSes already have this installed.
 #. :bash:`pip`. For help, take a look at the `pip documentation`_.
 #. :bash:`git`. For help, take a look at the `git documentation`_.
-#. Linux or OS X.
+#. Linux, OS X, or Windows (beta).
 
 For example, on Ubuntu, run
 
