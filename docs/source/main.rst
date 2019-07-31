@@ -292,7 +292,7 @@ Don't forget to commit your changes
 Specify Versions
 ^^^^^^^^^^^^^^^^
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
 
 Create a file :bash:`elixir_buildpack.config` at the root of your repo and add something like this. Make sure it matches what you have in development to ensure a smooth deploy.
 
@@ -435,7 +435,7 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 Specify Versions
 ^^^^^^^^^^^^^^^^
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir.
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support 
 
 Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
 
@@ -585,7 +585,7 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 Specify Versions
 ^^^^^^^^^^^^^^^^
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. Since we're using Elixir Releases, we need to use 1.9 or higher and a compatible version of erlang such as 21.3.
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. Since we're using Elixir Releases, we need to use 1.9 or higher and a compatible version of erlang such as 21.3. Supported elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
 
 Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
 
