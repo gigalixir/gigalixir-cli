@@ -27,5 +27,5 @@ rdr pass on lo0 inet proto tcp from any to %s port %s -> 127.0.0.1 port %s
         cast("sudo ifconfig lo0 %s netmask 255.255.255.255 -alias" % ip)
         subprocess.call("sudo pfctl -ef /etc/pf.conf".split())
 
-    def supports_multiplexing():
+    def supports_multiplexing(self):
         return True

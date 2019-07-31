@@ -14,5 +14,5 @@ class LinuxRouter(object):
         cast("sudo iptables -t nat -D OUTPUT -p all -d %(ip)s -j DNAT --to-destination 127.0.0.1" % {"ip": ip})
         # cast("sudo iptables -t nat -L OUTPUT")
 
-    def supports_multiplexing():
+    def supports_multiplexing(self):
         return True
