@@ -572,7 +572,7 @@ The only configuration change we really need to do now is make sure the web serv
 
    Phoenix 1.2, 1.3, and 1.4 give different names so this is a common source of errors.
 
-If you're using a free tier database, be sure to also set your pool size to 2 in :bash:`prod.secret.exs`.
+If you're using a free tier database, be sure to also set your pool size to 2 in :bash:`prod.exs`.
 
 You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
 
