@@ -339,12 +339,11 @@ to specify your own buildpacks create a :bash:`.buildpacks` file with the buildp
 
 .. code-block:: bash
 
-    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
     https://github.com/HashNuke/heroku-buildpack-elixir
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-mix.git
 
-If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your Gigalixir build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+:bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
 Note, that the command that gets run in production depends on what your last buildpack is.
 
@@ -514,12 +513,11 @@ to specify your own buildpacks create a :bash:`.buildpacks` file with the buildp
 
 .. code-block:: bash
 
-    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
     https://github.com/HashNuke/heroku-buildpack-elixir
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
-If you *really* want, the :bash:`gigalixir-buildpack-clean-cache` is optional if you know you will never want to clean your Gigalixir build cache. Also, :bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+:bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
 Note, that the command that gets run in production depends on what your last buildpack is.
 
@@ -706,10 +704,6 @@ When you run :bash:`git push gigalixir master`, our git server receives your sou
 
 By default, the buildpacks we use include
 
-  - https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
-
-    - To clean the cache if enabled.
-
   - https://github.com/HashNuke/heroku-buildpack-elixir.git
 
     - To run mix compile
@@ -839,7 +833,6 @@ Normally, the buildpack you need is auto-detected for you, but in some cases, yo
 
 .. code-block:: bash
 
-    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
     https://github.com/HashNuke/heroku-buildpack-elixir
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-distillery.git
@@ -849,7 +842,6 @@ The default buildpacks for elixir apps running mix looks like this
 
 .. code-block:: bash
 
-    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
     https://github.com/HashNuke/heroku-buildpack-elixir
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-mix.git
@@ -2320,10 +2312,10 @@ If you started out with a free tier database and then upgraded to the standard t
 
 Unfortunatetly, we can't automatically migrate your free tier db to a standard tier db. You'll have to
 
-  1. :bash:`pgdump` the free database
+  1. :bash:`pg_dump` the free database
   2. Delete the free database with :bash:`gigalixir pg:destroy --help`. Note postgres may make you scale down to 0 app replicas to do this so you'll have some downtime.
   3. Create the standard tier database with :bash:`gigalixir pg:create`.
-  4. Restore the data with :bash:`psql` or :bash:`pgrestore`. You can find the url to use with :bash:`gigalixir pg` once the standard tier database is created.
+  4. Restore the data with :bash:`psql` or :bash:`pg_restore`. You can find the url to use with :bash:`gigalixir pg` once the standard tier database is created.
 
 Please don't hesitate to `contact us`_ if you need help.
 
@@ -2756,7 +2748,6 @@ To use the buildpack, insert it in your :bash:`.buildpacks` file above the elixi
 
 .. code-block:: bash
 
-    https://github.com/gigalixir/gigalixir-buildpack-clean-cache.git
     https://github.com/timshadel/heroku-buildpack-github-netrc.git
     https://github.com/HashNuke/heroku-buildpack-elixir
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
