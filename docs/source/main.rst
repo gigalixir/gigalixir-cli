@@ -1069,6 +1069,7 @@ Your app configuration needs to have something like this in it. For a full examp
         k8s_example: [
           strategy: Cluster.Strategy.Kubernetes,
           config: [
+            # For Elixir Releases, use System.get_env instead of the distillery env vars below.
             kubernetes_selector: "${LIBCLUSTER_KUBERNETES_SELECTOR}",
             kubernetes_node_basename: "${LIBCLUSTER_KUBERNETES_NODE_BASENAME}"]]]
     ...
@@ -1505,6 +1506,8 @@ If the above commands still do not succeed and your app is open source, then ple
 
 Common Errors
 -------------
+
+A good first thing to try when you get a `git push` error is `cleaning your build cache`_.
 
     - My deploy succeeded, but nothing happened.
 
