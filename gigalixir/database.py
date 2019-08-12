@@ -57,7 +57,7 @@ def create(host, app_name, size):
             raise auth.AuthException()
         raise Exception(r.text)
     logging.getLogger("gigalixir-cli").info("Creating new database.")
-    logging.getLogger("gigalixir-cli").info("Please give us a few minutes provision the new database.")
+    logging.getLogger("gigalixir-cli").info("Please give us a few minutes to provision the new database.")
 
 def delete(host, app_name, database_id):
     r = requests.delete('%s/api/apps/%s/databases/%s' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
