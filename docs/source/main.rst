@@ -268,7 +268,7 @@ Then append something like the following in :bash:`prod.exs`. Don't replace what
        adapter: Ecto.Adapters.Postgres,
        url: System.get_env("DATABASE_URL"),
        ssl: true,
-       pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections.
+       pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections where n is the number of app replicas.
 
 1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
 2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like
@@ -415,7 +415,7 @@ Then add something like the following in :bash:`prod.exs`
        url: "${DATABASE_URL}",
        database: "",
        ssl: true,
-       pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections.
+       pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections where n is the number of app replicas.
 
 :elixir:`server: true` **is very important and is commonly left out. Make sure you have this line.**
 
@@ -2299,6 +2299,8 @@ It takes a few minutes to provision. You can check the status by running
 .. code-block:: bash
 
     gigalixir pg
+
+You may also want to adjust your pool_size. We recommend setting the pool size to (M-6)/(n+1) where M is the max connections and n is the num app replicas. We subtract 6 becaues cloud sql will sometimes, but rarely, use 6 for maintenance purposes. We use n+1 because rolling deploys will temporarily have an extra replica during the transition. For example, if you are running a size 0.6 database with 1 app replica, the pool size should be (25-6)/(1+1)=9.
 
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
