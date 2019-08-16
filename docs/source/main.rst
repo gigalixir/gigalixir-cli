@@ -654,6 +654,28 @@ If everything works, commit the changes
 
 Continue to :ref:`set up deploys`.
 
+Specify Buildpacks (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We rely on buildpacks to compile and build your release. We auto-detect a variety of buildpacks so you probably don't need this, but if you want
+to specify your own buildpacks create a :bash:`.buildpacks` file with the buildpacks you want. For example,
+
+.. code-block:: bash
+
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-releases.git
+
+:bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+
+Note, that the command that gets run in production depends on what your last buildpack is.
+
+- If the last buildpack is :bash:`gigalixir-buildpack-releases`, then the command run will be :bash:`/app/bin/foo start`.
+- If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
+- If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`.
+
+If your command is :bash:`mix run --no-halt`, but you are running phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
+
 How Does Gigalixir Work?
 ========================
 
