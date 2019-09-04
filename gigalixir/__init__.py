@@ -898,20 +898,25 @@ def pg_psql(ctx, app_name):
 @cli.command(name='pg:create')
 @click.option('-a', '--app_name')
 @click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
+@click.option('-c', '--cloud')
+@click.option('-r', '--region')
 @click.option('-f', '--free', is_flag=True)
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
 @detect_app_name
-def create_database(ctx, app_name, size, free, yes):
+def create_database(ctx, app_name, size, cloud, region, free, yes):
     """
     Create a new database for app.
     """
     if free:
-        if yes or click.confirm("A word of caution: Free tier databases are not suitable for production and migrating from a free db to a standard db is not trivial. Do you wish to continue?"):
-            gigalixir_free_database.create(ctx.obj['host'], app_name)
+        if cloud != None or region != None:
+            raise Exception("Sorry, free tier databases only run on gcp in us-central1. Try creating a standard database instead.")
+        else:
+            if yes or click.confirm("A word of caution: Free tier databases are not suitable for production and migrating from a free db to a standard db is not trivial. Do you wish to continue?"):
+                gigalixir_free_database.create(ctx.obj['host'], app_name)
     else:
-        gigalixir_database.create(ctx.obj['host'], app_name, size)
+        gigalixir_database.create(ctx.obj['host'], app_name, size, cloud, region)
 
 @cli.command(name='deprecated:create_free_database')
 @click.option('-a', '--app_name')

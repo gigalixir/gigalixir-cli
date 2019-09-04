@@ -46,12 +46,17 @@ def psql(host, app_name):
                 else:
                     raise
 
-def create(host, app_name, size):
+def create(host, app_name, size, cloud=None, region=None):
+    body = {
+        "size": size
+    }
+    if cloud != None:
+        body["cloud"] = cloud
+    if region != None:
+        body["region"] = region
     r = requests.post('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
-    }, json = {
-        "size": size,
-    })
+    }, json = body)
     if r.status_code != 201:
         if r.status_code == 401:
             raise auth.AuthException()
