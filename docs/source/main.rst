@@ -2867,6 +2867,15 @@ You can see what stack you are running with :bash:`gigalixir apps:info` or :bash
 
 For information about what packages are available in each stack, see https://devcenter.heroku.com/articles/stack-packages as well as the Dockerfiles at https://github.com/gigalixir/gigalixir-run
 
+How do I enable bash auto-completion?
+=====================================
+
+Add the following to your :bash:`.bashrc` file and restart your shell.
+
+.. code-block:: bash
+
+    eval "$(_GIGALIXIR_COMPLETE=source gigalixir)"
+
 How secure is Gigalixir?
 ========================
 
