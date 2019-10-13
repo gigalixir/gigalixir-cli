@@ -1418,7 +1418,8 @@ First, try generating and running a Distillery release locally by running
     SECRET_KEY_BASE="$(mix phx.gen.secret)"
     MIX_ENV=prod mix distillery.release --env=prod
     # if you are a running distillery below 2.1, then run: MIX_ENV=prod mix release --env=prod
-    DATABASE_URL="postgresql://user:pass@localhost:5432/foo" APP_NAME=gigalixir_getting_started MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started foreground
+    APP_NAME=gigalixir_getting_started
+    DATABASE_URL="postgresql://user:pass@localhost:5432/foo" MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/$APP_NAME/bin/$APP_NAME foreground
     curl localhost:4000
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
