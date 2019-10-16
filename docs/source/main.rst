@@ -36,8 +36,8 @@ Prerequisites
 .. role:: bash(code)
     :language: bash
 
-#. :bash:`python2.7`, not :bash:`python3`. Most OSes already have this installed.
-#. :bash:`pip`. For help, take a look at the `pip documentation`_.
+#. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
+#. :bash:`pip3`. For help, take a look at the `pip documentation`_.
 #. :bash:`git`. For help, take a look at the `git documentation`_.
 #. Linux, OS X, or Windows (beta).
 
@@ -46,7 +46,7 @@ For example, on Ubuntu, run
 .. code-block:: bash
 
     sudo apt-get update
-    sudo apt-get install -y python python-pip git-core curl
+    sudo apt-get install -y python3 python3-pip git-core curl
 
 .. _`buildpack configuration file`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 .. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
@@ -61,7 +61,19 @@ Next install, the command-line interface. Gigalixir has a web interface at https
 
 .. code-block:: bash
 
-    sudo pip install gigalixir --ignore-installed six
+    pip3 install gigalixir --ignore-installed six
+
+Make sure, the executable is in your path, if it isn't already. 
+
+.. code-block:: bash
+
+    echo "export PATH=~/.local/bin:$PATH" >> ~/.bash_profile
+
+Reload the profile
+
+.. code-block:: bash
+
+    source ~/.bash_profile
 
 Verify by running
 
@@ -1619,13 +1631,7 @@ The Gigalixir Command-Line Interface or CLI is a tool you install on your local 
 How to Install the CLI
 ----------------------
 
-Install :bash:`gigalixir` using
-
-.. code-block:: bash
-
-    sudo pip install gigalixir --ignore-installed six
-
-If you don't have pip installed, take a look at the `pip documentation`_.
+See :ref:`install the CLI`.
 
 How to Upgrade the CLI
 ----------------------
@@ -1634,7 +1640,7 @@ To upgrade the Gigalixir CLI, run
 
 .. code-block:: bash
 
-    sudo pip install -U gigalixir --ignore-installed six
+    pip3 install -U gigalixir --ignore-installed six
 
 Encryption
 ----------
@@ -1858,9 +1864,8 @@ If you want to automatically run migrations on each automatic deploy, you have t
    .. code-block:: bash
 
        # install gigalixir-cli
-       sudo apt-get install -y python-pip
-       sudo pip install --upgrade setuptools
-       sudo pip install gigalixir
+       sudo apt-get install -y python3 python3-pip
+       pip3 install gigalixir
 
        # deploy
        gigalixir login -e "$GIGALIXIR_EMAIL" -p "$GIGALIXIR_PASSWORD" -y
