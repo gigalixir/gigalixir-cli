@@ -399,7 +399,7 @@ Don't forget to commit
 
 .. code-block:: bash
 
-    git add mix.exs mix.lock rel/config.exs
+    git add mix.exs mix.lock rel/
     git commit -m 'install distillery'
 
 
@@ -1404,6 +1404,7 @@ Run the following commands
 .. code-block:: bash
 
     mix deps.get
+    mix compile
     SECRET_KEY_BASE="$(mix phx.gen.secret)" MIX_ENV=prod DATABASE_URL="postgresql://user:pass@localhost:5432/foo" PORT=4000 mix phx.server
     curl localhost:4000
 
