@@ -571,10 +571,10 @@ The only configuration change we really need to do now is make sure the web serv
 
 .. code-block:: bash
 
-     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
-       server: true,
-       http: [port: {:system, "PORT"}], # Needed for Phoenix 1.2 and 1.4. Doesn't hurt for 1.3.
-       url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443]
+    config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
+      server: true,
+      http: [port: {:system, "PORT"}], # Needed for Phoenix 1.2 and 1.4. Doesn't hurt for 1.3.
+      url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443]
 
 1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
 2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like
@@ -1496,7 +1496,8 @@ First, try generating and running a release locally by running
     SECRET_KEY_BASE="$(mix phx.gen.secret)"
     DATABASE_URL="postgresql://user:pass@localhost:5432/foo" 
     MIX_ENV=prod mix release
-    APP_NAME=gigalixir_getting_started PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started start
+    APP_NAME=gigalixir_getting_started
+    PORT=4000 _build/prod/rel/$APP_NAME/bin/$APP_NAME start
     curl localhost:4000
 
 Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
@@ -2767,8 +2768,11 @@ Here is an example script that we've used for webpack.
 
 .. _`gigalixir release options`:
 
-How to specify which Distillery release, environment, or profile to build
+How to specify which release, environment, or profile to build
 =========================================================================
+
+Distillery
+----------
 
 If you have multiple releases defined in :bash:`rel/config.exs`, which is common for umbrella apps, you can specify which release to build
 by setting a config variable on your app that controls the options passed to `mix distillery.release`. For example, you can pass the `--profile` option
@@ -2781,6 +2785,17 @@ using the command below.
 With this config variable set on each of your gigalixir apps, when you deploy the same repo to each app, you'll get a different release.
 
 If you have multiple phoenix apps in the umbrella, instead of deploying each as a separate distillery release, you could also consider something like this `master_proxy <https://github.com/jesseshieh/master_proxy>`_ to proxy requests to the two apps.
+
+Elixir Releases
+---------------
+
+If you want to pass options to :bash:`mix release` such as the release name, you can specify options with the :bash:`GIGALIXIR_RELEASE_OPTIONS` env var. 
+
+For example, to build a different release other than the default, run
+
+.. code-block:: bash
+
+    gigalixir config:set GIGALIXIR_RELEASE_OPTIONS="my-release"
 
 How do I use a private git dependency?
 ======================================
