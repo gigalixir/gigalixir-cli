@@ -2024,6 +2024,8 @@ If your DNS provider does not allow CNAME, which is common for naked/root domain
 
 Note that if you want both the naked/root domain and a subdomain such as www, be sure to run `gigalixir domains:add` for each one.
 
+If you need a wildcard domain, feel free to `contact us`_ and we can help you get set up.
+
 How to Set Up SSL/TLS
 =====================
 
