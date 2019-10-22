@@ -14,6 +14,9 @@ def netrc_name():
     else:
         return ".netrc"
 
+def rstrip_multiline(s):
+    return '\n'.join([line.rstrip() for line in s.splitlines()])
+
 @httpretty.activate
 def test_create_user():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/validate_email', body='{}', content_type='application/json')
@@ -22,7 +25,7 @@ def test_create_user():
     result = runner.invoke(gigalixir.cli, ['signup', '--email=foo@gigalixir.com'], input="y\npassword\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.httpretty.latest_requests[1].body.decode()).to.equal('{"password": "password", "email": "foo@gigalixir.com"}')
+    expect(httpretty.httpretty.latest_requests[1].parsed_body).to.equal({"password": "password", "email": "foo@gigalixir.com"})
 
 @httpretty.activate
 def test_logout():
@@ -70,7 +73,7 @@ machine git.gigalixir.com
 \tpassword fake-api-key
 """
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwYXNzd29yZA==\r\n')
+    expect(httpretty.last_request().headers.get('Authorization')).to.equal('Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwYXNzd29yZA==')
 
 @httpretty.activate
 def test_login_escaping():
@@ -91,7 +94,7 @@ machine git.gigalixir.com
 \tpassword fake-api-key
 """
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwJTNBYXNzd29yZA==\r\n')
+    expect(httpretty.last_request().headers.get('Authorization')).to.equal('Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwJTNBYXNzd29yZA==')
 
 @httpretty.activate
 def test_create_app():
@@ -102,7 +105,7 @@ def test_create_app():
         result = runner.invoke(gigalixir.cli, ['create', '--name=fake-app-name'])
         assert result.exit_code == 0
         remotes = subprocess.check_output(['git', 'remote', '-v'])
-        assert remotes == """gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (fetch)
+        assert remotes == b"""gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (fetch)
 gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 """
     expect(httpretty.has_request()).to.be.true
@@ -115,7 +118,7 @@ def test_set_git_remote():
         result = runner.invoke(gigalixir.cli, ['set_git_remote', 'fake-app-name'])
         assert result.exit_code == 0
         remotes = subprocess.check_output(['git', 'remote', '-v'])
-        assert remotes == """gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (fetch)
+        assert remotes == b"""gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (fetch)
 gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 """
 
@@ -133,34 +136,33 @@ def test_get_apps():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps', body='{"data":[{"unique_name":"one","size":0.5,"replicas":1},{"unique_name":"two","size":0.5,"replicas":1},{"unique_name":"three","size":0.5,"replicas":1},{"unique_name":"four","size":0.5,"replicas":1},{"unique_name":"five","size":0.5,"replicas":1}]}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['apps'])
-    assert result.output == """[
+    assert rstrip_multiline(result.output) == """[
   {
-    "replicas": 1, 
-    "size": 0.5, 
+    "replicas": 1,
+    "size": 0.5,
     "unique_name": "one"
-  }, 
+  },
   {
-    "replicas": 1, 
-    "size": 0.5, 
+    "replicas": 1,
+    "size": 0.5,
     "unique_name": "two"
-  }, 
+  },
   {
-    "replicas": 1, 
-    "size": 0.5, 
+    "replicas": 1,
+    "size": 0.5,
     "unique_name": "three"
-  }, 
+  },
   {
-    "replicas": 1, 
-    "size": 0.5, 
+    "replicas": 1,
+    "size": 0.5,
     "unique_name": "four"
-  }, 
+  },
   {
-    "replicas": 1, 
-    "size": 0.5, 
+    "replicas": 1,
+    "size": 0.5,
     "unique_name": "five"
   }
 ]
-
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -183,7 +185,7 @@ def test_scale():
     assert result.output == "{}\n\n"
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body.decode()).to.equal('{"size": 0.5, "replicas": 100}')
+    expect(httpretty.last_request().parsed_body).to.equal({"size": 0.5, "replicas": 100})
 
 @httpretty.activate
 def test_restart():
@@ -227,7 +229,7 @@ def test_create_config():
     result = runner.invoke(gigalixir.cli, ['set_config', '-a', 'fake-app-name', 'FOO', 'bar'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body.decode()).to.equal('{"value": "bar", "key": "FOO"}')
+    expect(httpretty.last_request().parsed_body).to.equal({"value": "bar", "key": "FOO"})
 
 @httpretty.activate
 def test_delete_config():
@@ -290,7 +292,7 @@ machine git.gigalixir.com
 \tpassword another-fake-api-key
 """
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().headers.headers).to.contain('Authorization: Basic Zm9vQGdpZ2FsaXhpci5jb206cGFzc3dvcmQ=\r\n')
+    expect(httpretty.last_request().headers.get('Authorization')).to.equal('Basic Zm9vQGdpZ2FsaXhpci5jb206cGFzc3dvcmQ=')
 
 @httpretty.activate
 def test_get_releases():
@@ -299,21 +301,20 @@ def test_get_releases():
     result = runner.invoke(gigalixir.cli, ['releases', '-a', 'fake-app-name'])
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    assert result.output == """[
+    assert rstrip_multiline(result.output) == """[
   {
-    "created_at": "2017-03-29T17:28:29.000+00:00", 
-    "sha": "another-fake-sha", 
-    "summary": "fake summary", 
+    "created_at": "2017-03-29T17:28:29.000+00:00",
+    "sha": "another-fake-sha",
+    "summary": "fake summary",
     "version": 1
-  }, 
+  },
   {
-    "created_at": "2017-03-29T17:28:28.000+00:00", 
-    "sha": "fake-sha", 
-    "summary": "fake summary", 
+    "created_at": "2017-03-29T17:28:28.000+00:00",
+    "sha": "fake-sha",
+    "summary": "fake summary",
     "version": 2
   }
 ]
-
 """
 
 @httpretty.activate
@@ -349,13 +350,12 @@ def test_get_ssh_keys():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/ssh_keys', body='{"data":[{"key":"fake-ssh-key","id":1}]}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['ssh_keys'])
-    assert result.output == """[
+    assert rstrip_multiline(result.output) == """[
   {
-    "id": 1, 
+    "id": 1,
     "key": "fake-ssh-key"
   }
 ]
-
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -385,13 +385,12 @@ def test_get_payment_method():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/payment_methods', body='{"data":{"last4":4242,"exp_year":2018,"exp_month":12,"brand":"Visa"}}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['payment_method'])
-    assert result.output == """{
-  "brand": "Visa", 
-  "exp_month": 12, 
-  "exp_year": 2018, 
+    assert rstrip_multiline(result.output) == """{
+  "brand": "Visa",
+  "exp_month": 12,
+  "exp_year": 2018,
   "last4": 4242
 }
-
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -417,7 +416,8 @@ def test_update_payment_method_cvc_leading_zero():
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.httpretty.latest_requests[0].body.decode()).to.equal('card%5Bnumber%5D=4111111111111111&card%5Bexp_year%5D=34&card%5Bcvc%5D=023&card%5Bexp_month%5D=12')
+    expect(httpretty.httpretty.latest_requests[0].parsed_body).to.equal({'card[cvc]': ['023'], 'card[exp_month]': ['12'], 'card[exp_year]': ['34'], 'card[number]': ['4111111111111111']})
+    # expect(httpretty.httpretty.latest_requests[0].body).to.equal(b'card%5Bnumber%5D=4111111111111111&card%5Bexp_year%5D=34&card%5Bcvc%5D=023&card%5Bexp_month%5D=12')
     expect(httpretty.last_request().body.decode()).to.equal('{"stripe_token": "fake-stripe-token"}')
 
 @httpretty.activate
@@ -499,7 +499,7 @@ def test_reset_password():
     result = runner.invoke(gigalixir.cli, ['set_password', '--token=fake-token'], input="password\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body.decode()).to.equal('{"token": "fake-token", "password": "password"}')
+    expect(httpretty.last_request().parsed_body).to.equal({"token": "fake-token", "password": "password"})
 
 @httpretty.activate
 def test_invoices():
@@ -567,31 +567,30 @@ def test_get_free_databases():
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['free_databases', '-a', 'fake-app-name'])
     print(result.output)
-    assert result.output == """[
+    assert rstrip_multiline(result.output) == """[
   {
-    "app_name": "REDACTED", 
-    "database": "REDACTED", 
-    "host": "REDACTED", 
-    "id": "REDACTED", 
-    "password": "REDACTED", 
-    "port": 5432, 
-    "state": "DELETED", 
-    "url": "REDACTED", 
+    "app_name": "REDACTED",
+    "database": "REDACTED",
+    "host": "REDACTED",
+    "id": "REDACTED",
+    "password": "REDACTED",
+    "port": 5432,
+    "state": "DELETED",
+    "url": "REDACTED",
     "username": "app"
-  }, 
+  },
   {
-    "app_name": "REDACTED", 
-    "database": "REDACTED", 
-    "host": "REDACTED", 
-    "id": "REDACTED", 
-    "password": "REDACTED", 
-    "port": 5432, 
-    "state": "AVAILABLE", 
-    "url": "REDACTED", 
+    "app_name": "REDACTED",
+    "database": "REDACTED",
+    "host": "REDACTED",
+    "id": "REDACTED",
+    "password": "REDACTED",
+    "port": 5432,
+    "state": "AVAILABLE",
+    "url": "REDACTED",
     "username": "app"
   }
 ]
-
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -630,31 +629,30 @@ def test_get_databases():
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['databases', '-a', 'fake-app-name'])
     print(result.output)
-    assert result.output == """[
+    assert rstrip_multiline(result.output) == """[
   {
-    "app_name": "REDACTED", 
-    "database": "REDACTED", 
-    "host": "REDACTED", 
-    "id": "REDACTED", 
-    "password": "REDACTED", 
-    "port": 5432, 
-    "size": 0.6, 
-    "state": "DELETED", 
+    "app_name": "REDACTED",
+    "database": "REDACTED",
+    "host": "REDACTED",
+    "id": "REDACTED",
+    "password": "REDACTED",
+    "port": 5432,
+    "size": 0.6,
+    "state": "DELETED",
     "username": "app"
-  }, 
+  },
   {
-    "app_name": "REDACTED", 
-    "database": "REDACTED", 
-    "host": "REDACTED", 
-    "id": "REDACTED", 
-    "password": "REDACTED", 
-    "port": 5432, 
-    "size": 0.6, 
-    "state": "AVAILABLE", 
+    "app_name": "REDACTED",
+    "database": "REDACTED",
+    "host": "REDACTED",
+    "id": "REDACTED",
+    "password": "REDACTED",
+    "port": 5432,
+    "size": 0.6,
+    "state": "AVAILABLE",
     "username": "app"
   }
 ]
-
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -689,19 +687,17 @@ def test_create_free_database():
 """, content_type='application/json', status=201)
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['create_database', '-a', 'fake-app-name', '--free', '-y'])
-    # mind the trailing spaces!!
-    assert result.output == """{
-  "app_name": "REDACTED", 
-  "database": "REDACTED", 
-  "host": "REDACTED", 
-  "id": "REDACTED", 
-  "password": "REDACTED", 
-  "port": 5432, 
-  "state": "DELETED", 
-  "url": "REDACTED", 
+    assert rstrip_multiline(result.output) == """{
+  "app_name": "REDACTED",
+  "database": "REDACTED",
+  "host": "REDACTED",
+  "id": "REDACTED",
+  "password": "REDACTED",
+  "port": 5432,
+  "state": "DELETED",
+  "url": "REDACTED",
   "username": "app"
 }
-
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
@@ -739,19 +735,18 @@ def test_get_log_drains():
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['log_drains', '-a', 'fake-app-name'])
     print(result.output)
-    assert result.output == """[
+    assert rstrip_multiline(result.output) == """[
   {
-    "id": 1, 
-    "token": "fake-token1", 
+    "id": 1,
+    "token": "fake-token1",
     "url": "syslog+tls://foo.papertrailapp.com:12345"
-  }, 
+  },
   {
-    "id": 2, 
-    "token": "fake-token2", 
+    "id": 2,
+    "token": "fake-token2",
     "url": "https://user:pass@logs.timber.io/frames"
   }
 ]
-
 """
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true

@@ -45,13 +45,13 @@ def update_netrc(email, key):
 # into this deeper, but this works for now.
 def netrc_repr(netrc):
     rep = ""
-    for host in netrc.hosts.keys():
+    for host in sorted(netrc.hosts.keys()):
         attrs = netrc.hosts[host]
         rep = rep + "machine "+ host + "\n\tlogin " + str(attrs[0]) + "\n"
         if attrs[1]:
             rep = rep + "account " + str(attrs[1])
         rep = rep + "\tpassword " + str(attrs[2]) + "\n"
-    for macro in netrc.macros.keys():
+    for macro in sorted(netrc.macros.keys()):
         rep = rep + "macdef " + macro + "\n"
         for line in netrc.macros[macro]:
             rep = rep + line
