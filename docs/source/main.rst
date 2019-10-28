@@ -2799,6 +2799,24 @@ For example, to build a different release other than the default, run
 
     gigalixir config:set GIGALIXIR_RELEASE_OPTIONS="my-release"
 
+How do I use a private hex dependency?
+======================================
+
+First, take a look at the following page and generate an auth key for your org
+https://hex.pm/docs/private#authenticating-on-ci-and-build-servers
+
+Add something like this to your :bash:`elixir_buildpack.config` file
+
+.. code-block:: bash
+
+    hook_pre_fetch_dependencies="mix hex.organization auth myorg --key ${HEX_ORG_AUTH}"
+
+Then run
+
+.. code-block:: bash
+
+    gigalixir config:set HEX_ORG_AUTH="authkeyhere"
+
 How do I use a private git dependency?
 ======================================
 
