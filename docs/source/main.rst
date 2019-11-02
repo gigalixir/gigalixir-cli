@@ -689,6 +689,45 @@ Note, that the command that gets run in production depends on what your last bui
 
 If your command is :bash:`mix run --no-halt`, but you are running phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
 
+How do I install extra binaries I need for my app?
+==================================================
+
+The process is different if you are using releases (distillery, elixir releases) or mix. We recommend switching to mix mode as it's much easier. To switch to mix mode, see :ref:`mix mode`.
+
+In mix mode, all you have to do is add the relevant, buildpack to your :bash:`.buildpacks` file. Probably at the top. Make sure you also have the required elixir, phoenix, and mix buildpacks. For example, if you need rust installed, your :bash:`.buildpacks` file might look like this
+
+.. code-block:: bash
+
+    https://github.com/emk/heroku-buildpack-rust
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-mix.git
+
+In mix mode, the entire build folder is packed up and shipped to your run container which means it will pack up the extra binaries you've installed and any .profile.d scripts needed to make them available. That's it!
+
+If you want to continue using distillery, you need to manually figure out which folders and files need to be packed into your release tarball and copy them over using distillery overlays. See https://github.com/bitwalker/distillery/blob/master/docs/extensibility/overlays.md
+
+If you are using elixir releases, you also need to manually figure out which folders and files you need to be packed into your release tarball and copy them over using an extra "step". See https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-steps
+
+.. _`mix mode`:
+
+How do I switch to mix mode?
+============================
+
+Mix mode is sort of the default, but we automatically detect and switch you to distillery mode if you have a :bash:`rel/config.exs` file so one option is to delete that file.
+We also automatically detect and switch you to elixir releases mode if you have a :bash:`config/releases.exs` file so also be sure that file is deleted.
+
+If you don't want to delete those files, you can manually force mix mode by specifying the mix buildpack. Create a :bash:`.buildpacks` file and make sure you have something like the following. Notice that the last buildpack is the mix buildpack.
+
+.. code-block:: bash
+
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-mix.git
+
+If you wanted to force distillery or elixir releases, you'd want the last buildpack to be either the :bash:`https://github.com/gigalixir/gigalixir-buildpack-distillery.git` or the :bash:`https://github.com/gigalixir/gigalixir-buildpack-releases.git` buildpacks, respectively.
+
+
 How Does Gigalixir Work?
 ========================
 
@@ -1612,6 +1651,10 @@ A good first thing to try when you get a `git push` error is `cleaning your buil
 
         - This is an issue described here: https://github.com/bitwalker/distillery/issues/426
           Try either upgrading Distillery to 1.5.3 or downgrading OTP below 21.
+
+    - Could not invoke task "release": --env : Unknown option
+
+        - This happens when you upgrade to elixir 1.9, but are still using distillery older than 2.1. Upgrade distillery to fix this issue, but be sure to also change your rel/config.exs file. Mix.Releases.Config needs to be renamed to Distillery.Releases.Config
 
 .. _`contact us for help`:
 .. _`contact us`:
