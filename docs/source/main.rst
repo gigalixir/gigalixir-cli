@@ -57,7 +57,7 @@ For example, on Ubuntu, run
 Install the Command-Line Interface
 ----------------------------------
 
-Next install, the command-line interface. Gigalixir has a web interface at https://gigalixir.com/#/dashboard, but you will still need the CLI to do anything other than signup, deploy, and scale.
+Next, install the command-line interface. Gigalixir has a web interface at https://gigalixir.com/#/dashboard, but you will still need the CLI to do anything other than signup, deploy, and scale.
 
 .. code-block:: bash
 
@@ -67,7 +67,7 @@ Make sure, the executable is in your path, if it isn't already.
 
 .. code-block:: bash
 
-    echo "export PATH=~/.local/bin:$PATH" >> ~/.bash_profile
+    echo 'export PATH=~/.local/bin:$PATH' >> ~/.bash_profile
 
 Reload the profile
 
@@ -191,7 +191,7 @@ Once the database is created, verify your configuration includes a :bash:`DATABA
 Run Migrations
 --------------
 
-If you are using mix, the easiest way to run migrations is as a job.
+If you are using not using releases, the easiest way to run migrations is as a job.
 
 .. code-block:: bash
 
@@ -199,7 +199,7 @@ If you are using mix, the easiest way to run migrations is as a job.
     # this is run asynchronously as a job, so to see the progress, you need to run
     gigalixir logs
 
-If you are using distillery, your app needs to be up and running, then run
+If you are using distillery or elixir releases, your app needs to be up and running, then run
 
 .. code-block:: bash
 
@@ -238,7 +238,7 @@ Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 Mix vs Distillery vs Elixir Releases
 ------------------------------------
 
-It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also use mix or elixir releases (new in Elixir 1.9). 
+It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also use plain mix or elixir releases (new in Elixir 1.9). 
 
 You're probably already used to mix from development and deploying with mix is simpler and easier, but you can't do hot upgrades, clustering, remote observer, and maybe a few other things. 
 
@@ -376,8 +376,6 @@ For an example app that uses distillery and works on gigalixir, see https://gith
 
 Install Distillery to Build Releases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Distillery is currently the only supported release tool. We assume you have followed the `Distillery installation instructions`_. We use Distillery instead of bundling up your source code to support hot upgrades.
 
 In short, you'll need to add something like this to the :elixir:`deps` list in :bash:`mix.exs`
 
