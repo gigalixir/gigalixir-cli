@@ -222,6 +222,7 @@ def cli(ctx, env):
         raise Exception("Invalid GIGALIXIR_ENV")
 
     ctx.obj['host'] = host
+    ctx.obj['env'] = env
 
     PLATFORM = platform.system().lower() # linux, darwin, or windows
     if PLATFORM == "linux":
@@ -479,7 +480,7 @@ def reset_api_key(ctx, email, password, yes):
     """
     Regenerate a replacement api key. 
     """
-    gigalixir_api_key.regenerate(ctx.obj['host'], email, password, yes)
+    gigalixir_api_key.regenerate(ctx.obj['host'], email, password, yes, ctx.obj['env'])
 
 
 @cli.command()
@@ -501,7 +502,7 @@ def login(ctx, email, password, yes):
     """
     Login and receive an api key.
     """
-    gigalixir_user.login(ctx.obj['host'], email, password, yes)
+    gigalixir_user.login(ctx.obj['host'], email, password, yes, ctx.obj['env'])
 
 # @get.command()
 @cli.command()

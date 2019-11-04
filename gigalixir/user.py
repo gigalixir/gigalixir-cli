@@ -59,7 +59,7 @@ def change_password(host, email, current_password, new_password):
 def logout():
     netrc.clear_netrc()
 
-def login(host, email, password, yes):
+def login(host, email, password, yes, env):
     r = requests.get('%s/api/login' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
@@ -68,7 +68,7 @@ def login(host, email, password, yes):
     else:
         key = json.loads(r.text)["data"]["key"]
         if yes or click.confirm('Would you like us to save your api key to your ~/.netrc file?', default=True):
-            netrc.update_netrc(email, key)
+            netrc.update_netrc(email, key, env)
             logging.getLogger("gigalixir-cli").info('Logged in as %s.' % email)
         else:
             logging.getLogger("gigalixir-cli").warn('Please edit your ~/.netrc file manually. Many GIGALIXIR CLI commands may not work unless your ~/.netrc file contains your GIGALIXIR credentials.')

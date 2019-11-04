@@ -46,8 +46,6 @@ def test_databases():
         database_id = None
         start_time = timeit.default_timer()
         database_id = wait_for_available_database(runner, app_name)
-        print "database_id"
-        print database_id
         elapsed = timeit.default_timer() - start_time
         logging.info("Elapsed time: %s" % elapsed)
 

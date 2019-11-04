@@ -31,11 +31,17 @@ def clear_netrc():
     with open(fname, 'w') as fp:
         fp.write(netrc_repr(netrc_file))
 
-def update_netrc(email, key):
+def update_netrc(email, key, env):
     netrc_file, fname = get_netrc_file()
+    
+    if env == 'prod':
+        netrc_file.hosts['git.gigalixir.com'] = (email, None, key)
+        netrc_file.hosts['api.gigalixir.com'] = (email, None, key)
+    elif env == 'dev':
+        netrc_file.hosts['localhost'] = (email, None, key)
+    else:
+        raise Exception('Invalid env: %s' % env)
 
-    netrc_file.hosts['git.gigalixir.com'] = (email, None, key)
-    netrc_file.hosts['api.gigalixir.com'] = (email, None, key)
     with open(fname, 'w') as fp:
         fp.write(netrc_repr(netrc_file))
 

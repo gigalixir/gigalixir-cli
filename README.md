@@ -21,13 +21,6 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 
 ## Testing
 
-    # set up a virtualenv, then
-    source cli/bin/activate
-    unset GIGALIXIR_ENV
-    pip install -e .[dev]
-    pip install -e .[test]
-    python setup.py test
-
     # for python3 
     sudo apt-get install -y python3-venv
     sudo apt-get install -y python3-pip
@@ -38,12 +31,16 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     python setup.py test
 
     # e2e tests
-    source venv/bin/activate
+    source venv3/bin/activate
     unset GIGALIXIR_ENV
     pip install pytest
     export GIGALIXIR_EMAIL=foo
     export GIGALIXIR_PASSWORD=bar
     pytest -s e2e/test.py
+
+    # hit a development server
+    # get into the venv (see above)
+    GIGALIXIR_ENV=dev gigalixir account
 
 ## Distribute
 
