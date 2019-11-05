@@ -1596,7 +1596,7 @@ A good first thing to try when you get a `git push` error is `cleaning your buil
 
     - failed to connect: ** (Postgrex.Error) FATAL 53300 (too_many_connections): too many connections for database
 
-        - If you have a free tier database, the number of connections is limited. Try lowering the :elixir:`pool_size` in your :bash:`prod.exs` to 2.
+        - If you have a free tier database, the number of connections is limited. Try lowering the :elixir:`pool_size` in your :bash:`prod.exs` to 2, or if you're using :bash:`prod.secret.exs` setting the :bash:`POOL_SIZE` environment variable using :bash:`gigalixir config:set POOL_SIZE=2`.
 
     - ~/.netrc access too permissive: access permissions must restrict access to only the owner
 
