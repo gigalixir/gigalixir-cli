@@ -2563,13 +2563,13 @@ We hope to provide a database-as-a-service soon and automate the process you jus
 How to Run Migrations
 =====================
 
-If you deployed your app without distillery, you can run migrations as a job in a new container with
+If you deployed your app without distillery or elixir releases (mix mode), you can run migrations as a job in a new container with
 
 .. code-block:: bash
 
     gigalixir run mix ecto.migrate
 
-If you deployed your app as a distillery release, :bash:`mix` isn't available. We try to make it easy by providing a special command, but the command runs on your existing app container so you'll need to make sure your app is running first and set up SSH keys.
+If you deployed your app as a distillery release or elixir release, :bash:`mix` isn't available. We try to make it easy by providing a special command, but the command runs on your existing app container so you'll need to make sure your app is running first and set up SSH keys.
 
 .. code-block:: bash
 
