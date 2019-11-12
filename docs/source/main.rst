@@ -1654,6 +1654,10 @@ A good first thing to try when you get a `git push` error is `cleaning your buil
 
         - This happens when you upgrade to elixir 1.9, but are still using distillery older than 2.1. Upgrade distillery to fix this issue, but be sure to also change your rel/config.exs file. Mix.Releases.Config needs to be renamed to Distillery.Releases.Config
 
+    - sh: 1: mix: not found
+
+        - If you have an old Phoenix project where a :bash:`package.json` file exists in the project root folder, the :bash:`herokuish` buildpack might `mistakenly recognize it <https://github.com/gliderlabs/herokuish/issues/232>`_ as a Node.js project, and thus fail to build it properly. You may need to manually add a :bash:`.buildpacks` file in your root folder, as documented in the "Specify Buildpacks" sections above.
+
 .. _`contact us for help`:
 .. _`contact us`:
 .. _`help`:
