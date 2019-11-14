@@ -2074,7 +2074,7 @@ If you need a wildcard domain, feel free to `contact us`_ and we can help you ge
 How to Set Up SSL/TLS
 =====================
 
-SSL/TLS certificates are set up for you automatically assuming your custom domain is set up properly.  Note that your application will continue to be served on http as well as https.  If you want to force your users to use https by redirecting any http requests, specificy that in your `config/prod.exs`:
+SSL/TLS certificates are set up for you automatically assuming your custom domain is set up properly.  Note that your application will continue to be served on http as well as https.  If you want to force your users to use https by redirecting any http requests, specify that in your `config/prod.exs`:
 
 .. code-block:: elixir
 
