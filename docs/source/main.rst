@@ -861,6 +861,12 @@ Known Issues
 
       - Currently, the load balancer for domains under gigalixirapp.com has a request timeout of 30 seconds. If your request takes longer than 30 seconds to respond, the load balancer cuts the connection. Often, the cryptic error message you will see when using curl is the above. The load balancer for custom domains does not have this problem.
 
+  - php apps don't work well with the default stack, gigalixir-18. If you are deploying php, please downgrade your stack to giglaixir-16 with something like :bash:`gigalixir stack:set -s gigalixir-16`. Th e reason is because gigalixir-18 is based on heroku-18 which does not have libreadline.so preinstalled for some reason where giglaixir-16, based on heroku-16, does.
+
+  - Did not find exactly 1 release
+
+      - This can happen for a few different reasons, but usually clearing your build cache or retrying will resolve it. In some cases, if you added :bash:`release=true` to your :bash:`elixir_buildpack.config` file, it caches the release and is never deleted even when you bump the app version in your mix.exs. This results in two release folders and gigalixir does not know which release you intend to deploy and errors out. Clearing the cache resolves this issue. In some cases, if two deploys are running concurrently, you can end up with two release tarballs at the same time. This is a known issue we intend to fix, but usually re-running the deploy will work fine since it is a race condition.
+
 Can I run my app in AWS instead of Google Cloud Platform? What about Europe?
 ============================================================================
 
