@@ -264,7 +264,7 @@ For an example app that uses mix and works on gigalixir, see https://github.com/
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want.  If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
 Then append something like the following in :bash:`prod.exs`. Don't replace what you already have, just add this to the bottom.
 
@@ -406,7 +406,7 @@ Don't forget to commit
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
 Then add something like the following in :bash:`prod.exs`
 
@@ -563,7 +563,7 @@ Gigalixir auto-detects that you want to use Elixir Releases if you have a :bash:
 
     echo "import Config" > config/releases.exs
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want.  If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
 The only configuration change we really need to do now is make sure the web server is started. Add the following to your :bash:`releases.exs`.
 
@@ -1602,7 +1602,7 @@ A good first thing to try when you get a `git push` error is `cleaning your buil
 
     - failed to connect: ** (Postgrex.Error) FATAL 53300 (too_many_connections): too many connections for database
 
-        - If you have a free tier database, the number of connections is limited. Try lowering the :elixir:`pool_size` in your :bash:`prod.exs` to 2.
+        - If you have a free tier database, the number of connections is limited. Try lowering the :elixir:`pool_size` in your :bash:`prod.exs` to 2, or if you're using :bash:`prod.secret.exs` setting the :bash:`POOL_SIZE` environment variable using :bash:`gigalixir config:set POOL_SIZE=2`.
 
     - ~/.netrc access too permissive: access permissions must restrict access to only the owner
 
@@ -1659,6 +1659,10 @@ A good first thing to try when you get a `git push` error is `cleaning your buil
     - Could not invoke task "release": --env : Unknown option
 
         - This happens when you upgrade to elixir 1.9, but are still using distillery older than 2.1. Upgrade distillery to fix this issue, but be sure to also change your rel/config.exs file. Mix.Releases.Config needs to be renamed to Distillery.Releases.Config
+
+    - sh: 1: mix: not found
+
+        - If you have an old Phoenix project where a :bash:`package.json` file exists in the project root folder, the :bash:`herokuish` buildpack might `mistakenly recognize it <https://github.com/gliderlabs/herokuish/issues/232>`_ as a Node.js project, and thus fail to build it properly. You may need to manually add a :bash:`.buildpacks` file in your root folder, as documented in the "Specify Buildpacks" sections above.
 
 .. _`contact us for help`:
 .. _`contact us`:
@@ -2076,7 +2080,7 @@ If you need a wildcard domain, feel free to `contact us`_ and we can help you ge
 How to Set Up SSL/TLS
 =====================
 
-SSL/TLS certificates are set up for you automatically assuming your custom domain is set up properly.  Note that your application will continue to be served on http as well as https.  If you want to force your users to use https by redirecting any http requests, specificy that in your `config/prod.exs`:
+SSL/TLS certificates are set up for you automatically assuming your custom domain is set up properly.  Note that your application will continue to be served on http as well as https.  If you want to force your users to use https by redirecting any http requests, specify that in your `config/prod.exs`:
 
 .. code-block:: elixir
 
