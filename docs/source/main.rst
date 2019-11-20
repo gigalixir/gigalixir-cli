@@ -2204,8 +2204,9 @@ Each time you deploy or rollback a new release is generated. To see all your pre
 How to Change or Reset Your Password
 ====================================
 
-To change your password, run
+With the web interface, visit https://gigalixir.com/#/signin-help
 
+With the CLI, run
 
 .. code-block:: bash
 
@@ -2221,6 +2222,17 @@ How to Change My Email Address
 ==============================
 
 `Contact us`_ and we'll help you out.
+
+How to Resend the Confirmation Email
+====================================
+
+With the web interface, visit https://gigalixir.com/#/signin-help
+
+With the CLI, run
+
+.. code-block:: bash
+
+    gigalixir account:confirmation:resend
 
 How to Change Your Credit Card
 ==============================
