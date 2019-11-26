@@ -2077,6 +2077,8 @@ Note that if you want both the naked/root domain and a subdomain such as www, be
 
 If you need a wildcard domain, feel free to `contact us`_ and we can help you get set up.
 
+Note that with phoenix, you may need to change your :elixir:`check_origin` setting in order for websockets to pass the origin check. See https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#module-runtime-configuration
+
 How to Set Up SSL/TLS
 =====================
 
