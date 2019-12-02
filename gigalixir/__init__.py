@@ -306,6 +306,8 @@ def scale(ctx, app_name, replicas, size):
     """
     Scale app.
     """
+    if not app_name:
+        raise Exception("app_name is required")
     gigalixir_app.scale(ctx.obj['host'], app_name, replicas, size)
 
 @cli.command(name='releases:rollback')

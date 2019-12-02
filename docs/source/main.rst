@@ -701,6 +701,8 @@ In mix mode, all you have to do is add the relevant, buildpack to your :bash:`.b
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-mix.git
 
+For rust specifically, also be sure to run :bash:`echo "RUST_SKIP_BUILD=1" > RustConfig` since you just need the rust binaries, and don't want to build a rust project.
+
 In mix mode, the entire build folder is packed up and shipped to your run container which means it will pack up the extra binaries you've installed and any .profile.d scripts needed to make them available. That's it!
 
 If you want to continue using distillery, you need to manually figure out which folders and files need to be packed into your release tarball and copy them over using distillery overlays. See https://github.com/bitwalker/distillery/blob/master/docs/extensibility/overlays.md
