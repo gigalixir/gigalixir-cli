@@ -445,7 +445,7 @@ def upgrade(ctx, yes):
 @report_errors
 def set_password(ctx, token, password):
     """
-    Set password using reset password token.
+    Set password using reset password token. Deprecated. Use the web form instead.
     """
     gigalixir_user.reset_password(ctx.obj['host'], token, password)
 

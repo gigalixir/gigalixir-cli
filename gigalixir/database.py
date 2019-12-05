@@ -7,6 +7,7 @@ import json
 import click
 from six.moves.urllib.parse import quote
 import os
+import errno
 
 def get(host, app_name):
     r = requests.get('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
@@ -41,7 +42,7 @@ def psql(host, app_name):
             try:
                 os.execlp("psql", "psql", url)
             except OSError as e:
-                if e.errno == os.errno.ENOENT:
+                if e.errno == errno.ENOENT:
                     raise Exception("Sorry, we could not find psql. Try installing it and try again.")
                 else:
                     raise
