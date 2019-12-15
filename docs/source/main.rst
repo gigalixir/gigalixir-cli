@@ -199,7 +199,7 @@ If you are using not using releases, the easiest way to run migrations is as a j
     # this is run asynchronously as a job, so to see the progress, you need to run
     gigalixir logs
 
-If you are using distillery or elixir releases, your app needs to be up and running, then run
+If you are using distillery or Elixir releases, your app needs to be up and running, then run
 
 .. code-block:: bash
 
@@ -238,7 +238,7 @@ Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 Mix vs Distillery vs Elixir Releases
 ------------------------------------
 
-It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also use plain mix or elixir releases (new in Elixir 1.9). 
+It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also use plain mix or Elixir releases (new in Elixir 1.9). 
 
 You're probably already used to mix from development and deploying with mix is simpler and easier, but you can't do hot upgrades, clustering, remote observer, and maybe a few other things. 
 
@@ -246,13 +246,13 @@ Elixir releases is still very new and doesn't support hot upgrades, but it is bu
 
 If you deploy with distillery, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be confusing in some cases.
 
-If you don't know which to choose, we generally recommend going with distillery because.. why use elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir ps:migrate`, that makes it easy to run migrations without mix.
+If you don't know which to choose, we generally recommend going with distillery because.. why use Elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir ps:migrate`, that makes it easy to run migrations without mix.
 
 If you choose mix, see :ref:`modifying existing app with mix`.
 
 If you choose distillery, see :ref:`modifying existing app with distillery`.
 
-If you choose elixir releases, see :ref:`modifying existing app with elixir releases`.
+If you choose Elixir releases, see :ref:`modifying existing app with Elixir releases`.
 
 .. _`modifying existing app with mix`:
 
@@ -264,7 +264,7 @@ For an example app that uses mix and works on gigalixir, see https://github.com/
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want.  If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want.  If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of Phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
 Then append something like the following in :bash:`prod.exs`. Don't replace what you already have, just add this to the bottom.
 
@@ -304,7 +304,7 @@ Don't forget to commit your changes
 Specify Versions
 ^^^^^^^^^^^^^^^^
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
 
 Create a file :bash:`elixir_buildpack.config` at the root of your repo and add something like this. Make sure it matches what you have in development to ensure a smooth deploy.
 
@@ -355,7 +355,7 @@ to specify your own buildpacks create a :bash:`.buildpacks` file with the buildp
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-mix.git
 
-:bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+:bash:`heroku-buildpack-phoenix-static` is optional if you do not have Phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
 Note, that the command that gets run in production depends on what your last buildpack is.
 
@@ -363,7 +363,7 @@ Note, that the command that gets run in production depends on what your last bui
 - If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
 - If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`.
 
-If your command is :bash:`mix run --no-halt`, but you are running phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
+If your command is :bash:`mix run --no-halt`, but you are running Phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
 
 We highly recommend keeping :bash:`gigalixir-buildpack-mix` last so that your node name and cookie are set properly. Without those, remote_console, ps:migrate, observer, etc won't work.
 
@@ -383,7 +383,7 @@ In short, you'll need to add something like this to the :elixir:`deps` list in :
 
     {:distillery, "~> 2.1"}
 
-Important: If you are running elixir 1.9, then you *must* use distillery 2.1 or greater. Elixir 1.9 and distillery below 2.1 both use `mix release` and elixir's always takes precedence. Distillery 2.1 renames the task to `mix distillery.release`.
+Important: If you are running Elixir 1.9, then you *must* use distillery 2.1 or greater. Elixir 1.9 and distillery below 2.1 both use `mix release` and Elixir's always takes precedence. Distillery 2.1 renames the task to `mix distillery.release`.
 
 Then, run
 
@@ -406,7 +406,7 @@ Don't forget to commit
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of Phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
 Then add something like the following in :bash:`prod.exs`
 
@@ -444,7 +444,7 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 Specify Versions
 ^^^^^^^^^^^^^^^^
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support 
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support 
 
 Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
 
@@ -527,7 +527,7 @@ to specify your own buildpacks create a :bash:`.buildpacks` file with the buildp
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
-:bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+:bash:`heroku-buildpack-phoenix-static` is optional if you do not have Phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
 Note, that the command that gets run in production depends on what your last buildpack is.
 
@@ -535,7 +535,7 @@ Note, that the command that gets run in production depends on what your last bui
 - If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
 - If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`.
 
-If your command is :bash:`mix run --no-halt`, but you are running phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
+If your command is :bash:`mix run --no-halt`, but you are running Phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
 
 Set up Node Clustering with Libcluster (optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -549,7 +549,7 @@ Set Up Hot Upgrades with Git v2.9.0
 
 To run hot upgrades, you send an extra http header when running :bash:`git push gigalixir master`. Extra HTTP headers are only supported in git 2.9.0 and above so make sure you upgrade if needed. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_. For information on running hot upgrades, see :ref:`hot-upgrade` and :ref:`life-of-a-hot-upgrade`.
 
-.. _`modifying existing app with elixir releases`:
+.. _`modifying existing app with Elixir releases`:
 
 Using Elixir Releases
 ---------------------
@@ -563,7 +563,7 @@ Gigalixir auto-detects that you want to use Elixir Releases if you have a :bash:
 
     echo "import Config" > config/releases.exs
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want.  If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
+As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want.  If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of Phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
 
 The only configuration change we really need to do now is make sure the web server is started. Add the following to your :bash:`releases.exs`.
 
@@ -594,7 +594,7 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 Specify Versions
 ^^^^^^^^^^^^^^^^
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. Since we're using Elixir Releases, we need to use 1.9 or higher and a compatible version of erlang such as 21.3. Supported elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. Since we're using Elixir Releases, we need to use 1.9 or higher and a compatible version of erlang such as 21.3. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
 
 Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
 
@@ -677,7 +677,7 @@ to specify your own buildpacks create a :bash:`.buildpacks` file with the buildp
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-releases.git
 
-:bash:`heroku-buildpack-phoenix-static` is optional if you do not have phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+:bash:`heroku-buildpack-phoenix-static` is optional if you do not have Phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
 
 Note, that the command that gets run in production depends on what your last buildpack is.
 
@@ -685,14 +685,14 @@ Note, that the command that gets run in production depends on what your last bui
 - If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
 - If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`.
 
-If your command is :bash:`mix run --no-halt`, but you are running phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
+If your command is :bash:`mix run --no-halt`, but you are running Phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
 
 How do I install extra binaries I need for my app?
 ==================================================
 
-The process is different if you are using releases (distillery, elixir releases) or mix. We recommend switching to mix mode as it's much easier. To switch to mix mode, see :ref:`mix mode`.
+The process is different if you are using releases (distillery, Elixir releases) or mix. We recommend switching to mix mode as it's much easier. To switch to mix mode, see :ref:`mix mode`.
 
-In mix mode, all you have to do is add the relevant, buildpack to your :bash:`.buildpacks` file. Probably at the top. Make sure you also have the required elixir, phoenix, and mix buildpacks. For example, if you need rust installed, your :bash:`.buildpacks` file might look like this
+In mix mode, all you have to do is add the relevant, buildpack to your :bash:`.buildpacks` file. Probably at the top. Make sure you also have the required Elixir, Phoenix, and mix buildpacks. For example, if you need rust installed, your :bash:`.buildpacks` file might look like this
 
 .. code-block:: bash
 
@@ -707,7 +707,7 @@ In mix mode, the entire build folder is packed up and shipped to your run contai
 
 If you want to continue using distillery, you need to manually figure out which folders and files need to be packed into your release tarball and copy them over using distillery overlays. See https://github.com/bitwalker/distillery/blob/master/docs/extensibility/overlays.md
 
-If you are using elixir releases, you also need to manually figure out which folders and files you need to be packed into your release tarball and copy them over using an extra "step". See https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-steps
+If you are using Elixir releases, you also need to manually figure out which folders and files you need to be packed into your release tarball and copy them over using an extra "step". See https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-steps
 
 .. _`mix mode`:
 
@@ -715,7 +715,7 @@ How do I switch to mix mode?
 ============================
 
 Mix mode is sort of the default, but we automatically detect and switch you to distillery mode if you have a :bash:`rel/config.exs` file so one option is to delete that file.
-We also automatically detect and switch you to elixir releases mode if you have a :bash:`config/releases.exs` file so also be sure that file is deleted.
+We also automatically detect and switch you to Elixir releases mode if you have a :bash:`config/releases.exs` file so also be sure that file is deleted.
 
 If you don't want to delete those files, you can manually force mix mode by specifying the mix buildpack. Create a :bash:`.buildpacks` file and make sure you have something like the following. Notice that the last buildpack is the mix buildpack.
 
@@ -725,7 +725,7 @@ If you don't want to delete those files, you can manually force mix mode by spec
     https://github.com/gjaldon/heroku-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-mix.git
 
-If you wanted to force distillery or elixir releases, you'd want the last buildpack to be either the :bash:`https://github.com/gigalixir/gigalixir-buildpack-distillery.git` or the :bash:`https://github.com/gigalixir/gigalixir-buildpack-releases.git` buildpacks, respectively.
+If you wanted to force distillery or Elixir releases, you'd want the last buildpack to be either the :bash:`https://github.com/gigalixir/gigalixir-buildpack-distillery.git` or the :bash:`https://github.com/gigalixir/gigalixir-buildpack-releases.git` buildpacks, respectively.
 
 
 How Does Gigalixir Work?
@@ -809,7 +809,7 @@ Once your slug is built, we upload it to slug storage and we combine it with a c
 
 Then we create or update your Kubernetes configuration to deploy the app. We create a separate Kubernetes namespace for every app, a service account, an ingress for HTTP traffic, an ingress for SSH traffic, a TLS certificate, a service, and finally a deployment which creates pods and containers.
 
-The `container that runs your app`_ is a derivative of `heroku/cedar:14`_. The entrypoint is a script that sets up necessary environment variables including those from your `app configuration`_. It also starts an SSH server, installs your SSH keys, downloads the current slug, and executes it. We automatically generate and set up your erlang cookie, distributed node name, and phoenix secret key base for you. We also set up the Kubernetes permissions and libcluster selector you need to `cluster your nodes`_. We poll for your SSH keys every minute in case they have changed.
+The `container that runs your app`_ is a derivative of `heroku/cedar:14`_. The entrypoint is a script that sets up necessary environment variables including those from your `app configuration`_. It also starts an SSH server, installs your SSH keys, downloads the current slug, and executes it. We automatically generate and set up your erlang cookie, distributed node name, and Phoenix secret key base for you. We also set up the Kubernetes permissions and libcluster selector you need to `cluster your nodes`_. We poll for your SSH keys every minute in case they have changed.
 
 At this point, your app is running. The Kubernetes ingress controller is routing traffic from your host to the appropriate pods and terminating SSL/TLS for you automatically. For more information about how SSL/TLS works, see :ref:`how-tls-works`.
 
@@ -902,14 +902,14 @@ Your Elixir and Erlang versions are handled by the heroku-buildpack-elixir build
 
 Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpack. To configure, see the `heroku-buildpack-phoenix-static configuration`_. In short, you specify them in a :bash:`phoenix_static_buildpack.config` file.
 
-Supported elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
+Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
 
 .. _`heroku-buildpack-elixir configuration`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 
 How do I specify which buildpacks I want to use?
 ================================================
 
-Normally, the buildpack you need is auto-detected for you, but in some cases, you may want to specify which buildpacks you want to use. To do this, create a :bash:`.buildpacks` file and list each buildpack you want to use. For example, the default buildpacks for elixir apps using distillery would look like this
+Normally, the buildpack you need is auto-detected for you, but in some cases, you may want to specify which buildpacks you want to use. To do this, create a :bash:`.buildpacks` file and list each buildpack you want to use. For example, the default buildpacks for Elixir apps using distillery would look like this
 
 .. code-block:: bash
 
@@ -918,7 +918,7 @@ Normally, the buildpack you need is auto-detected for you, but in some cases, yo
     https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
 
-The default buildpacks for elixir apps running mix looks like this
+The default buildpacks for Elixir apps running mix looks like this
 
 .. code-block:: bash
 
@@ -933,13 +933,13 @@ Note the last buildpack. It's there to make sure your :bash:`Procfile` is set up
 How do I deploy an umbrella app?
 ================================
 
-Umbrella apps are deployed the same way, but the buildpacks need to know which internal app is your phoenix app. Set your :bash:`phoenix_relative_path` in your :bash:`phoenix_static_buildpack.config` file, see the `heroku-buildpack-phoenix-static configuration`_ for more details.
+Umbrella apps are deployed the same way, but the buildpacks need to know which internal app is your Phoenix app. Set your :bash:`phoenix_relative_path` in your :bash:`phoenix_static_buildpack.config` file, see the `heroku-buildpack-phoenix-static configuration`_ for more details.
 
 When running migrations, we need to know which internal app contains your migrations. Use the :bash:`--migration_app_name` flag on :bash:`gigalixir ps:migrate`.
 
 If you have multiple Distillery releases in your :bash:`rel/config.exs` file, be sure to set your default release to the one you want to deploy. See :ref:`gigalixir release options`.
 
-If you have multiple phoenix apps in the umbrella, you'll need to use something like this `master_proxy <https://github.com/jesseshieh/master_proxy>`_ to proxy requests to the two apps.
+If you have multiple Phoenix apps in the umbrella, you'll need to use something like this `master_proxy <https://github.com/jesseshieh/master_proxy>`_ to proxy requests to the two apps.
 
 .. _`heroku-buildpack-phoenix-static configuration`: https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration
 
@@ -1429,13 +1429,13 @@ is usually failing health checks and we constantly restart apps that fail health
 
 If you've just deployed, and you're not seeing 504s, but you're still seeing the old version of your app instead of the new version, it's the same problem. This happens when the new version does not pass health checks. When the new version doesn't pass health checks, we don't route traffic to it and we don't terminate the old version.
 
-Our health checks simply check that your app is listening on port $PORT. If you're running a non-HTTP elixir app, but need to just get health checks to pass, take a look at https://github.com/jesseshieh/elixir-tcp-accept-and-close
+Our health checks simply check that your app is listening on port $PORT. If you're running a non-HTTP Elixir app, but need to just get health checks to pass, take a look at https://github.com/jesseshieh/elixir-tcp-accept-and-close
 
 If you're using Mix, see `troubleshooting mix`_. 
 
 If you're using Distillery, see `troubleshooting distillery`_. 
 
-If you're using Elixir Releases, see `troubleshooting elixir releases`_. 
+If you're using Elixir Releases, see `troubleshooting Elixir releases`_. 
 
 .. _`troubleshooting mix`:
 
@@ -1455,7 +1455,7 @@ Run the following commands
 
 If it doesn't work, the first thing to check is your :bash:`prod.exs` file. Often, it is missing an :elixir:`http` configuration or there is a typo in the :elixir:`FooWeb.Endpoint` module name.
 
-If everything works locally, you might be running a different version of elixir in production. See :ref:`configure versions`.
+If everything works locally, you might be running a different version of Elixir in production. See :ref:`configure versions`.
 
 Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
 
@@ -1520,13 +1520,13 @@ Or to inspect closer, run
     # inspect /app folder
     # check /tmp/cache
 
-If everything works locally, you might be running a different version of elixir in production. See :ref:`configure versions`.
+If everything works locally, you might be running a different version of Elixir in production. See :ref:`configure versions`.
 
 Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
 
 If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
 
-.. _`troubleshooting elixir releases`:
+.. _`troubleshooting Elixir releases`:
 
 Elixir Releases
 ---------------
@@ -1583,7 +1583,7 @@ Or to inspect closer, run
     # inspect /app folder
     # check /tmp/cache
 
-If everything works locally, you might be running a different version of elixir in production. See :ref:`configure versions`.
+If everything works locally, you might be running a different version of Elixir in production. See :ref:`configure versions`.
 
 Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
 
@@ -1642,7 +1642,7 @@ A good first thing to try when you get a `git push` error is `cleaning your buil
 
     - cd: /tmp/build/./assets: No such file or directory
 
-        - This means the phoenix static buildpack could not find your assets folder. Either specify where it is or remove the buildpack. To specify, configure the buildpack following https://github.com/gjaldon/heroku-buildpack-phoenix-static. To remove, create a :bash:`.buildpacks` file with the buildpacks you need. For example, just :bash:`https://github.com/HashNuke/heroku-buildpack-elixir`
+        - This means the Phoenix static buildpack could not find your assets folder. Either specify where it is or remove the buildpack. To specify, configure the buildpack following https://github.com/gjaldon/heroku-buildpack-phoenix-static. To remove, create a :bash:`.buildpacks` file with the buildpacks you need. For example, just :bash:`https://github.com/HashNuke/heroku-buildpack-elixir`
 
     - SMTP/Email Network Failures e.g. {:network_failure, 'smtp.mailgun.org', {:error, :timeout}}
 
@@ -2079,7 +2079,7 @@ Note that if you want both the naked/root domain and a subdomain such as www, be
 
 If you need a wildcard domain, feel free to `contact us`_ and we can help you get set up.
 
-Note that with phoenix, you may need to change your :elixir:`check_origin` setting in order for websockets to pass the origin check. See https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#module-runtime-configuration
+Note that with Phoenix, you may need to change your :elixir:`check_origin` setting in order for websockets to pass the origin check. See https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#module-runtime-configuration
 
 How to Set Up SSL/TLS
 =====================
@@ -2589,7 +2589,7 @@ We hope to provide a database-as-a-service soon and automate the process you jus
 How to Run Migrations
 =====================
 
-If you deployed your app without distillery or elixir releases (mix mode), you can run migrations as a job in a new container with
+If you deployed your app without distillery or Elixir releases (mix mode), you can run migrations as a job in a new container with
 
 .. code-block:: bash
 
@@ -2853,7 +2853,7 @@ using the command below.
 
 With this config variable set on each of your gigalixir apps, when you deploy the same repo to each app, you'll get a different release.
 
-If you have multiple phoenix apps in the umbrella, instead of deploying each as a separate distillery release, you could also consider something like this `master_proxy <https://github.com/jesseshieh/master_proxy>`_ to proxy requests to the two apps.
+If you have multiple Phoenix apps in the umbrella, instead of deploying each as a separate distillery release, you could also consider something like this `master_proxy <https://github.com/jesseshieh/master_proxy>`_ to proxy requests to the two apps.
 
 Elixir Releases
 ---------------
@@ -2889,7 +2889,7 @@ How do I use a private git dependency?
 
 If you want to use a private git repository as a dependency in :bash:`mix.exs`, our recommended approach is to use the netrc buildpack found at https://github.com/timshadel/heroku-buildpack-github-netrc
 
-To use the buildpack, insert it in your :bash:`.buildpacks` file above the elixir and phoenix buildpacks. For example, if you are using distillery, your :bash:`.buildpacks` file will look like this
+To use the buildpack, insert it in your :bash:`.buildpacks` file above the Elixir and Phoenix buildpacks. For example, if you are using distillery, your :bash:`.buildpacks` file will look like this
 
 .. code-block:: bash
 
