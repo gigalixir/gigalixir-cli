@@ -63,7 +63,7 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
     pip3 install gigalixir --ignore-installed six
 
-Make sure, the executable is in your path, if it isn't already. 
+Make sure the executable is in your path, if it isn't already. 
 
 .. code-block:: bash
 
@@ -229,7 +229,7 @@ What's Next?
 Modifying an Existing App to Run on Gigalixir
 =============================================
 
-Whether you have an existing app or you just ran :bash:`mix phx.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine.
+Whether you have an existing app or you just ran :bash:`mix phx.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't, feel free to `contact us`_ for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine.
 
 Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
@@ -313,7 +313,7 @@ Create a file :bash:`elixir_buildpack.config` at the root of your repo and add s
     elixir_version=1.7.4
     erlang_version=21.0
 
-If necessary, you can also specify your node and npm versions by created a file called :bash:`phoenix_static_buildpack.config` with something like
+If necessary, you can also specify your node and npm versions by creating a file called :bash:`phoenix_static_buildpack.config` with something like
 
 .. code-block:: bash
 
@@ -391,7 +391,7 @@ Then, run
 
     mix deps.get
     mix distillery.init
-    # if you are running distillery below verison 2.1, you'll want to run `mix release.init` instead
+    # if you are running distillery below version 2.1, you'll want to run `mix release.init` instead
 
 Don't forget to commit
 
@@ -1166,7 +1166,7 @@ Gigalixir handles permissions so that you have access to Kubernetes endpoints an
 How to use a custom vm.args
 ===========================
 
-Gigalixir generates a default :bash:`vm.args` file for you and tells Distillery to use it by settingthe :bash:`VMARGS_PATH` envionment variable. By default, it is set to :bash:`/release-config/vm.args`. If you want to use a custom :bash:`vm.args`, we recommend you follow these instructions.
+Gigalixir generates a default :bash:`vm.args` file for you and tells Distillery to use it by setting the :bash:`VMARGS_PATH` environment variable. By default, it is set to :bash:`/release-config/vm.args`. If you want to use a custom :bash:`vm.args`, we recommend you follow these instructions.
 
 Disable Gigalixir's default vm.args
 
@@ -1651,7 +1651,7 @@ A good first thing to try when you get a `git push` error is `cleaning your buil
 
     - unknown command: MIX_ENV=prod mix phx.server
 
-        - If you are you are using a custom Procfile with an environment variables at the front of the command, you'll get this error. Try adding :bash:`env` to the front of the command. See https://github.com/ddollar/foreman/issues/265. We use the most command Ruby Foreman which behaves differently from Heroku's for this situation.
+        - If you are you are using a custom Procfile with an environment variable at the front of the command, you'll get this error. Try adding :bash:`env` to the front of the command. See https://github.com/ddollar/foreman/issues/265. We use the most command Ruby Foreman which behaves differently from Heroku's for this situation.
 
     - init terminating in do_boot ({cannot get bootfile,no_dot_erlang.boot})
 
@@ -1880,7 +1880,7 @@ And this to push to production
 
     git push production master
 
-You'll probably also want to check all your environment variables and make sure they are set probably for production and staging. Also, generally speaking, it's best to use :bash:`prod.exs` for both production and staging and let environment variables be the only thing that varies between the two environments. This way staging is as close a simulation of production as possible. If you need to convert any configs into environment variables use :elixir:`"${MYVAR}"`.
+You'll probably also want to check all your environment variables and make sure they are set probably for production and staging. Also, generally speaking, it's best to use :bash:`prod.exs` for both production and staging and let environment variables be the only thing that varies between the two environments. This way staging is as close a simulation of production as possible. If you need to convert any configs into environment variables, use :elixir:`"${MYVAR}"`.
 
 How to Set Up Continuous Integration (CI/CD)?
 =============================================
@@ -1980,7 +1980,7 @@ You can scale your app by adding more memory and cpu to each container, also cal
 How to Configure an App
 =======================
 
-All app configuration is done through envirnoment variables. You can get, set, and delete configs using the following commands. Note that setting configs automatically restarts your app.
+All app configuration is done through environment variables. You can get, set, and delete configs using the following commands. Note that setting configs automatically restarts your app.
 
 .. code-block:: bash
 
@@ -2313,7 +2313,7 @@ To run a command in a separate container, run
 
 The task is not run on the same node that your app is running in. Jobs are killed after 5 minutes.
 
-If you're using the distillery, note that beacuse we start a separate container to run the job, if you need any applications started such as your :elixir:`Repo`, use :elixir:`Application.ensure_all_started/2`. Also, be sure to stop all applications when done, otherwise your job will never complete and just hang until it times out.
+If you're using the distillery, note that because we start a separate container to run the job, if you need any applications started such as your :elixir:`Repo`, use :elixir:`Application.ensure_all_started/2`. Also, be sure to stop all applications when done, otherwise your job will never complete and just hang until it times out.
 
 .. For more information about running migrations with Distillery, see `Distillery's Running Migrations`_.
 
@@ -2402,7 +2402,7 @@ It takes a few minutes to provision. You can check the status by running
 
     gigalixir pg
 
-You may also want to adjust your pool_size. We recommend setting the pool size to (M-6)/(n+1) where M is the max connections and n is the num app replicas. We subtract 6 becaues cloud sql will sometimes, but rarely, use 6 for maintenance purposes. We use n+1 because rolling deploys will temporarily have an extra replica during the transition. For example, if you are running a size 0.6 database with 1 app replica, the pool size should be (25-6)/(1+1)=9.
+You may also want to adjust your pool_size. We recommend setting the pool size to (M-6)/(n+1) where M is the max connections and n is the num app replicas. We subtract 6 because cloud sql will sometimes, but rarely, use 6 for maintenance purposes. We use n+1 because rolling deploys will temporarily have an extra replica during the transition. For example, if you are running a size 0.6 database with 1 app replica, the pool size should be (25-6)/(1+1)=9.
 
 You can only have one database per app because otherwise managing your :bash:`DATABASE_URL` variable would become trickier.
 
@@ -2417,7 +2417,7 @@ How to upgrade a Free DB to a Standard DB
 
 If you started out with a free tier database and then upgraded to the standard tier, we highly recommend you migrate to a standard tier database. The standard tier databases support encryption, backups, extensions, and dedicated cpu, memory, & disk. There are no row limits, connection limits*, and they are automatically scalable.
 
-Unfortunatetly, we can't automatically migrate your free tier db to a standard tier db. You'll have to
+Unfortunately, we can't automatically migrate your free tier db to a standard tier db. You'll have to
 
   1. :bash:`pg_dump` the free database
   2. Delete the free database with :bash:`gigalixir pg:destroy --help`. Note postgres may make you scale down to 0 app replicas to do this so you'll have some downtime.
@@ -2533,7 +2533,7 @@ If you followed the :ref:`quick start`, then your database should already be con
        ssl: true,
        pool_size: 2
 
-Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`. If you provisioned your database using, :ref:`provisioning database`, then :bash:`DATABASE_URL` should be set for you automatically once the database in provisioned. Otherwise,
+Replace :elixir:`:gigalixir_getting_started` and :elixir:`GigalixirGettingStarted` with your app name. Then, be sure to set your :bash:`DATABASE_URL` config with something like this.  For more information on setting configs, see :ref:`configs`. If you provisioned your database using, :ref:`provisioning database`, then :bash:`DATABASE_URL` should be set for you automatically once the database is provisioned. Otherwise,
 
 .. code-block:: bash
 
@@ -2736,7 +2736,7 @@ In order to run a remote observer, you need to set up your SSH keys. It could ta
 
 Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have clustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`clustering`.
 
-You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file. Phoenix 1.3 and later adds it by default, but you have to add it youself in Phoenix 1.2.
+You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file. Phoenix 1.3 and later adds it by default, but you have to add it yourself in Phoenix 1.2.
 
 Your local machine also needs to have :bash:`lsof`.
 
@@ -2799,7 +2799,7 @@ If you don't have access to the CLI and want to modify access, `contact us`_ and
 
 The "owner", the user who created the app, is responsible for the bill each month. 
 
-For organizations, we recommend creating an "organization account" that is upgraded to the standard tier and has the billing information on file. Then create individual accounts for all developersand grant access to all contributors.
+For organizations, we recommend creating an "organization account" that is upgraded to the standard tier and has the billing information on file. Then create individual accounts for all developers and grant access to all contributors.
 
 How do I change the owner of my app?
 ====================================
@@ -2998,11 +2998,11 @@ Gigalixir takes security very, very seriously.
 #. Your build environment is fully isolated using Docker containers.
 #. Your slugs are authenticated using `Signed URLs`_.
 #. All API endpoints are authenticated using API keys instead of your password. API keys can be invalidated at any time by regenerating a new one.
-#. Remote console and remote observer uses a SSH tunnels to secure traffic.
+#. Remote console and remote observer use SSH tunnels to secure traffic.
 #. Erlang does not encrypt distribution traffic between your nodes by default, but you can `set it up to use SSL`_. For an extra layer of security, we route distribution traffic directly to each node so no other apps can sniff the traffic.
 #. We use `Stripe`_ to manage payment methods so Gigalixir never knows your credit card number.
 #. Passwords and app configs are encrypted at rest using `Cloak`_.
-#. Traffic between Gigalixir services and components are TLS encrypted.
+#. Traffic between Gigalixir services and components is TLS encrypted.
 
 .. _`Signed URLs`: https://cloud.google.com/storage/docs/access-control/signed-urls
 .. _`Cloak`: https://github.com/danielberkompas/cloak
