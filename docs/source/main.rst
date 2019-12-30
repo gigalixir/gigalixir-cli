@@ -8,6 +8,8 @@ Try Gigalixir for free without a credit card by following the :ref:`quick start`
 Screencast
 ==========
 
+Note: The video is out of date, so you can't follow it verbatim, but the steps are the same.
+
 For those of you who prefer a screencast introduction. `Elixircasts.io <https://elixircasts.io>`_ has a great video that they've generously allowed us to embed here.
 
 .. raw:: html
@@ -1999,6 +2001,11 @@ Note, this will copy all configuration variables from the source to the destinat
 
 .. _`hot-configure`:
 .. _`hot configuration updates`:
+
+Why was my app scaled down to 0?
+================================
+
+On the free tier apps are scaled down to 0 if there have been no deploys for 30 days. We send a warning email after 23 days. To prevent this from happening, make sure you either deploy often or upgrade to the standard tier.
 
 How to Hot Configure an App
 ===========================
