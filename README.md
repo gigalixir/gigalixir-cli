@@ -44,6 +44,9 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 
 ## Distribute
 
+    # may have to upgrade pip and setuptools with
+    # pip install --upgrade pip
+    # pip install --upgrade setuptools
     python setup.py sdist upload -r pypitest
     python setup.py sdist upload -r pypi
 
