@@ -1912,6 +1912,8 @@ Finally, add a :bash:`GIGALIXIR_APP_NAME` environment variable with the name of 
 
 Using GitLab CI or any other CI/CD service should be very similar. For an example GitLab CI yaml file, see this `.gitlab-ci.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.gitlab-ci.yml>`_ file.
 
+Using GitHub Actions is also similar. For example, see https://gist.github.com/jesseshieh/7b231370874445592a40bf5ed6961460
+
 Using CircleCI is also similar. For an example, see this `config.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.circleci/config.yml>`_.
 
 If you want to automatically run migrations on each automatic deploy, you have two options
