@@ -162,7 +162,7 @@ Create a file :bash:`elixir_buildpack.config` at the root of your repo and add s
     elixir_version=1.10.0
     erlang_version=22.2
 
-If necessary, you can also specify your node and npm versions by creating a file called :bash:`phoenix_static_buildpack.config` with something like
+The latest versions of phoenix also require higher versions of node. Create a file called :bash:`phoenix_static_buildpack.config` with something like
 
 .. code-block:: bash
 
