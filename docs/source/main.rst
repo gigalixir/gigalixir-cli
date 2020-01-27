@@ -115,7 +115,11 @@ Verify by running
 Prepare Your App
 ----------------
 
-If you have an existing app or want to use :bash:`mix phx.new`, follow the steps in :ref:`modifying existing app`. If you are starting a project from scratch, the easiest way to get started is to clone the `gigalixir-getting-started`_ repo.
+You *might* be able to skip this step and "just deploy", but it depends on what version of phoenix you're running and whether you are okay running in mix mode without distillery or elixir releases. 
+
+For more information, click here: :ref:`modifying existing app`. 
+
+Or if you just want to give gigalixir a spin, clone our reference app.
 
 .. code-block:: bash
 
@@ -146,6 +150,52 @@ Verify that a git remote was created by running
 
     git remote -v
 
+Specify Versions
+----------------
+
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
+
+Create a file :bash:`elixir_buildpack.config` at the root of your repo and add something like this. Make sure it matches what you have in development to ensure a smooth deploy.
+
+.. code-block:: bash
+
+    elixir_version=1.10.0
+    erlang_version=22.2
+
+If necessary, you can also specify your node and npm versions by creating a file called :bash:`phoenix_static_buildpack.config` with something like
+
+.. code-block:: bash
+
+    node_version=11.1.0
+
+Don't forget to commit
+
+.. code-block:: bash
+
+    git add elixir_buildpack.config phoenix_static_buildpack.config
+    git commit -m "set elixir, erlang, and node version"
+
+Provision a Database
+--------------------
+
+Phoenix 1.4 enforces the DATABASE_URL env var at compile time so let's create a database first, before deploying.
+
+.. code-block:: bash
+
+    gigalixir pg:create --free
+
+Verify by running
+
+.. code-block:: bash
+
+    gigalixir pg
+
+Once the database is created, verify your configuration includes a :bash:`DATABASE_URL` by running
+
+.. code-block:: bash
+
+    gigalixir config
+
 Deploy!
 -------
 
@@ -168,27 +218,6 @@ Once it's healthy, verify it works
     curl https://$APP_NAME.gigalixirapp.com/
     # or you could also run
     # gigalixir open
-
-Provision a Database
---------------------
-
-Your app does not have a database yet, let's create one.
-
-.. code-block:: bash
-
-    gigalixir pg:create --free
-
-Verify by running
-
-.. code-block:: bash
-
-    gigalixir pg
-
-Once the database is created, verify your configuration includes a :bash:`DATABASE_URL` by running
-
-.. code-block:: bash
-
-    gigalixir config
 
 Run Migrations
 --------------
@@ -302,31 +331,6 @@ Don't forget to commit your changes
 
     git add config/prod.exs
     git commit -m "setup production deploys"
-
-Specify Versions
-^^^^^^^^^^^^^^^^
-
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
-
-Create a file :bash:`elixir_buildpack.config` at the root of your repo and add something like this. Make sure it matches what you have in development to ensure a smooth deploy.
-
-.. code-block:: bash
-
-    elixir_version=1.7.4
-    erlang_version=21.0
-
-If necessary, you can also specify your node and npm versions by creating a file called :bash:`phoenix_static_buildpack.config` with something like
-
-.. code-block:: bash
-
-    node_version=11.1.0
-
-Don't forget to commit
-
-.. code-block:: bash
-
-    git add elixir_buildpack.config
-    git commit -m "use elixir v1.7.2"
 
 Verify
 ^^^^^^
@@ -442,24 +446,6 @@ Then add something like the following in :bash:`prod.exs`
 3. Replace :elixir:`GigalixirGettingStarted.Repo` with your repo module name e.g. :elixir:`MyApp.Repo`
 
 You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. 
-
-Specify Versions
-^^^^^^^^^^^^^^^^
-
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support 
-
-Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
-
-.. code-block:: bash
-
-    elixir_version=1.7.2
-
-Don't forget to commit
-
-.. code-block:: bash
-
-    git add elixir_buildpack.config
-    git commit -m "use elixir v1.7.2"
 
 Verify
 ^^^^^^
@@ -592,25 +578,6 @@ You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config becaus
 .. code-block:: bash
 
     gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
-
-Specify Versions
-^^^^^^^^^^^^^^^^
-
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. Since we're using Elixir Releases, we need to use 1.9 or higher and a compatible version of erlang such as 21.3. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
-
-Create a file :bash:`elixir_buildpack.config` at the root of your repo and add these contents
-
-.. code-block:: bash
-
-    elixir_version=1.9
-    erlang_version=21.3
-
-Don't forget to commit
-
-.. code-block:: bash
-
-    git add elixir_buildpack.config
-    git commit -m "use elixir v1.9"
 
 Verify
 ^^^^^^
