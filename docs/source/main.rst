@@ -222,7 +222,7 @@ Once it's healthy, verify it works
 Run Migrations
 --------------
 
-If you are using not using releases, the easiest way to run migrations is as a job.
+If you are not using releases, the easiest way to run migrations is as a job.
 
 .. code-block:: bash
 
@@ -845,7 +845,7 @@ Yes, if your current infrastructure is on AWS, you'll probably want to run your 
 
 Once the app is created, it's difficult to migrate to another region. If you want to do this, Heroku's guide is a good overview of what you should consider. If you don't mind downtime, the transition could be easy, but unfortunately gigalixir isn't able to do it for you with a button press. See https://devcenter.heroku.com/articles/app-migration
 
-One thing to keep in mind is that Gigalixir Postgres databases are as of right now only available in GCP/v2018-us-central1 and GCP/europe-west1 so if you plan to use a Gigalixir-managed database, make sure your app lives in one of those regions. 
+One thing to keep in mind is that Gigalixir Postgres databases are as of right now only available in GCP/v2018-us-central1 and GCP/europe-west1, however, we can set up a database for you in AWS manually if you like. Just `contact us`_ and we'll create one for you. We plan to add AWS to the Gigalixir CLI soon. 
 
 If you don't see the region you want, please `contact us`_ and let us know. We open new regions based purely on demand.
 
