@@ -326,23 +326,25 @@ def rollback(ctx, app_name, version):
 @cli.command(name='ps:remote_console')
 @click.option('-a', '--app_name')
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
+@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
-def remote_console(ctx, app_name, ssh_opts):
+def remote_console(ctx, app_name, ssh_opts, ssh_cmd):
     """
     Drop into a remote console on a live production node.
     """
-    gigalixir_app.remote_console(ctx.obj['host'], app_name, ssh_opts)
+    gigalixir_app.remote_console(ctx.obj['host'], app_name, ssh_opts, ssh_cmd)
 
 @cli.command(name='ps:run')
 @click.option('-a', '--app_name')
 @click.argument('command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
+@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
-def ps_run(ctx, app_name, ssh_opts, command):
+def ps_run(ctx, app_name, ssh_opts, ssh_cmd, command):
     """
     Run a shell command on your running container.
     """
@@ -352,27 +354,29 @@ def ps_run(ctx, app_name, ssh_opts, command):
 @click.option('-a', '--app_name')
 @click.argument('command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
+@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
-def ssh(ctx, app_name, ssh_opts, command):
+def ssh(ctx, app_name, ssh_opts, ssh_cmd, command):
     """
     Ssh into app. Be sure you added your ssh key using gigalixir create ssh_key. Configs are not loaded automatically.
     """
-    gigalixir_app.ssh(ctx.obj['host'], app_name, ssh_opts, *command)
+    gigalixir_app.ssh(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *command)
 
 @cli.command(name='ps:distillery')
 @click.option('-a', '--app_name')
 @click.argument('distillery_command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
+@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
-def distillery(ctx, app_name, ssh_opts, distillery_command):
+def distillery(ctx, app_name, ssh_opts, ssh_cmd, distillery_command):
     """
     Runs a distillery command to run on the remote container e.g. ping, remote_console. Be sure you've added your ssh key.
     """
-    gigalixir_app.distillery_command(ctx.obj['host'], app_name, ssh_opts, *distillery_command)
+    gigalixir_app.distillery_command(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *distillery_command)
 
 @cli.command(name='ps:restart')
 @click.option('-a', '--app_name')
@@ -403,14 +407,15 @@ def run(ctx, app_name, command):
 @click.option('-a', '--app_name')
 @click.option('-m', '--migration_app_name', default=None, help='For umbrella apps, specify which inner app to migrate.')
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
+@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
-def ps_migrate(ctx, app_name, migration_app_name, ssh_opts):
+def ps_migrate(ctx, app_name, migration_app_name, ssh_opts, ssh_cmd):
     """
     Run Ecto Migrations on a production node.
     """
-    gigalixir_app.migrate(ctx.obj['host'], app_name, migration_app_name, ssh_opts)
+    gigalixir_app.migrate(ctx.obj['host'], app_name, migration_app_name, ssh_opts, ssh_cmd)
 
 # @update.command()
 @cli.command(name='account:payment_method:set')
