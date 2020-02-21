@@ -115,25 +115,25 @@ def customer_app_name(host, app_name):
         data = json.loads(r.text)["data"]
         return data["customer_app_name"]
 
-def distillery_eval(host, app_name, ssh_opts, expression):
+def distillery_eval(host, app_name, ssh_opts, ssh_cmd, expression):
     # capture_output == True as this isn't interactive
     # and we want to return the result as a string rather than
     # print it out to the screen
-    return ssh_helper(host, app_name, ssh_opts, True, "gigalixir_run", "distillery_eval", "--", expression)
+    return ssh_helper(host, app_name, ssh_opts, ssh_cmd, True, "gigalixir_run", "distillery_eval", "--", expression)
 
-def distillery_command(host, app_name, ssh_opts, *args):
-    ssh(host, app_name, ssh_opts, "gigalixir_run", "shell", "--", "bin/%s" % customer_app_name(host, app_name), *args)
+def distillery_command(host, app_name, ssh_opts, ssh_cmd, *args):
+    ssh(host, app_name, ssh_opts, ssh_cmd, "gigalixir_run", "shell", "--", "bin/%s" % customer_app_name(host, app_name), *args)
 
-def ssh(host, app_name, ssh_opts, *args):
+def ssh(host, app_name, ssh_opts, ssh_cmd, *args):
     # capture_output == False for interactive mode which is
     # used by ssh, remote_console, distillery_command
-    ssh_helper(host, app_name, ssh_opts, False, *args)
+    ssh_helper(host, app_name, ssh_opts, ssh_cmd, False, *args)
 
 # if using this from a script, and you want the return
 # value in a variable, use capture_output=True
 # capture_output needs to be False for remote_console
 # and regular ssh to work.
-def ssh_helper(host, app_name, ssh_opts, capture_output, *args):
+def ssh_helper(host, app_name, ssh_opts, ssh_cmd, capture_output, *args):
     # verify SSH keys exist
     keys = ssh_key.ssh_keys(host)
     if len(keys) == 0:
@@ -153,11 +153,11 @@ def ssh_helper(host, app_name, ssh_opts, capture_output, *args):
             escaped_args = [pipes.quote(arg) for arg in args]
             command = " ".join(escaped_args)
             if capture_output:
-                return call("ssh %s -t root@%s %s" % (ssh_opts, ssh_ip, command))
+                return call("%s %s -t root@%s %s" % (ssh_cmd, ssh_opts, ssh_ip, command))
             else:
-                cast("ssh %s -t root@%s %s" % (ssh_opts, ssh_ip, command))
+                cast("%s %s -t root@%s %s" % (ssh_cmd, ssh_opts, ssh_ip, command))
         else:
-            cast("ssh %s -t root@%s" % (ssh_opts, ssh_ip))
+            cast("%s %s -t root@%s" % (ssh_cmd, ssh_opts, ssh_ip))
 
 
 def restart(host, app_name):
@@ -217,18 +217,18 @@ def run(host, app_name, command):
         click.echo("See `gigalixir logs` for any output.")
         click.echo("See `gigalixir ps` for job info.")
 
-def ps_run(host, app_name, ssh_opts, *command):
+def ps_run(host, app_name, ssh_opts, ssh_cmd, *command):
     # runs command in same container app is running
-    ssh(host, app_name, ssh_opts, "gigalixir_run", "shell", "--", *command)
+    ssh(host, app_name, ssh_opts, ssh_cmd, "gigalixir_run", "shell", "--", *command)
 
-def remote_console(host, app_name, ssh_opts):
-    ssh(host, app_name, ssh_opts, "gigalixir_run", "remote_console")
+def remote_console(host, app_name, ssh_opts, ssh_cmd):
+    ssh(host, app_name, ssh_opts, ssh_cmd, "gigalixir_run", "remote_console")
 
-def migrate(host, app_name, migration_app_name, ssh_opts):
+def migrate(host, app_name, migration_app_name, ssh_opts, ssh_cmd):
     if migration_app_name is None:
-        ssh(host, app_name, ssh_opts, "gigalixir_run", "migrate")
+        ssh(host, app_name, ssh_opts, ssh_cmd, "gigalixir_run", "migrate")
     else:
-        ssh(host, app_name, ssh_opts, "gigalixir_run", "migrate", "-m", migration_app_name)
+        ssh(host, app_name, ssh_opts, ssh_cmd, "gigalixir_run", "migrate", "-m", migration_app_name)
 
 def logs(host, app_name, num, no_tail):
     payload = {
