@@ -824,6 +824,10 @@ There is an extra flag you can pass to clean your cache before building in case 
 Known Issues
 ============
 
+  -  git push hangs and then times out
+
+      - Try running :bash:`git config --local http.version HTTP/1.1`. We've seen this issue happen with many customers and we've been able to narrow it down to an HTTP/2 issue of some kind with some versions of curl or git, but haven't been able to reproduce it. Many customers report that switching to HTTP/1.1 seems to fix the issue. For more information, try setting :bash:`GIT_TRACE=1 GIT_CURL_VERBOSE=1` when pushing. If you can also send us the output, that would be helpful. Often what we'll see in the output is something like :bash:`17 bytes stray data read before trying h2 connection`.
+
   -  Warning: Multiple default buildpacks reported the ability to handle this app. The first buildpack in the list below will be used.
 
       - This warning is safe to ignore. It is a temporary warning due to a workaround.
@@ -1507,8 +1511,8 @@ First, try generating and running a release locally by running
 .. code-block:: bash
 
     mix deps.get
-    SECRET_KEY_BASE="$(mix phx.gen.secret)"
-    DATABASE_URL="postgresql://user:pass@localhost:5432/foo" 
+    export SECRET_KEY_BASE="$(mix phx.gen.secret)"
+    export DATABASE_URL="postgresql://user:pass@localhost:5432/foo" 
     MIX_ENV=prod mix release
     APP_NAME=gigalixir_getting_started
     PORT=4000 _build/prod/rel/$APP_NAME/bin/$APP_NAME start
