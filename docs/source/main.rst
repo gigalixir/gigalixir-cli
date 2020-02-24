@@ -1069,11 +1069,6 @@ Heroku and others allow you to specify different types of processes under a sing
 .. _`Background Jobs in Phoenix`: http://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix.html
 .. _`whether you really need Exq`: https://github.com/akira/exq#do-you-need-exq
 
-*What if Gigalixir shuts down?*
--------------------------------
-
-Gigalixir is running profitably and has plenty of funding. There is no reason to think Gigalixir will shut down.
-
 *My git push was rejected*
 --------------------------
 
