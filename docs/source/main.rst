@@ -2636,7 +2636,13 @@ Then run this to "up" migrate.
 How to run seeds?
 =================
 
-Running seeds in production is usually a one-time job, so our recommendation is to `drop into a remote console`_ and run commands manually. If you have a :bash:`seeds.exs` file, you can follow `the Distillery migration guide`_ and run something like this in your remote console.
+If you are in mix mode (not using distillery or elixir releases) and have a seeds.exs file, you can just run
+
+.. code-block:: bash
+
+    gigalixir run -- mix run priv/repo/seeds.exs
+
+Otherwise, you'll need to `drop into a remote console`_ and run commands manually. If you have a :bash:`seeds.exs` file, you can follow `the Distillery migration guide`_ and run something like this in your remote console.
 
 .. code-block:: elixir
 
