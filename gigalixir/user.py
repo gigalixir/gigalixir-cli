@@ -40,8 +40,7 @@ def validate_email(host, email):
         "email": email
     })
     if r.status_code != 200:
-        errors = json.loads(r.text)["errors"]
-        raise Exception("\n".join(errors))
+        raise Exception(r.text)
 
 def validate_password(host, password):
     if len(password) < 4:
@@ -86,8 +85,7 @@ def get_reset_password_token(host, email):
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
-        errors = json.loads(r.text)["errors"]
-        raise Exception("\n".join(errors))
+        raise Exception(r.text)
     else:
         logging.getLogger("gigalixir-cli").info("Reset password token has been sent to your email.")
 
