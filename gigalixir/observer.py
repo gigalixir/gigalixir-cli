@@ -13,7 +13,7 @@ from .shell import cast, call
 from . import app as gigalixir_app
 from six.moves.urllib.parse import quote
 
-def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
+def observer(ctx, app_name, erlang_cookie, ssh_opts, ssh_cmd):
     if not ctx.obj['router'].supports_multiplexing():
         raise Exception("The observer command is not supported on this platform.")
 
@@ -55,19 +55,19 @@ def observer(ctx, app_name, erlang_cookie=None, ssh_opts=""):
 
         logging.getLogger("gigalixir-cli").info("Fetching erlang cookie")
         if erlang_cookie is None:
-            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, ssh_opts, get_cookie_command).strip("'")
+            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, ssh_opts, ssh_cmd, get_cookie_command).strip("'")
         else:
             ERLANG_COOKIE = erlang_cookie
         logging.getLogger("gigalixir-cli").info("Using erlang cookie: %s" % ERLANG_COOKIE)
 
         logging.getLogger("gigalixir-cli").info("Fetching pod ip")
-        node_name = gigalixir_app.distillery_eval(host, app_name, ssh_opts, get_node_name_command)
+        node_name = gigalixir_app.distillery_eval(host, app_name, ssh_opts, ssh_cmd, get_node_name_command)
         # node_name is surrounded with single quotes
         (sname, MY_POD_IP) = node_name.strip("'").split('@')
         logging.getLogger("gigalixir-cli").info("Using pod ip: %s" % MY_POD_IP)
         logging.getLogger("gigalixir-cli").info("Using node name: %s" % sname)
         logging.getLogger("gigalixir-cli").info("Fetching epmd port and app port.")
-        output = gigalixir_app.ssh_helper(host, app_name, ssh_opts, True, "--", "epmd", "-names")
+        output = gigalixir_app.ssh_helper(host, app_name, ssh_opts, ssh_cmd, True, "--", "epmd", "-names")
         EPMD_PORT=None
         APP_PORT=None
         for line in output.splitlines():

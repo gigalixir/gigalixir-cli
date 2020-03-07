@@ -1011,14 +1011,15 @@ def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
 @click.option('-a', '--app_name')
 @click.option('-c', '--cookie')
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
+@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
-def observer(ctx, app_name, cookie, ssh_opts):
+def observer(ctx, app_name, cookie, ssh_opts, ssh_cmd):
     """
     Launch remote production observer.
     """
-    gigalixir_observer.observer(ctx, app_name, cookie, ssh_opts)
+    gigalixir_observer.observer(ctx, app_name, cookie, ssh_opts, ssh_cmd)
 
 @cli.command()
 @click.pass_context
