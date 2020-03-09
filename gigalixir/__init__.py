@@ -348,7 +348,7 @@ def ps_run(ctx, app_name, ssh_opts, ssh_cmd, command):
     """
     Run a shell command on your running container.
     """
-    gigalixir_app.ps_run(ctx.obj['host'], app_name, ssh_opts, *command)
+    gigalixir_app.ps_run(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *command)
 
 @cli.command(name='ps:ssh')
 @click.option('-a', '--app_name')
