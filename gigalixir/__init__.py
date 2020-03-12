@@ -11,6 +11,7 @@ from . import app as gigalixir_app
 from . import config as gigalixir_config
 from . import permission as gigalixir_permission
 from . import release as gigalixir_release
+from . import app_activity as gigalixir_app_activity
 from . import api_key as gigalixir_api_key
 from . import ssh_key as gigalixir_ssh_key
 from . import log_drain as gigalixir_log_drain
@@ -578,6 +579,17 @@ def apps(ctx):
     Get apps.
     """
     gigalixir_app.get(ctx.obj['host'])
+
+@cli.command(name='apps:activity')
+@click.option('-a', '--app_name')
+@click.pass_context
+@report_errors
+@detect_app_name
+def app_activity(ctx, app_name):
+    """
+    Get activity for an app.
+    """
+    gigalixir_app_activity.get(ctx.obj['host'], app_name)
 
 # @get.command()
 @cli.command()
