@@ -2180,6 +2180,16 @@ Each time you deploy or rollback a new release is generated. To see all your pre
 
     gigalixir releases
 
+How to View App Activity
+========================
+
+We keep a record of each time you deploy, change configs, scale, etc. To view the activity history, run
+
+.. code-block:: bash
+
+    gigalixir apps:activity
+
+
 How to Change or Reset Your Password
 ====================================
 
