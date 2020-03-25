@@ -1658,6 +1658,12 @@ How to Install the CLI
 
 See :ref:`install the CLI`.
 
+There is also an Arch AUR Package here: https://aur.archlinux.org/packages/gigalixir-cli/
+
+If you're interested in creating a Mac OS Brew formula, contact us!
+
+If you're interested in creating an Ubuntu/Debian package, contact us!
+
 How to Upgrade the CLI
 ----------------------
 
@@ -1879,6 +1885,7 @@ Finally, add a :bash:`GIGALIXIR_APP_NAME` environment variable with the name of 
 Using GitLab CI or any other CI/CD service should be very similar. For an example GitLab CI yaml file, see this `.gitlab-ci.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.gitlab-ci.yml>`_ file.
 
 Using GitHub Actions is also similar. For example, see https://gist.github.com/jesseshieh/7b231370874445592a40bf5ed6961460
+You might also take a look at this GitHub Action for Gigalixir: https://github.com/marketplace/actions/gigalixir-action
 
 Using CircleCI is also similar. For an example, see this `config.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.circleci/config.yml>`_.
 

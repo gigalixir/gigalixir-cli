@@ -254,14 +254,7 @@ def cli(ctx, env):
 #     """
 #     raise TestException("Test Exception")
 
-@cli.command()
-@click.argument('subcommand', required=False)
-@click.pass_context
-@report_errors
-def help(ctx, subcommand):
-    """
-    Show commands and descriptions.
-    """
+def print_help(ctx, subcommand):
     if subcommand is None:
         click.echo(ctx.parent.get_help(), color=ctx.color)
     else:
@@ -271,6 +264,16 @@ def help(ctx, subcommand):
         else:
             ctx.info_name = subcommand
             click.echo(subcommand_obj.get_help(ctx))
+
+@cli.command()
+@click.argument('subcommand', required=False)
+@click.pass_context
+@report_errors
+def help(ctx, subcommand):
+    """
+    Show commands and descriptions.
+    """
+    print_help(ctx, subcommand)
 
 @cli.command(name='ps')
 @click.option('-a', '--app_name')
@@ -701,8 +704,13 @@ def config_set(ctx, app_name, assignments):
     colored_keys = []
     configs = {}
     for assignment in assignments:
-        key, value = assignment.split('=', 1)
-        configs[key] = value
+        try:
+            key, value = assignment.split('=', 1)
+            configs[key] = value
+        except ValueError:
+            print_help(ctx, "config:set")
+            raise
+
     gigalixir_config.create_multiple(ctx.obj['host'], app_name, configs)
 
 # @get.command()
