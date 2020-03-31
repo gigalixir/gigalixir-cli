@@ -1208,7 +1208,9 @@ No Row Limits                       YES
 Backups                             YES
 Scalable/Upgradeable                YES
 Automatic Data Migration            YES
-Postgres Extensions                 YES
+Extensions                          YES
+Functions                           YES
+Triggers                            YES
 Role Management                     YES
 ========================  ========= =============
 
@@ -2407,7 +2409,7 @@ Under the hood, we use Google's Cloud SQL which provides reliability, security, 
 How to upgrade a Free DB to a Standard DB
 =========================================
 
-If you started out with a free tier database and then upgraded to the standard tier, we highly recommend you migrate to a standard tier database. The standard tier databases support encryption, backups, extensions, and dedicated cpu, memory, & disk. There are no row limits, connection limits*, and they are automatically scalable.
+If you started out with a free tier database and then upgraded to the standard tier, we highly recommend you migrate to a standard tier database. The standard tier databases support encryption, backups, extensions, functions, trigers, and dedicated cpu, memory, & disk. There are no row limits, connection limits*, and they are automatically scalable.
 
 Unfortunately, we can't automatically migrate your free tier db to a standard tier db. You'll have to
 
