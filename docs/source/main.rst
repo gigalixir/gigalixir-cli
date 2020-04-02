@@ -1348,7 +1348,7 @@ Gigalixir is designed for Elixir/Phoenix apps and it is common for Elixir/Phoeni
 
 We also know that Elixir/Phoenix apps are designed to be long-lived and potentially store state in-memory so we do not restart replicas arbitrarily. In fact, replicas should not restart at all, unless there is an extenuating circumstance that requires it.  For apps that require extreme high availability, we suggest that your app be able to handle node restarts just as you would for any app not running on Gigalixir.
 
-That said, we do have a number of limits in order to prevent abuse which are listed below.
+That said, we do have a number of limits in order to prevent abuse which are listed below. If you need to request a higher limit, contact us and we'll do our best to accomodate you.
 
 ============= =====
 Resource      Limit
