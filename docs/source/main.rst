@@ -1348,6 +1348,21 @@ Gigalixir is designed for Elixir/Phoenix apps and it is common for Elixir/Phoeni
 
 We also know that Elixir/Phoenix apps are designed to be long-lived and potentially store state in-memory so we do not restart replicas arbitrarily. In fact, replicas should not restart at all, unless there is an extenuating circumstance that requires it.  For apps that require extreme high availability, we suggest that your app be able to handle node restarts just as you would for any app not running on Gigalixir.
 
+That said, we do have a number of limits in order to prevent abuse which are listed below.
+
+============= =====
+Resource      Limit
+============= =====
+Domains       10000
+Log Drains    5
+Apps          100
+SSH Keys      50
+Collaborators 25
+Config Vars   32kb
+Slug Size     500mb
+Repo Size     1gb
+Build Time    15m
+
 [1] Because Gigalixir runs on Google Compute Engine, you may bump into an issue with connections that stay idle for 10m. For more information and how to work around it, see https://cloud.google.com/compute/docs/troubleshooting
 [2] We do have a timeout of 60 minutes for connections after an nginx configuration reload. If you have a long-lived websocket connection and our nginx configuration is reloaded, the connection will be dropped 60 minutes later. Unfortunately, nginx reloads happen frequently under Kubernetes.
 
