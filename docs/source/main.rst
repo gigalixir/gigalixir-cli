@@ -8,10 +8,6 @@ Try Gigalixir for free without a credit card by following the :ref:`quick start`
 Screencast
 ==========
 
-Note: The video is out of date, so you can't follow it verbatim, but the steps are the same.
-
-For those of you who prefer a screencast introduction. `Elixircasts.io <https://elixircasts.io>`_ has a great video that they've generously allowed us to embed here.
-
 .. raw:: html
 
     <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto; margin-bottom: 20px;">
