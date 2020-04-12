@@ -1771,6 +1771,12 @@ And for every app listed, run
 
 This will make sure you've deleted all domains, databases, etc and you won't be charged in the future.
 
+If you really want to completely destroy your account, run
+
+.. code-block:: bash
+
+    gigalixir account:destroy
+
 How to Create an App
 ====================
 
