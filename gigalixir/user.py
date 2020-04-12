@@ -33,6 +33,18 @@ def upgrade(host):
         raise Exception(r.text)
     logging.getLogger("gigalixir-cli").info('Account upgraded.')
 
+def delete(host, email, password):
+    r = requests.delete('%s/api/users' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    }, json = {
+        'email': email
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    logging.getLogger("gigalixir-cli").info('Account destroyed.')
+
 def validate_email(host, email):
     r = requests.get('%s/api/validate_email' % host, headers = {
         'Content-Type': 'application/json',

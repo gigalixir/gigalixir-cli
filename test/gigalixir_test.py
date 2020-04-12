@@ -493,6 +493,16 @@ def test_get_reset_password_token():
     expect(httpretty.last_request().body.decode()).to.equal('{"email": "foo@gigalixir.com"}')
 
 @httpretty.activate
+def test_account_destroy():
+    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/users', body='{}', content_type='application/json', status=200)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['account:destroy', '-y', '--email=foo@gigalixir.com'], input="password\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().parsed_body).to.equal({"email": "foo@gigalixir.com"})
+    expect(httpretty.last_request().headers.get('Authorization')).to.equal('Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwYXNzd29yZA==')
+
+@httpretty.activate
 def test_reset_password():
     httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/users/reset_password', body='{}', content_type='application/json', status=200)
     runner = CliRunner()

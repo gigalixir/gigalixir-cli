@@ -446,6 +446,20 @@ def upgrade(ctx, yes):
     if yes or click.confirm('Are you sure you want to upgrade to the standard tier?'):
         gigalixir_user.upgrade(ctx.obj['host'])
 
+@cli.command(name='account:destroy')
+@click.option('-y', '--yes', is_flag=True)
+@click.option('-e', '--email', prompt=True)
+@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
+@click.pass_context
+@report_errors
+def destroy_account(ctx, yes, email, password):
+    """
+    Destroy your account
+    """
+    logging.getLogger("gigalixir-cli").info("WARNING: Deleting an account can not be undone.")
+    if yes or click.confirm('Are you sure you want to delete your account (%s)?' % email):
+        gigalixir_user.delete(ctx.obj['host'], email, password)
+
 # @reset.command()
 @cli.command(name='account:password:set')
 @click.option('-t', '--token', prompt=True)
