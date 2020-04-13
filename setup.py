@@ -10,7 +10,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'click~=6.7',
-        'requests~=2.13.0',
+        'requests~=2.20.0',
         'stripe~=1.51.0',
         'rollbar~=0.13.11',
         'pygments~=2.2.0',
