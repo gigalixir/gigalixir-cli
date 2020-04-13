@@ -2977,9 +2977,12 @@ Or if you aren't using distillery, see :ref:`custom procfile`. You can add any c
 Can I choose my operating system, stack, or image?
 ==================================================
 
-We have 3 stacks you can choose from: gigalixir-14, gigalixir-16, and gigalixir-18.
-These stacks are based on Heroku's cedar-14, heroku-16, and heroku-18, respectively which are based on Ubuntu 14, 16, and 18 respectively.
+We have 2 stacks you can choose from: gigalixir-16 and gigalixir-18.
+These stacks are based on Heroku's heroku-16 and heroku-18, respectively which are based on Ubuntu 16 and 18 respectively.
 gigalixir-18 is the default.
+
+Note that some older apps on gigalixir might be running gigalixir-14, based on Heroku's cedar-14, which will be end-of-life on November 2nd, 2020. gigalixir-14 will be also be end-of-life on the same day. See 
+https://devcenter.heroku.com/changelog-items/1757
 
 You can choose your stack when you create your app with 
 
