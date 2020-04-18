@@ -1080,7 +1080,7 @@ Try force pushing with
 Clustering Nodes
 ================
 
-First of all, be sure you are using Distillery and not mix for your deploys. Clustering won't work with just mix. For instructions on using distillery, see :ref:`mix vs distillery`.
+First of all, be sure you are using either Distillery or Elixir Releases for your deploys and not mix. Clustering won't work with just mix. For instructions on using Distillery or Releases, see :ref:`mix vs distillery`.
 
 We use libcluster to manage node clustering. For more information, see `libcluster's documentation`_.
 
@@ -1088,20 +1088,23 @@ To install libcluster, add this to the deps list in :bash:`mix.exs`
 
 .. code-block:: elixir
 
-    {:libcluster, "~> 2.0.3"}
+    {:libcluster, "~> 3.2"}
 
 If you are on Elixir 1.3 or lower, add :elixir:`libcluster` and :elixir:`:ssl` to your applications list. Elixir 1.4 and up detect your applications list for you.
 
-If you are running erlang/OTP 21 or higher, you need to use libcluster 3.0 or higher and add the following to your :bash:`application.ex` file.
+Next, add the following to the existing :elixir:`start` function in your :bash:`application.ex` file. Remember to replace :elixir:`GigalixirGettingStarted` with your application name.
 
 .. code-block:: elixir
 
-    # libcluster 3.0+ only
+  def start(_type, _args) do
+    topologies = Application.get_env(:libcluster, :topologies) || []
+
     children = [
-      {Cluster.Supervisor, [Application.get_env(:libcluster, :topologies), [name: GigalixirGettingStarted.ClusterSupervisor]]},
+      {Cluster.Supervisor, [topologies, [name: GigalixirGettingStarted.ClusterSupervisor]]},
       ... # other children
     ]
-
+    ...
+  end
 
 Your app configuration needs to have something like this in it. For a full example, see `gigalixir-getting-started's prod.exs file`_.
 
