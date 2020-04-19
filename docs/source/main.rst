@@ -162,6 +162,7 @@ The latest versions of phoenix also require higher versions of node. Create a fi
 
 .. code-block:: bash
 
+    phoenix_relative_path=.
     node_version=11.1.0
 
 Don't forget to commit
