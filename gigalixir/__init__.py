@@ -833,7 +833,7 @@ def delete_app(ctx, app_name, yes):
     Deletes an app. Can not be undone. 
     """
     logging.getLogger("gigalixir-cli").info("WARNING: Deleting an app can not be undone and the name can not be reused.")
-    if yes or click.confirm('Do you want to delete your app?'):
+    if yes or click.confirm('Do you want to delete your app (%s)?' % app_name):
         gigalixir_app.delete(ctx.obj['host'], app_name)
 
 # @delete.command()
