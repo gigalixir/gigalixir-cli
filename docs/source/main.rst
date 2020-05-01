@@ -420,7 +420,8 @@ Then add something like the following in :bash:`prod.exs`
        server: true, # Without this line, your app will not start the web server!
        secret_key_base: "${SECRET_KEY_BASE}",
        url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
-       cache_static_manifest: "priv/static/cache_manifest.json"
+       cache_static_manifest: "priv/static/cache_manifest.json",
+       version: Mix.Project.config[:version] # to bust cache during hot upgrades
 
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
@@ -2607,7 +2608,7 @@ We hope to provide a database-as-a-service soon and automate the process you jus
 How to Run Migrations
 =====================
 
-If you deployed your app without distillery or Elixir releases (mix mode), you can run migrations as a job in a new container with
+If you deployed your app without distillery or elixir releases, meaning you are in mix mode, you can run migrations as a job in a new container with
 
 .. code-block:: bash
 
@@ -2633,16 +2634,6 @@ If you are running an umbrella app, you will probably need to specify which "inn
 
     gigalixir ps:migrate --migration_app_name=$MIGRATION_APP_NAME
 
-If you want to run migrations automatically before each deploy, we suggest using a distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/guides/running_migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/extensibility/boot_hooks.md
-
-If you aren't running distillery, you can try modifying your :bash:`Procfile` to something like this
-
-.. code-block:: bash
-
-    web: mix ecto.migrate && elixir --name $MY_NODE_NAME --cookie $MY_COOKIE -S mix phoenix.server
-
-For more details, see :ref:`custom procfile`.
-
 When running :bash:`gigalixir ps:migrate`, sometimes the migration doesn't do exactly what you want. If you need to tweak the migration command to fit your situation, all :bash:`gigalixir ps:migrate` is doing is dropping into a remote_console and running the following. For information on how to open a remote console, see :ref:`remote console`.
 
 .. code-block:: elixir
@@ -2660,6 +2651,27 @@ If you have a chicken-and-egg problem where your app will not start without migr
 .. code-block:: bash
 
     MIX_ENV=prod DATABASE_URL="$YOUR_PRODUCTION_DATABASE_URL" mix ecto.migrate
+
+How to run migrations on startup
+================================
+
+If you are using distillery, we suggest using a distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/guides/running_migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/extensibility/boot_hooks.md
+
+If you are using elixir releases, we suggest using a custom Procfile with something like this
+
+.. code-block:: bash
+
+    web: /app/bin/$GIGALIXIR_APP_NAME eval "MyApp.Release.migrate" && /app/bin/$GIGALIXIR_APP_NAME $GIGALIXIR_COMMAND
+
+You have to implement the :elixir:`MyApp.Release.migrate` function with something like https://hexdocs.pm/phoenix/releases.html#ecto-migrations-and-custom-commands. You might also be interested in reading https://elixirforum.com/t/equivalent-to-distillerys-boot-hooks-in-mix-release-elixir-1-9/23431
+
+If you aren't running distillery or elixir releases, meaning you are in mix mode, you can try modifying your :bash:`Procfile` to something like this
+
+.. code-block:: bash
+
+    web: mix ecto.migrate && elixir --name $MY_NODE_NAME --cookie $MY_COOKIE -S mix phoenix.server
+
+For more details, see :ref:`custom procfile`.
 
 How to reset the database?
 ==========================
