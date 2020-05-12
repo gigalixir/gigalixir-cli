@@ -2514,7 +2514,7 @@ To delete a database, run
 How to install a Postgres Extension
 ===================================
 
-Note: Free Databases do not support extensions. See :ref:`tiers`.
+Note: Free Databases do not support extensions except for citext which is preinstalled. See :ref:`tiers`.
 
 First, make sure Google Cloud SQL supports your extension by checking `their list of extensions`_. If it is supported, find your database url by running
 
