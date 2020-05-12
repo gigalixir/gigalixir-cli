@@ -155,14 +155,14 @@ Create a file :bash:`elixir_buildpack.config` at the root of your repo and add s
 
 .. code-block:: bash
 
-    elixir_version=1.10.0
-    erlang_version=22.2
+    elixir_version=1.10.3
+    erlang_version=22.3
 
 The latest versions of phoenix also require higher versions of node. Create a file called :bash:`phoenix_static_buildpack.config` with something like
 
 .. code-block:: bash
 
-    node_version=11.1.0
+    node_version=12.16.3
 
 Don't forget to commit
 
@@ -230,8 +230,7 @@ If you are using distillery or Elixir releases, your app needs to be up and runn
 
 .. code-block:: bash
 
-    # pg:migrate runs migrations from your app node so you need to ssh in to run it
-    # we need to add ssh keys first
+    # pg:migrate runs migrations from your app node so we need to add ssh keys first
     gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
     gigalixir ps:migrate
 
@@ -1129,10 +1128,10 @@ Your app configuration needs to have something like this in it. For a full examp
 Gigalixir handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run`_ for more details.
 
 .. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
-.. _`gigalixir-getting-started's vm.args file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/vm.args
+.. _`gigalixir-getting-started's vm.args file`: https://github.com/gigalixir/gigalixir-getting-started/blob/js/distillery-2.0/rel/vm.args
 .. _`gigalixir-getting-started's prod.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/config/prod.exs#L68
 .. _`gigalixir-getting-started's mix.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/mix.exs
-.. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/rel/config.exs#L27
+.. _`gigalixir-getting-started's rel/config.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/js/distillery-2.0/rel/config.exs#L41
 .. _`gigalixir-run`: https://github.com/gigalixir/gigalixir-run
 
 How to use a custom vm.args
@@ -1909,12 +1908,12 @@ Add a :bash:`GIGALIXIR_API_KEY` environment variable which you can find in your 
 
 Finally, add a :bash:`GIGALIXIR_APP_NAME` environment variable with the name of your app e.g. :bash:`real-hasty-fruitbat`
 
-Using GitLab CI or any other CI/CD service should be very similar. For an example GitLab CI yaml file, see this `.gitlab-ci.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.gitlab-ci.yml>`_ file.
+Using GitLab CI or any other CI/CD service should be very similar. For an example GitLab CI yaml file, see this `.gitlab-ci.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/42a73c9e0f7de50cbfabd092a504aa454f9f9fc8/.gitlab-ci.yml>`_ file.
 
 Using GitHub Actions is also similar. For example, see https://gist.github.com/jesseshieh/7b231370874445592a40bf5ed6961460
 You might also take a look at this GitHub Action for Gigalixir: https://github.com/marketplace/actions/gigalixir-action
 
-Using CircleCI is also similar. For an example, see this `config.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.circleci/config.yml>`_.
+Using CircleCI is also similar. For an example, see this `config.yml <https://github.com/gigalixir/gigalixir-getting-started/blob/42a73c9e0f7de50cbfabd092a504aa454f9f9fc8/.circleci/config.yml>`_.
 
 If you want to automatically run migrations on each automatic deploy, you have two options
 
@@ -1946,7 +1945,7 @@ If you want to automatically run migrations on each automatic deploy, you have t
 How to Set Up Review Apps (Feature branch apps)
 ===============================================
 
-Review Apps let you run a new instance for every branch and tear them down after the branch is deleted. For GitLab CI/CD Review Apps, all you have to do is create a :bash:`.gitlab-ci.yml` file that looks something like `this one <https://github.com/gigalixir/gigalixir-getting-started/blob/master/.gitlab-ci.yml>`_.
+Review Apps let you run a new instance for every branch and tear them down after the branch is deleted. For GitLab CI/CD Review Apps, all you have to do is create a :bash:`.gitlab-ci.yml` file that looks something like `this one <https://github.com/gigalixir/gigalixir-getting-started/blob/42a73c9e0f7de50cbfabd092a504aa454f9f9fc8/.gitlab-ci.yml>`_.
 
 Be sure to create CI/CD secrets for :bash:`GIGALIXIR_EMAIL`, :bash:`GIGALIXIR_PASSWORD`, and :bash:`GIGALIXIR_APP_NAME`.
 
@@ -2342,7 +2341,7 @@ We prepend :elixir:`Elixir.` to your module name to let the BEAM virtual machine
 
 The size of the container that runs your job will be the same size as the app containers and billed the same way, based on replica-size-seconds. See, :ref:`pricing`.
 
-.. _`gigalixir-getting-started's migrate task`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/lib/tasks.ex
+.. _`gigalixir-getting-started's migrate task`: https://github.com/gigalixir/gigalixir-getting-started/blob/js/hooks/lib/tasks.ex
 .. _`Distillery's Running Migrations`: https://hexdocs.pm/distillery/running-migrations.html
 
 How to Reset your API Key
