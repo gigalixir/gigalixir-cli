@@ -78,35 +78,43 @@ def test_mix():
         result = runner.invoke(gigalixir.cli, ['login', '--email=%s' % email], input="%s\ny\n" % password)
         assert result.exit_code == 0
         with open(".tool-versions", "w") as text_file:
-            text_file.write("elixir 1.7.0\nerlang 21.0")
+            text_file.write("elixir 1.10.3\nerlang 22.3")
         # ensure these are up to date on your system under the .tool-versions above
         # gigalixir.shell.cast("mix archive.uninstall phx_new 1.4.0")
-        # gigalixir.shell.cast("mix archive.install hex phx_new")
+        # gigalixir.shell.cast("mix archive.install hex phx_new 1.5.1")
         phx_new_process = subprocess.Popen(["mix", "phx.new", "gigalixir_scratch"], stdin=subprocess.PIPE)
         phx_new_process.communicate(input=b'n\n')
         with cd("gigalixir_scratch"):
             with open("elixir_buildpack.config", "w") as text_file:
-                text_file.write("elixir_version=1.7.0\nerlang_version=21.0")
+                text_file.write("elixir_version=1.10.3\nerlang_version=22.3")
+            with open("phoenix_static_buildpack.config", "w") as text_file:
+                text_file.write("node_version=12.16.3")
             gigalixir.shell.cast("git init")
             gigalixir.shell.cast("git add .")
             gigalixir.shell.cast("git config user.email jesse@gigalixir.com")
             gigalixir.shell.cast("git config user.name Jesse")
             gigalixir.shell.cast("git commit -m phxnew")
-            subprocess.check_call(["sed", "-i", "s/^\/config\/\*\.secret\.exs/# \/config\/*.secret.exs/", ".gitignore"])
-            gigalixir.shell.cast("git add .gitignore")
-            gigalixir.shell.cast("git add config/prod.secret.exs")
-            gigalixir.shell.cast("git commit -m secrets")
+            # unneeded in phoenix 1.5+
+            # subprocess.check_call(["sed", "-i", "s/^\/config\/\*\.secret\.exs/# \/config\/*.secret.exs/", ".gitignore"])
+            # gigalixir.shell.cast("git add .gitignore")
+            # gigalixir.shell.cast("git add config/prod.secret.exs")
+            # gigalixir.shell.cast("git commit -m secrets")
 
             # TODO: remove this when buildpack is fixed
-            with open("compile", "w") as text_file:
-                text_file.write("npm run deploy\ncd $phoenix_dir\nmix ${phoenix_ex}.digest")
-
-            gigalixir.shell.cast("git add compile")
-            gigalixir.shell.cast("git commit -m assets")
+            # with open("compile", "w") as text_file:
+            #     text_file.write("npm run deploy\ncd $phoenix_dir\nmix ${phoenix_ex}.digest")
+            # gigalixir.shell.cast("git add compile")
+            # gigalixir.shell.cast("git commit -m assets")
 
             result = runner.invoke(gigalixir.cli, ['create'])
             assert result.exit_code == 0
             app_name = result.output.rstrip()
+
+            result = runner.invoke(gigalixir.cli, ['pg:create', '--free', '-y', '-a', app_name])
+            assert result.exit_code == 0
+            db = json.loads(result.output)
+            db_id = db["id"]
+
             gigalixir.shell.cast("git push gigalixir master")
 
             logging.info('Completed Deploy.')
@@ -137,7 +145,15 @@ def test_mix():
             logging.info("Elapsed time: %s" % elapsed)
 
             # scale down to 0
-            result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0'])
+            result = runner.invoke(gigalixir.cli, ['ps:scale', '--replicas=0', '-a', app_name])
+            assert result.exit_code == 0
+
+            start_time = timeit.default_timer()
+            wait_for_app_scaling(runner, app_name, 0)
+            elapsed = timeit.default_timer() - start_time
+            logging.info("Elapsed time: %s" % elapsed)
+
+            result = runner.invoke(gigalixir.cli, ['pg:destroy', '-y', '-a', app_name, '-d', db_id])
             assert result.exit_code == 0
 
 def test_ruby():
@@ -335,6 +351,21 @@ def cd(newdir, cleanup=lambda: True):
     finally:
         os.chdir(prevdir)
         cleanup()
+
+def wait_for_app_scaling(runner, app_name, desired):
+    for i in range(60):
+        logging.info('Attempt: %s/60' % (i))
+        result = runner.invoke(gigalixir.cli, ['ps', '-a', app_name])
+        assert result.exit_code == 0
+        output = json.loads(result.output)
+        if len(output["pods"]) == desired and output["replicas_running"] == desired:
+            logging.info('Pass.')
+            return True
+        logging.info('Waiting 30 seconds to try again.')
+        time.sleep(30)
+    else:
+        logging.info('Exhausted retries. Be sure to clean up manually.')
+        assert False
 
 def wait_for_available_database(runner, app_name):
     for i in range(60):

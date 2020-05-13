@@ -192,6 +192,18 @@ Once the database is created, verify your configuration includes a :bash:`DATABA
 
     gigalixir config
 
+Let's also lower the pool size since the free tier database only allows 4 connections. If you are using a standard tier database, then ignore this.
+
+.. code-block:: bash
+
+    gigalixir config:set POOL_SIZE=2
+
+And check it
+
+.. code-block:: bash
+
+    gigalixir config
+
 Deploy!
 -------
 
