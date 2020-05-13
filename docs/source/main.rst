@@ -426,18 +426,18 @@ Then add something like the following in :bash:`prod.exs`
 .. code-block:: elixir
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
-       load_from_system_env: true,
-       http: [port: {:system, "PORT"}], # Needed for Phoenix 1.2 and 1.4. Doesn't hurt for 1.3.
        server: true, # Without this line, your app will not start the web server!
+       load_from_system_env: true, # Needed for Phoenix 1.3. Doesn't hurt for other versions
+       http: [port: {:system, "PORT"}], # Needed for Phoenix 1.2 and 1.4. Doesn't hurt for 1.3.
        secret_key_base: "${SECRET_KEY_BASE}",
        url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
        cache_static_manifest: "priv/static/cache_manifest.json",
-       version: Mix.Project.config[:version] # to bust cache during hot upgrades
+       version: Mix.Project.config[:version] # To bust cache during hot upgrades
 
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
        url: "${DATABASE_URL}",
-       database: "",
+       database: "", # Works around a bug in older versions of ecto. Doesn't hurt for other versions.
        ssl: true,
        pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections where n is the number of app replicas.
 
@@ -870,7 +870,7 @@ If you don't see the region you want, please `contact us`_ and let us know. We o
 Can I use a custom Procfile?
 ============================
 
-Definitely! If you are using mix (not distillery) and you have a :bash:`Procfile` at the root of your repo, we'll use it instead of `the default one <https://github.com/gigalixir/gigalixir-run/blob/master/Procfile>`_. If you are using Distillery, you'll have to use distillery overlays to include the Procfile inside your release tarball i.e. slug.
+Definitely! If you are using mix (not distillery) and you have a :bash:`Procfile` at the root of your repo, we'll use it instead of `the default one <https://github.com/gigalixir/gigalixir-run/blob/master/Procfile>`_. If you are using Distillery, you'll have to use distillery overlays to include the Procfile inside your release tarball i.e. slug. If you are using Elixir releases, then you want to place the Procfile inside rel/overlays so that it gets copied into the release tarball.
 
 The only gotcha is that if you want remote console to work, you'll want to make sure the node name and cookie are set properly. For example, your :bash:`Procfile` should look something like this.
 
@@ -2668,7 +2668,7 @@ How to run migrations on startup
 
 If you are using distillery, we suggest using a distillery pre-start boot hook by following https://github.com/bitwalker/distillery/blob/master/docs/guides/running_migrations.md and https://github.com/bitwalker/distillery/blob/master/docs/extensibility/boot_hooks.md
 
-If you are using elixir releases, we suggest using a custom Procfile with something like this
+If you are using elixir releases, we suggest creating a custom Procfile and overlaying it into your release tarball. To do this create a file :bash:`rel/overlays/Procfile` with something like this
 
 .. code-block:: bash
 
