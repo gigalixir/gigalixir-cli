@@ -58,6 +58,15 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     make html
     xdg-open build/html/index.html
 
+## Clean up e2e test
+
+    # the test cleans itself up unless there was a failure, then it does not clean up
+    # to clean up failed tests, run
+    APPS=$(gigalixir apps | jq -r '.[] | select(.replicas > 0) | .unique_name')
+    for app in $APPS; do gigalixir ps:scale -r 0 -a $app; done
+
+    # you may also have to clean up databases, which is not described here.
+
 ## Credits
 
 Beaker by Eugen Belyakoff from the Noun Project
