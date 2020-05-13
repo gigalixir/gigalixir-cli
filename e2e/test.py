@@ -236,6 +236,12 @@ def __test_deploy_and_upgrade(cloud, region, branch="master"):
             result = runner.invoke(gigalixir.cli, args)
             assert result.exit_code == 0
             app_name = result.output.rstrip()
+
+            result = runner.invoke(gigalixir.cli, ['pg:create', '--free', '-y', '-a', app_name])
+            assert result.exit_code == 0
+            db = json.loads(result.output)
+            db_id = db["id"]
+
             gigalixir.shell.cast("git push gigalixir HEAD:master")
 
             logging.info('Completed Deploy.')
@@ -280,7 +286,7 @@ def __test_deploy_and_upgrade(cloud, region, branch="master"):
             result = runner.invoke(gigalixir.cli, ['config'])
             assert result.exit_code == 0
             configs = json.loads(result.output)
-            assert configs == {"FOO": "foo"}
+            assert configs["FOO"] == "foo"
 
             # delete the config
             result = runner.invoke(gigalixir.cli, ['config:unset', "FOO"])
@@ -290,7 +296,7 @@ def __test_deploy_and_upgrade(cloud, region, branch="master"):
             result = runner.invoke(gigalixir.cli, ['config'])
             assert result.exit_code == 0
             configs = json.loads(result.output)
-            assert configs == {}
+            assert configs.get("FOO") == None
 
             # hot upgrade
             gigalixir.shell.cast("""git config user.email e2e@gigalixir.com""")
@@ -341,6 +347,14 @@ def __test_deploy_and_upgrade(cloud, region, branch="master"):
             status = json.loads(result.output)
             assert status["replicas_desired"] == 0
             assert status["replicas_running"] == 0
+
+            start_time = timeit.default_timer()
+            wait_for_app_scaling(runner, app_name, 0)
+            elapsed = timeit.default_timer() - start_time
+            logging.info("Elapsed time: %s" % elapsed)
+
+            result = runner.invoke(gigalixir.cli, ['pg:destroy', '-y', '-a', app_name, '-d', db_id])
+            assert result.exit_code == 0
 
 @contextlib.contextmanager
 def cd(newdir, cleanup=lambda: True):
