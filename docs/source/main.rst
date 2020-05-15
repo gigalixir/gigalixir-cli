@@ -290,8 +290,6 @@ For an example app that uses mix and works on gigalixir, see https://github.com/
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want.  If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of Phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
-
 Then append something like the following in :bash:`prod.exs`. Don't replace what you already have, just add this to the bottom.
 
 .. code-block:: elixir
@@ -407,9 +405,7 @@ Don't forget to commit
 Configuration and Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want. If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of Phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
-
-Then add something like the following in :bash:`prod.exs`
+Add something like the following in :bash:`prod.exs`
 
 .. code-block:: elixir
 
@@ -547,8 +543,6 @@ Gigalixir auto-detects that you want to use Elixir Releases if you have a :bash:
 
     echo "import Config" > config/releases.exs
 
-As of Phoenix 1.4.4+, :bash:`prod.secret.exs` has been `modernized <https://github.com/phoenixframework/phoenix/pull/3380>`_ and uses environment variables for configuration which is exactly what we want.  If you plan to use this and are on a free-tier database, make sure that you either set the :bash:`POOL_SIZE` environment variable by running :bash:`gigalixir config:set POOL_SIZE=2` or change the default value in :bash:`prod.secret.exs` to :bash:`"2"`. If you are running an older version of Phoenix, you'll probably want to delete your :bash:`prod.secret.exs` file, and comment out the line in your :bash:`prod.exs` that imports it.
-
 The only configuration change we really need to do now is make sure the web server is started. Add the following to your :bash:`releases.exs`.
 
 .. code-block:: bash
@@ -569,11 +563,7 @@ The only configuration change we really need to do now is make sure the web serv
 
 If you're using a free tier database, be sure to also set your pool size to 2 in :bash:`prod.exs`.
 
-You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. If you don't use a gigalixir managed postgres database, you'll have to set the :bash:`DATABASE_URL` yourself. You can do this by running the following, but you'll need to :ref:`install the CLI` and login. For more information on setting configs, see :ref:`configs`.
-
-.. code-block:: bash
-
-    gigalixir config:set DATABASE_URL="ecto://user:pass@host:port/db"
+You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. 
 
 Verify
 ^^^^^^
