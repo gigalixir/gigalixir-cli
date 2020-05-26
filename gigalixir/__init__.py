@@ -276,7 +276,7 @@ def help(ctx, subcommand):
     print_help(ctx, subcommand)
 
 @cli.command(name='ps')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -287,7 +287,7 @@ def status(ctx, app_name):
     gigalixir_app.status(ctx.obj['host'], app_name)
 
 @cli.command(name='pg:scale')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-d', '--database_id', required=True)
 @click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
 @click.pass_context
@@ -300,7 +300,7 @@ def scale_database(ctx, app_name, database_id, size):
     gigalixir_database.scale(ctx.obj['host'], app_name, database_id, size)
 
 @cli.command(name='ps:scale')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-r', '--replicas', type=int, help='Number of replicas to run.')
 @click.option('-s', '--size', type=float, help='Size of each replica between 0.5 and 128 in increments of 0.1.')
 @click.pass_context
@@ -315,7 +315,7 @@ def scale(ctx, app_name, replicas, size):
     gigalixir_app.scale(ctx.obj['host'], app_name, replicas, size)
 
 @cli.command(name='releases:rollback')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-r', '--version', default=None, help='The version of the release to revert to. Use gigalixir get releases to find the version. If omitted, this defaults to the second most recent release.')
 @click.pass_context
 @report_errors
@@ -328,7 +328,7 @@ def rollback(ctx, app_name, version):
 
 
 @cli.command(name='ps:remote_console')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
@@ -341,7 +341,7 @@ def remote_console(ctx, app_name, ssh_opts, ssh_cmd):
     gigalixir_app.remote_console(ctx.obj['host'], app_name, ssh_opts, ssh_cmd)
 
 @cli.command(name='ps:run')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
@@ -355,7 +355,7 @@ def ps_run(ctx, app_name, ssh_opts, ssh_cmd, command):
     gigalixir_app.ps_run(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *command)
 
 @cli.command(name='ps:ssh')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
@@ -369,7 +369,7 @@ def ssh(ctx, app_name, ssh_opts, ssh_cmd, command):
     gigalixir_app.ssh(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *command)
 
 @cli.command(name='ps:distillery')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('distillery_command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
@@ -383,7 +383,7 @@ def distillery(ctx, app_name, ssh_opts, ssh_cmd, distillery_command):
     gigalixir_app.distillery_command(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *distillery_command)
 
 @cli.command(name='ps:restart')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -396,7 +396,7 @@ def restart(ctx, app_name):
 
 # gigalixir run mix ecto.migrate
 @cli.command()
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('command', nargs=-1)
 @click.pass_context
 @report_errors
@@ -408,7 +408,7 @@ def run(ctx, app_name, command):
     gigalixir_app.run(ctx.obj['host'], app_name, command)
 
 @cli.command(name='ps:migrate')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-m', '--migration_app_name', default=None, help='For umbrella apps, specify which inner app to migrate.')
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
@@ -531,7 +531,7 @@ def login(ctx, email, password, yes):
 
 # @get.command()
 @cli.command()
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-n', '--num')
 @click.option('-t', '--no_tail', is_flag=True)
 @click.pass_context
@@ -555,7 +555,7 @@ def payment_method(ctx):
 
 # @get.command()
 @cli.command(name='drains')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -577,7 +577,7 @@ def ssh_keys(ctx):
     gigalixir_ssh_key.get(ctx.obj['host'])
 
 @cli.command(name="apps:info")
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -598,7 +598,7 @@ def apps(ctx):
     gigalixir_app.get(ctx.obj['host'])
 
 @cli.command(name='apps:activity')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -610,7 +610,7 @@ def app_activity(ctx, app_name):
 
 # @get.command()
 @cli.command()
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -623,7 +623,7 @@ def releases(ctx, app_name):
 
 # @get.command()
 @cli.command(name='access')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -635,7 +635,7 @@ def permissions(ctx, app_name):
 
 # @create.command()
 @cli.command(name='drains:add')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('url')
 @click.pass_context
 @report_errors
@@ -661,7 +661,7 @@ def add_ssh_key(ctx, ssh_key):
 
 # @create.command()
 @cli.command(name='domains:add')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('fully_qualified_domain_name')
 @click.pass_context
 @report_errors
@@ -674,7 +674,7 @@ def add_domain(ctx, app_name, fully_qualified_domain_name):
 
 # @create.command()
 @cli.command(name='deprecated:set_config')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('key')
 @click.argument('value')
 @click.pass_context
@@ -703,7 +703,7 @@ def config_copy(ctx, src_app_name, dst_app_name, yes):
         gigalixir_config.copy(ctx.obj['host'], src_app_name, dst_app_name)
 
 @cli.command(name="config:set")
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('assignments', nargs=-1)
 @click.pass_context
 @report_errors
@@ -751,7 +751,7 @@ def send_reset_password_token(ctx, email):
 
 # @get.command()
 @cli.command(name='pg')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -764,7 +764,7 @@ def databases(ctx, app_name):
 # @get.command()
 # deprecated. pg/databases above lists free and standard.
 @cli.command(name='deprecated:free_databases')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -776,7 +776,7 @@ def free_databases(ctx, app_name):
 
 # @get.command()
 @cli.command()
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -788,7 +788,7 @@ def domains(ctx, app_name):
 
 # @get.command()
 @cli.command()
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -800,7 +800,7 @@ def config(ctx, app_name):
 
 # @delete.command()
 @cli.command(name='drains:remove')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('drain_id')
 @click.pass_context
 @report_errors
@@ -823,7 +823,7 @@ def delete_ssh_key(ctx, key_id):
     gigalixir_ssh_key.delete(ctx.obj['host'], key_id)
 
 @cli.command(name='apps:destroy')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
@@ -838,7 +838,7 @@ def delete_app(ctx, app_name, yes):
 
 # @delete.command()
 @cli.command(name='access:remove')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('email')
 @click.pass_context
 @report_errors
@@ -851,7 +851,7 @@ def delete_permission(ctx, app_name, email):
 
 # @delete.command()
 @cli.command(name='pg:destroy')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-y', '--yes', is_flag=True)
 @click.option('-d', '--database_id', required=True)
 @click.pass_context
@@ -870,7 +870,7 @@ def delete_database(ctx, app_name, yes, database_id):
 # @delete.command()
 # is this command still needed? i think delete_database/pg:destroy above can delete free databases?
 @cli.command(name='deprecated:delete_free_database')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-y', '--yes', is_flag=True)
 @click.option('-d', '--database_id', required=True)
 @click.pass_context
@@ -888,7 +888,7 @@ def delete_free_database(ctx, app_name, yes, database_id):
 
 # @delete.command()
 @cli.command(name='domains:remove')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('fully_qualified_domain_name')
 @click.pass_context
 @report_errors
@@ -901,7 +901,7 @@ def delete_domain(ctx, app_name, fully_qualified_domain_name):
 
 # @delete.command()
 @cli.command(name='config:unset')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('key')
 @click.pass_context
 @report_errors
@@ -914,7 +914,7 @@ def delete_config(ctx, app_name, key):
 
 # @create.command()
 @cli.command(name='access:add')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('email')
 @click.pass_context
 @report_errors
@@ -927,7 +927,7 @@ def add_permission(ctx, app_name, email):
 
 
 @cli.command(name='pg:psql')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -938,7 +938,7 @@ def pg_psql(ctx, app_name):
     gigalixir_database.psql(ctx.obj['host'], app_name)
 
 @cli.command(name='pg:create')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
 @click.option('-c', '--cloud')
 @click.option('-r', '--region')
@@ -961,7 +961,7 @@ def create_database(ctx, app_name, size, cloud, region, free, yes):
         gigalixir_database.create(ctx.obj['host'], app_name, size, cloud, region)
 
 @cli.command(name='deprecated:create_free_database')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -1042,7 +1042,7 @@ def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
     gigalixir_user.create(ctx.obj['host'], email, password, accept_terms_of_service_and_privacy_policy)
 
 @cli.command(name='ps:observer')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-c', '--cookie')
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
@@ -1066,7 +1066,7 @@ def version(ctx):
 
 
 @cli.command(name='open')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -1074,7 +1074,7 @@ def open_app(ctx, app_name):
     ctx.obj['opener'].open("https://%s.gigalixirapp.com" % app_name)
 
 @cli.command(name='pg:backups')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-d', '--database_id', required=True)
 @click.pass_context
 @report_errors
@@ -1086,7 +1086,7 @@ def pg_backups(ctx, app_name, database_id):
     gigalixir_database.backups(ctx.obj['host'], app_name, database_id)
 
 @cli.command(name='pg:backups:restore')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-d', '--database_id', required=True)
 @click.option('-b', '--backup_id', required=True)
 @click.pass_context
@@ -1100,7 +1100,7 @@ def pg_backups_restore(ctx, app_name, database_id, backup_id):
     gigalixir_database.restore(ctx.obj['host'], app_name, database_id, backup_id)
 
 @cli.command(name='stack:set')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-s', '--stack', required=True)
 @click.pass_context
 @report_errors
@@ -1112,7 +1112,7 @@ def set_stack(ctx, app_name, stack):
     gigalixir_app.set_stack(ctx.obj['host'], app_name, stack)
 
 @cli.command(name='canary')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -1123,7 +1123,7 @@ def canary(ctx, app_name):
     gigalixir_canary.get(ctx.obj['host'], app_name)
 
 @cli.command(name='canary:set')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-c', '--canary_name')
 @click.option('-w', '--weight', type=int)
 @click.pass_context
@@ -1136,7 +1136,7 @@ def set_canary(ctx, app_name, canary_name, weight):
     gigalixir_canary.set(ctx.obj['host'], app_name, canary_name, weight)
 
 @cli.command(name='canary:unset')
-@click.option('-a', '--app_name')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-c', '--canary_name', required=True)
 @click.pass_context
 @report_errors
