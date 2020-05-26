@@ -1400,6 +1400,8 @@ In your app code, access the environment variable using
 Troubleshooting
 ===============
 
+Also see :ref:`Known Issues`
+
 If your app isn't working and you're seeing either 504s or an "unhealthy" message, you're in the right place. The first places to check for clues are `gigalixir logs` and `gigalixir ps`. If nothing pops out at you there, keep reading.
 
 A 504 means that our load balancer isn't able to reach your app. This is usually because the app isn't running. An app that isn't running
