@@ -906,6 +906,11 @@ If you have multiple Phoenix apps in the umbrella, you'll need to use something 
 
 .. _`heroku-buildpack-phoenix-static configuration`: https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration
 
+How do I manage multiple apps?
+==============================
+
+All relevant CLI commands can take an optional :bash:`--app_name` flag to specify which app you want to run the command on. Or, if you prefer, you can use the :bash:`GIGALIXIR_APP` environment variable instead. Without the app name, Gigalixir tries to auto-detect the app name based on your git remotes which works fine when you only have one app.
+
 Can I deploy an app that isn't at the root of my repository?
 ============================================================
 
