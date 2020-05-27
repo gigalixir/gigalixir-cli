@@ -111,7 +111,7 @@ Verify by running
 Prepare Your App
 ----------------
 
-You *might* be able to skip this step and "just deploy", but it depends on what version of phoenix you're running and whether you are okay running in mix mode without distillery or elixir releases. 
+Most likely, there is nothing you need to do here and you can skip this step and "just deploy", but it depends on what version of phoenix you're running and whether you are okay running in mix mode without distillery or elixir releases. 
 
 For more information, click here: :ref:`modifying existing app`. 
 
@@ -149,20 +149,18 @@ Verify that a git remote was created by running
 Specify Versions
 ----------------
 
-The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is 1.5.3 as of this writing. If you are using Phoenix 1.4 or higher, you may need to use a higher version of Elixir. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
-
-Create a file :bash:`elixir_buildpack.config` at the root of your repo and add something like this. Make sure it matches what you have in development to ensure a smooth deploy.
+The default Elixir version is defined `here <https://github.com/HashNuke/heroku-buildpack-elixir/blob/master/elixir_buildpack.config>`_ which is quite old and it's a good idea to use the same version in production as you use in development so let's specify them. Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
 
 .. code-block:: bash
 
-    elixir_version=1.10.3
-    erlang_version=22.3
+    echo "elixir_version=1.10.3" > elixir_buildpack.config
+    echo "erlang_version=22.3" >> elixir_buildpack.config
 
-The latest versions of phoenix also require higher versions of node. Create a file called :bash:`phoenix_static_buildpack.config` with something like
+Same for nodejs
 
 .. code-block:: bash
 
-    node_version=12.16.3
+    echo "node_version=12.16.3" > phoenix_static_buildpack.config
 
 Don't forget to commit
 
@@ -174,7 +172,7 @@ Don't forget to commit
 Provision a Database
 --------------------
 
-Phoenix 1.4 enforces the DATABASE_URL env var at compile time so let's create a database first, before deploying.
+Phoenix 1.4+ enforces the DATABASE_URL env var at compile time so let's create a database first, before deploying.
 
 .. code-block:: bash
 
