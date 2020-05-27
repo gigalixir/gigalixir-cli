@@ -260,6 +260,7 @@ Whether you have an existing app or you just ran :bash:`mix phx.new`, the goal o
 Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
 .. _`mix vs distillery`:
+.. _`deploy-types`:
 
 Mix vs Distillery vs Elixir Releases
 ------------------------------------
