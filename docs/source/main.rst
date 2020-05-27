@@ -2011,6 +2011,8 @@ This feature is still a work in progress.
 How to Hot Upgrade an App
 =========================
 
+First of all, be sure you are using either Distillery or Elixir Releases for your deploys and not mix. Clustering won't work with just mix. For instructions on using Distillery or Releases, see :ref:`mix vs distillery`.
+
 To do a hot upgrade, deploy your app with the extra header shown below. You'll need git v2.9.0 for this
 to work. For information on how to install the latest version of git on Ubuntu, see `this stackoverflow question <http://stackoverflow.com/questions/19109542/installing-latest-version-of-git-in-ubuntu>`_. For more information about how hot upgrades work, see :ref:`life-of-a-hot-upgrade`.
 
@@ -2749,6 +2751,7 @@ To see things like which account you are logged in as, what tier you are on, and
     gigalixir account
 
 .. _`remote observer`:
+.. _`observer`:
 
 How to Launch a Remote Observer
 ===============================
