@@ -267,11 +267,11 @@ Mix vs Distillery vs Elixir Releases
 
 It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also use plain mix or Elixir releases (new in Elixir 1.9). 
 
-You're probably already used to mix from development and deploying with mix is simpler and easier, but you can't do hot upgrades, clustering, remote observer, and maybe a few other things. 
+You're probably already used to mix from development and deploying with mix is simpler and easier, but you can't do hot upgrades or remote observer. 
 
-Elixir releases is still very new and doesn't support hot upgrades, but it is built-in to Elixir so you don't have to add an extra dependency such as distillery to get clustering, remote console, observer, etc.
+Elixir releases is still very new and doesn't support hot upgrades, but it is built-in to Elixir so you don't have to add an extra dependency such as distillery.
 
-If you deploy with distillery, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be confusing in some cases.
+If you deploy with distillery or elixir releases, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be confusing in some cases.
 
 If you don't know which to choose, we generally recommend going with distillery because.. why use Elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir ps:migrate`, that makes it easy to run migrations without mix.
 
