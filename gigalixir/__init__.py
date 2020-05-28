@@ -207,7 +207,7 @@ def detect_app():
 
 @click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
 # @click.group(cls=CatchAllExceptions(AliasedGroup, handler=handle_exception), context_settings=CONTEXT_SETTINGS)
-@click.option('--env', envvar='GIGALIXIR_ENV', default='prod', help="GIGALIXIR environment [prod, dev].")
+@click.option('--env', envvar='GIGALIXIR_ENV', default='prod', help="GIGALIXIR environment [prod, dev, test].")
 @click.pass_context
 def cli(ctx, env):
     ctx.obj = {}
@@ -220,6 +220,11 @@ def cli(ctx, env):
     elif env == "dev":
         stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
         host = "http://localhost:4000"
+    elif env == "test":
+        stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
+
+        # gets intercepted in tests
+        host = "https://api.gigalixir.com"
     else:
         raise Exception("Invalid GIGALIXIR_ENV")
 

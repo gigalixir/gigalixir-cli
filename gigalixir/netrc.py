@@ -39,6 +39,9 @@ def update_netrc(email, key, env):
         netrc_file.hosts['api.gigalixir.com'] = (email, None, key)
     elif env == 'dev':
         netrc_file.hosts['localhost'] = (email, None, key)
+    elif env == 'test':
+        netrc_file.hosts['git.gigalixir.com'] = (email, None, key)
+        netrc_file.hosts['api.gigalixir.com'] = (email, None, key)
     else:
         raise Exception('Invalid env: %s' % env)
 
