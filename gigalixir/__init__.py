@@ -814,6 +814,7 @@ def delete_log_drain(ctx, app_name, drain_id):
 @cli.command(name='account:ssh_keys:remove')
 @click.argument('key_id')
 @click.pass_context
+@report_errors
 def delete_ssh_key(ctx, key_id):
     """
     Deletes your ssh key. Find the key_id from gigalixir get_ssh_keys.
