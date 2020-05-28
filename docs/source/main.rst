@@ -643,6 +643,19 @@ Note, that the command that gets run in production depends on what your last bui
 
 If your command is :bash:`mix run --no-halt`, but you are running Phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
 
+What packages are available on Gigalixir?
+=========================================
+
+Gigalixir's stacks are based on Heroku's stacks so anything you find here, you can find on Gigalixir.
+https://devcenter.heroku.com/articles/stack-packages#installed-ubuntu-packages
+
+You can also explore and verify by SSH'ing into your container. For example
+
+.. code-block:: bash
+
+   gigalixir ps:ssh
+   convert --help
+
 How do I install extra binaries I need for my app?
 ==================================================
 
