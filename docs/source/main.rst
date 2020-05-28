@@ -263,15 +263,17 @@ Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 Mix vs Distillery vs Elixir Releases
 ------------------------------------
 
-It's typically recommended to use distillery when you're ready to deploy, but if you prefer, you can also use plain mix or Elixir releases (new in Elixir 1.9). 
+Probably the hardest part of deploying Elixir is choosing which method of deploying you prefer. We typically recommend Distillery because it has the most features, but Mix is much simpler and Elixir releases give you a bit of both. Here is a comparison table to help you choose. Any features not in the table are available for all three.
 
-You're probably already used to mix from development and deploying with mix is simpler and easier, but you can't do hot upgrades or remote observer. 
-
-Elixir releases is still very new and doesn't support hot upgrades, but it is built-in to Elixir so you don't have to add an extra dependency such as distillery.
-
-If you deploy with distillery or elixir releases, you no longer get mix tasks like :bash:`mix ecto.migrate` and configuring your :bash:`prod.exs` can be confusing in some cases.
-
-If you don't know which to choose, we generally recommend going with distillery because.. why use Elixir if you can't use all its amazing features? Also, Gigalixir works hard to make things easy with distillery. For example, we have a special command, :bash:`gigalixir ps:migrate`, that makes it easy to run migrations without mix.
+=======================  =================== ======================= =========== 
+Feature                  Mix                 Elixir Releases         Distillery
+=======================  =================== ======================= ===========
+Hot Upgrades                                                         YES
+Remote Observer                              YES                     YES
+Mix Tasks                YES
+Included with Elixir     YES                 YES
+Easy Configuration       YES
+=======================  =================== ======================= ===========
 
 If you choose mix, see :ref:`modifying existing app with mix`.
 
