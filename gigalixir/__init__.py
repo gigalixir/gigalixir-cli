@@ -61,6 +61,8 @@ if env == "prod":
     rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True, allow_logging_basic_config=False)
 elif env == "dev":
     rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'development', enabled=False, allow_logging_basic_config=False)
+elif env == "test":
+    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'test', enabled=False, allow_logging_basic_config=False)
 else:
     raise Exception("Invalid GIGALIXIR_ENV")
 
