@@ -71,10 +71,10 @@ def observer(ctx, app_name, erlang_cookie, ssh_opts, ssh_cmd):
         EPMD_PORT=None
         APP_PORT=None
         for line in output.splitlines():
-            match = re.match("^epmd: up and running on port (\d+) with data:$", line)
+            match = re.match(r"^epmd: up and running on port (\d+) with data:$", line)
             if match:
                 EPMD_PORT = match.groups()[0]
-            match = re.match("^name (.+) at port (\d+)$", line)
+            match = re.match(r"^name (.+) at port (\d+)$", line)
             if match:
                 APP_PORT = match.groups()[1]
         if EPMD_PORT == None:

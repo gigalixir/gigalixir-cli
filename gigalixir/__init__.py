@@ -81,7 +81,6 @@ def report_errors(f):
             f(*args, **kwds)
         except:
             logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-            # rollbar.report_exc_info()
             rollbar.report_exc_info(sys.exc_info(), payload_data={'fingerprint': rollbar_fingerprint(sys.exc_info())})
             sys.exit(1)
     return wrapper
