@@ -7,13 +7,13 @@
 `Gigalixir`_ Documentation
 =====================================
 
-`Gigalixir`_ is Elixir's Platform-as-a-Service. For more information, see https://gigalixir.com. Get 1 instance + 1 database for free without a credit card.
-
-.. _`Gigalixir`: https://gigalixir.com
+`Gigalixir <https://www.gigalixir.com>`_ is Elixir's Platform-as-a-Service. For more information, see https://gigalixir.com. Get 1 instance + 1 database for free without a credit card.
 
 .. toctree::
     :maxdepth: 4
     :caption: Contents:
 
+    intro
+    getting-started-guide
     main
 
