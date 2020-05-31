@@ -15,5 +15,9 @@
 
     intro
     getting-started-guide
+    modify-app/index
+    modify-app/mix
+    modify-app/distillery
+    modify-app/releases
     main
 

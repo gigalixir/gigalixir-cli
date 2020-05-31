@@ -1,17 +1,3 @@
-.. _`getting-started-guide`:
-
-Getting Started Guide
-=====================
-
-This section has moved here: :ref:`quick start`
-
-.. _`deploy-types`:
-
-Mix vs Distillery vs Elixir Releases
-====================================
-
-This section has moved here: :ref:`mix vs distillery`
-
 What packages are available on Gigalixir?
 =========================================
 
@@ -1703,16 +1689,16 @@ To run a command in your app container, run
 .. code-block:: bash
 
     gigalixir ps:run $COMMAND
-    # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app eval 'IO.inspect Node.self'`
-    # if you're using mix, you'll probably want $COMMAND to be something like :bash:`mix ecto.migrate`
+    # if you're using distillery, you'll probably want $COMMAND to be something like `bin/app eval 'IO.inspect Node.self'`
+    # if you're using mix, you'll probably want $COMMAND to be something like `mix ecto.migrate`
 
 To run a command in a separate container, run
 
 .. code-block:: bash
 
     gigalixir run $COMMAND
-    # if you're using distillery, you'll probably want $COMMAND to be something like :bash:`bin/app eval 'IO.inspect Node.self'`
-    # if you're using mix, you'll probably want $COMMAND to be something like :bash:`mix ecto.migrate`
+    # if you're using distillery, you'll probably want $COMMAND to be something like `bin/app eval 'IO.inspect Node.self'`
+    # if you're using mix, you'll probably want $COMMAND to be something like `mix ecto.migrate`
 
 .. For an example task, see `gigalixir-getting-started's migrate task`_.
 
@@ -2445,12 +2431,19 @@ Money-back Guarantee
 
 If you are unhappy for any reason within the first 31 days, contact us to get a refund up to $75. Enough to run a 3 node cluster for 31 days.
 
-Indices and Tables
-==================
+.. _`getting-started-guide`:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Getting Started Guide
+=====================
+
+This section has moved here: :ref:`quick start`
+
+.. _`deploy-types`:
+
+Mix vs Distillery vs Elixir Releases
+====================================
+
+This section has moved here: :ref:`mix vs distillery`
 
 .. _`Distillery appup documentation`: https://hexdocs.pm/distillery/upgrades-and-downgrades.html#appups
 .. _`Distillery's upgrade command`: https://hexdocs.pm/distillery/walkthrough.html#deploying-an-upgrade

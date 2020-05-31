@@ -1,0 +1,113 @@
+.. _`modifying existing app with Elixir releases`:
+
+Using Elixir Releases
+---------------------
+
+Configuration and Secrets
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Gigalixir auto-detects that you want to use Elixir Releases if you have a :bash:`config/releases.exs` file, so let's create one.
+
+.. code-block:: bash
+
+    echo "import Config" > config/releases.exs
+
+The only configuration change we really need to do now is make sure the web server is started. Add the following to your :bash:`releases.exs`.
+
+.. code-block:: bash
+
+    config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
+      server: true,
+      http: [port: {:system, "PORT"}], # Needed for Phoenix 1.2 and 1.4. Doesn't hurt for 1.3.
+      url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443]
+
+1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
+2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like
+
+   .. code-block:: bash
+
+     grep -R "defmodule.*Endpoint" lib/
+
+   Phoenix 1.2, 1.3, and 1.4 give different names so this is a common source of errors.
+
+If you're using a free tier database, be sure to also set your pool size to 2 in :bash:`prod.exs`.
+
+You don't have to worry about setting your :bash:`SECRET_KEY_BASE` config because we generate one and set it for you. 
+
+Verify
+^^^^^^
+
+Let's make sure everything works.
+
+First, try generating building static assets
+
+.. code-block:: bash
+
+    mix deps.get
+
+    # generate static assets
+    cd assets
+    npm install
+    npm run deploy
+    cd ..
+    mix phx.digest
+
+and building a release locally
+
+.. code-block:: bash
+
+    export SECRET_KEY_BASE="$(mix phx.gen.secret)" 
+    export DATABASE_URL="postgresql://user:pass@localhost:5432/foo"
+    MIX_ENV=prod mix release 
+
+and running it locally
+
+.. code-block:: bash
+
+    MIX_ENV=prod APP_NAME=gigalixir_getting_started PORT=4000 _build/prod/rel/gigalixir_getting_started/bin/gigalixir_getting_started start
+
+Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
+
+Check it out.
+
+.. code-block:: bash
+
+    curl localhost:4000
+
+If that didn't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
+
+Also check out :ref:`troubleshooting`.
+
+If it still doesn't work, don't hesitate to :ref:`contact us<help>`.
+
+If everything works, commit the changes
+
+.. code-block:: bash
+
+    git add config/prod.exs assets/package-lock.json config/releases.exs
+    git commit -m 'releases configuration'
+
+Continue to :ref:`set up deploys`.
+
+Specify Buildpacks (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We rely on buildpacks to compile and build your release. We auto-detect a variety of buildpacks so you probably don't need this, but if you want
+to specify your own buildpacks create a :bash:`.buildpacks` file with the buildpacks you want. For example,
+
+.. code-block:: bash
+
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-releases.git
+
+:bash:`heroku-buildpack-phoenix-static` is optional if you do not have Phoenix static assets. For more information about buildpacks, see :ref:`life of a deploy`.
+
+Note, that the command that gets run in production depends on what your last buildpack is.
+
+- If the last buildpack is :bash:`gigalixir-buildpack-releases`, then the command run will be :bash:`/app/bin/foo start`.
+- If the last buildpack is :bash:`heroku-buildpack-phoenix-static`, then the command run will be :bash:`mix phx.server`.
+- If the last buildpack is :bash:`heroku-buildpack-elixir`, then the command run will be :bash:`mix run --no-halt`.
+
+If your command is :bash:`mix run --no-halt`, but you are running Phoenix (just not the assets pipeline), make sure you set :elixir:`server: true` in :bash:`prod.exs`.
+
