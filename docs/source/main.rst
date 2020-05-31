@@ -1,3 +1,17 @@
+.. _`getting-started-guide`:
+
+Getting Started Guide
+=====================
+
+This section has moved here: :ref:`quick start`
+
+.. _`deploy-types`:
+
+Mix vs Distillery vs Elixir Releases
+====================================
+
+This section has moved here: :ref:`mix vs distillery`
+
 What packages are available on Gigalixir?
 =========================================
 
