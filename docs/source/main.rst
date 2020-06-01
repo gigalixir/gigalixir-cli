@@ -1,6 +1,8 @@
 Moved
 ~~~~~
 
+These sections are just here so that old links don't appear broken.
+
 .. _`getting-started-guide`:
 
 Getting Started Guide
