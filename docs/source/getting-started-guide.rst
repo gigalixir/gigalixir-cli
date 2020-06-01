@@ -10,12 +10,6 @@ If you're deploying an open source project, we provide consulting services free 
 Prerequisites
 -------------
 
-.. role:: elixir(code)
-    :language: elixir
-
-.. role:: bash(code)
-    :language: bash
-
 #. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
 #. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
 #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.

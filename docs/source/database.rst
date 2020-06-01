@@ -109,7 +109,7 @@ View what backups you have available by running
 
     gigalixir pg:backups -d $DATABASE_ID
 
-Note: we required the database_id even though we could probably detect it automatically because these are sensitive operations and we prefer to be explicit.
+.. Note:: We required the database_id even though we could probably detect it automatically because these are sensitive operations and we prefer to be explicit.
 
 Find the backup id you want and run
 
@@ -142,7 +142,7 @@ To delete a database, run
 How to install a Postgres Extension
 ===================================
 
-Note: Free Databases do not support extensions except for citext which is preinstalled. See :ref:`tiers`.
+.. Note:: Free Databases do not support extensions except for citext which is preinstalled. See :ref:`tiers`.
 
 First, make sure Google Cloud SQL supports your extension by checking `their list of extensions`_. If it is supported, find your database url by running
 
@@ -201,7 +201,7 @@ If you need to provision a database, Gigalixir provides Databases-as-a-Service. 
 How to manually set up a Google Cloud SQL PostgreSQL database
 -------------------------------------------------------------
 
-Note: You can also use Amazon RDS, but we do not have instructions provided yet.
+.. Note:: You can also use Amazon RDS, but we do not have instructions provided yet.
 
 1. Navigate to https://console.cloud.google.com/sql/instances and click "Create Instance".
 #. Select PostgreSQL and click "Next".

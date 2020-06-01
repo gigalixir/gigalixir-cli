@@ -14,7 +14,7 @@ In short, you'll need to add something like this to the :elixir:`deps` list in :
 
     {:distillery, "~> 2.1"}
 
-Important: If you are running Elixir 1.9, then you *must* use distillery 2.1 or greater. Elixir 1.9 and distillery below 2.1 both use `mix release` and Elixir's always takes precedence. Distillery 2.1 renames the task to `mix distillery.release`.
+.. Important:: If you are running Elixir 1.9, then you *must* use distillery 2.1 or greater. Elixir 1.9 and distillery below 2.1 both use `mix release` and Elixir's always takes precedence. Distillery 2.1 renames the task to `mix distillery.release`.
 
 Then, run
 
@@ -57,7 +57,7 @@ Add something like the following in :bash:`prod.exs`
        ssl: true,
        pool_size: 2 # Free tier db only allows 4 connections. Rolling deploys need pool_size*(n+1) connections where n is the number of app replicas.
 
-:elixir:`server: true` **is very important and is commonly left out. Make sure you have this line.**
+.. Attention:: :elixir:`server: true` **is very important and is commonly left out. Make sure you have this line.**
 
 1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
 2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like

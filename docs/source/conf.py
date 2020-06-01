@@ -89,6 +89,7 @@ html_theme_options = {
     'collapse_navigation': False,
     'display_version': True,
     'navigation_depth': 4,
+    'logo_only': True,
 }
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -164,5 +165,13 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+rst_prolog = """
+.. role:: elixir(code)
+    :language: elixir
 
+.. role:: bash(code)
+    :language: bash
 
+"""
+
+html_logo = "gigalixir_logo.png"

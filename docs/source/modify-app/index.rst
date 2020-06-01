@@ -6,7 +6,7 @@ Modifying an Existing App to Run on Gigalixir
 
 Whether you have an existing app or you just ran :bash:`mix phx.new`, the goal of this guide is to get your app ready for deployment on Gigalixir. We assume that you are using Phoenix here. If you aren't, feel free to :ref:`contact us<help>` for help. As long as your app is serving HTTP traffic on :bash:`$PORT`, you should be fine.
 
-Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
+.. Important:: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 
 .. _`mix vs distillery`:
 
@@ -34,6 +34,13 @@ If you choose Elixir releases, see :ref:`modifying existing app with Elixir rele
 If you choose distillery, see :ref:`modifying existing app with distillery`.
 
 * We say easy configuration here because some customers get confused about the difference between prod.exs and releases.exs. Distillery can be even more confusing with its :bash:`REPLACE_OS_VARS` syntax.
+
+.. toctree::
+    :hidden:
+
+    mix
+    distillery
+    releases
 
 .. _`mix mode`:
 

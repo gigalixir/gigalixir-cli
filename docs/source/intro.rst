@@ -5,8 +5,8 @@ What is Gigalixir?
 
 Try Gigalixir for free without a credit card by following the :ref:`quick start`.
 
-Screencast
-==========
+Overview Screencast
+===================
 
 .. raw:: html
 
