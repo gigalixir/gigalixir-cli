@@ -19,5 +19,9 @@
     modify-app/mix
     modify-app/distillery
     modify-app/releases
+    account
+    teams
+    billing
+    troubleshooting
     main
 

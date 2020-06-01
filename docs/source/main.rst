@@ -178,33 +178,6 @@ There is an extra flag you can pass to clean your cache before building in case 
 
     git -c http.extraheader="GIGALIXIR-CLEAN: true" push gigalixir master
 
-.. _`known-issues`:
-
-Known Issues
-============
-
-  -  git push hangs and then times out
-
-      - Try running :bash:`git config --local http.version HTTP/1.1`. We've seen this issue happen with many customers and we've been able to narrow it down to an HTTP/2 issue of some kind with some versions of curl or git, but haven't been able to reproduce it. Many customers report that switching to HTTP/1.1 seems to fix the issue. For more information, try setting :bash:`GIT_TRACE=1 GIT_CURL_VERBOSE=1` when pushing. If you can also send us the output, that would be helpful. Often what we'll see in the output is something like :bash:`17 bytes stray data read before trying h2 connection`.
-
-  - (FunctionClauseError) no function clause matching in List.first/1 when running `gigalixir ps:migrate`
-
-      - If you have a `releases` config in your mix.exs, make sure it is named the same as your app a few lines above. This is something we need to figure out how to fix, but in the meantime, we need the release name to match the app name. Let us know if you encounter this issue so we can bump the priority!
-
-  -  Warning: Multiple default buildpacks reported the ability to handle this app. The first buildpack in the list below will be used.
-
-      - This warning is safe to ignore. It is a temporary warning due to a workaround.
-
-  - curl: (56) GnuTLS recv error (-110): The TLS connection was non-properly terminated.
-
-      - Currently, the load balancer for domains under gigalixirapp.com has a request timeout of 30 seconds. If your request takes longer than 30 seconds to respond, the load balancer cuts the connection. Often, the cryptic error message you will see when using curl is the above. The load balancer for custom domains does not have this problem.
-
-  - php apps don't work well with the default stack, gigalixir-18. If you are deploying php, please downgrade your stack to giglaixir-16 with something like :bash:`gigalixir stack:set -s gigalixir-16`. Th e reason is because gigalixir-18 is based on heroku-18 which does not have libreadline.so preinstalled for some reason where giglaixir-16, based on heroku-16, does.
-
-  - Did not find exactly 1 release
-
-      - This can happen for a few different reasons, but usually clearing your build cache or retrying will resolve it. In some cases, if you added :bash:`release=true` to your :bash:`elixir_buildpack.config` file, it caches the release and is never deleted even when you bump the app version in your mix.exs. This results in two release folders and gigalixir does not know which release you intend to deploy and errors out. Clearing the cache resolves this issue. In some cases, if two deploys are running concurrently, you can end up with two release tarballs at the same time. This is a known issue we intend to fix, but usually re-running the deploy will work fine since it is a race condition.
-
 Can I run my app in AWS instead of Google Cloud Platform? What about Europe?
 ============================================================================
 
@@ -212,9 +185,9 @@ Yes, if your current infrastructure is on AWS, you'll probably want to run your 
 
 Once the app is created, it's difficult to migrate to another region. If you want to do this, Heroku's guide is a good overview of what you should consider. If you don't mind downtime, the transition could be easy, but unfortunately gigalixir isn't able to do it for you with a button press. See https://devcenter.heroku.com/articles/app-migration
 
-One thing to keep in mind is that Gigalixir Postgres databases are as of right now only available in GCP/v2018-us-central1 and GCP/europe-west1, however, we can set up a database for you in AWS manually if you like. Just `contact us`_ and we'll create one for you. We plan to add AWS to the Gigalixir CLI soon. 
+One thing to keep in mind is that Gigalixir Postgres databases are as of right now only available in GCP/v2018-us-central1 and GCP/europe-west1, however, we can set up a database for you in AWS manually if you like. Just :ref:`contact us<help>` and we'll create one for you. We plan to add AWS to the Gigalixir CLI soon. 
 
-If you don't see the region you want, please `contact us`_ and let us know. We open new regions based purely on demand.
+If you don't see the region you want, please :ref:`contact us<help>` and let us know. We open new regions based purely on demand.
 
 .. _`custom procfile`:
 
@@ -690,7 +663,7 @@ Replica Sizing
 ==============
 
   - A replica is a docker container that your app runs in.
-  - Replica sizes are available in increments of 0.1 between 0.2 and 384, but for the higher sizes you'll need to `contact us`_ first.
+  - Replica sizes are available in increments of 0.1 between 0.2 and 384, but for the higher sizes you'll need to :ref:`contact us<help>` first.
   - 1 size unit is 1GB memory and 1 CPU share.
   - 1 CPU share is 200m as defined using `Kubernetes CPU requests`_ or roughly 20% of a core guaranteed.
 
@@ -708,7 +681,7 @@ Replica Sizing
 Releases
 ========
 
-One common pitfall for beginners is how releases differ from running apps with `Mix`_. In development, you typically have access to `Mix`_ tasks to run your app, migrate your database, etc. In production, we use releases. With releases, your code is distributed in it's compiled form and is almost no different from an Erlang release. You no longer have access to `Mix`_ commands. However, in return, you also have access to hot upgrades and smaller slug sizes, and a "single package which can be deployed anywhere, independently of an Erlang/Elixir installation. No dependencies, no hassle" [1].
+One common pitfall for beginners is how releases differ from running apps with mix. In development, you typically have access to mix tasks to run your app, migrate your database, etc. In production, we use releases. With releases, your code is distributed in it's compiled form and is almost no different from an Erlang release. You no longer have access to mix commands. However, in return, you also have access to hot upgrades and smaller slug sizes, and a "single package which can be deployed anywhere, independently of an Erlang/Elixir installation. No dependencies, no hassle" [1].
 
 [1]: https://github.com/bitwalker/distillery
 
@@ -719,7 +692,7 @@ Gigalixir is designed for Elixir/Phoenix apps and it is common for Elixir/Phoeni
 
 We also know that Elixir/Phoenix apps are designed to be long-lived and potentially store state in-memory so we do not restart replicas arbitrarily. In fact, replicas should not restart at all, unless there is an extenuating circumstance that requires it.  For apps that require extreme high availability, we suggest that your app be able to handle node restarts just as you would for any app not running on Gigalixir.
 
-That said, we do have a number of limits in order to prevent abuse which are listed below. If you need to request a higher limit, contact us and we'll do our best to accomodate you.
+That said, we do have a number of limits in order to prevent abuse which are listed below. If you need to request a higher limit, :ref:`contact us<help>` and we'll do our best to accomodate you.
 
 ============= =====
 Resource      Limit
@@ -774,266 +747,6 @@ In your app code, access the environment variable using
 
 .. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/config/runtime.html
 
-.. _`troubleshooting`:
-
-Troubleshooting
-===============
-
-Also see :ref:`known-issues`
-
-If your app isn't working and you're seeing either 504s or an "unhealthy" message, you're in the right place. The first places to check for clues are `gigalixir logs` and `gigalixir ps`. If nothing pops out at you there, keep reading.
-
-A 504 means that our load balancer isn't able to reach your app. This is usually because the app isn't running. An app that isn't running
-is usually failing health checks and we constantly restart apps that fail health checks in hopes that it will become healthy.
-
-If you've just deployed, and you're not seeing 504s, but you're still seeing the old version of your app instead of the new version, it's the same problem. This happens when the new version does not pass health checks. When the new version doesn't pass health checks, we don't route traffic to it and we don't terminate the old version.
-
-Our health checks simply check that your app is listening on port $PORT. If you're running a non-HTTP Elixir app, but need to just get health checks to pass, take a look at https://github.com/jesseshieh/elixir-tcp-accept-and-close
-
-If you're using Mix, see `troubleshooting mix`_. 
-
-If you're using Distillery, see `troubleshooting distillery`_. 
-
-If you're using Elixir Releases, see `troubleshooting Elixir releases`_. 
-
-.. _`troubleshooting mix`:
-
-Mix
----
-
-Let's verify that your app works locally.
-
-Run the following commands
-
-.. code-block:: bash
-
-    mix deps.get
-    mix compile
-    SECRET_KEY_BASE="$(mix phx.gen.secret)" MIX_ENV=prod DATABASE_URL="postgresql://user:pass@localhost:5432/foo" PORT=4000 mix phx.server
-    curl localhost:4000
-
-If it doesn't work, the first thing to check is your :bash:`prod.exs` file. Often, it is missing an :elixir:`http` configuration or there is a typo in the :elixir:`FooWeb.Endpoint` module name.
-
-If everything works locally, you might be running a different version of Elixir in production. See :ref:`configure versions`.
-
-Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
-
-If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
-
-.. _`troubleshooting distillery`:
-
-Distillery
-----------
-
-If you're having trouble getting things working, you can verify a few things locally.
-
-First, try generating and running a Distillery release locally by running
-
-.. code-block:: bash
-
-    mix deps.get
-    mix compile
-    export SECRET_KEY_BASE="$(mix phx.gen.secret)"
-    export DATABASE_URL="postgresql://user:pass@localhost:5432/foo" 
-    MIX_ENV=prod mix distillery.release --env=prod
-    # if you are a running distillery below 2.1, then run this instead: MIX_ENV=prod mix release --env=prod
-    APP_NAME=gigalixir_getting_started
-    MY_HOSTNAME=example.com MY_COOKIE=secret REPLACE_OS_VARS=true MY_NODE_NAME=foo@127.0.0.1 PORT=4000 _build/prod/rel/$APP_NAME/bin/$APP_NAME foreground
-    curl localhost:4000
-
-Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
-
-You can safely ignore Kubernetes errors like :bash:`[libcluster:k8s_example]` errors because you probably aren't running inside Kubernetes.
-
-If they don't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
-
-In case static assets don't show up, you can try the following and then re-run the commands above.
-
-.. code-block:: bash
-
-    cd assets
-    npm install
-    npm run deploy
-    cd ..
-    mix phx.digest
-
-If your problem is with one of the buildpacks, try running the full build using Docker and Herokuish by running
-
-.. code-block:: bash
-
-    APP_ROOT=$(pwd)
-    rm -rf /tmp/gigalixir/cache
-    rm -rf _build
-    mkdir -p /tmp/gigalixir/cache
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish
-
-Or to inspect closer, run
-
-.. code-block:: bash
-
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/herokuish
-
-    # and then inside the container run
-    build-slug
-
-    # inspect /app folder
-    # check /tmp/cache
-
-If everything works locally, you might be running a different version of Elixir in production. See :ref:`configure versions`.
-
-Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
-
-If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
-
-.. _`troubleshooting Elixir releases`:
-
-Elixir Releases
----------------
-
-If you're having trouble getting things working, you can verify a few things locally.
-
-First, try generating and running a release locally by running
-
-.. code-block:: bash
-
-    mix deps.get
-    export SECRET_KEY_BASE="$(mix phx.gen.secret)"
-    export DATABASE_URL="postgresql://user:pass@localhost:5432/foo" 
-    MIX_ENV=prod mix release
-    APP_NAME=gigalixir_getting_started
-    PORT=4000 _build/prod/rel/$APP_NAME/bin/$APP_NAME start
-    curl localhost:4000
-
-Don't forget to replace :bash:`gigalixir_getting_started` with your own app name. Also, change/add the environment variables as needed.
-
-You can safely ignore Kubernetes errors like :bash:`[libcluster:k8s_example]` errors because you probably aren't running inside Kubernetes.
-
-If they don't work, the first place to check is :bash:`prod.exs`. Make sure you have :elixir:`server: true` somewhere and there are no typos.
-
-In case static assets don't show up, you can try the following and then re-run the commands above.
-
-.. code-block:: bash
-
-    cd assets
-    npm install
-    npm run deploy
-    cd ..
-    mix phx.digest
-
-If your problem is with one of the buildpacks, try running the full build using Docker and Herokuish by running
-
-.. code-block:: bash
-
-    APP_ROOT=$(pwd)
-    rm -rf /tmp/gigalixir/cache
-    rm -rf _build
-    mkdir -p /tmp/gigalixir/cache
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish
-
-Or to inspect closer, run
-
-.. code-block:: bash
-
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/herokuish
-
-    # and then inside the container run
-    build-slug
-
-    # inspect /app folder
-    # check /tmp/cache
-
-If everything works locally, you might be running a different version of Elixir in production. See :ref:`configure versions`.
-
-Another possibility is that your app is running out of memory and can't start up properly. To fix this, try scaling up. See :ref:`scaling`.
-
-If the above commands still do not succeed and your app is open source, then please `contact us for help`_. If not open source, `contact us`_ anyway and we'll do our best to help you.
-
-Common Errors
--------------
-
-A good first thing to try when you get a `git push` error is `cleaning your build cache`_.
-
-    - My deploy succeeded, but nothing happened.
-
-        - When :bash:`git push gigalixir master` succeeds, it means your code was compiled and built without any problems, but there can still be problems during runtime. Other platforms will just let your app fail, but gigalixir performs tcp health checks on port 4000 on your new release before terminating the old release. So if your new release is failing health checks, it can appear as if nothing is happening because in a sense, nothing is. Check :bash:`gigalixir logs` for any startup errors.
-
-    - My app takes a long time to startup.
-
-        - Most likely, this is because your CPU reservation isn't enough and there isn't any extra CPU available on the machine to give you. Try scaling up your instance sizes. See :ref:`scale`.
-
-    - failed to connect: ** (Postgrex.Error) FATAL 53300 (too_many_connections): too many connections for database
-
-        - If you have a free tier database, the number of connections is limited. Try lowering the :elixir:`pool_size` in your :bash:`prod.exs` to 2, or if you're using :bash:`prod.secret.exs` setting the :bash:`POOL_SIZE` environment variable using :bash:`gigalixir config:set POOL_SIZE=2`.
-
-    - ~/.netrc access too permissive: access permissions must restrict access to only the owner
-
-        - run :bash:`chmod og-rwx ~/.netrc`
-
-    - :bash:`git push gigalixir master` asks for my password
-
-        - First try running :bash:`gigalixir login` and try again. If that doesn't work, try resetting your git remote by running :bash:`gigalixir git:remote $APP` and trying again.
-
-    - remote: cp: cannot overwrite directory ‘/tmp/cache/node_modules/phoenix_html’ with non-directory
-
-        - Try `cleaning your build cache`_. Looks like something changed in your app that makes the cache non-overwritable.
-
-    - :elixir:`conn.remote_ip` has :elixir:`127.0.0.1` instead of the real client ip
-
-        - Try using https://github.com/kbrw/plug_forwarded_peer or otherwise use the :elixir:`X-Forwarded-For` header instead. Gigalixir apps run behind load balancers which write the real client ip in that header.
-
-    - (File.Error) could not read file "foo/bar": no such file or directory
-
-        - Often, this means that Distillery did not package the :bash:`foo` directory into your release tarball. Try using Distillery Overlays to add the :bash:`foo` directory. For example, adjusting your :bash:`rel/config.exs` to something like this
-
-          .. code-block:: bash
-
-              release :gigalixir_getting_started do
-                set version: current_version(:gigalixir_getting_started)
-                set applications: [
-                  :runtime_tools
-                ]
-                set overlays: [
-                  {:copy, "foo", "foo"}
-                ]
-              end
-
-          For more, see https://github.com/bitwalker/distillery/blob/master/docs/Overlays.md
-
-    - cd: /tmp/build/./assets: No such file or directory
-
-        - This means the Phoenix static buildpack could not find your assets folder. Either specify where it is or remove the buildpack. To specify, configure the buildpack following https://github.com/gjaldon/heroku-buildpack-phoenix-static. To remove, create a :bash:`.buildpacks` file with the buildpacks you need. For example, just :bash:`https://github.com/HashNuke/heroku-buildpack-elixir`
-
-    - SMTP/Email Network Failures e.g. {:network_failure, 'smtp.mailgun.org', {:error, :timeout}}
-
-        - Google Cloud Engine does not allow certain email ports like 587. See https://cloud.google.com/compute/docs/tutorials/sending-mail/
-          Try using port 2525. See https://cloud.google.com/compute/docs/tutorials/sending-mail/using-mailgun
-
-    - unknown command: MIX_ENV=prod mix phx.server
-
-        - If you are you are using a custom Procfile with an environment variable at the front of the command, you'll get this error. Try adding :bash:`env` to the front of the command. See https://github.com/ddollar/foreman/issues/265. We use the most command Ruby Foreman which behaves differently from Heroku's for this situation.
-
-    - init terminating in do_boot ({cannot get bootfile,no_dot_erlang.boot})
-
-        - This is an issue described here: https://github.com/bitwalker/distillery/issues/426
-          Try either upgrading Distillery to 1.5.3 or downgrading OTP below 21.
-
-    - Could not invoke task "release": --env : Unknown option
-
-        - This happens when you upgrade to elixir 1.9, but are still using distillery older than 2.1. Upgrade distillery to fix this issue, but be sure to also change your rel/config.exs file. Mix.Releases.Config needs to be renamed to Distillery.Releases.Config
-
-    - sh: 1: mix: not found
-
-        - If you have an old Phoenix project where a :bash:`package.json` file exists in the project root folder, the :bash:`herokuish` buildpack might `mistakenly recognize it <https://github.com/gliderlabs/herokuish/issues/232>`_ as a Node.js project, and thus fail to build it properly. You may need to manually add a :bash:`.buildpacks` file in your root folder, as documented in the "Specify Buildpacks" sections above.
-
-.. _`contact us for help`:
-.. _`contact us`:
-.. _`help`:
-
-Support/Help
-============
-
-Feel free to email help@gigalixir.com for any questions or issues, we generally respond quickly.
-
 .. _`Stack Overflow`: http://stackoverflow.com/
 .. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
 
@@ -1051,9 +764,9 @@ See :ref:`install the CLI`.
 
 There is also an Arch AUR Package here: https://aur.archlinux.org/packages/gigalixir-cli/
 
-If you're interested in creating a Mac OS Brew formula, contact us!
+If you're interested in creating a Mac OS Brew formula, :ref:`contact us!<help>`
 
-If you're interested in creating an Ubuntu/Debian package, contact us!
+If you're interested in creating an Ubuntu/Debian package, :ref:`contact us!<help>`
 
 How to Upgrade the CLI
 ----------------------
@@ -1101,59 +814,6 @@ How to Set Up Distributed Phoenix Channels
 If you have successfully clustered your nodes, then distributed Phoenix channels *just work* out of
 the box. No need to follow any of the steps described in `Running Elixir and Phoenix projects on a
 cluster of nodes`_. See more information on how to `cluster your nodes`_.
-
-How to Sign Up for an Account
-=============================
-
-Create an account using the following command. It will prompt you for your email address and password. You will have to confirm your email before continuing. Gigalixir's free tier does not require a credit card, but you will be limited to 1 instance with 0.2GB of memory and 1 postgresql database limited to 10,000 rows.
-
-.. code-block:: bash
-
-    gigalixir signup
-
-.. _`upgrade account`:
-
-How to Upgrade an Account
-=========================
-
-The standard tier offers much more than the free tier, see :ref:`tiers`.
-
-The easiest way to upgrade is through the web interface. Login at https://gigalixir.com/#/signin and click the Upgrade button.
-
-To upgrade with the CLI, first add a payment method
-
-.. code-block:: bash
-
-    gigalixir account:payment_method:set
-
-Then upgrade.
-
-.. code-block:: bash
-
-    gigalixir account:upgrade
-
-How to Delete an Account
-========================
-
-If you just want to make sure you won't be billed anymore, run
-
-.. code-block:: bash
-
-    gigalixir apps
-
-And for every app listed, run
-
-.. code-block:: bash
-
-    gigalixir apps:destroy
-
-This will make sure you've deleted all domains, databases, etc and you won't be charged in the future.
-
-If you really want to completely destroy your account, run
-
-.. code-block:: bash
-
-    gigalixir account:destroy
 
 How to Create an App
 ====================
@@ -1458,7 +1118,7 @@ If your DNS provider does not allow CNAME, which is common for naked/root domain
 
 Note that if you want both the naked/root domain and a subdomain such as www, be sure to run `gigalixir domains:add` for each one.
 
-If you need a wildcard domain, feel free to `contact us`_ and we can help you get set up.
+If you need a wildcard domain, feel free to :ref:`contact us<help>` and we can help you get set up.
 
 Note that with Phoenix, you may need to change your :elixir:`check_origin` setting in order for websockets to pass the origin check. See https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#module-runtime-configuration
 
@@ -1517,29 +1177,6 @@ To delete a drain, run
 
 .. _managing-ssh-keys:
 
-Managing SSH Keys
-=================
-
-In order to SSH, run remote observer, remote console, etc, you need to set up your SSH keys. It could take up to a minute for the SSH keys to update in your containers.
-
-.. code-block:: bash
-
-    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
-
-If you don't have an :bash:`id_rsa.pub` file, follow `this guide <https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/>`_ to create one.
-
-To view your SSH keys
-
-.. code-block:: bash
-
-    gigalixir account:ssh_keys
-
-To delete an SSH key, find the key's id and then run delete the key by id.
-
-.. code-block:: bash
-
-    gigalixir account:ssh_keys:remove $ID
-
 How to SSH into a Production Container
 ======================================
 
@@ -1595,53 +1232,6 @@ We keep a record of each time you deploy, change configs, scale, etc. To view th
 
     gigalixir apps:activity
 
-
-How to Change or Reset Your Password
-====================================
-
-With the web interface, visit https://gigalixir.com/#/signin-help
-
-With the CLI, run
-
-.. code-block:: bash
-
-    gigalixir account:password:change
-
-If you forgot your password, send a reset token to your email address by running the following command and following the instructions in the email.
-
-.. code-block:: bash
-
-    gigalixir account:password:reset
-
-How to Change My Email Address
-==============================
-
-`Contact us`_ and we'll help you out.
-
-How to Resend the Confirmation Email
-====================================
-
-With the web interface, visit https://gigalixir.com/#/signin-help
-
-With the CLI, run
-
-.. code-block:: bash
-
-    gigalixir account:confirmation:resend
-
-How to Change Your Credit Card
-==============================
-
-To change your credit card, run
-
-.. code-block:: bash
-
-    gigalixir account:payment_method:set
-
-How to Delete your Account
-==========================
-
-There is currently no way to completely delete an account. We are working on implementing this feature. You can delete apps though. See :ref:`delete-app`.
 
 .. _`restart`:
 
@@ -1717,33 +1307,6 @@ The size of the container that runs your job will be the same size as the app co
 .. _`gigalixir-getting-started's migrate task`: https://github.com/gigalixir/gigalixir-getting-started/blob/js/hooks/lib/tasks.ex
 .. _`Distillery's Running Migrations`: https://hexdocs.pm/distillery/running-migrations.html
 
-How to Reset your API Key
-=========================
-
-If you lost your API key or it has been stolen, you can reset it by running
-
-.. code-block:: bash
-
-    gigalixir account:api_key:reset
-
-Your old API key will no longer work and you may have to login again.
-
-How to Log Out
-==============
-
-.. code-block:: bash
-
-    gigalixir logout
-
-How to Log In
-=============
-
-.. code-block:: bash
-
-    gigalixir login
-
-This modifies your ~/.netrc file so that future API requests will be authenticated. API keys never expire, but can be revoked.
-
 
 .. _`provisioning free database`:
 
@@ -1815,7 +1378,7 @@ Unfortunately, we can't automatically migrate your free tier db to a standard ti
   3. Create the standard tier database with :bash:`gigalixir pg:create`.
   4. Restore the data with :bash:`psql` or :bash:`pg_restore`. You can find the url to use with :bash:`gigalixir pg` once the standard tier database is created.
 
-Please don't hesitate to `contact us`_ if you need help.
+Please don't hesitate to :ref:`contact us<help>` if you need help.
 
 * Databases still have connection limits based on Google Cloud SQL limits. See https://cloud.google.com/sql/docs/postgres/quotas#fixed-limits
 
@@ -1870,7 +1433,7 @@ This can take a while. Sometimes over ten minutes. To check the status, run
 How to restart a database
 =========================
 
-`Contact us`_ and we'll help you out. Only standard tier databases can be restarted.
+:ref:`Contact us<help>` and we'll help you out. Only standard tier databases can be restarted.
 
 How to delete a database
 ========================
@@ -1998,7 +1561,7 @@ Then run
 
     gigalixir ps:migrate
 
-This command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please `contact us for help`_.
+This command runs your migrations in a remote console directly on your production node. It makes some assumptions about your project so if it does not work, please :ref:`contact us for help<help>`.
 
 If you are running an umbrella app, you will probably need to specify which "inner app" within your umbrella to migrate. Do this by passing the :bash:`--migration_app_name` flag like so
 
@@ -2159,61 +1722,6 @@ Then, to launch observer and connect it to a production node, run
 
 and follow the instructions. It will prompt you for your local sudo password so it can modify iptables rules. This connects to a random container using consistent hashing. We don't currently allow you to specify which container you want to connect to, but it will connect to the same container each time based on a hash of your ip address.
 
-How to see the current period's usage
-=====================================
-
-To see how many replica-size-seconds you've used so far this month, run
-
-.. code-block:: bash
-
-    gigalixir account:usage
-
-The amount you see here has probably not been charged yet since we do that at the end of the month.
-
-How to see previous invoices
-============================
-
-To see all your previous period's invoices, run
-
-.. code-block:: bash
-
-    gigalixir account:invoices
-
-.. _`money back guarantee`:
-
-Teams & Organizations
-=====================
-
-If you work in a team, you'll probably want to collaborate with other users. With gigalixir's access permissions, you can grant access using the commands below. They'll be able to deploy & rollback, manage configs, ssh, remote_console, observer, hot upgrade, and scale.
-
-First, they need to sign up for their own gigalixir account. Then run the command below to give them access.
-
-.. code-block:: bash
-
-    gigalixir access:add $USER_EMAIL
-
-To see, who has access, run
-
-.. code-block:: bash
-
-    gigalixir access
-
-To deny access to a user, run
-
-.. code-block:: bash
-
-    gigalixir access:remove $USER_EMAIL
-
-If you don't have access to the CLI and want to modify access, `contact us`_ and we'll help you out.
-
-The "owner", the user who created the app, is responsible for the bill each month. 
-
-For organizations, we recommend creating an "organization account" that is upgraded to the standard tier and has the billing information on file. Then create individual accounts for all developers and grant access to all contributors.
-
-How do I change the owner of my app?
-====================================
-
-No problem. `Contact us` and we'll help you out.
 
 .. _`How to deploy a Ruby app`:
 
@@ -2426,10 +1934,12 @@ Are there any benchmarks?
 
 Take a look at our `benchmark data <https://docs.google.com/spreadsheets/d/1KWES-cSH_qXZQN9y3yu6HDSTdweIbZQuL12qLvkJnBo/edit?usp=sharing>`_.
 
+.. _`money back guarantee`:
+
 Money-back Guarantee
 ====================
 
-If you are unhappy for any reason within the first 31 days, contact us to get a refund up to $75. Enough to run a 3 node cluster for 31 days.
+If you are unhappy for any reason within the first 31 days, :ref:`contact us<help>` to get a refund up to $75. Enough to run a 3 node cluster for 31 days.
 
 .. _`getting-started-guide`:
 
