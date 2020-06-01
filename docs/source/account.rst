@@ -54,29 +54,6 @@ If you really want to completely destroy your account, run
 
     gigalixir account:destroy
 
-Managing SSH Keys
-=================
-
-In order to SSH, run remote observer, remote console, etc, you need to set up your SSH keys. It could take up to a minute for the SSH keys to update in your containers.
-
-.. code-block:: bash
-
-    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
-
-If you don't have an :bash:`id_rsa.pub` file, follow `this guide <https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/>`_ to create one.
-
-To view your SSH keys
-
-.. code-block:: bash
-
-    gigalixir account:ssh_keys
-
-To delete an SSH key, find the key's id and then run delete the key by id.
-
-.. code-block:: bash
-
-    gigalixir account:ssh_keys:remove $ID
-
 How to Change or Reset Your Password
 ====================================
 

@@ -30,3 +30,9 @@ To see all your previous period's invoices, run
 
     gigalixir account:invoices
 
+.. _`money back guarantee`:
+
+Money-back Guarantee
+====================
+
+If you are unhappy for any reason within the first 31 days, :ref:`contact us<help>` to get a refund up to $75. Enough to run a 3 node cluster for 31 days.

@@ -22,15 +22,20 @@
     account
     app
     database
+    config
+    log
+    runtime
     teams
     domain
-    billing
     tiers-pricing
+    billing
     deploy
-    config
+    cluster
+    job
     dependency
     troubleshooting
     cli
+    concepts
     faq
     main
 

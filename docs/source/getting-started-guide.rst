@@ -1,7 +1,7 @@
 .. _`quick start`:
 
 Getting Started Guide
-=====================
+~~~~~~~~~~~~~~~~~~~~~
 
 The goal of this guide is to get your app up and running on Gigalixir. You will sign up for an account, prepare your app, deploy, and provision a database.
 

@@ -38,7 +38,7 @@ If you choose distillery, see :ref:`modifying existing app with distillery`.
 .. _`mix mode`:
 
 How do I switch to mix mode?
-============================
+----------------------------
 
 Mix mode is sort of the default, but we automatically detect and switch you to distillery mode if you have a :bash:`rel/config.exs` file so one option is to delete that file.
 We also automatically detect and switch you to Elixir releases mode if you have a :bash:`config/releases.exs` file so also be sure that file is deleted.
