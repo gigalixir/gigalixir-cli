@@ -20,8 +20,17 @@
     modify-app/distillery
     modify-app/releases
     account
+    app
+    database
     teams
+    domain
     billing
+    tiers-pricing
+    deploy
+    config
+    dependency
     troubleshooting
+    cli
+    faq
     main
 

@@ -141,3 +141,12 @@ How to Log In
     gigalixir login
 
 This modifies your ~/.netrc file so that future API requests will be authenticated. API keys never expire, but can be revoked.
+
+How to Check Account Status
+===========================
+
+To see things like which account you are logged in as, what tier you are on, and how many credits you have available, run
+
+.. code-block:: bash
+
+    gigalixir account

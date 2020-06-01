@@ -13,7 +13,7 @@ Important: If you have an umbrella app, be sure to *also* see :ref:`umbrella`.
 Mix vs Distillery vs Elixir Releases
 ------------------------------------
 
-Probably the hardest part of deploying Elixir is choosing which method of deploying you prefer. We typically recommend Distillery because it has the most features, but Mix is much simpler and Elixir releases give you a bit of both. Here is a comparison table to help you choose. Any features not in the table are available for all three.
+Probably the hardest part of deploying Elixir is choosing which method of deploying you prefer, but don't worry, it's easy to change your mind later and switch. We typically recommend elixir releases because it is easy to set up and unlocks the most important features like observer.  Here is a comparison table to help you choose. 
 
 =======================  =================== ======================= =========== 
 Feature                  Mix                 Elixir Releases         Distillery
@@ -21,13 +21,35 @@ Feature                  Mix                 Elixir Releases         Distillery
 Hot Upgrades                                                         YES
 Remote Observer                              YES                     YES
 Mix Tasks                YES
-Included with Elixir     YES                 YES
-Easy Configuration       YES
+Built-in to Elixir       YES                 YES
+Easy Configuration*      YES
+Clustering               YES                 YES                     YES
+gigalixir ps:migrate     YES                 YES                     YES
 =======================  =================== ======================= ===========
 
 If you choose mix, see :ref:`modifying existing app with mix`.
 
+If you choose Elixir releases, see :ref:`modifying existing app with Elixir releases`.
+
 If you choose distillery, see :ref:`modifying existing app with distillery`.
 
-If you choose Elixir releases, see :ref:`modifying existing app with Elixir releases`.
+* We say easy configuration here because some customers get confused about the difference between prod.exs and releases.exs. Distillery can be even more confusing with its :bash:`REPLACE_OS_VARS` syntax.
+
+.. _`mix mode`:
+
+How do I switch to mix mode?
+============================
+
+Mix mode is sort of the default, but we automatically detect and switch you to distillery mode if you have a :bash:`rel/config.exs` file so one option is to delete that file.
+We also automatically detect and switch you to Elixir releases mode if you have a :bash:`config/releases.exs` file so also be sure that file is deleted.
+
+If you don't want to delete those files, you can manually force mix mode by specifying the mix buildpack. Create a :bash:`.buildpacks` file and make sure you have something like the following. Notice that the last buildpack is the mix buildpack.
+
+.. code-block:: bash
+
+    https://github.com/HashNuke/heroku-buildpack-elixir
+    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-mix.git
+
+If you wanted to force distillery or Elixir releases, you'd want the last buildpack to be either the :bash:`https://github.com/gigalixir/gigalixir-buildpack-distillery.git` or the :bash:`https://github.com/gigalixir/gigalixir-buildpack-releases.git` buildpacks, respectively.
 

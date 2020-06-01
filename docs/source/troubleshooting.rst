@@ -1,7 +1,7 @@
+.. _`troubleshooting-page`:
+
 Troubleshooting
 ~~~~~~~~~~~~~~~
-
-.. _`troubleshooting`:
 
 Troubleshooting
 ===============
