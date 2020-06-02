@@ -58,6 +58,12 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     make html
     xdg-open build/html/index.html
 
+    # Be sure to update
+    # 1. Phoenix Guides
+    # 2. Marketing Emails
+    # 3. Console & Homepage Links
+    # 4. Blog Links
+
 ## Clean up e2e test
 
     # the test cleans itself up unless there was a failure, then it does not clean up
