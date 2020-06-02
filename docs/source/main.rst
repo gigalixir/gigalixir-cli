@@ -3,6 +3,13 @@ Moved
 
 These sections are just here so that old links don't appear broken.
 
+.. _`install-the-command-line-interface`:
+
+Install the Command-Line Interface
+==================================
+
+This section has moved here: :ref:`install the CLI`
+
 .. _`getting-started-guide`:
 
 Getting Started Guide
