@@ -272,3 +272,13 @@ PORT contains the port your app needs to listen on to pass health checks and rec
 SECRET_KEY_BASE contains a randomly generated string that we use as your Elixir app's secret key base.
 
 HOME contains the location of your app's home directly. It is almost always /app, but we reserve the right to change it.
+
+How can I get a static outgoing ip address?
+===========================================
+
+Gigalixir doesn't support static outgoing ip addresses at the moment, but some customers have had success using IPBurger.com which is affordable and simple. Just configure your http client to make requests through the proxy. For example, with HTTPoison, something like this
+
+.. code-block:: elixir
+
+    HTTPoison.get(url, [], [proxy: {:socks5, String.to_charlist("server_domain"), port_num}, socks5_user: "username", socks5_pass: "password"])
+
