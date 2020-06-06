@@ -336,7 +336,7 @@ def rollback(ctx, app_name, version):
 @cli.command(name='ps:remote_console')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
-@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
+@click.option('-c', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
