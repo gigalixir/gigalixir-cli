@@ -12,7 +12,7 @@ See :ref:`install the CLI`.
 
 There is also an Arch AUR Package here: https://aur.archlinux.org/packages/gigalixir-cli/
 
-If you're interested in creating a Mac OS Brew formula, :ref:`contact us!<help>`
+If you're interested in creating a macOS Brew formula, :ref:`contact us!<help>`
 
 If you're interested in creating an Ubuntu/Debian package, :ref:`contact us!<help>`
 
