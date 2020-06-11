@@ -31,6 +31,7 @@ setup(
         'dev': [
             'Sphinx',
             'sphinx_rtd_theme',
+            'sphinx-tabs',
         ],
         'test': [
             'pytest',

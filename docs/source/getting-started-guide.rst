@@ -33,21 +33,66 @@ Install the Command-Line Interface
 
 Next, install the command-line interface. Gigalixir has a web interface at https://console.gigalixir.com/, but you will still need the CLI to do anything other than signup, deploy, and scale.
 
-.. code-block:: bash
+.. tabs::
 
-    pip3 install gigalixir --ignore-installed six
+   .. group-tab:: Linux
+
+      .. code-block:: bash
+
+          pip3 install gigalixir --user
+
+   .. group-tab:: macOS
+
+      .. code-block:: bash
+
+          pip3 install gigalixir --ignore-installed six --user
+
+      .. warning::
+
+         You may need to update Xcode command-line tools otherwise you'll get an error like this
+
+         .. code-block::
+
+             xcrun: error: invalid active developer path
+
+         To upgrade Xcode command-line tools, see https://stackoverflow.com/questions/52522565/git-is-not-working-after-macos-update-xcrun-error-invalid-active-developer-pa
+
+      .. note::
+
+          The reason we ignore six is because OS X has a pre-installed version of six that is incompatible. When pip tries to upgrade it, OS X won't let us. For more, see https://github.com/pypa/pip/issues/3165
+
+   .. group-tab:: Windows
+
+      .. code-block:: bash
+
+          pip3 install gigalixir --user
+
 
 Make sure the executable is in your path, if it isn't already. 
 
-.. code-block:: bash
+.. tabs::
 
-    echo 'export PATH=~/.local/bin:$PATH' >> ~/.bash_profile
+   .. group-tab:: Linux
 
-Reload the profile
+      .. code-block:: bash
 
-.. code-block:: bash
+          echo 'export PATH=~/.local/bin:$PATH' >> ~/.bash_profile
+          source ~/.bash_profile
 
-    source ~/.bash_profile
+   .. group-tab:: macOS
+
+      .. code-block:: bash
+
+          echo 'export PATH=~/.local/bin:$PATH' >> ~/.bash_profile
+          source ~/.bash_profile
+
+   .. group-tab:: Windows
+
+      On Windows Powershell, try something similar to this. Note this may vary based on your python version.
+
+      .. code-block:: bash
+
+        [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$HOME\appdata\roaming\python\python38\Scripts", "Machine")
 
 Verify by running
 
@@ -55,7 +100,6 @@ Verify by running
 
     gigalixir --help
 
-The reason we ignore six is because OS X has a pre-installed version of six that is incompatible. When pip tries to upgrade it, OS X won't let us. For more, see https://github.com/pypa/pip/issues/3165
 
 Create an Account
 -----------------
