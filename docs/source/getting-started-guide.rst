@@ -51,7 +51,7 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
          You may need to update Xcode command-line tools otherwise you'll get an error like this
 
-         .. code-block::
+         .. code-block:: bash
 
              xcrun: error: invalid active developer path
 
