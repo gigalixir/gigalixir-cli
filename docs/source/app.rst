@@ -28,8 +28,6 @@ That should do it. Once you deploy, you'll be able to access your app from :bash
 How to Delete an App
 ====================
 
-WARNING!! Deleting an app can not be undone and the name can not be reused.
-
 To delete an app, run
 
 .. code-block:: bash
