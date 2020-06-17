@@ -81,11 +81,6 @@ If you forgot your password, send a reset token to your email address by running
 
     gigalixir account:password:reset
 
-How to Change My Email Address
-==============================
-
-:ref:`Contact us<help>` and we'll help you out.
-
 How to Resend the Confirmation Email
 ====================================
 
