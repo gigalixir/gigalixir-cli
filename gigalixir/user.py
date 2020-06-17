@@ -99,7 +99,16 @@ def get_reset_password_token(host, email):
             raise auth.AuthException()
         raise Exception(r.text)
     else:
-        logging.getLogger("gigalixir-cli").info("Reset password token has been sent to your email.")
+        logging.getLogger("gigalixir-cli").info("Reset password link has been sent to your email.")
+
+def set_email(host, current_password, email):
+    r = requests.post('%s/api/users/email' % host, json = {"next_email": email, "current_password": current_password})
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        logging.getLogger("gigalixir-cli").info("Confirmation email sent. Please check your email to continue.")
 
 def reset_password(host, token, password):
     r = requests.post('%s/api/users/reset_password' % host, json = {"token": token, "password": password})
@@ -115,7 +124,7 @@ def get_confirmation_token(host, email):
             raise auth.AuthException()
         raise Exception(r.text)
     else:
-        logging.getLogger("gigalixir-cli").info("Confirmation token has been sent to your email.")
+        logging.getLogger("gigalixir-cli").info("Confirmation email sent.")
 
 def account(host):
     r = requests.get('%s/api/users' % host)

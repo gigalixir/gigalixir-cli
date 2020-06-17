@@ -756,6 +756,18 @@ def send_reset_password_token(ctx, email):
     gigalixir_user.get_reset_password_token(ctx.obj['host'], email)
 
 # @get.command()
+@cli.command(name='account:email:set')
+@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
+@click.option('-e', '--email', prompt=True)
+@click.pass_context
+@report_errors
+def send_reset_password_token(ctx, password, email):
+    """
+    Set account email
+    """
+    gigalixir_user.set_email(ctx.obj['host'], password, email)
+
+# @get.command()
 @cli.command(name='pg')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context

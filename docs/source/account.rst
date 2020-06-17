@@ -54,6 +54,16 @@ If you really want to completely destroy your account, run
 
     gigalixir account:destroy
 
+How to change your email address
+================================
+
+.. code-block:: bash
+
+    gigalixir account:email:set
+
+You will be sent a confirmation email with a link to confirm the email change.
+The current email address will be sent an email with a link to revoke the change.
+
 How to Change or Reset Your Password
 ====================================
 
