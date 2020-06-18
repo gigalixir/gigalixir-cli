@@ -32,7 +32,7 @@ def create(host, app_name, fqdn):
     data = json.loads(r.text)["data"]
     cname = data["cname"]
     logging.getLogger("gigalixir-cli").info("Added %s." % fqdn)
-    logging.getLogger("gigalixir-cli").info("Create a CNAME record with your DNS provider pointing to %s" % cname)
+    logging.getLogger("gigalixir-cli").info("Create a CNAME or ALIAS record with your DNS provider pointing to %s" % cname)
     logging.getLogger("gigalixir-cli").info("Please give us a few minutes to set up a new TLS certificate.")
 
 
