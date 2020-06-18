@@ -34,12 +34,18 @@ This feature is still a work in progress.
 .. _distillery-replace-os-vars:
 .. _`app configuration`:
 
-Using Environment Variables in your App
-=======================================
+Environment variables and secrets
+=================================
 
-Environment variables with Elixir, Distillery, and releases in general are one of those things that always trip up beginners. I think `Distillery's Runtime Configuration`_ explains it better than I can, but in short, never use :elixir:`System.get_env("FOO")` in your :bash:`prod.exs`. Always use :elixir:`"${FOO}"` instead.
+Environment variables in general are confusing because mix, distillery, and elixir releases all handle it differently. 
 
-Gigalixir automatically sets :bash:`REPLACE_OS_VARS=true` for you so all you have to do to introduce a new :bash:`MY_CONFIG` env var is add something like this to your :bash:`config.exs` file
+For distillery, I think `Distillery's Runtime Configuration`_ explains it better than I can, but in short, never use :elixir:`System.get_env("FOO")` in your :bash:`prod.exs`. Always use :elixir:`"${FOO}"` instead. Gigalixir automatically sets :bash:`REPLACE_OS_VARS=true` for you so you can skip that step.
+
+For mix, always use :elixir:`System.get_env("FOO")` in your :bash:`prod.exs`.
+
+For elixir releases, always use :elixir:`System.get_env("FOO")`, but put it in your :bash:`releases.exs` file if you want it loaded at runtime, which is usually what you want.
+
+For example with distillery, to introduce a new :bash:`MY_CONFIG` env var is add something like this to your :bash:`prod.exs` file
 
 .. code-block:: elixir
 
@@ -61,7 +67,6 @@ In your app code, access the environment variable using
     Application.get_env(:myapp, :my_config) == "foo"
 
 .. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/config/runtime.html
-
 .. _`Stack Overflow`: http://stackoverflow.com/
 .. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
 
