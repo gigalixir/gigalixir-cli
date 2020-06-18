@@ -14,23 +14,6 @@ All app configuration is done through environment variables. You can get, set, a
     gigalixir config:set FOO=bar
     gigalixir config:unset FOO
 
-How to Copy Configuration Variables
-===================================
-
-.. code-block:: bash
-
-    gigalixir config:copy -s $SOURCE_APP -d $DESTINATION_APP
-
-Note, this will copy all configuration variables from the source to the destination. If there are duplicate keys, the destination config will be overwritten. Variables that only exist on the destination app will not be deleted.
-
-.. _`hot-configure`:
-.. _`hot configuration updates`:
-
-How to Hot Configure an App
-===========================
-
-This feature is still a work in progress.
-
 .. _distillery-replace-os-vars:
 .. _`app configuration`:
 
@@ -49,10 +32,8 @@ For example with distillery, to introduce a new :bash:`MY_CONFIG` env var is add
 
 .. code-block:: elixir
 
-    ...
     config :myapp,
         my_config: "${MY_CONFIG}"
-    ...
 
 Then set the :bash:`MY_CONFIG` environment variable, by running
 
@@ -69,6 +50,24 @@ In your app code, access the environment variable using
 .. _`Distillery's Runtime Configuration`: https://hexdocs.pm/distillery/config/runtime.html
 .. _`Stack Overflow`: http://stackoverflow.com/
 .. _`the gigalixir tag`: http://stackoverflow.com/questions/tagged/gigalixir
+
+
+How to Copy Configuration Variables
+===================================
+
+.. code-block:: bash
+
+    gigalixir config:copy -s $SOURCE_APP -d $DESTINATION_APP
+
+Note, this will copy all configuration variables from the source to the destination. If there are duplicate keys, the destination config will be overwritten. Variables that only exist on the destination app will not be deleted.
+
+.. _`hot-configure`:
+.. _`hot configuration updates`:
+
+How to Hot Configure an App
+===========================
+
+This feature is still a work in progress.
 
 How to use a custom vm.args
 ===========================
