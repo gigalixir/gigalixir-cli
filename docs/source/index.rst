@@ -25,6 +25,7 @@
     cluster
     job
     dependency
+    disk
     troubleshooting
     cli
     concepts

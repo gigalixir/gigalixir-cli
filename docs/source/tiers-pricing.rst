@@ -197,6 +197,7 @@ Config Vars   32kb
 Slug Size     500mb
 Repo Size     1gb
 Build Time    15m
+Disk          10gb
 ============= =====
 
 [1] Because Gigalixir runs on Google Compute Engine, you may bump into an issue with connections that stay idle for 10m. For more information and how to work around it, see https://cloud.google.com/compute/docs/troubleshooting
