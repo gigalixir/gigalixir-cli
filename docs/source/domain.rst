@@ -14,13 +14,17 @@ After your first deploy, you can see your app by visiting https://$APP_NAME.giga
 
 This will do a few things. It registers your fully qualified domain name in the load balancer so that it knows to direct traffic to your containers. It also sets up SSL/TLS encryption for you and provisions a certificate. For more information on how SSL/TLS works, see :ref:`how-tls-works`.
 
-If your DNS provider does not allow CNAME, which is common for apex domains, use ALIAS instead.
-
 .. important::
 
     If you want both the apex domain and a subdomain such as www, be sure to run `gigalixir domains:add` for each one.
 
-If you need a wildcard domain, feel free to :ref:`contact us<help>` and we can help you get set up, but you will have to provide your own wildcard certificate.
+.. note::
+
+    If your DNS provider does not allow CNAME, which is common for apex domains, use ALIAS instead.
+
+.. note::
+
+    If you need a wildcard domain, feel free to :ref:`contact us<help>` and we can help you get set up, but you will have to provide your own wildcard certificate.
 
 .. note::
 
