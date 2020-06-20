@@ -13,7 +13,7 @@ Prerequisites
 #. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
 #. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
 #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
-#. Linux, macOs, or Windows (beta).
+#. Linux, macOS, or Windows (beta).
 
 For example, on Ubuntu, run
 
@@ -35,12 +35,6 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
 .. tabs::
 
-   .. group-tab:: Linux
-
-      .. code-block:: bash
-
-          pip3 install gigalixir --user
-
    .. group-tab:: macOS
 
       .. code-block:: bash
@@ -49,7 +43,7 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
       .. warning::
 
-         You may need to update Xcode command-line tools otherwise you'll get an error like this
+         You may need to update Xcode command-line tools otherwise you might get an error like this
 
          .. code-block:: bash
 
@@ -59,7 +53,13 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
       .. note::
 
-          The reason we ignore six is because macOs has a pre-installed version of six that is incompatible. When pip tries to upgrade it, macOs won't let us. For more, see https://github.com/pypa/pip/issues/3165
+          The reason we ignore six is because macOS has a pre-installed version of six that is incompatible. When pip tries to upgrade it, macOs won't let us. For more, see https://github.com/pypa/pip/issues/3165
+
+   .. group-tab:: Linux
+
+      .. code-block:: bash
+
+          pip3 install gigalixir --user
 
    .. group-tab:: Windows
 
@@ -72,14 +72,15 @@ Make sure the executable is in your path, if it isn't already.
 
 .. tabs::
 
-   .. group-tab:: Linux
+   .. group-tab:: macOS
 
       .. code-block:: bash
 
-          echo 'export PATH=~/.local/bin:$PATH' >> ~/.bash_profile
+          # Modify the python version in the path if needed
+          echo 'export PATH=~/Library/Python/3.7/bin:$PATH' >> ~/.bash_profile
           source ~/.bash_profile
 
-   .. group-tab:: macOS
+   .. group-tab:: Linux
 
       .. code-block:: bash
 
