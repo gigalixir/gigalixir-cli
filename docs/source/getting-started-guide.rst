@@ -10,17 +10,31 @@ If you're deploying an open source project, we provide consulting services free 
 Prerequisites
 -------------
 
-#. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
-#. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
-#. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
-#. Linux, macOS, or Windows (beta).
+.. tabs::
 
-For example, on Ubuntu, run
+   .. group-tab:: macOS
 
-.. code-block:: bash
+      #. :bash:`brew`. For help, take a look at the `homebrew documentation <https://docs.brew.sh/Installation>`_.
+      #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
 
-    sudo apt-get update
-    sudo apt-get install -y python3 python3-pip git-core curl
+   .. group-tab:: Linux
+
+      #. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
+      #. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
+      #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
+
+      For example, run
+
+      .. code-block:: bash
+
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip git-core curl
+
+   .. group-tab:: Windows
+
+      #. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
+      #. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
+      #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
 
 .. _`buildpack configuration file`: https://github.com/HashNuke/heroku-buildpack-elixir#configuration
 .. _`beta sign up form`: https://docs.google.com/forms/d/e/1FAIpQLSdB1Uh1mGQHqIIX7puoZvwm9L93bR88cM1uGeSOCXh06_smVg/viewform
