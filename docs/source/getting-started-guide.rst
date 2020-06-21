@@ -57,26 +57,7 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
           pip3 install gigalixir --user
 
-   .. group-tab:: Windows
-
-      .. code-block:: bash
-
-          pip3 install gigalixir --user
-
-
-Make sure the executable is in your path, if it isn't already. 
-
-.. tabs::
-
-   .. group-tab:: macOS
-
-      .. code-block:: bash
-
-          # Modify the python version in the path if needed
-          echo 'export PATH=~/Library/Python/3.7/bin:$PATH' >> ~/.bash_profile
-          source ~/.bash_profile
-
-   .. group-tab:: Linux
+      Make sure the executable is in your path, if it isn't already. 
 
       .. code-block:: bash
 
@@ -84,6 +65,12 @@ Make sure the executable is in your path, if it isn't already.
           source ~/.bash_profile
 
    .. group-tab:: Windows
+
+      .. code-block:: bash
+
+          pip3 install gigalixir --user
+
+      Make sure the executable is in your path, if it isn't already. 
 
       On Windows Powershell, try something similar to this. Note this may vary based on your python version.
 
