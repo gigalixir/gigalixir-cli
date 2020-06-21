@@ -39,7 +39,7 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
       .. code-block:: bash
 
-          pip3 install gigalixir --ignore-installed six --user
+          brew tap gigalixir/brew && brew install gigalixir
 
       .. warning::
 
@@ -50,10 +50,6 @@ Next, install the command-line interface. Gigalixir has a web interface at https
              xcrun: error: invalid active developer path
 
          To upgrade Xcode command-line tools, see https://stackoverflow.com/questions/52522565/git-is-not-working-after-macos-update-xcrun-error-invalid-active-developer-pa
-
-      .. note::
-
-          The reason we ignore six is because macOS has a pre-installed version of six that is incompatible. When pip tries to upgrade it, macOs won't let us. For more, see https://github.com/pypa/pip/issues/3165
 
    .. group-tab:: Linux
 
