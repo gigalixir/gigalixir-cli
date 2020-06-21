@@ -31,7 +31,7 @@ For example, on Ubuntu, run
 Install the Command-Line Interface
 ----------------------------------
 
-Next, install the command-line interface. Gigalixir has a web interface at https://console.gigalixir.com/, but you will still need the CLI to do anything other than signup, deploy, and scale.
+Next, install the command-line interface. Gigalixir has a web interface at https://console.gigalixir.com/, but you will likely still want the CLI.
 
 .. tabs::
 
