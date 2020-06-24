@@ -95,9 +95,9 @@ To see how we do zero-downtime deploys, see :ref:`zero-downtime`.
 How SSL/TLS Works
 -----------------
 
-We use kube-lego for automatic TLS certificate generation with Let's Encrypt. For more information, see `kube-lego's documentation`_. When you add a custom domain, we create a Kubernetes ingress for you to route traffic to your app. kube-lego picks this up, obtains certificates for you and installs them. Our ingress controller then handles terminating SSL traffic before sending it to your app.
+We use cert-manager for automatic TLS certificate generation with Let's Encrypt. For more information, see `cert-manager's documentation`_. When you add a custom domain, we create a Kubernetes ingress for you to route traffic to your app. cert-manager picks this up, obtains certificates for you and installs them. Our ingress controller then handles terminating SSL traffic before sending it to your app.
 
-.. _`kube-lego's documentation`: https://github.com/jetstack/kube-lego
+.. _`cert-manager's documentation`: https://github.com/jetstack/cert-manager
 
 .. _life-of-a-hot-upgrade:
 
