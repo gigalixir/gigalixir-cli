@@ -92,6 +92,11 @@ You can find your database id by running
 
 Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. For more information about databases sizes, see :ref:`database sizes`.
 
+How to dump the database to a file
+==================================
+
+We recommend :bash:`pg_dump`. You can find all the connection paramters you need from :bash:`gigalixir pg`. This should dump the database contents as a sql file which you can load back in with :bash:`psql`. If you dump a binary file, then you can use :bash:`pg_restore`.
+
 How to restore a database backup
 ================================
 

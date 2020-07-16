@@ -8,7 +8,7 @@ Troubleshooting
 
 Also see :ref:`known-issues`
 
-If your app isn't working and you're seeing either 504s or an "unhealthy" message, you're in the right place. The first places to check for clues are `gigalixir logs` and `gigalixir ps`. If nothing pops out at you there, keep reading.
+If your app isn't working and you're seeing either 504s or an "unhealthy" message, you're in the right place. The first places to check for clues are `gigalixir logs` and `gigalixir ps`. For example, check if the :bash:`lastState` shows :bash:`OOMKilled`, which indicates your app is using more memory than it has provisioned. If nothing pops out at you there, keep reading.
 
 A 504 means that our load balancer isn't able to reach your app. This is usually because the app isn't running. An app that isn't running
 is usually failing health checks and we constantly restart apps that fail health checks in hopes that it will become healthy.
