@@ -14,7 +14,7 @@ Then append something like the following in :bash:`prod.exs`. Don't replace what
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
        http: [port: {:system, "PORT"}], # Possibly not needed, but doesn't hurt
-       url: [nil, port: 80],
+       url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
        secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
        server: true
 
