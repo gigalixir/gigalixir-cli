@@ -18,7 +18,7 @@ Probably the hardest part of deploying Elixir is choosing which method of deploy
 =======================  =================== ======================= =========== 
 Feature                  Mix                 Elixir Releases         Distillery
 =======================  =================== ======================= ===========
-Hot Upgrades                                                         YES
+Hot Upgrades                                 YES                     YES
 Remote Observer                              YES                     YES
 Mix Tasks                YES
 Built-in to Elixir       YES                 YES
