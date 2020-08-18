@@ -152,6 +152,7 @@ To create your app, run the following command. It will also set up a git remote.
     cd gigalixir-getting-started
     APP_NAME=$(gigalixir create)
 
+
 Verify that the app was created, by running
 
 .. code-block:: bash
@@ -163,6 +164,14 @@ Verify that a git remote was created by running
 .. code-block:: bash
 
     git remote -v
+
+
+If someone in your organization has already created the gigalixir app and you only need to add the proper git remote to your local repository configuration, you can skip the app creation and add a the :bash:`gigalixir` git remote by using the :bash:`git:remote` command:
+
+.. code-block:: bash
+
+    gigalixir git:remote $app
+    
 
 Specify Versions
 ----------------
