@@ -20,7 +20,7 @@ This will do a few things. It registers your fully qualified domain name in the 
 
 .. note::
 
-    If your DNS provider does not allow CNAME, which is common for apex domains, use ALIAS instead.
+    Per the RFC spec, many DNS providers (such as GoDaddy and AWS Route 53) do not allow CNAME records for apex domains. If you are using a DNS provider that supports ALIAS records (such as Namecheap), you may define an ALIAS record for your apex domain that points to your corresponding gigalixir DNS domain, e.g. `example.com.gigalixirdns.com.`. Alternatively, you can use a redirect service such as redirect.pizza to securely forward requests for your apex domain to your `www.` sub-domain.
 
 .. note::
 
