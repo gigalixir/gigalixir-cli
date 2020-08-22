@@ -16,7 +16,7 @@ You can tail logs in real-time aggregated across all containers using the follow
 How to Forward Logs Externally
 ==============================
 
-If you want to forward your logs to another service such as `Logflare`, `Timber`_ or `PaperTrail`_, you'll need to set up a log drain. We support HTTPS and syslog drains. To create a log drain, run
+If you want to forward your logs to another service such as `Logflare`_, `Timber`_ or `PaperTrail`_, you'll need to set up a log drain. We support HTTPS and syslog drains. To create a log drain, run
 
 .. code-block:: bash
 
