@@ -1,4 +1,5 @@
 import os
+import errno
 import subprocess
 
 def check_for_git():
@@ -7,7 +8,7 @@ def check_for_git():
             subprocess.check_call('git rev-parse --is-inside-git-dir'.split(), stdout=FNULL, stderr=subprocess.STDOUT)
     except OSError as e:
         # from https://stackoverflow.com/a/11210185/365377
-        if e.errno == os.errno.ENOENT:
+        if e.errno == errno.ENOENT:
             raise Exception("Sorry, we could not find git. Try installing it and try again.")
         else:
             raise
