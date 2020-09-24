@@ -96,7 +96,7 @@ In order to run a remote observer, you need to set up your SSH keys. It could ta
 
     gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
 
-Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have clustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`clustering`.
+Because Observer runs on your local machine and connects to a production node by joining the production cluster, you first have to have elustering set up. You don't have to have multiple nodes, but you need to follow the instructions in :ref:`cluster your nodes`.
 
 You also need to have :elixir:`runtime_tools` in your application list in your :bash:`mix.exs` file. Phoenix 1.3 and later adds it by default, but you have to add it yourself in Phoenix 1.2.
 
