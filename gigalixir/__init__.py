@@ -350,7 +350,7 @@ def remote_console(ctx, app_name, ssh_opts, ssh_cmd):
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
-@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
+@click.option('-c', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -364,7 +364,7 @@ def ps_run(ctx, app_name, ssh_opts, ssh_cmd, command):
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
-@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
+@click.option('-c', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -378,7 +378,7 @@ def ssh(ctx, app_name, ssh_opts, ssh_cmd, command):
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('distillery_command', nargs=-1)
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
-@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
+@click.option('-c', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -417,7 +417,7 @@ def run(ctx, app_name, command):
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-m', '--migration_app_name', default=None, help='For umbrella apps, specify which inner app to migrate.')
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
-@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
+@click.option('-c', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -1063,7 +1063,7 @@ def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-c', '--cookie')
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
-@click.option('-o', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
+@click.option('-c', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
 @report_errors
 @detect_app_name
