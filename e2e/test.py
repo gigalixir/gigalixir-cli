@@ -11,8 +11,9 @@ import logging
 import requests
 import timeit
 
+logging.basicConfig(format='%(message)s', level=logging.DEBUG)
+
 def test_databases():
-    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 
     email = os.environ['GIGALIXIR_EMAIL']
     password = os.environ['GIGALIXIR_PASSWORD']
@@ -67,8 +68,6 @@ def test_databases():
         logging.info("Elapsed time: %s" % elapsed)
 
 def test_mix():
-    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
-
     email = os.environ['GIGALIXIR_EMAIL']
     password = os.environ['GIGALIXIR_PASSWORD']
     runner = CliRunner()
@@ -157,8 +156,6 @@ def test_mix():
             assert result.exit_code == 0
 
 def test_ruby():
-    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
-
     email = os.environ['GIGALIXIR_EMAIL']
     password = os.environ['GIGALIXIR_PASSWORD']
     runner = CliRunner()
@@ -172,6 +169,8 @@ def test_ruby():
             result = runner.invoke(gigalixir.cli, ['create'])
             assert result.exit_code == 0
             app_name = result.output.rstrip()
+            # they changed this repo from master to main on 9/3/2020
+            gigalixir.shell.cast("git branch master")
             gigalixir.shell.cast("git push gigalixir master")
 
             logging.info('Completed Deploy.')
@@ -215,8 +214,6 @@ def test_deploy_and_upgrade():
     __test_deploy_and_upgrade(None, None)
 
 def __test_deploy_and_upgrade(cloud, region, branch="master"):
-    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
-
     email = os.environ['GIGALIXIR_EMAIL']
     password = os.environ['GIGALIXIR_PASSWORD']
     runner = CliRunner()
