@@ -210,7 +210,7 @@ A good first thing to try when you get a `git push` error is :ref:`cleaning your
 
     - My deploy succeeded, but nothing happened.
 
-        - When :bash:`git push gigalixir master` succeeds, it means your code was compiled and built without any problems, but there can still be problems during runtime. Other platforms will just let your app fail, but gigalixir performs tcp health checks on port 4000 on your new release before terminating the old release. So if your new release is failing health checks, it can appear as if nothing is happening because in a sense, nothing is. Check :bash:`gigalixir logs` for any startup errors.
+        - When :bash:`git push gigalixir` succeeds, it means your code was compiled and built without any problems, but there can still be problems during runtime. Other platforms will just let your app fail, but gigalixir performs tcp health checks on port 4000 on your new release before terminating the old release. So if your new release is failing health checks, it can appear as if nothing is happening because in a sense, nothing is. Check :bash:`gigalixir logs` for any startup errors.
 
     - My app takes a long time to startup.
 
@@ -224,7 +224,7 @@ A good first thing to try when you get a `git push` error is :ref:`cleaning your
 
         - run :bash:`chmod og-rwx ~/.netrc`
 
-    - :bash:`git push gigalixir master` asks for my password
+    - :bash:`git push gigalixir` asks for my password
 
         - First try running :bash:`gigalixir login` and try again. If that doesn't work, try resetting your git remote by running :bash:`gigalixir git:remote $APP` and trying again.
 

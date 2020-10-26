@@ -8,7 +8,7 @@ Deploying an app is done using a git push, the same way you would push code to g
 
 .. code-block:: bash
 
-    git push gigalixir master
+    git push gigalixir
 
 .. _`cleaning your build cache`:
 
@@ -19,7 +19,7 @@ There is an extra flag you can pass to clean your cache before building in case 
 
 .. code-block:: bash
 
-    git -c http.extraheader="GIGALIXIR-CLEAN: true" push gigalixir master
+    git -c http.extraheader="GIGALIXIR-CLEAN: true" push gigalixir
 
 .. _`zero-downtime`:
 
@@ -183,7 +183,7 @@ to work. For information on how to install the latest version of git on Ubuntu, 
 
 .. code-block:: bash
 
-    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir master
+    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir
 
 .. _`rollback`:
 
@@ -232,7 +232,7 @@ If you just want to push a subtree, try
 
 .. code-block:: bash
 
-    git subtree push --prefix my-sub-folder gigalixir master
+    git subtree push --prefix my-sub-folder gigalixir
 
 If you want to push the entire repo, but run the app from a subfolder, it becomes a bit trickier, but this pull request should help you.
 https://github.com/jesseshieh/nonroot/pull/1/files
@@ -312,7 +312,7 @@ How to deploy a Ruby app
     git clone https://github.com/heroku/ruby-getting-started.git
     cd ruby-getting-started
     APP=$(gigalixir create)
-    git push gigalixir master
+    git push gigalixir
     curl https://$APP.gigalixirapp.com/
 
 Does Gigalixir have any web hooks?

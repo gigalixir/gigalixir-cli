@@ -95,7 +95,7 @@ Try force pushing with
 
 .. code-block:: bash
 
-    git push -f gigalixir master
+    git push -f gigalixir
 
 .. _`elixir homepage`: http://elixir-lang.org/
 .. _`phoenix homepage`: http://www.phoenixframework.org/

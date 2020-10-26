@@ -47,7 +47,7 @@ Concepts
 Life of a Deploy
 ----------------
 
-When you run :bash:`git push gigalixir master`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in an isolated docker container which ultimately produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpacks` file.
+When you run :bash:`git push gigalixir`, our git server receives your source code and kicks off a build using a pre-receive hook. We build your app in an isolated docker container which ultimately produces a slug which we store for later. The buildpacks used are defined in your :bash:`.buildpacks` file.
 
 By default, the buildpacks we use include
 
@@ -108,7 +108,7 @@ There is an extra flag you can pass to deploy by hot upgrade instead of a restar
 
 .. code-block:: bash
 
-    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir master
+    git -c http.extraheader="GIGALIXIR-HOT: true" push gigalixir
 
 A hot upgrade follows the same steps as a regular deploy, except for a few differences. In order for distillery to build an upgrade, it needs access to your old app so we download it and make it available in the build container.
 

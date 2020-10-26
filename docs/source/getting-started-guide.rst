@@ -224,7 +224,7 @@ Finally, build and deploy.
 
 .. code-block:: bash
 
-    git push gigalixir master
+    git push gigalixir
 
 Wait a minute or two for the app to pass health checks. You can check the status by running
 
