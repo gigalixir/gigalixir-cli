@@ -8,6 +8,8 @@ Configuration and Secrets
 
 Gigalixir auto-detects that you want to use Elixir Releases if you have a :bash:`config/releases.exs` file, so let's create one.
 
+.. Note:: Elixir 1.11 adds :bash:`config/runtime.exs`. If you use that instead, then you'll want to specify buildpacks since we can no longer detect if you want releases or mix mode. See :ref:`buildpacks-releases`.
+
 .. code-block:: bash
 
     echo "import Config" > config/releases.exs
@@ -88,6 +90,8 @@ If everything works, commit the changes
     git commit -m 'releases configuration'
 
 Continue to :ref:`set up deploys`.
+
+.. _`buildpack-releases`:
 
 Specify Buildpacks (optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

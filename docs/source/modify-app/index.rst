@@ -33,7 +33,7 @@ If you choose Elixir releases, see :ref:`modifying existing app with Elixir rele
 
 If you choose distillery, see :ref:`modifying existing app with distillery`.
 
-* We say easy configuration here because some customers get confused about the difference between prod.exs and releases.exs. Distillery can be even more confusing with its :bash:`REPLACE_OS_VARS` syntax.
+* We say easy configuration here because some customers often get confused about the difference between prod.exs, releases.exs, and runtime.exs. Distillery can be even more confusing with its :bash:`REPLACE_OS_VARS` syntax.
 
 .. toctree::
     :hidden:

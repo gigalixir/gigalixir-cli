@@ -69,7 +69,9 @@ By default, the buildpacks we use include
   - https://github.com/gigalixir/gigalixir-buildpack-releases
 
     - To run mix release if you are running Elixir 1.9 and using the built-in releases
-    - This is only run if you have a config/releases.exs file present.
+    - This is only run if you have a config/releases.exs file present. 
+
+      .. Note:: Elixir 1.11 adds :bash:`config/runtime.exs`. If you use that instead, then you'll want to specify buildpacks since we can no longer detect if you want releases or mix mode. See :ref:`buildpacks-releases`.
 
   - https://github.com/gigalixir/gigalixir-buildpack-mix.git
 

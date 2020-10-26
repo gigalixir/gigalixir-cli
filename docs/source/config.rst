@@ -30,6 +30,8 @@ For elixir releases, always use :elixir:`System.get_env("FOO")`, but put it in y
 
 For example with distillery, to introduce a new :bash:`MY_CONFIG` env var is add something like this to your :bash:`prod.exs` file
 
+.. Note:: Elixir 1.11 adds :bash:`config/runtime.exs`. If you use that instead, then you'll want to specify buildpacks since we can no longer detect if you want releases or mix mode. See :ref:`buildpacks-releases`.
+
 .. code-block:: elixir
 
     config :myapp,
