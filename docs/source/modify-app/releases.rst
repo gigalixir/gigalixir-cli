@@ -91,7 +91,7 @@ If everything works, commit the changes
 
 Continue to :ref:`set up deploys`.
 
-.. _`buildpack-releases`:
+.. _`buildpacks-releases`:
 
 Specify Buildpacks (optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
