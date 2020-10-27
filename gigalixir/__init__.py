@@ -82,8 +82,9 @@ def report_errors(f):
         try:
             f(*args, **kwds)
         except:
+            version = pkg_resources.get_distribution("gigalixir").version
+            rollbar.report_exc_info(sys.exc_info(), payload_data={"version": version})
             logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
-            rollbar.report_exc_info(sys.exc_info(), payload_data={'fingerprint': rollbar_fingerprint(sys.exc_info())})
             sys.exit(1)
     return wrapper
 
