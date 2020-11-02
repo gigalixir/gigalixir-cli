@@ -6,8 +6,6 @@ Clustering
 Clustering Nodes
 ================
 
-First of all, be sure you are using either Distillery or Elixir Releases for your deploys and not mix. Clustering won't work with just mix. For instructions on using Distillery or Releases, see :ref:`mix vs distillery`.
-
 We use libcluster to manage node clustering. For more information, see `libcluster's documentation`_.
 
 To install libcluster, add this to the deps list in :bash:`mix.exs`
@@ -15,8 +13,6 @@ To install libcluster, add this to the deps list in :bash:`mix.exs`
 .. code-block:: elixir
 
     {:libcluster, "~> 3.2"}
-
-If you are on Elixir 1.3 or lower, add :elixir:`libcluster` and :elixir:`:ssl` to your applications list. Elixir 1.4 and up detect your applications list for you.
 
 Next, add the following to the existing :elixir:`start` function in your :bash:`application.ex` file. Remember to replace :elixir:`GigalixirGettingStarted` with your application name.
 
@@ -50,8 +46,7 @@ Your app configuration needs to have something like this in it. For a full examp
 Gigalixir handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run`_ for more details.
 
 .. _`libcluster's documentation`: https://github.com/bitwalker/libcluster
-.. _`gigalixir-getting-started's prod.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/config/prod.exs#L68
-.. _`gigalixir-getting-started's mix.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/master/mix.exs
+.. _`gigalixir-getting-started's prod.exs file`: https://github.com/gigalixir/gigalixir-getting-started/blob/ff56b063b4bb2519acd3dc82893ce6accd714d8e/config/prod.exs#L33
 .. _`gigalixir-run`: https://github.com/gigalixir/gigalixir-run
 
 
