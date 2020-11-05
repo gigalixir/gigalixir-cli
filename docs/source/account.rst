@@ -92,11 +92,6 @@ With the CLI, run
 
     gigalixir account:confirmation:resend
 
-How to Delete your Account
-==========================
-
-There is currently no way to completely delete an account. We are working on implementing this feature. You can delete apps though. See :ref:`delete-app`.
-
 How to Reset your API Key
 =========================
 
