@@ -58,6 +58,9 @@ def validate_password(host, password):
     if len(password) < 4:
         raise Exception("Password should be at least 4 characters.")
 
+def logout(env):
+    netrc.clear_netrc(env)
+
 def change_password(host, email, current_password, new_password):
     r = requests.patch('%s/api/users' % host, auth = (quote(email.encode('utf-8')), quote(current_password.encode('utf-8'))), json = {
         "new_password": new_password
@@ -67,8 +70,6 @@ def change_password(host, email, current_password, new_password):
             raise auth.AuthException()
         raise Exception(r.text)
 
-def logout():
-    netrc.clear_netrc()
 
 def login(host, email, password, yes, env):
     r = requests.get('%s/api/login' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))))

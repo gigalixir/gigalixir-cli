@@ -522,7 +522,7 @@ def logout(ctx):
     """
     Logout
     """
-    gigalixir_user.logout()
+    gigalixir_user.logout(ctx.obj['env'])
 
 @cli.command()
 @click.option('-e', '--email', prompt=True)

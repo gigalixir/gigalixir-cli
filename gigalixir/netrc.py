@@ -23,11 +23,18 @@ def get_netrc_file():
     
     return netrc_file, fname
 
-def clear_netrc():
+def clear_netrc(env):
     netrc_file, fname = get_netrc_file()
 
-    del netrc_file.hosts['git.gigalixir.com'] 
-    del netrc_file.hosts['api.gigalixir.com']
+    if env == 'prod':
+        del netrc_file.hosts['git.gigalixir.com'] 
+        del netrc_file.hosts['api.gigalixir.com']
+    elif env == 'dev':
+        del netrc_file.hosts['localhost']
+    elif env == 'test':
+        del netrc_file.hosts['git.gigalixir.com'] 
+        del netrc_file.hosts['api.gigalixir.com']
+
     with open(fname, 'w') as fp:
         fp.write(netrc_repr(netrc_file))
 
