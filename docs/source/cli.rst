@@ -16,6 +16,8 @@ If you're interested in creating a macOS Brew formula, :ref:`contact us!<help>`
 
 If you're interested in creating an Ubuntu/Debian package, :ref:`contact us!<help>`
 
+.. _`cli-upgrade`:
+
 How to Upgrade the CLI
 ----------------------
 

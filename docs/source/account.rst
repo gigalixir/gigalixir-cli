@@ -119,6 +119,37 @@ How to Log In
 
 This modifies your ~/.netrc file so that future API requests will be authenticated. API keys never expire, but can be revoked.
 
+How to use  multi-factor authentication
+=======================================
+
+Also known as 2-factor authentication or 2fa, this gives your account an extra layer of security so someone with just your password still won't be able to login to your account.
+
+To activate mfa with the CLI, first make sure you have version 1.2 or higher. To upgrade your CLI. See :ref:`cli-upgrade`.  Then run
+
+.. code-block:: bash
+
+    gigalixir account:mfa:activate
+
+This logs you out, so re-login.
+
+.. code-block:: bash
+
+    gigalixir login 
+
+Also, try it out on the web console: https://console.gigalixir.com/#/login
+
+To deactivate, run
+
+.. code-block:: bash
+
+    gigalixir account:mfa:deactivate
+
+To regenerate recovery codes, run
+
+.. code-block:: bash
+
+    gigalixir account:mfa:recovery_codes:regenerate
+
 How to Check Account Status
 ===========================
 
