@@ -21,23 +21,25 @@ If you're interested in creating an Ubuntu/Debian package, :ref:`contact us!<hel
 How to Upgrade the CLI
 ----------------------
 
-.. group-tab:: macOS
+.. tabs::
 
-    .. code-block:: bash
+  .. group-tab:: macOS
 
-        brew upgrade gigalixir
+      .. code-block:: bash
 
-.. group-tab:: Linux
+          brew upgrade gigalixir
 
-    .. code-block:: bash
+  .. group-tab:: Linux
 
-        pip3 install -U gigalixir --user
+      .. code-block:: bash
 
-.. group-tab:: Windows
+          pip3 install -U gigalixir --user
 
-    .. code-block:: bash
+  .. group-tab:: Windows
 
-        pip3 install -U gigalixir --user
+      .. code-block:: bash
+
+          pip3 install -U gigalixir --user
 
 Encryption
 ----------
