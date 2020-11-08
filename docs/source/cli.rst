@@ -19,11 +19,23 @@ If you're interested in creating an Ubuntu/Debian package, :ref:`contact us!<hel
 How to Upgrade the CLI
 ----------------------
 
-To upgrade the Gigalixir CLI, run
+.. group-tab:: macOS
 
-.. code-block:: bash
+    .. code-block:: bash
 
-    pip3 install -U gigalixir --ignore-installed six
+        brew upgrade gigalixir
+
+.. group-tab:: Linux
+
+    .. code-block:: bash
+
+        pip3 install -U gigalixir --user
+
+.. group-tab:: Windows
+
+    .. code-block:: bash
+
+        pip3 install -U gigalixir --user
 
 Encryption
 ----------
