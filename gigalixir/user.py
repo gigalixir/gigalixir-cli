@@ -34,10 +34,11 @@ def upgrade(host):
     logging.getLogger("gigalixir-cli").info('Account upgraded.')
 
 def delete(host, email, password):
-    r = requests.delete('%s/api/users' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))), headers = {
+    r = requests.delete('%s/api/users/destroy' % host, headers = {
         'Content-Type': 'application/json',
     }, json = {
-        'email': email
+        'email': email,
+        'current_password': password
     })
     if r.status_code != 200:
         if r.status_code == 401:
@@ -61,22 +62,37 @@ def validate_password(host, password):
 def logout(env):
     netrc.clear_netrc(env)
 
-def change_password(host, email, current_password, new_password):
-    r = requests.patch('%s/api/users' % host, auth = (quote(email.encode('utf-8')), quote(current_password.encode('utf-8'))), json = {
+def change_password(host, current_password, new_password):
+    r = requests.patch('%s/api/users/change_password' % host, headers = {
+        'Content-Type': 'application/json',
+    }, json = {
+        "current_password": current_password,
         "new_password": new_password
     })
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
+    data = json.loads(r.text)["data"]
+    presenter.echo_json(data)
 
+def login(host, email, password, yes, env, token):
+    payload = {}
+    if token:
+        payload["mfa_token"] = token
 
-def login(host, email, password, yes, env):
-    r = requests.get('%s/api/login' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))))
+    r = requests.get('%s/api/login' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+        }, params=payload)
+
     if r.status_code != 200:
         if r.status_code == 401:
             raise Exception("Sorry, we could not authenticate you. If you need to reset your password, run `gigalixir account:password:reset --email=%s`." % email)
-        raise Exception(r.text)
+        elif r.status_code == 303:
+            token = click.prompt('Multi-factor Authentication Token')
+            login(host, email, password, yes, env, token)
+        else:
+            raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
         if yes or click.confirm('Would you like us to save your api key to your ~/.netrc file?', default=True):

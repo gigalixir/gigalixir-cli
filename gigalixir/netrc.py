@@ -42,11 +42,19 @@ def update_netrc(email, key, env):
     netrc_file, fname = get_netrc_file()
     
     if env == 'prod':
+        if email is None:
+            # is it safe to assume the emails are the same for both?
+            (email, _, _) = netrc_file.hosts['api.gigalixir.com']
         netrc_file.hosts['git.gigalixir.com'] = (email, None, key)
         netrc_file.hosts['api.gigalixir.com'] = (email, None, key)
     elif env == 'dev':
+        if email is None:
+            (email, _, _) = netrc_file.hosts['localhost']
         netrc_file.hosts['localhost'] = (email, None, key)
     elif env == 'test':
+        if email is None:
+            # is it safe to assume the emails are the same for both?
+            (email, _, _) = netrc_file.hosts['api.gigalixir.com']
         netrc_file.hosts['git.gigalixir.com'] = (email, None, key)
         netrc_file.hosts['api.gigalixir.com'] = (email, None, key)
     else:

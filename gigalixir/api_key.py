@@ -5,8 +5,10 @@ import json
 import click
 import logging
 
-def regenerate(host, email, password, yes, env):
-    r = requests.post('%s/api/api_keys' % host, auth = (email, password))
+def regenerate(host, password, yes, env):
+    r = requests.post('%s/api/api_keys/regenerate' % host, params={
+        'current_password': password
+    })
     if r.status_code != 201:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -14,7 +16,7 @@ def regenerate(host, email, password, yes, env):
     else:
         key = json.loads(r.text)["data"]["key"]
         if yes or click.confirm('Would you like to save your api key to your ~/%s file?' % netrc.netrc_name()):
-            netrc.update_netrc(email, key, env)
+            netrc.update_netrc(None, key, env)
         else:
             logging.getLogger("gigalixir-cli").info('Your api key is %s' % key)
             logging.getLogger("gigalixir-cli").warn('Many GIGALIXIR CLI commands may not work unless you your ~/.netrc file contains your GIGALIXIR credentials.')

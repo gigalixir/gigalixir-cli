@@ -7,6 +7,7 @@ from .openers.darwin import DarwinOpener
 from .openers.windows import WindowsOpener
 from . import observer as gigalixir_observer
 from . import user as gigalixir_user
+from . import mfa as gigalixir_mfa
 from . import app as gigalixir_app
 from . import config as gigalixir_config
 from . import permission as gigalixir_permission
@@ -481,16 +482,15 @@ def set_password(ctx, token, password):
 
 # @update.command()
 @cli.command(name='account:password:change')
-@click.option('-e', '--email', prompt=True)
 @click.option('-p', '--current_password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-n', '--new_password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.pass_context
 @report_errors
-def change_password(ctx, email, current_password, new_password):
+def change_password(ctx, current_password, new_password):
     """
     Change password.
     """
-    gigalixir_user.change_password(ctx.obj['host'], email, current_password, new_password)
+    gigalixir_user.change_password(ctx.obj['host'], current_password, new_password)
 
 @cli.command()
 @click.pass_context
@@ -503,17 +503,47 @@ def account(ctx):
 
 # @update.command()
 @cli.command(name='account:api_key:reset')
-@click.option('-e', '--email', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
-def reset_api_key(ctx, email, password, yes):
+def reset_api_key(ctx, password, yes):
     """
     Regenerate a replacement api key. 
     """
-    gigalixir_api_key.regenerate(ctx.obj['host'], email, password, yes, ctx.obj['env'])
+    gigalixir_api_key.regenerate(ctx.obj['host'], password, yes, ctx.obj['env'])
 
+@cli.command(name='account:mfa:activate')
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+def mfa_activate(ctx, yes):
+    """
+    Start the multi-factor authentication activation process.
+    """
+    gigalixir_mfa.activate(ctx.obj['host'], yes)
+
+
+@cli.command(name='account:mfa:deactivate')
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+def mfa_deactivate(ctx, yes):
+    """
+    Deactivate multi-factor authentication.
+    """
+    if yes or click.confirm('Are you sure you want to deactivate multi-factor authentication?'):
+        gigalixir_mfa.deactivate(ctx.obj['host'])
+
+@cli.command(name='account:mfa:recovery_codes:regenerate')
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+def mfa_deactivate(ctx, yes):
+    """
+    Regenerate multi-factor authentication recovery codes.
+    """
+    gigalixir_mfa.regenerate_recovery_codes(ctx.obj['host'], yes)
 
 @cli.command()
 @click.pass_context
@@ -527,14 +557,15 @@ def logout(ctx):
 @cli.command()
 @click.option('-e', '--email', prompt=True)
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
+@click.option('-t', '--mfa_token', prompt=False) # we handle prompting if needed, not always needed
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
-def login(ctx, email, password, yes):
+def login(ctx, email, password, yes, mfa_token):
     """
     Login and receive an api key.
     """
-    gigalixir_user.login(ctx.obj['host'], email, password, yes, ctx.obj['env'])
+    gigalixir_user.login(ctx.obj['host'], email, password, yes, ctx.obj['env'], mfa_token)
 
 # @get.command()
 @cli.command()
@@ -1165,4 +1196,5 @@ def unset_canary(ctx, app_name, canary_name):
     Unset a canary for your app.
     """
     gigalixir_canary.delete(ctx.obj['host'], app_name, canary_name)
+
 

@@ -5,7 +5,7 @@ setup(
     url='https://github.com/gigalixir/gigalixir-cli',
     author='Jesse Shieh',
     author_email='jesse@gigalixir.com',
-    version='1.1.11',
+    version='1.2.0',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -14,6 +14,7 @@ setup(
         'stripe~=1.51.0',
         'rollbar~=0.13.11',
         'pygments~=2.2.0',
+        'qrcode~=6.1',
     ],
     entry_points='''
         [console_scripts]
