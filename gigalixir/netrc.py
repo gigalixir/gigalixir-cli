@@ -43,6 +43,7 @@ def update_netrc(email, key, env):
     
     if env == 'prod':
         if email is None:
+            # is it safe to assume that the email is always there for us to use?
             # is it safe to assume the emails are the same for both?
             (email, _, _) = netrc_file.hosts['api.gigalixir.com']
         netrc_file.hosts['git.gigalixir.com'] = (email, None, key)

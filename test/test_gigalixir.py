@@ -7,6 +7,7 @@ import click
 from click.testing import CliRunner
 import httpretty
 import platform
+import json
 
 def netrc_name():
     if platform.system().lower() == 'windows':
@@ -124,12 +125,14 @@ gigalixir\thttps://git.gigalixir.com/fake-app-name.git/ (push)
 
 @httpretty.activate
 def test_update_user():
-    httpretty.register_uri(httpretty.PATCH, 'https://api.gigalixir.com/api/users', body='{}', content_type='application/json')
+    httpretty.register_uri(httpretty.PATCH, 'https://api.gigalixir.com/api/users/change_password', body='{"data": {"message": "Password successfully changed"}}', content_type='application/json')
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['change_password', '--email=foo@gigalixir.com'], input="current_password\nnew_password\n")
+    result = runner.invoke(gigalixir.cli, ['account:password:change'], input="current_password\nnew_password\n")
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().body.decode()).to.equal('{"new_password": "new_password"}')
+    body = json.loads(httpretty.last_request().body.decode())
+    expect(body["new_password"]).to.equal("new_password")
+    expect(body["current_password"]).to.equal("current_password")
 
 @httpretty.activate
 def test_get_apps():
@@ -276,12 +279,22 @@ def test_delete_permission():
 
 @httpretty.activate
 def test_create_api_key():
-    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/api_keys', body='{"data":{"key":"another-fake-api-key","expires_at":"2017-04-28T16:47:09"}}', content_type='application/json', status=201)
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/api_keys/regenerate', body='{"data":{"key":"another-fake-api-key","expires_at":"2017-04-28T16:47:09"}}', content_type='application/json', status=201)
     runner = CliRunner()
     # Make sure this test does not modify the user's netrc file.
     with runner.isolated_filesystem():
         os.environ['HOME'] = '.'
-        result = runner.invoke(gigalixir.cli, ['reset_api_key', '--email=foo@gigalixir.com'], input="password\ny\n")
+        with open(netrc_name(), 'w') as f:
+            f.write("""machine api.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+machine git.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+""")
+            os.chmod(netrc_name(), 0o600)
+        result = runner.invoke(gigalixir.cli, ['reset_api_key'], input="password\ny\n")
+        print(result.output)
         assert result.exit_code == 0
         with open(netrc_name()) as f:
             assert f.read() == """machine api.gigalixir.com
@@ -292,7 +305,7 @@ machine git.gigalixir.com
 \tpassword another-fake-api-key
 """
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().headers.get('Authorization')).to.equal('Basic Zm9vQGdpZ2FsaXhpci5jb206cGFzc3dvcmQ=')
+    expect(httpretty.last_request().headers.get('Authorization')).to.equal('Basic Zm9vQGdpZ2FsaXhpci5jb206ZmFrZS1hcGkta2V5')
 
 @httpretty.activate
 def test_get_releases():
@@ -503,13 +516,25 @@ def test_email_set():
 
 @httpretty.activate
 def test_account_destroy():
-    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/users', body='{}', content_type='application/json', status=200)
+    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/users/destroy', body='{}', content_type='application/json', status=200)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['account:destroy', '-y', '--email=foo@gigalixir.com'], input="password\n")
-    assert result.exit_code == 0
+    with runner.isolated_filesystem():
+        os.environ['HOME'] = '.'
+        with open(netrc_name(), 'w') as f:
+            f.write("""machine api.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+machine git.gigalixir.com
+\tlogin foo@gigalixir.com
+\tpassword fake-api-key
+""")
+            os.chmod(netrc_name(), 0o600)
+        result = runner.invoke(gigalixir.cli, ['account:destroy', '-y', '--email=foo@gigalixir.com'], input="password\n")
+        assert result.exit_code == 0
+
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().parsed_body).to.equal({"email": "foo@gigalixir.com"})
-    expect(httpretty.last_request().headers.get('Authorization')).to.equal('Basic Zm9vJTQwZ2lnYWxpeGlyLmNvbTpwYXNzd29yZA==')
+    expect(httpretty.last_request().parsed_body).to.equal({"current_password": "password", "email": "foo@gigalixir.com"})
+    expect(httpretty.last_request().headers.get('Authorization')).to.equal('Basic Zm9vQGdpZ2FsaXhpci5jb206ZmFrZS1hcGkta2V5')
 
 @httpretty.activate
 def test_reset_password():
