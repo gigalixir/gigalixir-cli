@@ -8,6 +8,7 @@ import requests
 import click
 from .shell import cast, call
 from . import auth
+from . import api_exception
 from . import presenter
 from . import ssh_key
 from . import git
@@ -81,7 +82,7 @@ def status(host, app_name):
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
-        raise Exception(r.text)
+        raise api_exception.ApiException(r)
     else:
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
