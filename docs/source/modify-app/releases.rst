@@ -21,7 +21,7 @@ The only configuration change we really need to do now is make sure the web serv
     config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
       server: true,
       http: [port: {:system, "PORT"}], # Needed for Phoenix 1.2 and 1.4. Doesn't hurt for 1.3.
-      url: [host: nil, port: 443]
+      url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443],
 
 1. Replace :elixir:`:gigalixir_getting_started` with your app name e.g. :elixir:`:my_app`
 2. Replace :elixir:`GigalixirGettingStartedWeb.Endpoint` with your endpoint module name. You can find your endpoint module name by running something like
