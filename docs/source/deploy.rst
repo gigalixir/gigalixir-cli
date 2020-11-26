@@ -190,6 +190,10 @@ to work. For information on how to install the latest version of git on Ubuntu, 
 How to Rollback an App
 ======================
 
+.. note::
+
+   We only keep the releases for 1 year from when they were created so rolling back will only work if was created less than 1 year ago.
+
 To rollback one release, run the following command.
 
 .. code-block:: bash
