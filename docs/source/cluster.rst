@@ -39,8 +39,8 @@ Your app configuration needs to have something like this in it. For a full examp
           strategy: Cluster.Strategy.Kubernetes,
           config: [
             # For Elixir Releases, use System.get_env instead of the distillery env vars below.
-            kubernetes_selector: "${LIBCLUSTER_KUBERNETES_SELECTOR}",
-            kubernetes_node_basename: "${LIBCLUSTER_KUBERNETES_NODE_BASENAME}"]]]
+            kubernetes_selector: System.get_env("LIBCLUSTER_KUBERNETES_SELECTOR"),
+            kubernetes_node_basename: System.get_env("LIBCLUSTER_KUBERNETES_NODE_BASENAME")]]]
     ...
 
 Gigalixir handles permissions so that you have access to Kubernetes endpoints and we automatically set your node name and erlang cookie so that your nodes can reach each other. We don't firewall each container from each other like Heroku does. We also automatically set the environment variables :bash:`LIBCLUSTER_KUBERNETES_SELECTOR`, :bash:`LIBCLUSTER_KUBERNETES_NODE_BASENAME`, :bash:`APP_NAME`, and :bash:`MY_POD_IP` for you. See `gigalixir-run`_ for more details.
