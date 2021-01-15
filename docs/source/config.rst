@@ -248,7 +248,7 @@ For information about what packages are available in each stack, see https://dev
 Can I run my app in AWS instead of Google Cloud Platform? What about Europe?
 ============================================================================
 
-Yes, if your current infrastructure is on AWS, you'll probably want to run your gigalixir app on AWS too. Or if most of your users are in Europe, you probably want to host your app in Europe. We currently support GCP v2018-us-central1 and GCP europe-west1 as well as AWS us-east-1 and AWS us-west-2. When creating your app with :bash:`gigalixir create` simply specify the :bash:`--cloud=aws` and :bash:`--region=us-east-1` options.
+Yes, if your current infrastructure is on AWS, you'll probably want to run your gigalixir app on AWS too. Or if most of your users are in Europe, you probably want to host your app in Europe. We currently support GCP v2018-us-central1 and GCP europe-west1 as well as AWS us-east-1 and AWS eu-west-2. When creating your app with :bash:`gigalixir create` simply specify the :bash:`--cloud=aws` and :bash:`--region=us-east-1` options.
 
 Once the app is created, it's difficult to migrate to another region. If you want to do this, Heroku's guide is a good overview of what you should consider. If you don't mind downtime, the transition could be easy, but unfortunately gigalixir isn't able to do it for you with a button press. See https://devcenter.heroku.com/articles/app-migration
 
