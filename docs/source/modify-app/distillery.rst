@@ -93,7 +93,7 @@ and building a Distillery release locally
 
 .. code-block:: bash
 
-    MIX_ENV=prod mix distillery.release --env=prod
+    SECRET_KEY_BASE="$(mix phx.gen.secret)" MIX_ENV=prod DATABASE_URL="postgresql://user:pass@localhost:5432/foo" mix distillery.release --env=prod
     # if you are running distillery below 2.1, you'll want to run this instead: MIX_ENV=prod mix release --env=prod
 
 and running it locally

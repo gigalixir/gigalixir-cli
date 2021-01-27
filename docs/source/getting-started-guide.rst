@@ -180,14 +180,14 @@ The default Elixir version is defined `here <https://github.com/HashNuke/heroku-
 
 .. code-block:: bash
 
-    echo "elixir_version=1.10.3" > elixir_buildpack.config
-    echo "erlang_version=22.3" >> elixir_buildpack.config
+    echo "elixir_version=1.11.3" > elixir_buildpack.config
+    echo "erlang_version=23.2" >> elixir_buildpack.config
 
 Same for nodejs
 
 .. code-block:: bash
 
-    echo "node_version=12.16.3" > phoenix_static_buildpack.config
+    echo "node_version=14.15.4" > phoenix_static_buildpack.config
 
 Don't forget to commit
 
