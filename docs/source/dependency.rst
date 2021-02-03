@@ -7,7 +7,7 @@ What packages are available to my Gigalixir app?
 Gigalixir's stacks are based on Heroku's stacks so anything you find here, you can find on Gigalixir.
 https://devcenter.heroku.com/articles/stack-packages#installed-ubuntu-packages
 
-To find what stack you are on, run `gigalixir apps:info` or `gigalixir ps`. If you are on gigalixir-16, check the heroku-16 column. Same for gigalixir-18 and heroku-18.
+To find what stack you are on, run `gigalixir apps:info` or `gigalixir ps`. If you are on gigalixir-18, check the heroku-18 column. Same for the other stacks.
 
 You can also explore and verify by SSH'ing into your container. For example
 

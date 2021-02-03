@@ -222,8 +222,8 @@ The only gotcha is that if you want remote console to work, you'll want to make 
 Can I choose my operating system, stack, or image?
 ==================================================
 
-We have 2 stacks you can choose from: gigalixir-16 and gigalixir-18.
-These stacks are based on Heroku's heroku-16 and heroku-18, respectively which are based on Ubuntu 16 and 18 respectively.
+We have 3 stacks you can choose from: gigalixir-16, gigalixir-18, and gigalixir-20.
+These stacks are based on Heroku's heroku-16, heroku-18, and heroku-20, respectively which are based on Ubuntu 16, 18, and 20 respectively.
 gigalixir-18 is the default.
 
 Note that some older apps on gigalixir might be running gigalixir-14, based on Heroku's cedar-14, which will be end-of-life on November 2nd, 2020. gigalixir-14 will be also be end-of-life on the same day. See 
