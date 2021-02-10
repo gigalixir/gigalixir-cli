@@ -22,9 +22,11 @@ Hot Upgrades                                                         YES
 Remote Observer                              YES                     YES
 Mix Tasks                YES
 Built-in to Elixir       YES                 YES
-Easy Configuration*      YES
+Easy Configuration[1]    YES
 Clustering               YES                 YES                     YES
 gigalixir ps:migrate     YES                 YES                     YES
+Fast startup[2]                              YES                     YES 
+Hidden Source Code[3]                        YES                     YES
 =======================  =================== ======================= ===========
 
 If you choose mix, see :ref:`modifying existing app with mix`.
@@ -33,7 +35,9 @@ If you choose Elixir releases, see :ref:`modifying existing app with Elixir rele
 
 If you choose distillery, see :ref:`modifying existing app with distillery`.
 
-* We say easy configuration here because some customers often get confused about the difference between prod.exs, releases.exs, and runtime.exs. Distillery can be even more confusing with its :bash:`REPLACE_OS_VARS` syntax.
+[1] We say easy configuration here because some customers get confused about the difference between prod.exs and releases.exs. Distillery can be even more confusing with its :bash:`REPLACE_OS_VARS` syntax.
+[2] Due to smaller slug sizes
+[3] Mix deploys the source code to the runtime container rather than just the compiled BEAM files
 
 .. toctree::
     :hidden:
