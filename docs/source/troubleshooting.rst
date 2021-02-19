@@ -92,13 +92,13 @@ If your problem is with one of the buildpacks, try running the full build using 
     rm -rf /tmp/gigalixir/cache
     rm -rf _build
     mkdir -p /tmp/gigalixir/cache
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/build-18
 
 Or to inspect closer, run
 
 .. code-block:: bash
 
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/herokuish
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/build-18
 
     # and then inside the container run
     build-slug
@@ -155,13 +155,13 @@ If your problem is with one of the buildpacks, try running the full build using 
     rm -rf /tmp/gigalixir/cache
     rm -rf _build
     mkdir -p /tmp/gigalixir/cache
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/herokuish
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache us.gcr.io/gigalixir-152404/build-18
 
 Or to inspect closer, run
 
 .. code-block:: bash
 
-    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/herokuish
+    docker run -it --rm -v $APP_ROOT:/tmp/app -v /tmp/gigalixir/cache/:/tmp/cache --entrypoint=/bin/bash us.gcr.io/gigalixir-152404/build-18
 
     # and then inside the container run
     build-slug
