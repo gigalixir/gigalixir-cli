@@ -1,6 +1,7 @@
 import requests
 import logging
 from . import auth
+from . import api_exception
 from . import presenter
 import urllib
 import json
@@ -16,7 +17,7 @@ def get(host, app_name):
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
-        raise Exception(r.text)
+        raise api_exception.ApiException(r)
     else:
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
