@@ -24,12 +24,16 @@ def test_databases():
         result = runner.invoke(gigalixir.cli, ['login', '--email=%s' % email], input="%s\ny\n" % password)
         assert result.exit_code == 0
 
-        result = runner.invoke(gigalixir.cli, ['apps'])
-        assert result.exit_code == 0
+        # result = runner.invoke(gigalixir.cli, ['apps'])
+        # assert result.exit_code == 0
         # assumes this account already has an app created
-        app = json.loads(result.output)[-1]
+        # app = json.loads(result.output)[-1]
+        app_name = 'advanced-zany-hornedtoad'
+        result = runner.invoke(gigalixir.cli, ['apps:info', '-a', app_name])
+        assert result.exit_code == 0
+        app = json.loads(result.output)
         assert app['replicas'] == 0
-        app_name = app['unique_name']
+        # app_name = app['unique_name']
 
         # ensure there is no available database at the start of the test.
         result = runner.invoke(gigalixir.cli, ['pg', '-a', app_name])
@@ -37,10 +41,10 @@ def test_databases():
         output = json.loads(result.output)
         for entry in output:
             if entry["state"] == "AVAILABLE":
-                logging.info('Pass.')
                 raise "there already exists an AVAILABLE database."
 
         # create
+        logging.info("Creating database.")
         result = runner.invoke(gigalixir.cli, ['pg:create', '-a', app_name])
         assert result.exit_code == 0
 
@@ -76,11 +80,16 @@ def test_mix():
         os.environ['HOME'] = os.getcwd()
         result = runner.invoke(gigalixir.cli, ['login', '--email=%s' % email], input="%s\ny\n" % password)
         assert result.exit_code == 0
-        with open(".tool-versions", "w") as text_file:
-            text_file.write("elixir 1.10.3\nerlang 22.3")
+
+        print(os.environ['PATH'])
+
+        # needed so this isolated filesystem can find .asdf plugins and installed versions
+        gigalixir.shell.cast("ln -s /home/js/.asdf .asdf")
+        gigalixir.shell.cast("asdf local elixir 1.10.3")
+        gigalixir.shell.cast("asdf local erlang 22.3")
+
         # ensure these are up to date on your system under the .tool-versions above
-        # gigalixir.shell.cast("mix archive.uninstall phx_new 1.4.0")
-        # gigalixir.shell.cast("mix archive.install hex phx_new 1.5.1")
+        # gigalixir.shell.cast("mix archive.install hex phx_new 1.5.8")
         phx_new_process = subprocess.Popen(["mix", "phx.new", "gigalixir_scratch"], stdin=subprocess.PIPE)
         phx_new_process.communicate(input=b'n\n')
         with cd("gigalixir_scratch"):

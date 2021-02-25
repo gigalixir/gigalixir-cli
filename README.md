@@ -2,7 +2,7 @@
 
 ## Installation
 
-    pip install gigalixir
+    pip3 install gigalixir
 
 If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 
@@ -31,9 +31,18 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     python setup.py test
 
     # e2e tests
+    asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
+    asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
+    sudo apt-get -y install build-essential autoconf m4 libncurses5-dev libwxgtk3.0-gtk3-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev xsltproc fop libxml2-utils libncurses-dev openjdk-11-jdk
+    asdf install elixir 1.10.3
+    asdf install erlang 22.3
+    mix local.hex
+    mix archive.install hex phx_new 1.5.8
+
+
     source venv3/bin/activate
     unset GIGALIXIR_ENV
-    pip install pytest
+    pip3 install pytest
     export GIGALIXIR_EMAIL=foo
     export GIGALIXIR_PASSWORD=bar
     pytest -s e2e/test.py
@@ -45,15 +54,15 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 ## Distribute
 
     # may have to upgrade pip and setuptools with
-    # pip install --upgrade pip
-    # pip install --upgrade setuptools
+    # pip3 install --upgrade pip
+    # pip3 install --upgrade setuptools
     python setup.py sdist upload -r pypitest
     python setup.py sdist upload -r pypi
 
 ## Modify documentation
 
-    pip install sphinx
-    pip install sphinx_rtd_theme
+    pip3 install sphinx
+    pip3 install sphinx_rtd_theme
     cd docs
     make html
     xdg-open build/html/index.html
