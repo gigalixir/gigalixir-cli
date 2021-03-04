@@ -185,9 +185,9 @@ We also know that Elixir/Phoenix apps are designed to be long-lived and potentia
 
 That said, we do have a number of limits in order to prevent abuse which are listed below. If you need to request a higher limit, :ref:`contact us<help>` and we'll do our best to accomodate you.
 
-============= =====
+============= ======
 Resource      Limit
-============= =====
+============= ======
 Domains       1000
 Log Drains    5
 Apps          100
@@ -198,7 +198,8 @@ Slug Size     500mb
 Repo Size     1gb
 Build Time    15m
 Disk          10gb
-============= =====
+Bandwidth     2tb/mo
+============= ======
 
 [1] Because Gigalixir runs on Google Compute Engine, you may bump into an issue with connections that stay idle for 10m. For more information and how to work around it, see https://cloud.google.com/compute/docs/troubleshooting
 [2] We do have a timeout of 60 minutes for connections after an nginx configuration reload. If you have a long-lived websocket connection and our nginx configuration is reloaded, the connection will be dropped 60 minutes later. Unfortunately, nginx reloads happen frequently under Kubernetes.
