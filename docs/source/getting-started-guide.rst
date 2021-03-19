@@ -170,7 +170,7 @@ If someone in your organization has already created the gigalixir app and you on
 
 .. code-block:: bash
 
-    gigalixir git:remote $app
+    gigalixir git:remote $APP_NAME
     
 
 Specify Versions
