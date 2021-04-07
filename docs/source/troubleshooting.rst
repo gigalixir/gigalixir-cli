@@ -197,7 +197,7 @@ Known Issues
 
       - Currently, the load balancer for domains under gigalixirapp.com has a request timeout of 30 seconds. If your request takes longer than 30 seconds to respond, the load balancer cuts the connection. Often, the cryptic error message you will see when using curl is the above. The load balancer for custom domains does not have this problem.
 
-  - php apps don't work well with the default stack, gigalixir-18. If you are deploying php, please downgrade your stack to gigalixir-16 with something like :bash:`gigalixir stack:set -s gigalixir-16`. Th e reason is because gigalixir-18 is based on heroku-18 which does not have libreadline.so preinstalled for some reason where gigalixir-16, based on heroku-16, does.
+  - php apps don't work well with the stack gigalixir-18. If you are deploying php, please downgrade your stack to gigalixir-16 with something like :bash:`gigalixir stack:set -s gigalixir-16`. The reason is because gigalixir-18 is based on heroku-18 which does not have libreadline.so preinstalled for some reason where gigalixir-16, based on heroku-16, does.
 
   - Did not find exactly 1 release
 
