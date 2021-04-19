@@ -6,6 +6,12 @@ Clustering
 Clustering Nodes
 ================
 
+.. raw:: html
+
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto; margin-bottom: 20px;">
+        <iframe src="https://player.vimeo.com/video/536159871" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+    </div>
+
 We use libcluster to manage node clustering. For more information, see `libcluster's documentation`_.
 
 To install libcluster, add this to the deps list in :bash:`mix.exs`
