@@ -188,7 +188,7 @@ That said, we do have a number of limits in order to prevent abuse which are lis
 ============= ======
 Resource      Limit
 ============= ======
-Domains       1000
+Domains       100
 Log Drains    5
 Apps          100
 SSH Keys      50
