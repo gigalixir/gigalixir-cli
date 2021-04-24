@@ -76,13 +76,11 @@ Verify
 
 Let's make sure everything works.
 
-First, try generating building static assets
+First, try building static assets
 
 .. code-block:: bash
 
     mix deps.get
-
-    # generate static assets
     cd assets
     npm install
     npm run deploy
