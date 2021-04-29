@@ -181,6 +181,10 @@ If the above commands still do not succeed and your app is open source, then ple
 Known Issues
 ============
 
+  -  warning: the --remsh option will be ignored because IEx is running on limited shell
+
+      - Try running :bash:`export TERM=xterm` and trying again.
+
   -  git push hangs and then times out
 
       - Try running :bash:`git config --local http.version HTTP/1.1`. We've seen this issue happen with many customers and we've been able to narrow it down to an HTTP/2 issue of some kind with some versions of curl or git, but haven't been able to reproduce it. Many customers report that switching to HTTP/1.1 seems to fix the issue. For more information, try setting :bash:`GIT_TRACE=1 GIT_CURL_VERBOSE=1` when pushing. If you can also send us the output, that would be helpful. Often what we'll see in the output is something like :bash:`17 bytes stray data read before trying h2 connection`.
