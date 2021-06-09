@@ -302,7 +302,7 @@ If you aren't running distillery or elixir releases, meaning you are in mix mode
 
 .. code-block:: bash
 
-    web: mix ecto.migrate && elixir --name $MY_NODE_NAME --cookie $MY_COOKIE -S mix phoenix.server
+    web: mix ecto.migrate && elixir --name $MY_NODE_NAME --cookie $MY_COOKIE -S mix phx.server
 
 For more details, see :ref:`custom procfile`.
 
