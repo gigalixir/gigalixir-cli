@@ -10,9 +10,9 @@ In order to SSH, run remote observer, remote console, etc, you need to set up yo
 
 .. code-block:: bash
 
-    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"
+    gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_ed25519.pub)"
 
-If you don't have an :bash:`id_rsa.pub` file, follow `this guide <https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/>`_ to create one.
+If you don't have an :bash:`id_ed25519.pub` file, follow `this guide <https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/>`_ to create one. Or if you have an RSA key already, run :bash:`gigalixir account:ssh_keys:add "$(cat ~/.ssh/id_rsa.pub)"` instead.
 
 To view your SSH keys
 
