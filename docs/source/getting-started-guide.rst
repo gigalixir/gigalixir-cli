@@ -189,7 +189,14 @@ Same for nodejs
 
     echo "node_version=14.15.4" > phoenix_static_buildpack.config
 
-If you are using Phoenix v1.6, there is also a `mix assets.deploy` alias in your `mix.exs` that you want to invoke after installing assets. To do this, make sure you have something like this in your `assets/package.json` file.
+Don't forget to commit
+
+.. code-block:: bash
+
+    git add elixir_buildpack.config phoenix_static_buildpack.config
+    git commit -m "set elixir, erlang, and node version"
+
+If you are using Phoenix v1.6, there is also a :bash:`mix assets.deploy` alias in your :bash:`mix.exs` that you want to invoke after installing assets. To do this, make sure you have this in your :bash:`assets/package.json` file.
 
 .. code-block:: bash
     
@@ -203,8 +210,9 @@ Don't forget to commit
 
 .. code-block:: bash
 
-    git add elixir_buildpack.config phoenix_static_buildpack.config
-    git commit -m "set elixir, erlang, and node version"
+    git add assets/package.json
+    git commit -m "assets deploy script"
+
 
 Provision a Database
 --------------------
