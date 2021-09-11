@@ -196,7 +196,7 @@ Don't forget to commit
     git add elixir_buildpack.config phoenix_static_buildpack.config
     git commit -m "set elixir, erlang, and node version"
 
-If you're using Phoenix v1.6, it uses `esbuild` to compile your assets but Gigalixir images come with npm, so we will configure npm directly to deploy our assets. Add a `assets/package.json` file if you don't have any with the following:
+If you're using Phoenix v1.6, it uses :bash:`esbuild` to compile your assets but Gigalixir images come with npm, so we will configure npm directly to deploy our assets. Add a :bash:`assets/package.json` file if you don't have any with the following:
 
 .. code-block:: bash
 
