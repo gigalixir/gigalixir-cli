@@ -196,13 +196,13 @@ Don't forget to commit
     git add elixir_buildpack.config phoenix_static_buildpack.config
     git commit -m "set elixir, erlang, and node version"
 
-If you are using Phoenix v1.6, there is also a :bash:`mix assets.deploy` alias in your :bash:`mix.exs` that you want to invoke after installing assets. To do this, make sure you have this in your :bash:`assets/package.json` file.
+If you're using Phoenix v1.6, it uses `esbuild` to compile your assets but Gigalixir images come with npm, so we will configure npm directly to deploy our assets. Add a `assets/package.json` file if you don't have any with the following:
 
 .. code-block:: bash
-    
+
     {
       "scripts": {
-        "deploy": "cd ..; mix assets.deploy;"
+        "deploy": "cd .. && mix assets.deploy && rm -f _build/esbuild"
       }
     }
 
