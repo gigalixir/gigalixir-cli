@@ -222,24 +222,24 @@ The only gotcha is that if you want remote console to work, you'll want to make 
 Can I choose my operating system, stack, or image?
 ==================================================
 
-We have 3 stacks you can choose from: gigalixir-16, gigalixir-18, and gigalixir-20.
-These stacks are based on Heroku's heroku-16, heroku-18, and heroku-20, respectively which are based on Ubuntu 16, 18, and 20 respectively.
-gigalixir-18 is the default.
+We have 2 stacks you can choose from: gigalixir-18, and gigalixir-20.
+These stacks are based on Heroku's heroku-18 and heroku-20, respectively which are based on Ubuntu 18 and 20 respectively.
+gigalixir-20 is the default.
 
-Note that some older apps on gigalixir might be running gigalixir-14, based on Heroku's cedar-14, which will be end-of-life on November 2nd, 2020. gigalixir-14 will be also be end-of-life on the same day. See 
-https://devcenter.heroku.com/changelog-items/1757
+Note that some older apps on gigalixir might be running gigalixir-14 or gigalixir-16, based on Heroku's cedar-14 and heroku-16, which will be end-of-life on November 2nd, 2020 and May 1st, 2021. gigalixir-14 and gigalixir-16 will be also be end-of-life on the same day. See 
+https://devcenter.heroku.com/changelog-items/1757 and https://help.heroku.com/0S5P41DC/heroku-16-end-of-life-faq
 
 You can choose your stack when you create your app with 
 
 .. code-block:: bash
 
-    gigalixir create --stack gigalixir-16
+    gigalixir create --stack gigalixir-20
     
 or you can change it later on with
 
 .. code-block:: bash
 
-    gigalixir stack:set --stack gigalixir-18
+    gigalixir stack:set --stack gigalixir-20
 
 You can see what stack you are running with :bash:`gigalixir apps:info` or :bash:`gigalixir ps`.
 
