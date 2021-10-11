@@ -239,6 +239,8 @@ or you can change it later on with
 
 .. code-block:: bash
 
+    # Note that depending on the situation, you may have to re-deploy your app after changing the stack in case
+    # the shared libraries have changed locations.
     gigalixir stack:set --stack gigalixir-20
 
 You can see what stack you are running with :bash:`gigalixir apps:info` or :bash:`gigalixir ps`.
