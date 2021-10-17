@@ -236,6 +236,10 @@ A good first thing to try when you get a `git push` error is :ref:`cleaning your
 
         - Try :ref:`cleaning your build cache`. Looks like something changed in your app that makes the cache non-overwritable.
 
+    - remote: cp: cannot stat '/tmp/cache/node_modules/': No such file or directory
+
+        - Try :ref:`cleaning your build cache`. 
+
     - :elixir:`conn.remote_ip` has :elixir:`127.0.0.1` instead of the real client ip
 
         - Try using https://github.com/kbrw/plug_forwarded_peer or otherwise use the :elixir:`X-Forwarded-For` header instead. Gigalixir apps run behind load balancers which write the real client ip in that header.
