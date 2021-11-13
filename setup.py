@@ -16,6 +16,7 @@ setup(
         'pygments>=2.2.0',
         'qrcode>=6.1',
         'pyOpenSSL>=19.1.0',
+        'cryptography==3.4.8',
     ],
     entry_points='''
         [console_scripts]
