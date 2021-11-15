@@ -61,6 +61,11 @@ Deis Workflow is also really great platform and is very similar to Heroku, excep
 
 On the other hand, Heroku and Deis are more mature products that have been around much longer. They have more features, but we are working hard to fill in the holes. Heroku and Deis also support languages other than Elixir.
 
+For a comparison with some other hosting platforms, check out `StakNine`_'s review of the `best hosting providers for Elixir Phoenix`_.
+
+.. _`StakNine`: https://staknine.com/?utm_source=gigalixir.com&utm_medium=referral&utm_campaign=gigalixir_docs
+.. _`best hosting providers for Elixir Phoenix`: https://staknine.com/best-cloud-hosting-platforms-elixir-phoenix/?utm_source=gigalixir.com&utm_medium=referral&utm_campaign=gigalixir_docs
+
 *I thought you weren't supposed to SSH into docker containers!?*
 ----------------------------------------------------------------
 
