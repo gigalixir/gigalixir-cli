@@ -128,9 +128,9 @@ def test_mix():
             logging.info('Completed Deploy.')
             start_time = timeit.default_timer()
             url = 'https://%s.gigalixirapp.com/' % app_name
-            for i in range(30):
+            for i in range(60):
                 try:
-                    logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                    logging.info('Attempt: %s/60: Checking %s' % (i, url))
                     r = requests.get(url)
                     if r.status_code != 200:
                         # wait 5 seconds
@@ -185,9 +185,9 @@ def test_ruby():
             logging.info('Completed Deploy.')
             start_time = timeit.default_timer()
             url = 'https://%s.gigalixirapp.com/' % app_name
-            for i in range(30):
+            for i in range(60):
                 try:
-                    logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                    logging.info('Attempt: %s/60: Checking %s' % (i, url))
                     r = requests.get(url)
                     if r.status_code != 200:
                         # wait 5 seconds
@@ -253,9 +253,9 @@ def __test_deploy_and_upgrade(cloud, region, branch="master"):
             logging.info('Completed Deploy.')
             start_time = timeit.default_timer()
             url = 'https://%s.gigalixirapp.com/' % app_name
-            for i in range(30):
+            for i in range(60):
                 try:
-                    logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                    logging.info('Attempt: %s/60: Checking %s' % (i, url))
                     r = requests.get(url)
                     if r.status_code != 200:
                         # wait 5 seconds
@@ -314,9 +314,9 @@ def __test_deploy_and_upgrade(cloud, region, branch="master"):
             logging.info('Completed Hot Upgrade.')
             start_time = timeit.default_timer()
             url = 'https://%s.gigalixirapp.com/' % app_name
-            for i in range(30):
+            for i in range(60):
                 try:
-                    logging.info('Attempt: %s/30: Checking %s' % (i, url))
+                    logging.info('Attempt: %s/60: Checking %s' % (i, url))
                     r = requests.get(url)
                     if r.status_code != 200:
                         # wait 5 seconds
