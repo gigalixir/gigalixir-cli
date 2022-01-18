@@ -413,11 +413,12 @@ def test_update_payment_method():
     httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/payment_methods', body='{}', content_type='application/json', status=200)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['set_payment_method', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=123'])
+    result = runner.invoke(gigalixir.cli, ['set_payment_method', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=123', '--name_on_card=User One'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"stripe_token": "fake-stripe-token"}')
+    expect(httpretty.httpretty.latest_requests[0].parsed_body).to.equal({'card[cvc]': ['123'], 'card[exp_month]': ['12'], 'card[exp_year]': ['34'], 'card[number]': ['4111111111111111'], 'card[name]': ['User One']})
 
 
 @httpretty.activate
@@ -425,11 +426,11 @@ def test_update_payment_method_cvc_leading_zero():
     httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
     httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/payment_methods', body='{}', content_type='application/json', status=200)
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['set_payment_method', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=023'])
+    result = runner.invoke(gigalixir.cli, ['set_payment_method', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=023', '--name_on_card=Joe User'])
     assert result.output == ''
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
-    expect(httpretty.httpretty.latest_requests[0].parsed_body).to.equal({'card[cvc]': ['023'], 'card[exp_month]': ['12'], 'card[exp_year]': ['34'], 'card[number]': ['4111111111111111']})
+    expect(httpretty.httpretty.latest_requests[0].parsed_body).to.equal({'card[cvc]': ['023'], 'card[exp_month]': ['12'], 'card[exp_year]': ['34'], 'card[number]': ['4111111111111111'], 'card[name]': ['Joe User']})
     # expect(httpretty.httpretty.latest_requests[0].body).to.equal(b'card%5Bnumber%5D=4111111111111111&card%5Bexp_year%5D=34&card%5Bcvc%5D=023&card%5Bexp_month%5D=12')
     expect(httpretty.last_request().body.decode()).to.equal('{"stripe_token": "fake-stripe-token"}')
 

@@ -330,7 +330,7 @@ def scale(ctx, app_name, replicas, size):
 @detect_app_name
 def rollback(ctx, app_name, version):
     """
-    Rollback to a previous release. 
+    Rollback to a previous release.
     """
     gigalixir_app.rollback(ctx.obj['host'], app_name, version)
 
@@ -435,13 +435,14 @@ def ps_migrate(ctx, app_name, migration_app_name, ssh_opts, ssh_cmd):
 @click.option('--card_exp_month', prompt=True)
 @click.option('--card_exp_year', prompt=True)
 @click.option('--card_cvc', prompt=True)
+@click.option('--name_on_card', prompt=True)
 @click.pass_context
 @report_errors
-def set_payment_method(ctx, card_number, card_exp_month, card_exp_year, card_cvc):
+def set_payment_method(ctx, card_number, card_exp_month, card_exp_year, card_cvc, name_on_card):
     """
     Set your payment method.
     """
-    gigalixir_payment_method.update(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc)
+    gigalixir_payment_method.update(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc, name_on_card)
 
 @cli.command(name='account:upgrade')
 @click.option('-y', '--yes', is_flag=True)
@@ -509,7 +510,7 @@ def account(ctx):
 @report_errors
 def reset_api_key(ctx, password, yes):
     """
-    Regenerate a replacement api key. 
+    Regenerate a replacement api key.
     """
     gigalixir_api_key.regenerate(ctx.obj['host'], password, yes, ctx.obj['env'])
 
@@ -706,7 +707,7 @@ def add_ssh_key(ctx, ssh_key):
 @detect_app_name
 def add_domain(ctx, app_name, fully_qualified_domain_name):
     """
-    Adds a custom domain name to your app. 
+    Adds a custom domain name to your app.
     """
     gigalixir_domain.create(ctx.obj['host'], app_name, fully_qualified_domain_name)
 
@@ -880,7 +881,7 @@ def delete_ssh_key(ctx, key_id):
 @detect_app_name
 def delete_app(ctx, app_name, yes):
     """
-    Deletes an app. Can not be undone. 
+    Deletes an app. Can not be undone.
     """
     logging.getLogger("gigalixir-cli").info("WARNING: Deleting an app can not be undone.")
     if yes or click.confirm('Do you want to delete your app (%s)?' % app_name):

@@ -21,13 +21,14 @@ def get(host):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def update(host, card_number, card_exp_month, card_exp_year, card_cvc):
+def update(host, card_number, card_exp_month, card_exp_year, card_cvc, name_on_card):
     token = stripe.Token.create(
         card={
             "number": card_number,
             "exp_month": card_exp_month,
             "exp_year": card_exp_year,
             "cvc": card_cvc,
+            "name": name_on_card,
         },
     )
     r = requests.put('%s/api/payment_methods' % host, headers = {
