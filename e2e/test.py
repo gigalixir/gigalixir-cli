@@ -85,8 +85,10 @@ def test_mix():
 
         # needed so this isolated filesystem can find .asdf plugins and installed versions
         gigalixir.shell.cast("ln -s /home/js/.asdf .asdf")
-        gigalixir.shell.cast("asdf local elixir 1.10.3")
-        gigalixir.shell.cast("asdf local erlang 22.3")
+        gigalixir.shell.cast("asdf local elixir 1.12.3")
+        gigalixir.shell.cast("asdf local erlang 24.1.6")
+        gigalixir.shell.cast("mix local.hex --force")
+        gigalixir.shell.cast("mix archive.install --force hex phx_new")
 
         # ensure these are up to date on your system under the .tool-versions above
         # gigalixir.shell.cast("mix archive.install hex phx_new 1.5.8")
@@ -94,7 +96,7 @@ def test_mix():
         phx_new_process.communicate(input=b'n\n')
         with cd("gigalixir_scratch"):
             with open("elixir_buildpack.config", "w") as text_file:
-                text_file.write("elixir_version=1.10.3\nerlang_version=22.3")
+                text_file.write("elixir_version=1.12.3\nerlang_version=24.1.6")
             with open("phoenix_static_buildpack.config", "w") as text_file:
                 text_file.write("node_version=12.16.3")
             gigalixir.shell.cast("git init")
