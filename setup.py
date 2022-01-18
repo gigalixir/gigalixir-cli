@@ -32,6 +32,7 @@ setup(
     ],
     extras_require={
         'dev': [
+            'docutils~=0.16.0',
             'Sphinx',
             'sphinx_rtd_theme',
             'sphinx-tabs',
