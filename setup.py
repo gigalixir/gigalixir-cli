@@ -5,7 +5,7 @@ setup(
     url='https://github.com/gigalixir/gigalixir-cli',
     author='Jesse Shieh',
     author_email='jesse@gigalixir.com',
-    version='1.2.4',
+    version='1.2.5',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -16,7 +16,7 @@ setup(
         'pygments>=2.2.0',
         'qrcode>=6.1',
         'pyOpenSSL>=19.1.0',
-        'cryptography==3.4.8',
+        'cryptography==36.0.1',
     ],
     entry_points='''
         [console_scripts]
