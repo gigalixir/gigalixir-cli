@@ -196,7 +196,7 @@ Collaborators 25
 Config Vars   32kb
 Slug Size     500mb
 Repo Size     1gb
-Build Time    15m
+Build Time    30m
 Disk          10gb
 Bandwidth     1tb/mo
 ============= ======
