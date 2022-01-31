@@ -1,4 +1,5 @@
 import os
+import re
 import pipes
 import logging
 import urllib
@@ -92,7 +93,7 @@ def scale(host, app_name, replicas, size):
     if replicas != None:
         body["replicas"] = replicas
     if size != None:
-        body["size"] = size 
+        body["size"] = size
     r = requests.put('%s/api/apps/%s/scale' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = body)
@@ -139,6 +140,11 @@ def ssh_helper(host, app_name, ssh_opts, ssh_cmd, capture_output, *args):
     keys = ssh_key.ssh_keys(host)
     if len(keys) == 0:
         raise Exception("You don't have any ssh keys yet. See `gigalixir account:ssh_keys:add --help`")
+
+    # use the identity file specified by environment variable
+    id_file = os.environ.get("GIGALIXIR_IDENTITY_FILE")
+    if id_file and not re.match(r'(^|[\s])-i', ssh_opts):
+        ssh_opts = (ssh_opts + " -i " + id_file).strip()
 
     r = requests.get('%s/api/apps/%s/ssh_ip' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',

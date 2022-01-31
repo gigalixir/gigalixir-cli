@@ -55,6 +55,13 @@ The :bash:`-o` option lets you pass in arbitrary options to :bash:`ssh`. Somethi
 
 If you have multiple SSH keys on your machine, you may need to explicitly specify which one the Gigalixir CLI should use when connecting. If you get a :bash:`Permission denied (publickey)` error when attempting to run commands through the CLI but your :bash:`git push gigalixir master` (or equivalent) succeeds, first try specifying the SSH key you want to use with the option above.
 
+To avoid having to specify the key file on each run, set the :bash:`GIGALIXIR_IDENTITY_FILE` to the path to your private key.
+
+.. code-block:: bash
+
+    export GIGALIXIR_IDENTITY_FILE=$HOME/.ssh/gigalixir
+   
+
 You can use :bash:`-o` to specify any option or options to :bash:`ssh`.
 
 .. _`Launching a remote console`:
