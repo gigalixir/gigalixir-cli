@@ -176,6 +176,26 @@ Why was my app scaled down to 0?
 
 On the free tier apps are scaled down to 0 if there have been no deploys for 30 days. We send a warning email after 23 days. To prevent this from happening, make sure you either deploy often or upgrade to the standard tier.
 
+.. _`custom domain pricing`:
+
+Custom Domain Pricing
+=====================
+
+Gigalixir allows custom domains for each application.  Up to 100 custom domains are included free for each application.  Additional custom domains can be purchased by :ref:`contacting us<help>` and are priced according to the following schedule.
+
+========  =============
+Quantity  Price / Month
+========  =============
+     100  FREE
+   1,000  $15
+   5,000  $60
+  10,000  $100
+========  =============
+
+After 10,000 it becomes $100 per month for each 10,000 domain block.
+
+
+
 Limits
 ======
 
@@ -188,7 +208,6 @@ That said, we do have a number of limits in order to prevent abuse which are lis
 ============= ======
 Resource      Limit
 ============= ======
-Domains       100
 Log Drains    5
 Apps          100
 SSH Keys      50
