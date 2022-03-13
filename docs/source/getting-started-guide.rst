@@ -238,7 +238,7 @@ Once the database is created, verify your configuration includes a :bash:`DATABA
 Deploy!
 -------
 
-Finally, build and deploy.
+Unless you have an umbrella app, you can finally, build and deploy. Otherwise, you should follow the :ref:`quick start umbrella` part then come back.
 
 .. code-block:: bash
 
