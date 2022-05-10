@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 setup(
     name='gigalixir',
     url='https://github.com/gigalixir/gigalixir-cli',
-    author='Jesse Shieh',
-    author_email='jesse@gigalixir.com',
-    version='1.2.5',
+    author='Tim Day',
+    author_email='tim@gigalixir.com',
+    version='1.2.6',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
