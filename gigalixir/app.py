@@ -146,6 +146,10 @@ def ssh_helper(host, app_name, ssh_opts, ssh_cmd, capture_output, *args):
     if id_file and not re.match(r'(^|[\s])-i', ssh_opts):
         ssh_opts = (ssh_opts + " -i " + id_file).strip()
 
+    # if -T and -t are not specified, add the -t option
+    if not re.match(r'(^|[\s])-[Tt]', ssh_opts):
+        ssh_opts = (ssh_opts + " -t")
+
     r = requests.get('%s/api/apps/%s/ssh_ip' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     })
@@ -160,11 +164,11 @@ def ssh_helper(host, app_name, ssh_opts, ssh_cmd, capture_output, *args):
             escaped_args = [pipes.quote(arg) for arg in args]
             command = " ".join(escaped_args)
             if capture_output:
-                return call("%s %s -t root@%s %s" % (ssh_cmd, ssh_opts, ssh_ip, command))
+                return call("%s %s root@%s %s" % (ssh_cmd, ssh_opts, ssh_ip, command))
             else:
-                cast("%s %s -t root@%s %s" % (ssh_cmd, ssh_opts, ssh_ip, command))
+                cast("%s %s root@%s %s" % (ssh_cmd, ssh_opts, ssh_ip, command))
         else:
-            cast("%s %s -t root@%s" % (ssh_cmd, ssh_opts, ssh_ip))
+            cast("%s %s root@%s" % (ssh_cmd, ssh_opts, ssh_ip))
 
 
 def restart(host, app_name):
