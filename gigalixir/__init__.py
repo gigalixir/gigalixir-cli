@@ -297,7 +297,7 @@ def status(ctx, app_name):
 @cli.command(name='pg:scale')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-d', '--database_id', required=True)
-@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
+@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 48, 64, or 128.')
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -330,7 +330,7 @@ def scale(ctx, app_name, replicas, size):
 @detect_app_name
 def rollback(ctx, app_name, version):
     """
-    Rollback to a previous release. 
+    Rollback to a previous release.
     """
     gigalixir_app.rollback(ctx.obj['host'], app_name, version)
 
@@ -509,7 +509,7 @@ def account(ctx):
 @report_errors
 def reset_api_key(ctx, password, yes):
     """
-    Regenerate a replacement api key. 
+    Regenerate a replacement api key.
     """
     gigalixir_api_key.regenerate(ctx.obj['host'], password, yes, ctx.obj['env'])
 
@@ -706,7 +706,7 @@ def add_ssh_key(ctx, ssh_key):
 @detect_app_name
 def add_domain(ctx, app_name, fully_qualified_domain_name):
     """
-    Adds a custom domain name to your app. 
+    Adds a custom domain name to your app.
     """
     gigalixir_domain.create(ctx.obj['host'], app_name, fully_qualified_domain_name)
 
@@ -880,7 +880,7 @@ def delete_ssh_key(ctx, key_id):
 @detect_app_name
 def delete_app(ctx, app_name, yes):
     """
-    Deletes an app. Can not be undone. 
+    Deletes an app. Can not be undone.
     """
     logging.getLogger("gigalixir-cli").info("WARNING: Deleting an app can not be undone.")
     if yes or click.confirm('Do you want to delete your app (%s)?' % app_name):

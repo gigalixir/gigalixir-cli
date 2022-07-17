@@ -90,7 +90,7 @@ You can find your database id by running
 
     gigalixir pg
 
-Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. For more information about databases sizes, see :ref:`database sizes`.
+Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 48, 64, and 128. For more information about databases sizes, see :ref:`database sizes`.
 
 How to dump the database to a file
 ==================================

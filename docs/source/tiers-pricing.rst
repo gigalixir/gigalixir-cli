@@ -131,7 +131,7 @@ Database Sizes & Pricing
 
 In the free tier, the database is free, but it is really not suitable for production use. It is a multi-tenant postgres database cluster with shared CPU, memory, and disk. You are limited to 2 connections, 10,000 rows, and no backups. Idle connections are terminated after 5 minutes. If you want to upgrade your database, you'll have to migrate the data yourself. For a complete feature comparison see :ref:`tiers`.
 
-In the standard tier, database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically as needed.
+In the standard tier, database sizes are defined as a single number for simplicity. The number defines how many GBs of memory your database will have. Supported sizes include 0.6, 1.7, 4, 8, 16, 32, 48, 64, and 128. Sizes 0.6 and 1.7 share CPU with other databases. All other sizes have dedicated CPU, 1 CPU for every 4 GB of memory. For example, size 4 has 1 dedicated CPU and size 64 has 16 dedicated CPUs. All databases start with 10 GB disk and increase automatically as needed.
 
 ====  ============= ======= ============= ================ =============
 Size  Price / Month RAM     Rollback Days Connection Limit Storage Limit
@@ -142,6 +142,7 @@ Size  Price / Month RAM     Rollback Days Connection Limit Storage Limit
   8   $200          8 GB    7             200              200 GB
  16   $400          16 GB   7             250              400 GB
  32   $800          32 GB   7             300              800 GB
+ 48   $1200         48 GB   7             350              1.2 TB
  64   $1600         64 GB   7             400              1.6 TB
 128   $3200         128 GB  7             500              3.2 TB
 ====  ============= ======= ============= ================ =============
