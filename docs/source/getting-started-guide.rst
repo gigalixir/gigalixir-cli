@@ -14,7 +14,8 @@ Prerequisites
 
    .. group-tab:: macOS
 
-      #. :bash:`brew`. For help, take a look at the `homebrew documentation <https://docs.brew.sh/Installation>`_.
+      #. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
+      #. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
       #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
 
    .. group-tab:: Linux
@@ -53,17 +54,14 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
       .. code-block:: bash
 
-          brew tap gigalixir/brew && brew install gigalixir
+          pip install gigalixir --user
 
-      .. warning::
+      Make sure the executable is in your path, if it isn't already. 
 
-         You may need to update Xcode command-line tools otherwise you might get an error like this
+      .. code-block:: bash
 
-         .. code-block:: bash
-
-             xcrun: error: invalid active developer path
-
-         To upgrade Xcode command-line tools, see https://stackoverflow.com/questions/52522565/git-is-not-working-after-macos-update-xcrun-error-invalid-active-developer-pa
+          echo 'export PATH=~/.local/bin:$PATH' >> ~/.bash_profile
+          source ~/.bash_profile
 
    .. group-tab:: Linux
 

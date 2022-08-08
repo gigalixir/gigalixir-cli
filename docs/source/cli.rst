@@ -27,7 +27,7 @@ How to Upgrade the CLI
 
       .. code-block:: bash
 
-          brew upgrade gigalixir
+          pip install -U gigalixir --user
 
   .. group-tab:: Linux
 
