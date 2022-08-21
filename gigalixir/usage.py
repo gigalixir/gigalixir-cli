@@ -17,3 +17,15 @@ def get(host):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
+def run_rate(host):
+    r = requests.get('%s/api/usage/run_rate' % (host), headers = {
+        'Content-Type': 'application/json',
+    })
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
+

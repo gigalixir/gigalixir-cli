@@ -1064,6 +1064,15 @@ def current_period_usage(ctx):
     """
     gigalixir_usage.get(ctx.obj['host'])
 
+@cli.command(name='account:usage:running')
+@click.pass_context
+@report_errors
+def current_running_usage(ctx):
+    """
+    See the current running charges.
+    """
+    gigalixir_usage.run_rate(ctx.obj['host'])
+
 # @create.command()
 @cli.command()
 @click.option('--email')
