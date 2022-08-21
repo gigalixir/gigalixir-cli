@@ -19,7 +19,18 @@ To see how many replica-size-seconds you've used so far this month, run
 
     gigalixir account:usage
 
-The amount you see here has probably not been charged yet since we do that at the end of the month.
+The amount you see here has probably not been charged yet since we do that at the end of each billing cycle.
+
+How to see the current active usage
+===================================
+
+To see your current usage rate, run
+
+.. code-block:: bash
+
+    gigalixir account:usage:running
+
+The amount you see here is the amount your current usage would yield every billing cycle if left untouched.
 
 How to see previous invoices
 ============================
