@@ -8,3 +8,4 @@ gigalixir-cli
 dist/
 secrets/
 tmp/
+build/
