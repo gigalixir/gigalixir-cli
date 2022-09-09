@@ -14,13 +14,13 @@ Prerequisites
 
    .. group-tab:: macOS
 
-      #. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
+      #. :bash:`python3`.
       #. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
       #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
 
    .. group-tab:: Linux
 
-      #. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
+      #. :bash:`python3`.
       #. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
       #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
 
@@ -33,7 +33,7 @@ Prerequisites
 
    .. group-tab:: Windows
 
-      #. :bash:`python3`. :bash:`python2` also works, but it is EOL as of January 1st, 2020.
+      #. :bash:`python3`.
       #. :bash:`pip3`. For help, take a look at the `pip documentation <https://packaging.python.org/installing/>`_.
       #. :bash:`git`. For help, take a look at the `git documentation <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
 
@@ -54,14 +54,16 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
       .. code-block:: bash
 
-          pip install gigalixir --user
+          pip3 install gigalixir --user
 
       Make sure the executable is in your path, if it isn't already. 
 
       .. code-block:: bash
 
-          echo 'export PATH=~/.local/bin:$PATH' >> ~/.bash_profile
-          source ~/.bash_profile
+          echo "export PATH=\$PATH:$(python3 -m site --user-base)/bin" >> ~/.profile
+          source ~/.profile
+      
+      If you have any trouble, please :ref:`reach out for help<help>`.
 
    .. group-tab:: Linux
 
@@ -73,7 +75,7 @@ Next, install the command-line interface. Gigalixir has a web interface at https
 
       .. code-block:: bash
 
-          echo 'export PATH=~/.local/bin:$PATH' >> ~/.bash_profile
+          echo "export PATH=\$PATH:$(python3 -m site --user-base)/bin" >> ~/.profile
           source ~/.bash_profile
 
    .. group-tab:: Windows
