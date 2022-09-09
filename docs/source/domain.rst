@@ -45,3 +45,10 @@ This configures your app to `check the x-forwarded-proto header`_ set by Gigalix
 For more information on how this works internally, see :ref:`how-tls-works`.
 
 .. _`check the x-forwarded-proto header`: https://hexdocs.pm/plug/Plug.SSL.html#module-x-forwarded-proto
+
+If you are using a custom domain, add that as the :elixir:`host` option, otherwise the redirect will go to https://$APP_NAME.gigalixirapp.com/.
+
+.. code-block:: elixir
+
+    config :my_app, MyAppWeb.Endpoint,
+       force_ssl: [rewrite_on: [:x_forwarded_proto], host: "www.example.com"]
