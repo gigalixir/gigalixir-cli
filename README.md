@@ -34,23 +34,6 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     pip3 install -e .[test]
     python setup.py test
 
-    # e2e tests
-    asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
-    asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
-    sudo apt-get -y install build-essential autoconf m4 libncurses5-dev libwxgtk3.0-gtk3-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev xsltproc fop libxml2-utils libncurses-dev openjdk-11-jdk
-    asdf install elixir 1.10.3
-    asdf install erlang 22.3
-    mix local.hex
-    mix archive.install hex phx_new 1.5.8
-
-
-    source venv3/bin/activate
-    unset GIGALIXIR_ENV
-    pip3 install pytest
-    export GIGALIXIR_EMAIL=foo
-    export GIGALIXIR_PASSWORD=bar
-    pytest -s e2e/test.py
-
     # hit a development server
     # get into the venv (see above)
     GIGALIXIR_ENV=dev gigalixir account
@@ -76,15 +59,6 @@ If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
     # 2. Marketing Emails
     # 3. Console & Homepage Links
     # 4. Blog Links
-
-## Clean up e2e test
-
-    # the test cleans itself up unless there was a failure, then it does not clean up
-    # to clean up failed tests, run
-    APPS=$(gigalixir apps | jq -r '.[] | select(.replicas > 0) | .unique_name')
-    for app in $APPS; do gigalixir ps:scale -r 0 -a $app; done
-
-    # you may also have to clean up databases, which is not described here.
 
 ## Credits
 
