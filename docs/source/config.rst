@@ -284,7 +284,7 @@ HOME contains the location of your app's home directly. It is almost always /app
 How can I get a static outgoing ip address?
 ===========================================
 
-Gigalixir doesn't support static outgoing ip addresses at the moment, but some customers have had success using IPBurger.com which is affordable and simple. Just configure your http client to make requests through the proxy. For example, with HTTPoison, something like this
+Gigalixir doesn't support static outgoing ip addresses at the moment, but some customers have had success using [QuotaGuard Static IP](https://www.quotaguard.com)'s which is affordable and simple. Just configure your http client to make requests through the proxy. For example, with HTTPoison, something like this
 
 .. code-block:: elixir
 
