@@ -182,18 +182,7 @@ On the free tier apps are scaled down to 0 if there have been no deploys for 30 
 Custom Domain Pricing
 =====================
 
-Gigalixir allows custom domains for each application.  Up to 100 custom domains are included free for each application.  Additional custom domains can be purchased by :ref:`contacting us<help>` and are priced according to the following schedule.
-
-========  =============
-Quantity  Price / Month
-========  =============
-     100  FREE
-   1,000  $15
-   5,000  $60
-  10,000  $100
-========  =============
-
-After 10,000 it becomes $100 per month for each 10,000 domain block.
+Gigalixir allows custom domains for each application.  Up to 100 custom domains are included free for each application.  Additional custom domains can be purchased by :ref:`contacting us<help>`.
 
 
 
