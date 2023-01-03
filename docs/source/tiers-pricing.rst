@@ -108,7 +108,10 @@ If you ran a single replica of size 1.0 (1000 MB) for 10 days, then scaled it up
 
 .. code-block:: bash
 
-  [ (1 replica) * (1000 MB) * (1/3 month) + (3 replicas) * (1000 MB) * (1/3 month) + (3 replicas) * (2000 MB) * (1/3 month) ] * (0.05 $/MB-Month-Replica) = $166.67
+  [   (1 replica)  * (1000 MB) * (1/3 month) 
+    + (3 replicas) * (1000 MB) * (1/3 month) 
+    + (3 replicas) * (2000 MB) * (1/3 month) ] 
+  * (0.05 $/MB-Month-Replica) = $166.67
 
 For database pricing, see :ref:`database sizes`.
 
