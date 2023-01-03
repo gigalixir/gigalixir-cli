@@ -90,37 +90,25 @@ Autoscaling                                                                     
 Pricing Details
 ===============
 
-In the free tier, everything is no-credit-card free. Once you upgrade to the standard tier, you pay $10 for every 200MB of memory per month. CPU, bandwidth, and power are free.
+In the free tier, everything is no-credit-card free. Once you upgrade to the standard tier, you pay $10 for every 200MB of memory per month ($0.05/MB/Month/Replica). CPU, bandwidth, and power are free.
 
 See our `cost estimator <https://gigalixir.com/pricing>`_ to calculate how much you should expect to pay each month. Keep reading for exactly how we compute your bill.
 
-Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used, multiply that by $0.00001866786, and charge your credit card.
+Every month after you sign up on the same day of the month, we calculate the number of replica-size-seconds used and charge your credit card.
 
 replica-size-seconds is how many replicas you ran multiplied by the size of each replica multiplied by how many seconds they were run. This is aggregated across all your apps and is prorated to the second.
 
-For example, if you ran a single 0.5 size replica for 31 days, you will have used
+For example, if you ran a single replica of size 0.5 (500 MB) for the entire month, your bill will be
 
 .. code-block:: bash
 
-  (1 replica) * (0.5 size) * (31 days) = 1339200 replica-size-seconds.
+  (1 replica) * (500 MB) * (1 month) * (0.05 $/MB-Month-Replica) = $25.00
 
-Your monthly bill will be
-
-.. code-block:: bash
-
-  1339200 * $0.00001866786 = $25.00.
-
-If you ran a 1.0 size replica for 10 days, then scaled it up to 3 replicas, then 10 days later scaled the size up to 2.0 and it was a 30-day month, then your usage would be
+If you ran a single replica of size 1.0 (1000 MB) for 10 days, then scaled it up to 3 replicas, then 10 days later scaled the size up to 2.0 and it was a 30-day month, then your bill would be
 
 .. code-block:: bash
 
-  (1 replica) * (1.0 size) * (10 days) + (3 replicas) * (1.0 size) * (10 days) + (3 replicas) * (2.0 size) * (10 days) = 8640000 replica-size-seconds
-
-Your monthly bill will be
-
-.. code-block:: bash
-
-  8640000 * $0.00001866786 = $161.29.
+  [ (1 replica) * (1000 MB) * (1/3 month) + (3 replicas) * (1000 MB) * (1/3 month) + (3 replicas) * (2000 MB) * (1/3 month) ] * (0.05 $/MB-Month-Replica) = $166.67
 
 For database pricing, see :ref:`database sizes`.
 
