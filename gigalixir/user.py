@@ -8,6 +8,7 @@ import click
 import stripe
 import json
 from six.moves.urllib.parse import quote
+from time import sleep
 
 def create(host, email, password, accept_terms_of_service_and_privacy_policy):
     r = requests.post('%s/api/free_users' % host, headers = {
@@ -22,6 +23,14 @@ def create(host, email, password, accept_terms_of_service_and_privacy_policy):
         raise Exception(r.text)
     logging.getLogger("gigalixir-cli").info('Created account for %s. Confirmation email sent.' % email)
     logging.getLogger("gigalixir-cli").info('Please check your email and click confirm before continuing.')
+
+def oauth_create(host, env, provider):
+    r = requests.post('%s/api/oauth/%s' % (host, provider), headers = {
+        'Content-Type': 'application/json'
+    }, json = { 'signup': True })
+
+    oauth_process(host, provider, 'signup', r, False, env)
+
 
 def upgrade(host):
     r = requests.put('%s/api/users/upgrade' % host, headers = {
@@ -95,19 +104,40 @@ def login(host, email, password, yes, env, token):
             raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
-        if yes or click.confirm('Would you like us to save your api key to your ~/.netrc file?', default=True):
-            netrc.update_netrc(email, key, env)
-            logging.getLogger("gigalixir-cli").info('Logged in as %s.' % email)
+        complete_login(email, key, yes, env)
+
+def oauth_login(host, yes, env, provider):
+    r = requests.post('%s/api/oauth/%s' % (host, provider), headers = { 'Content-Type': 'application/json' })
+
+    oauth_process(host, provider, 'login', r, yes, env)
+
+def oauth_process(host, provider, action, r, yes, env):
+    if r.status_code != 201:
+        raise Exception(r.text)
+
+    request_url = json.loads(r.text)["data"]["url"]
+    session = json.loads(r.text)["data"]["session"]
+    print('To', action, 'browse to', request_url)
+
+    delay_time = 4
+    while True:
+        r = requests.get('%s/api/oauth/%s/%s' % (host, provider, session), headers = { 'Content-Type': 'application/json' })
+        if r.status_code == 204:
+            if delay_time < 2:
+                raise Exception('OAuth process timed out')
+            else:
+                sleep(delay_time)
+                delay_time -= 0.05
+
+        elif r.status_code == 200:
+            email = json.loads(r.text)["data"]["email"]
+            key = json.loads(r.text)["data"]["key"]
+            complete_login(email, key, yes, env)
+            return
+
         else:
-            logging.getLogger("gigalixir-cli").warn('Please edit your ~/.netrc file manually. Many GIGALIXIR CLI commands may not work unless your ~/.netrc file contains your GIGALIXIR credentials.')
-            logging.getLogger("gigalixir-cli").info('Add the following:')
-            logging.getLogger("gigalixir-cli").info('')
-            logging.getLogger("gigalixir-cli").info('machine api.gigalixir.com')
-            logging.getLogger("gigalixir-cli").info('\tlogin %s' % email)
-            logging.getLogger("gigalixir-cli").info('\tpassword %s' % key)
-            logging.getLogger("gigalixir-cli").info('machine git.gigalixir.com')
-            logging.getLogger("gigalixir-cli").info('\tlogin %s' % email)
-            logging.getLogger("gigalixir-cli").info('\tpassword %s' % key)
+            error = json.loads(r.text)["errors"][""]
+            raise Exception('Oauth %s %s' % (action, error))
 
 def get_reset_password_token(host, email):
     r = requests.put('%s/api/users/reset_password' % host, json = {"email": email})
@@ -152,3 +182,18 @@ def account(host):
     else:
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
+
+def complete_login(email, key, yes, env):
+    if yes or click.confirm('Would you like us to save your api key to your ~/.netrc file?', default=True):
+        netrc.update_netrc(email, key, env)
+        logging.getLogger("gigalixir-cli").info('Logged in as %s.' % email)
+    else:
+        logging.getLogger("gigalixir-cli").warn('Please edit your ~/.netrc file manually. Many GIGALIXIR CLI commands may not work unless your ~/.netrc file contains your GIGALIXIR credentials.')
+        logging.getLogger("gigalixir-cli").info('Add the following:')
+        logging.getLogger("gigalixir-cli").info('')
+        logging.getLogger("gigalixir-cli").info('machine api.gigalixir.com')
+        logging.getLogger("gigalixir-cli").info('\tlogin %s' % email)
+        logging.getLogger("gigalixir-cli").info('\tpassword %s' % key)
+        logging.getLogger("gigalixir-cli").info('machine git.gigalixir.com')
+        logging.getLogger("gigalixir-cli").info('\tlogin %s' % email)
+        logging.getLogger("gigalixir-cli").info('\tpassword %s' % key)

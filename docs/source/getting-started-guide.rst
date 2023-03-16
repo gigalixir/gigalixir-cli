@@ -110,11 +110,18 @@ Create an account using the following command. It will prompt you for your email
 
     gigalixir signup
 
+Or if you want to use your Google account:
+
+.. code-block:: bash
+
+    gigalixir signup:google
+
+
 
 Log In
 ------
 
-Next, log in. This will grant you an api key. It will also optionally modify your ~/.netrc file so that all future commands are authenticated.
+If you signed up with your Google account, you should already be logged in. Otherwise, log in. This will grant you an api key. It will also optionally modify your ~/.netrc file so that all future commands are authenticated.
 
 .. code-block:: bash
 

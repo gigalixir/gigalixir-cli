@@ -567,6 +567,16 @@ def login(ctx, email, password, yes, mfa_token):
     """
     gigalixir_user.login(ctx.obj['host'], email, password, yes, ctx.obj['env'], mfa_token)
 
+@cli.command(name='login:google')
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+def google_login(ctx, yes):
+    """
+    Login with Google and receive an api key.
+    """
+    gigalixir_user.oauth_login(ctx.obj['host'], yes, ctx.obj['env'], 'google')
+
 # @get.command()
 @cli.command()
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1099,6 +1109,22 @@ def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
     gigalixir_user.validate_password(ctx.obj['host'], password)
 
     gigalixir_user.create(ctx.obj['host'], email, password, accept_terms_of_service_and_privacy_policy)
+
+@cli.command('signup:google')
+@click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
+@click.pass_context
+@report_errors
+def google_signup(ctx, accept_terms_of_service_and_privacy_policy):
+    """
+    Sign up for a new account using your google login.
+    """
+    if not accept_terms_of_service_and_privacy_policy:
+        logging.getLogger("gigalixir-cli").info("GIGALIXIR Terms of Service: https://www.gigalixir.com/terms")
+        logging.getLogger("gigalixir-cli").info("GIGALIXIR Privacy Policy: https://www.gigalixir.com/privacy")
+        if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
+            raise Exception("You must accept the Terms of Service and Privacy Policy to continue.")
+
+    gigalixir_user.oauth_create(ctx.obj['host'], ctx.obj['env'], "google")
 
 @cli.command(name='ps:observer')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")

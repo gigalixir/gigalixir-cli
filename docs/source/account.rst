@@ -10,6 +10,13 @@ Create an account using the following command. It will prompt you for your email
 
     gigalixir signup
 
+If you wish to signup with your Google account, you can use:
+
+.. code-block:: bash
+
+    gigalixir signup:google
+
+
 .. _`upgrade account`:
 
 How to Upgrade an Account
@@ -118,6 +125,13 @@ How to Log In
     gigalixir login
 
 This modifies your ~/.netrc file so that future API requests will be authenticated. API keys never expire, but can be revoked.
+
+If you wish to login with your Google account, you can use:
+
+.. code-block:: bash
+
+    gigalixir login:google
+
 
 How to use  multi-factor authentication
 =======================================
