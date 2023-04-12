@@ -26,6 +26,8 @@ The standard tier offers much more than the free tier, see :ref:`tiers`.
 
 The easiest way to upgrade is through the web interface at https://console.gigalixir.com/
 
+.. Important:: Tiers are applicable at the account level, not at the app or database level. Therefore, a Free Tier account can not have a payable set of apps or databases, nor can a Standard Tier account have a free set of apps.
+
 To upgrade with the CLI, first add a payment method
 
 .. code-block:: bash

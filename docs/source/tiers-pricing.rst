@@ -6,8 +6,39 @@ Tiers & Pricing
 Tiers
 =====
 
-Gigalixir offers 2 tiers of pricing. The free tier is free, but you are limited to 1 instance up to size 0.5 and 1 free tier database. Also, on the free tier, if you haven't deployed anything for over 30 days, we will send you an email to remind you to keep your account active. If you do not, your app may be scaled down to 0 replicas. We know this isn't ideal, but we think it is better than sleeping instances and we appreciate your understanding since the free tier does cost a lot to run.
+Gigalixir offers two account tiers with respect to usage, pricing, and limits.
 
+.. Important:: Tiers are applicable at the account level, not at the app or database level. Therefore, a Free Tier account can not have a payable set of apps or databases, nor can a Standard Tier account have a free set of apps.
+
+The Free Tier is intended for testing the Gigalixir platform to make sure we offer you a good, long term solution for your use case. 
+
+.. _`free account tier`:
+
+Free Account Tier
+-----------------
+
+The free tier requires no credit card and the usage is free, but with the limitation of 1 instance up to size 0.5 and 1 free tier database. 
+
+Although the database is free, it is really not suitable for production use. You are limited to 2 connections, 10,000 rows, and no backups. Idle connections are terminated after 5 minutes. 
+
+Also, on the free tier, if you haven't deployed anything for over 30 days, we will send you an email to remind you to keep your account active. If you do not, your app may be scaled down to 0 replicas. 
+
+We know these limits aren't ideal, but we think it is better than sleeping instances and we appreciate your understanding as the free tier does cost a lot to run for the developer community.
+
+.. _`standard account tier`:
+
+Standard Account Tier
+---------------------
+The Standard tier is ideal for development, testing, and running production applications. 
+
+CPU, bandwidth, and power are still free on the Standard Account Tier, however you pay $10 for every 200MB of memory per month ($0.05/MB/Month/Replica). 
+
+Please check :ref:`database sizes` for standard tier database costs.
+
+.. _`tier comparison`:
+
+Tier Comparison
+---------------
 =======================  ========= =============
 Instance Feature         FREE Tier STANDARD Tier
 =======================  ========= =============
@@ -90,7 +121,7 @@ Autoscaling                                                                     
 Pricing Details
 ===============
 
-In the free tier, everything is no-credit-card free. Once you upgrade to the standard tier, you pay $10 for every 200MB of memory per month ($0.05/MB/Month/Replica). CPU, bandwidth, and power are free.
+In the free tier, everything is no-credit-card free. Once you upgrade to the standard tier, you pay $5 for every 100MB of memory per month ($0.05/MB/Month/Replica). CPU, bandwidth, and power are free.
 
 See our `cost estimator <https://gigalixir.com/pricing>`_ to calculate how much you should expect to pay each month. Keep reading for exactly how we compute your bill.
 
