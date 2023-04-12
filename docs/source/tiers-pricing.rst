@@ -31,7 +31,7 @@ Standard Account Tier
 ---------------------
 The Standard tier is ideal for development, testing, and running production applications. 
 
-CPU, bandwidth, and power are still free on the Standard Account Tier, however you pay $10 for every 200MB of memory per month ($0.05/MB/Month/Replica). 
+CPU, bandwidth, and power are still free on the Standard Account Tier, however you pay $5 for every 100MB of memory per month ($0.05/MB/Month/Replica). 
 
 Please check :ref:`database sizes` for standard tier database costs.
 
