@@ -180,7 +180,7 @@ If you followed the :ref:`quick start`, then your database should already be con
 
      config :gigalixir_getting_started, GigalixirGettingStarted.Repo,
        adapter: Ecto.Adapters.Postgres,
-       url: {:system, "DATABASE_URL"},
+       url: System.get_env("DATABASE_URL"),
        database: "",
        ssl: true,
        pool_size: 2

@@ -43,8 +43,8 @@ Add something like the following in :bash:`prod.exs`
 
      config :gigalixir_getting_started, GigalixirGettingStartedWeb.Endpoint,
        server: true, # Without this line, your app will not start the web server!
-       load_from_system_env: true, # Needed for Phoenix 1.3. Doesn't hurt for other versions
-       http: [port: {:system, "PORT"}], # Needed for Phoenix 1.2 and 1.4. Doesn't hurt for 1.3.
+       load_from_system_env: true,
+       http: [port: System.get_env("PORT")],
        secret_key_base: "${SECRET_KEY_BASE}",
        url: [host: "${APP_NAME}.gigalixirapp.com", port: 443],
        cache_static_manifest: "priv/static/cache_manifest.json",
