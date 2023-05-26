@@ -160,7 +160,7 @@ Then run
 How do I use webpack, yarn, bower, gulp, etc instead of brunch?
 ===============================================================
 
-You can use a custom compile script. For more details, see https://github.com/gjaldon/heroku-buildpack-phoenix-static#compile
+You can use a custom compile script. For more details, see https://github.com/gigalixir/gigalixir-buildpack-phoenix-static#compile
 Here is an example script that we've used for webpack.
 
 .. code-block:: bash
@@ -178,7 +178,7 @@ How do I specify my Elixir, Erlang, Node, NPM, etc versions?
 
 Your Elixir and Erlang versions are handled by the heroku-buildpack-elixir buildpack. To configure, see the `heroku-buildpack-elixir configuration`_. In short, you specify them in a :bash:`elixir_buildpack.config` file.
 
-Node and NPM versions are handled by the heroku-buildpack-phoenix-static buildpack. To configure, see the `heroku-buildpack-phoenix-static configuration <https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration>`_. In short, you specify them in a :bash:`phoenix_static_buildpack.config` file.
+Node and NPM versions are handled by the gigalixir-buildpack-phoenix-static buildpack. To configure, see the `gigalixir-buildpack-phoenix-static configuration <https://github.com/gigalixir/gigalixir-buildpack-phoenix-static#configuration>`_. In short, you specify them in a :bash:`phoenix_static_buildpack.config` file.
 
 Supported Elixir and erlang versions can be found at https://github.com/HashNuke/heroku-buildpack-elixir#version-support
 
@@ -192,7 +192,7 @@ Normally, the buildpack you need is auto-detected for you, but in some cases, yo
 .. code-block:: bash
 
     https://github.com/HashNuke/heroku-buildpack-elixir
-    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
 
@@ -201,7 +201,7 @@ The default buildpacks for Elixir apps running mix looks like this
 .. code-block:: bash
 
     https://github.com/HashNuke/heroku-buildpack-elixir
-    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-mix.git
 
 Note the last buildpack. It's there to make sure your :bash:`Procfile` is set up correctly to run on gigalixir. It basically makes sure you have your node name and cookie set correctly so that remote console, migrate, observer, etc will work.

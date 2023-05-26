@@ -59,7 +59,7 @@ If you don't want to delete those files, you can manually force mix mode by spec
 .. code-block:: bash
 
     https://github.com/HashNuke/heroku-buildpack-elixir
-    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-mix.git
 
 If you wanted to force distillery or Elixir releases, you'd want the last buildpack to be either the :bash:`https://github.com/gigalixir/gigalixir-buildpack-distillery.git` or the :bash:`https://github.com/gigalixir/gigalixir-buildpack-releases.git` buildpacks, respectively.

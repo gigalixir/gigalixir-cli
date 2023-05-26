@@ -27,7 +27,7 @@ In mix mode, all you have to do is add the relevant, buildpack to your :bash:`.b
 
     https://github.com/emk/heroku-buildpack-rust
     https://github.com/HashNuke/heroku-buildpack-elixir
-    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-mix.git
 
 For rust specifically, also be sure to run :bash:`echo "RUST_SKIP_BUILD=1" > RustConfig` since you just need the rust binaries, and don't want to build a rust project.
@@ -49,7 +49,7 @@ To use the buildpack, insert it in your :bash:`.buildpacks` file above the Elixi
 
     https://github.com/timshadel/heroku-buildpack-github-netrc.git
     https://github.com/HashNuke/heroku-buildpack-elixir
-    https://github.com/gjaldon/heroku-buildpack-phoenix-static
+    https://github.com/gigalixir/gigalixir-buildpack-phoenix-static
     https://github.com/gigalixir/gigalixir-buildpack-distillery.git
 
 Next, create a personal access token by following https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/

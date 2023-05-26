@@ -297,7 +297,7 @@ If you have custom domains defined on :bash:`my-app-blue`, traffic to those will
 How do I deploy an umbrella app?
 ================================
 
-Umbrella apps are deployed the same way, but the buildpacks need to know which internal app is your Phoenix app. Set your :bash:`phoenix_relative_path` in your :bash:`phoenix_static_buildpack.config` file, see the `heroku-buildpack-phoenix-static configuration <https://github.com/gjaldon/heroku-buildpack-phoenix-static#configuration>`_ for more details.
+Umbrella apps are deployed the same way, but the buildpacks need to know which internal app is your Phoenix app. Set your :bash:`phoenix_relative_path` in your :bash:`phoenix_static_buildpack.config` file, see the `gigalixir-buildpack-phoenix-static configuration <https://github.com/gigalixir/gigalixir-buildpack-phoenix-static#configuration>`_ for more details.
 
 When running migrations, we need to know which internal app contains your migrations. Use the :bash:`--migration_app_name` flag on :bash:`gigalixir ps:migrate`.
 

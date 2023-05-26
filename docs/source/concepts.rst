@@ -56,7 +56,7 @@ By default, the buildpacks we use include
     - To run mix compile
     - If you want, you can `configure this buildpack <https://github.com/HashNuke/heroku-buildpack-elixir#configuration>`_.
 
-  - https://github.com/gjaldon/heroku-buildpack-phoenix-static.git
+  - https://github.com/gigalixir/gigalixir-buildpack-phoenix-static.git
 
     - To run mix phx.digest
     - This is only included if you have an assets folder present.
