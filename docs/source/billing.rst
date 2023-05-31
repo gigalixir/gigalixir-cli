@@ -4,49 +4,8 @@
 Billing
 ~~~~~~~
 
-How to Change Your Credit Card
-==============================
+The content on this page has been moved to the new `Gigalixir documentation`_.  
 
-To change your credit card, run
+You should be redirected automatically.
 
-.. code-block:: bash
-
-    gigalixir account:payment_method:set
-
-How to see the current period's usage
-=====================================
-
-To see how many replica-size-seconds you've used so far this month, run
-
-.. code-block:: bash
-
-    gigalixir account:usage
-
-The amount you see here has probably not been charged yet since we do that at the end of each billing cycle.
-
-How to see the current active usage
-===================================
-
-To see your current usage rate, run
-
-.. code-block:: bash
-
-    gigalixir account:usage:running
-
-The amount you see here is the amount your current usage would yield every billing cycle if left untouched.
-
-How to see previous invoices
-============================
-
-To see all your previous period's invoices, run
-
-.. code-block:: bash
-
-    gigalixir account:invoices
-
-.. _`money back guarantee`:
-
-Money-back Guarantee
-====================
-
-If you are unhappy for any reason within the first 31 days, :ref:`contact us<help>` to get a refund up to $75. Enough to run a 3 node cluster for 31 days.
+.. _`Gigalixir documentation`: https://www.gigalixir.com/docs/billing
