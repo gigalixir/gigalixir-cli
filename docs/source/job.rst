@@ -1,5 +1,5 @@
 .. meta::
-   :http-equiv=Refresh: 0; url='https://www.gigalixir.com/docs/job.html'
+   :http-equiv=Refresh: 0; url='https://www.gigalixir.com/docs/jobs'
 
 Jobs
 ~~~~

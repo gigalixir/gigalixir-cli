@@ -1,3 +1,6 @@
+.. meta::
+   :http-equiv=Refresh: 0; url='https://www.gigalixir.com/docs/cli'
+
 The Gigalixir Command-Line Interface
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

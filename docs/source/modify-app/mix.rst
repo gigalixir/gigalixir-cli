@@ -1,3 +1,6 @@
+.. meta::
+   :http-equiv=Refresh: 0; url='https://www.gigalixir.com/docs/modify-app/mix'
+
 .. _`modifying existing app with mix`:
 
 Using Mix

@@ -1,3 +1,6 @@
+.. meta::
+   :http-equiv=Refresh: 0; url='https://www.gigalixir.com/docs/getting-started-guide/'
+
 .. _`quick start`:
 
 Getting Started Guide

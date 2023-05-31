@@ -1,3 +1,6 @@
+.. meta::
+   :http-equiv=Refresh: 0; url='https://www.gigalixir.com/docs/modify-app/'
+
 .. _`make your existing app work on Gigalixir`:
 .. _`modifying existing app`:
 

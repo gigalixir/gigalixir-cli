@@ -1,3 +1,6 @@
+.. meta::
+   :http-equiv=Refresh: 0; url='https://www.gigalixir.com/docs/modify-app/releases'
+
 .. _`modifying existing app with Elixir releases`:
 
 Using Elixir Releases
