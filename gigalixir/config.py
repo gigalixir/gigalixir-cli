@@ -18,26 +18,12 @@ def get(host, app_name):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def create(host, app_name, key, value):
+def create_multiple(host, app_name, configs, dont_restart):
     r = requests.post('%s/api/apps/%s/configs' % (host, quote(app_name.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
     }, json = {
-        "key": key,
-        "value": value
-    })
-    if r.status_code != 201:
-        if r.status_code == 401:
-            raise auth.AuthException()
-        raise Exception(r.text)
-    else:
-        data = json.loads(r.text)["data"]
-        presenter.echo_json(data)
-
-def create_multiple(host, app_name, configs):
-    r = requests.post('%s/api/apps/%s/configs' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = {
-        "configs": configs
+        "configs": configs,
+        "avoid_restart": dont_restart
     })
     if r.status_code != 201:
         if r.status_code == 401:

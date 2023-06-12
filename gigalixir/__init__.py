@@ -720,20 +720,6 @@ def add_domain(ctx, app_name, fully_qualified_domain_name):
     """
     gigalixir_domain.create(ctx.obj['host'], app_name, fully_qualified_domain_name)
 
-# @create.command()
-@cli.command(name='deprecated:set_config')
-@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
-@click.argument('key')
-@click.argument('value')
-@click.pass_context
-@report_errors
-@detect_app_name
-def set_config(ctx, app_name, key, value):
-    """
-    Set an app configuration/environment variable.
-    """
-    gigalixir_config.create(ctx.obj['host'], app_name, key, value)
-
 @cli.command(name="config:copy")
 @click.option('-s', '--src_app_name', required=True)
 @click.option('-d', '--dst_app_name', required=True)
@@ -752,6 +738,7 @@ def config_copy(ctx, src_app_name, dst_app_name, yes):
 
 @cli.command(name="config:set")
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('--no_restart', default=False, help="Do not restart the application.", is_flag=True)
 @click.argument('assignments', nargs=-1)
 @click.pass_context
 @report_errors
@@ -773,7 +760,7 @@ def config_set(ctx, app_name, assignments):
             print_help(ctx, "config:set")
             raise
 
-    gigalixir_config.create_multiple(ctx.obj['host'], app_name, configs)
+    gigalixir_config.create_multiple(ctx.obj['host'], app_name, configs, no_restart)
 
 # @get.command()
 @cli.command(name='account:confirmation:resend')
