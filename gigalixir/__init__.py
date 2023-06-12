@@ -743,7 +743,7 @@ def config_copy(ctx, src_app_name, dst_app_name, yes):
 @click.pass_context
 @report_errors
 @detect_app_name
-def config_set(ctx, app_name, assignments):
+def config_set(ctx, app_name, no_restart, assignments):
     """
     Set configuration variables and restarts your app.
     ASSIGNMENTS are of the form KEY=VALUE.
