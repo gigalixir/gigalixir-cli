@@ -141,7 +141,6 @@ class AliasedGroup(click.Group):
             return rv
         aliases = {
             "configs": "config",
-            "set_config": "deprecated:set_config",
             "databases": "pg",
             "scale_database": "pg:scale",
             "delete_database": "pg:destroy",
@@ -169,9 +168,6 @@ class AliasedGroup(click.Group):
             "delete_app": "apps:destroy",
             "delete_permission": "access:remove",
             "permissions": "access",
-            "delete_free_database": "deprecated:delete_free_database",
-            "free_databases": "deprecated:free_databases",
-            "create_free_database": "deprecated:create_free_database",
             "delete_domain": "domains:remove",
             "delete_config": "config:unset",
             "add_permission": "access:add",
@@ -809,19 +805,6 @@ def databases(ctx, app_name):
     gigalixir_database.get(ctx.obj['host'], app_name)
 
 # @get.command()
-# deprecated. pg/databases above lists free and standard.
-@cli.command(name='deprecated:free_databases')
-@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
-@click.pass_context
-@report_errors
-@detect_app_name
-def free_databases(ctx, app_name):
-    """
-    Get free databases for your app.
-    """
-    gigalixir_free_database.get(ctx.obj['host'], app_name)
-
-# @get.command()
 @cli.command()
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
@@ -915,25 +898,6 @@ def delete_database(ctx, app_name, yes, database_id):
         gigalixir_database.delete(ctx.obj['host'], app_name, database_id)
 
 # @delete.command()
-# is this command still needed? i think delete_database/pg:destroy above can delete free databases?
-@cli.command(name='deprecated:delete_free_database')
-@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
-@click.option('-y', '--yes', is_flag=True)
-@click.option('-d', '--database_id', required=True)
-@click.pass_context
-@report_errors
-@detect_app_name
-def delete_free_database(ctx, app_name, yes, database_id):
-    """
-    Delete free database. Find the database id by running `gigalixir pg`
-    """
-    logging.getLogger("gigalixir-cli").info("WARNING: Deleting your database will destroy all your data.")
-    logging.getLogger("gigalixir-cli").info("WARNING: This can not be undone.")
-    logging.getLogger("gigalixir-cli").info("WARNING: Please make sure you backup your data first.")
-    if yes or click.confirm('Do you want to delete your database?'):
-        gigalixir_free_database.delete(ctx.obj['host'], app_name, database_id)
-
-# @delete.command()
 @cli.command(name='domains:remove')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.argument('fully_qualified_domain_name')
@@ -1006,17 +970,6 @@ def create_database(ctx, app_name, size, cloud, region, free, yes):
                 gigalixir_free_database.create(ctx.obj['host'], app_name)
     else:
         gigalixir_database.create(ctx.obj['host'], app_name, size, cloud, region)
-
-@cli.command(name='deprecated:create_free_database')
-@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
-@click.pass_context
-@report_errors
-@detect_app_name
-def create_free_database(ctx, app_name):
-    """
-    Create a new free database for app.
-    """
-    gigalixir_free_database.create(ctx.obj['host'], app_name)
 
 # @create.command()
 @cli.command(name='git:remote')
