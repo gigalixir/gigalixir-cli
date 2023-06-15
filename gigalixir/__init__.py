@@ -293,7 +293,7 @@ def status(ctx, app_name):
 @cli.command(name='pg:scale')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-d', '--database_id', required=True)
-@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 48, 64, or 128.')
+@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 48, 64, or 96.')
 @click.pass_context
 @report_errors
 @detect_app_name
@@ -950,7 +950,7 @@ def pg_psql(ctx, app_name):
 
 @cli.command(name='pg:create')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
-@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 64, or 128.')
+@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 48, 64, or 96.')
 @click.option('-c', '--cloud')
 @click.option('-r', '--region')
 @click.option('-f', '--free', is_flag=True)
