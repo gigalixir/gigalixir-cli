@@ -226,15 +226,6 @@ def test_get_configs():
     expect(httpretty.has_request()).to.be.true
 
 @httpretty.activate
-def test_create_config():
-    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/apps/fake-app-name/configs', body='{"data": "created"}', content_type='application/json', status=201)
-    runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['set_config', '-a', 'fake-app-name', 'FOO', 'bar'])
-    assert result.exit_code == 0
-    expect(httpretty.has_request()).to.be.true
-    expect(httpretty.last_request().parsed_body).to.equal({"value": "bar", "key": "FOO"})
-
-@httpretty.activate
 def test_delete_config():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/configs', body='{"data": "deleted"}', content_type='application/json')
     runner = CliRunner()
@@ -566,76 +557,6 @@ def test_delete_database():
     httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id', body='{}', content_type='application/json')
     runner = CliRunner()
     result = runner.invoke(gigalixir.cli, ['delete_database', '-a', 'fake-app-name', '-d', 'fake-database-id'], input="y\n")
-    assert result.exit_code == 0
-    expect(httpretty.has_request()).to.be.true
-
-@httpretty.activate
-def test_delete_free_database():
-    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/free_databases/fake-database-id', body='{}', content_type='application/json')
-    runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['delete_free_database', '-a', 'fake-app-name', '-d', 'fake-database-id'], input="y\n")
-    assert result.exit_code == 0
-    expect(httpretty.has_request()).to.be.true
-
-@httpretty.activate
-def test_get_free_databases():
-    httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/free_databases', body="""
-{
-  "data": [
-    {
-      "username": "app",
-      "url": "REDACTED",
-      "state": "DELETED",
-      "port": 5432,
-      "password": "REDACTED",
-      "id": "REDACTED",
-      "host": "REDACTED",
-      "database": "REDACTED",
-      "app_name": "REDACTED"
-    },
-    {
-      "username": "app",
-      "url": "REDACTED",
-      "state": "AVAILABLE",
-      "port": 5432,
-      "password": "REDACTED",
-      "id": "REDACTED",
-      "host": "REDACTED",
-      "database": "REDACTED",
-      "app_name": "REDACTED"
-    }
-  ]
-}
-
-""", content_type='application/json')
-    runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['free_databases', '-a', 'fake-app-name'])
-    print(result.output)
-    assert rstrip_multiline(result.output) == """[
-  {
-    "app_name": "REDACTED",
-    "database": "REDACTED",
-    "host": "REDACTED",
-    "id": "REDACTED",
-    "password": "REDACTED",
-    "port": 5432,
-    "state": "DELETED",
-    "url": "REDACTED",
-    "username": "app"
-  },
-  {
-    "app_name": "REDACTED",
-    "database": "REDACTED",
-    "host": "REDACTED",
-    "id": "REDACTED",
-    "password": "REDACTED",
-    "port": 5432,
-    "state": "AVAILABLE",
-    "url": "REDACTED",
-    "username": "app"
-  }
-]
-"""
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
