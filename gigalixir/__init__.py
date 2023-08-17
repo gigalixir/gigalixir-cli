@@ -293,15 +293,16 @@ def status(ctx, app_name):
 @cli.command(name='pg:scale')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.option('-d', '--database_id', required=True)
-@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 48, 64, or 96.')
+@click.option('-s', '--size', type=float, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 48, 64, or 96.')
+@click.option('--high_availability', help='Manage high availability. Set to "enabled" or "disabled"')
 @click.pass_context
 @report_errors
 @detect_app_name
-def scale_database(ctx, app_name, database_id, size):
+def scale_database(ctx, app_name, database_id, size, high_availability):
     """
     Scale database. Find the database id by running `gigalixir pg`
     """
-    gigalixir_database.scale(ctx.obj['host'], app_name, database_id, size)
+    gigalixir_database.scale(ctx.obj['host'], app_name, database_id, size, high_availability)
 
 @cli.command(name='ps:scale')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")

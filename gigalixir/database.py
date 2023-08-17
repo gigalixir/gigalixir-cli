@@ -75,12 +75,21 @@ def delete(host, app_name, database_id):
             raise auth.AuthException()
         raise Exception(r.text)
 
-def scale(host, app_name, database_id, size):
+def scale(host, app_name, database_id, size, high_availability):
+    body = {}
+
+    if high_availability in [ 'disabled', 'enabled' ]:
+      body['high_availability'] = high_availability
+    elif high_availability:
+      raise Exception('high_availability must be either "enabled" or "disabled"')
+
+    if scale:
+      body['size'] = size
+
     r = requests.put('%s/api/apps/%s/databases/%s' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
         'Content-Type': 'application/json',
-    }, json = {
-        "size": size,
-    })
+    }, json = body)
+
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
