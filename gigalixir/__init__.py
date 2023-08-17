@@ -806,6 +806,34 @@ def databases(ctx, app_name):
     gigalixir_database.get(ctx.obj['host'], app_name)
 
 # @get.command()
+@cli.command(name='pg:read_replicas')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-d', '--database_id', required=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def read_replicas(ctx, app_name, database_id):
+    """
+    Get read replicas for your app and database.
+    """
+    gigalixir_database.get_read_replicas(ctx.obj['host'], app_name, database_id)
+
+@cli.command(name='pg:read_replicas:create')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-d', '--database_id', required=True, help='The primary database id. Use "gigalixir pg" to find it.')
+@click.option('-s', '--size', type=float, default=0.6, help='Size of the database can be 0.6, 1.7, 4, 8, 16, 32, 48, 64, or 96.')
+@click.pass_context
+@report_errors
+@detect_app_name
+def create_read_replica(ctx, app_name, database_id, size):
+    """
+    Create a new read replica for a database.
+    """
+    gigalixir_database.create_read_replica(ctx.obj['host'], app_name, database_id, size)
+
+
+
+# @get.command()
 @cli.command()
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
 @click.pass_context
