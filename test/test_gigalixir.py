@@ -744,3 +744,20 @@ def test_update_stack():
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"stack": "gigalixir-18"}')
 
+@httpretty.activate
+def test_maintenance_on():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/maintenance', body='{"data": "maintenance mode enabled"}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['maintenance:on', '-a', 'fake-app-name'], input="y\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body.decode()).to.equal('{"enable": true}')
+
+@httpretty.activate
+def test_maintenance_off():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/maintenance', body='{"data": "maintenance mode disabled"}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['maintenance:off', '-a', 'fake-app-name'], input="y\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+    expect(httpretty.last_request().body.decode()).to.equal('{"enable": false}')
