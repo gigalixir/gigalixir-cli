@@ -44,7 +44,8 @@ def observer(ctx, app_name, erlang_cookie, ssh_opts, ssh_cmd):
     ssh_master_pid = None
     control_path = "/tmp/gigalixir-cm-%s" % uuid.uuid4()
     ssh_opts += " -S %s" % control_path
-    try: 
+    ssh_opts = gigalixir_app.ssh_add_identity_option(ssh_opts)
+    try:
         logging.getLogger("gigalixir-cli").info("Setting up SSH multiplexing master")
         cmd = "".join(["ssh %s" % (ssh_opts), " root@%s -N -M" % (ssh_ip)])
         ssh_master_pid = subprocess.Popen(cmd.split()).pid
@@ -55,15 +56,15 @@ def observer(ctx, app_name, erlang_cookie, ssh_opts, ssh_cmd):
 
         logging.getLogger("gigalixir-cli").info("Fetching erlang cookie")
         if erlang_cookie is None:
-            ERLANG_COOKIE = gigalixir_app.distillery_eval(host, app_name, ssh_opts, ssh_cmd, get_cookie_command).strip("'")
+            ERLANG_COOKIE = sanitize_respone(gigalixir_app.distillery_eval(host, app_name, ssh_opts, ssh_cmd, get_cookie_command))
         else:
             ERLANG_COOKIE = erlang_cookie
         logging.getLogger("gigalixir-cli").info("Using erlang cookie: %s" % ERLANG_COOKIE)
 
         logging.getLogger("gigalixir-cli").info("Fetching pod ip")
-        node_name = gigalixir_app.distillery_eval(host, app_name, ssh_opts, ssh_cmd, get_node_name_command)
+        node_name = sanitize_respone(gigalixir_app.distillery_eval(host, app_name, ssh_opts, ssh_cmd, get_node_name_command))
         # node_name is surrounded with single quotes
-        (sname, MY_POD_IP) = node_name.strip("'").split('@')
+        (sname, MY_POD_IP) = node_name.split('@')
         logging.getLogger("gigalixir-cli").info("Using pod ip: %s" % MY_POD_IP)
         logging.getLogger("gigalixir-cli").info("Using node name: %s" % sname)
         logging.getLogger("gigalixir-cli").info("Fetching epmd port and app port.")
@@ -137,9 +138,15 @@ def ensure_port_free(port):
         # if the port is in use, then a pid is found, this "succeeds" and continues
         # if the port is free, then a pid is not found, this "fails" and raises a CalledProcessError
         pid = call("lsof -wni tcp:%(port)s -t" % {"port": port})
-        # If multiplexing gets supported later, on Windows this command would be: 
+        # If multiplexing gets supported later, on Windows this command would be:
         #   pid = call("netstat -p tcp -n | find \"\"\":%(port)s\"\"\" % {"port": port})
         raise Exception("It looks like process %s is using port %s on your local machine. We need this port to be able to connect observer. Please kill this process on your local machine and try again. e.g. `kill %s`" % (pid, port, pid))
     except subprocess.CalledProcessError:
         # success! continue
         pass
+
+def sanitize_respone(text):
+    match = re.match(r"^(~c\"|')(.+)[\"']$", text)
+    if match:
+        return match.groups()[1]
+    return text

@@ -131,6 +131,14 @@ def ssh(host, app_name, ssh_opts, ssh_cmd, *args):
     # used by ssh, remote_console, distillery_command
     ssh_helper(host, app_name, ssh_opts, ssh_cmd, False, *args)
 
+def ssh_add_identity_option(ssh_opts):
+    # use the identity file specified by environment variable
+    id_file = os.environ.get("GIGALIXIR_IDENTITY_FILE")
+    if id_file and not re.match(r'(^|[\s])-i', ssh_opts):
+        return (ssh_opts + " -i " + id_file).strip()
+
+    return ssh_opts
+
 # if using this from a script, and you want the return
 # value in a variable, use capture_output=True
 # capture_output needs to be False for remote_console
@@ -142,9 +150,7 @@ def ssh_helper(host, app_name, ssh_opts, ssh_cmd, capture_output, *args):
         raise Exception("You don't have any ssh keys yet. See `gigalixir account:ssh_keys:add --help`")
 
     # use the identity file specified by environment variable
-    id_file = os.environ.get("GIGALIXIR_IDENTITY_FILE")
-    if id_file and not re.match(r'(^|[\s])-i', ssh_opts):
-        ssh_opts = (ssh_opts + " -i " + id_file).strip()
+    ssh_opts = ssh_add_identity_option(ssh_opts)
 
     # if -T and -t are not specified, add the -t option
     if not re.match(r'(^|[\s])-[Tt]', ssh_opts):
