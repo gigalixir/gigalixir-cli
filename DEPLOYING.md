@@ -1,13 +1,31 @@
-## Deploying
+Deploying
+--
 
-    # may have to upgrade pip and setuptools with
-    # pip3 install --upgrade pip
-    # pip3 install --upgrade setuptools
-    python setup.py sdist upload -r pypitest
-    python setup.py sdist upload -r pypi
+## Required packages
 
+Install these outside the virtualenv
+* build
+* twine
 
-## Testing from pypitest version
+## Build the pip
 
-    pip3 uninstall gigalixir
-    python3 -m pip install --user --index-url https://test.pypi.org/simple/ gigalixir
+```
+rm dist/*
+python3 -m build
+```
+
+## Upload and tsting from pypitest
+
+```
+twine upload -r pypitest dist/*
+pip3 uninstall gigalixir
+python3 -m pip install --user --index-url https://test.pypi.org/simple/ gigalixir
+```
+
+## Upload to production
+
+```
+twine upload -r pypi dist/*
+pip3 uninstall gigalixir
+python3 -m pip install --user gigalixir
+```
