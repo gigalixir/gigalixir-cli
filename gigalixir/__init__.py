@@ -52,7 +52,7 @@ def _show_usage_error(self, file=None):
 
 click.exceptions.UsageError.show = _show_usage_error
 
-ROLLBAR_POST_CLIENT_ITEM = "40403cdd48904a12b6d8d27050b12343"
+ROLLBAR_POST_CLIENT_ITEM = "de505ce1f87d40fbbc299d479d2bfc2f"
 # kinda sorta duplicated in this file as an option to cli Command.
 # we need this at the "top" level so that handle_exception has access to rollbar
 # when it was in cli(), it didn't work. I guess that gets run a bit later, after
