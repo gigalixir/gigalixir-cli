@@ -1201,4 +1201,28 @@ def unset_canary(ctx, app_name, canary_name):
     """
     gigalixir_canary.delete(ctx.obj['host'], app_name, canary_name)
 
+@cli.command(name='maintenance:on')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def app_maintenance_on(ctx, app_name, yes):
+    """
+    Enables maintenance mode for an app.  App will be unreachable until maintenance mode is turned off.
+    """
+    if yes or click.confirm('Do you want to put your app (%s) in maintenance mode?' % app_name):
+        gigalixir_app.maintenance(ctx.obj['host'], app_name, True)
 
+@cli.command(name='maintenance:off')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def app_maintenance_off(ctx, app_name, yes):
+    """
+    Disables maintenance mode on an app.
+    """
+    if yes or click.confirm('Do you want to remove your app (%s) from maintenance mode?' % app_name):
+        gigalixir_app.maintenance(ctx.obj['host'], app_name, False)

@@ -289,3 +289,15 @@ def set_stack(host, app_name, stack):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
+def maintenance(host, app_name, enable):
+    body = { "enable": enable }
+    r = requests.put('%s/api/apps/%s/maintenance' % (host, quote(app_name.encode('utf-8'))), headers = {
+        'Content-Type': 'application/json',
+    }, json = body)
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
