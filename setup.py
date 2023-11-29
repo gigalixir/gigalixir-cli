@@ -5,7 +5,7 @@ setup(
     url='https://github.com/gigalixir/gigalixir-cli',
     author='Tim Day',
     author_email='tim@gigalixir.com',
-    version='1.9.1',
+    version='1.9.2',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -18,6 +18,7 @@ setup(
         'pyOpenSSL>=22.1',
         'cryptography>=38.0',
         'six>=1.16',
+        'setuptools>=59.6.0',
     ],
     entry_points='''
         [console_scripts]
