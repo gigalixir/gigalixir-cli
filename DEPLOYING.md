@@ -19,7 +19,7 @@ python3 -m build
 ```
 twine upload -r pypitest dist/*
 pip3 uninstall gigalixir
-python3 -m pip install --user --index-url https://test.pypi.org/simple/ gigalixir
+python3 -m pip install --user --extra-index-url https://test.pypi.org/simple/ gigalixir==X.Y.Z
 ```
 
 ## Upload to production
