@@ -698,6 +698,17 @@ def test_upgrade():
     expect(httpretty.has_request()).to.be.true
 
 @httpretty.activate
+def test_upgrade_with_promo_code():
+    httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/upgrade', body='{}', content_type='application/json', status=200)
+
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['upgrade', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=123', '--promo_code=foo'])
+
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
 def test_get_log_drains():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/apps/fake-app-name/drains', body='{"data":[{"url":"syslog+tls://foo.papertrailapp.com:12345","token":"fake-token1","id":1},{"url":"https://user:pass@logs.timber.io/frames","token":"fake-token2","id":2}]}', content_type='application/json')
     runner = CliRunner()

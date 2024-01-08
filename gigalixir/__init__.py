@@ -445,13 +445,14 @@ def set_payment_method(ctx, card_number, card_exp_month, card_exp_year, card_cvc
 @click.option('--card_exp_month', prompt=True)
 @click.option('--card_exp_year', prompt=True)
 @click.option('--card_cvc', prompt=True)
+@click.option('--promo_code')
 @click.pass_context
 @report_errors
-def upgrade(ctx, card_number, card_exp_month, card_exp_year, card_cvc):
+def upgrade(ctx, card_number, card_exp_month, card_exp_year, card_cvc, promo_code):
     """
     Upgrade from free tier to standard tier.
     """
-    gigalixir_user.upgrade(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc)
+    gigalixir_user.upgrade(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc, promo_code)
 
 @cli.command(name='account:destroy')
 @click.option('-y', '--yes', is_flag=True)

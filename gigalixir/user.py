@@ -32,7 +32,7 @@ def oauth_create(host, env, provider):
     oauth_process(host, provider, 'signup', r, False, env)
 
 
-def upgrade(host, card_number, card_exp_month, card_exp_year, card_cvc):
+def upgrade(host, card_number, card_exp_month, card_exp_year, card_cvc, promo_code):
     token = stripe.Token.create(
         card={
             "number": card_number,
@@ -41,11 +41,12 @@ def upgrade(host, card_number, card_exp_month, card_exp_year, card_cvc):
             "cvc": card_cvc,
         },
     )
-    r = requests.post('%s/api/upgrade' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
-        "stripe_token": token["id"],
-    })
+
+    body = {"stripe_token": token["id"]}
+    if promo_code != None:
+        body["promo_code"] = promo_code.upper()
+
+    r = requests.post('%s/api/upgrade' % host, headers = { 'Content-Type': 'application/json' }, json = body)
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
