@@ -688,9 +688,23 @@ def test_account():
 
 @httpretty.activate
 def test_upgrade():
-    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/users/upgrade', body='{}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/upgrade', body='{}', content_type='application/json', status=200)
+
     runner = CliRunner()
-    result = runner.invoke(gigalixir.cli, ['upgrade'], input="y\n")
+    result = runner.invoke(gigalixir.cli, ['upgrade', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=123'])
+
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_upgrade_with_promo_code():
+    httpretty.register_uri(httpretty.POST, 'https://api.stripe.com/v1/tokens', body='{"id":"fake-stripe-token"}', content_type='application/json')
+    httpretty.register_uri(httpretty.POST, 'https://api.gigalixir.com/api/upgrade', body='{}', content_type='application/json', status=200)
+
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['upgrade', '--card_number=4111111111111111', '--card_exp_month=12', '--card_exp_year=34', '--card_cvc=123', '--promo_code=foo'])
+
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
 
