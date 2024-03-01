@@ -6,6 +6,10 @@
 
 If you don't have pip install, see https://pip.pypa.io/en/stable/installing/
 
+## Upgrading
+
+    pip3 install gigalixir --upgrade
+
 ## Quickstart
 
     gigalixir signup
