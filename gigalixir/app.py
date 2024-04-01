@@ -88,6 +88,18 @@ def status(host, app_name):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
+def kill_pod(host, app_name, pod_name):
+    url = '%s/api/apps/%s/pods/%s' % (host, quote(app_name.encode('utf-8')), quote(pod_name.encode('utf-8')))
+    r = requests.delete(url, headers = { 'Content-Type': 'application/json' })
+
+    if r.status_code != 202:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
+
 def scale(host, app_name, replicas, size):
     body = {}
     if replicas != None:

@@ -1229,3 +1229,17 @@ def app_maintenance_off(ctx, app_name, yes):
     """
     if yes or click.confirm('Do you want to remove your app (%s) from maintenance mode?' % app_name):
         gigalixir_app.maintenance(ctx.obj['host'], app_name, False)
+
+@cli.command(name='ps:kill')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-p', '--pod', required=True, help='The name of the pod to kill.')
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def ps_kill(ctx, app_name, pod, yes):
+    """
+    Kills a pod.
+    """
+    if yes or click.confirm('Do you want to kill your pod (%s)?' % pod):
+      gigalixir_app.kill_pod(ctx.obj['host'], app_name, pod)
