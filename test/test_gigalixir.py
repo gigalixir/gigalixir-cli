@@ -8,6 +8,7 @@ from click.testing import CliRunner
 import httpretty
 import platform
 import json
+from six.moves.urllib.parse import quote
 
 def netrc_name():
     if platform.system().lower() == 'windows':
@@ -775,3 +776,20 @@ def test_maintenance_off():
     assert result.exit_code == 0
     expect(httpretty.has_request()).to.be.true
     expect(httpretty.last_request().body.decode()).to.equal('{"enable": false}')
+
+@httpretty.activate
+def test_kill_pod():
+    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/pods/pod-abcd', body='{"data": "Pod pod-abcd is being deleted."}', content_type='application/json', status=202)
+
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['ps:kill', '-a', 'fake-app-name', '-p', 'pod-abcd'], input="y\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_kill_pod_404():
+    httpretty.register_uri(httpretty.DELETE, 'https://api.gigalixir.com/api/apps/fake-app-name/pods/pod-abcd', body='{"data": "Pod `pod-abcd` not found."}', content_type='application/json', status=404)
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['ps:kill', '-a', 'fake-app-name', '-p', 'pod-abcd'], input="y\n")
+    assert result.exit_code != 0
+    expect(httpretty.has_request()).to.be.true
