@@ -5,10 +5,11 @@ setup(
     url='https://github.com/gigalixir/gigalixir-cli',
     author='Tim Knight',
     author_email='tim@gigalixir.com',
-    version='1.11.1',
+    version='1.11.2',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
+        'certifi>=2024.2.2',
         'click>=8.1',
         'cryptography>=38.0',
         'pygments>=2.13',
