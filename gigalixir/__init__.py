@@ -59,7 +59,9 @@ ROLLBAR_POST_CLIENT_ITEM = "de505ce1f87d40fbbc299d479d2bfc2f"
 # the command not found exception is raised.
 env = os.environ.get("GIGALIXIR_ENV", "prod")
 if env == "prod":
-    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production', enabled=True, allow_logging_basic_config=False)
+    rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production',
+                 enabled=True, allow_logging_basic_config=False,
+                 code_version=pkg_resources.get_distribution("gigalixir").version)
 elif env == "dev":
     rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'development', enabled=False, allow_logging_basic_config=False)
 elif env == "test":
