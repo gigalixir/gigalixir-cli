@@ -80,7 +80,7 @@ def status(session, app_name):
         presenter.echo_json(data)
 
 def kill_pod(session, app_name, pod_name):
-    url = '%s/api/apps/%s/pods/%s' % (quote(app_name.encode('utf-8')), quote(pod_name.encode('utf-8')))
+    url = '/api/apps/%s/pods/%s' % (quote(app_name.encode('utf-8')), quote(pod_name.encode('utf-8')))
     r = session.delete(url)
 
     if r.status_code != 202:
