@@ -20,7 +20,7 @@ class ApiSession(requests.Session):
         # Parse response header
         if self.needs_warning:
           self.needs_warning = False
-          latest_version = response.headers.get('X-Latest-Version')
+          latest_version = response.headers.get('x-latest-version')
           if latest_version and latest_version != self.version:
               print("Warning: A new version is available.")
               print("  Current version: ", self.version)
