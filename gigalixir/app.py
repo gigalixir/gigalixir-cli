@@ -1,6 +1,6 @@
 import os
 import re
-import pipes
+import shlex
 import logging
 import urllib
 import json
@@ -164,7 +164,7 @@ def ssh_helper(session, app_name, ssh_opts, ssh_cmd, capture_output, *args):
         data = json.loads(r.text)["data"]
         ssh_ip = data["ssh_ip"]
         if len(args) > 0:
-            escaped_args = [pipes.quote(arg) for arg in args]
+            escaped_args = [shlex.quote(arg) for arg in args]
             command = " ".join(escaped_args)
             if capture_output:
                 return call("%s %s root@%s %s" % (ssh_cmd, ssh_opts, ssh_ip, command))
