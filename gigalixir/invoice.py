@@ -1,14 +1,11 @@
-import requests
 from . import auth
 from . import presenter
 import urllib
 import json
 import click
 
-def get(host):
-    r = requests.get('%s/api/invoices' % (host), headers = {
-        'Content-Type': 'application/json',
-    })
+def get(session):
+    r = session.get('/api/invoices')
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()

@@ -1,4 +1,3 @@
-import requests
 from . import auth
 import urllib
 import json
@@ -6,10 +5,8 @@ import click
 from . import presenter
 from six.moves.urllib.parse import quote
 
-def get(host, app_name):
-    r = requests.get('%s/api/apps/%s/canaries' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def get(session, app_name):
+    r = session.get('/api/apps/%s/canaries' % (quote(app_name.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -18,15 +15,13 @@ def get(host, app_name):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def set(host, app_name, canary_name, weight):
+def set(session, app_name, canary_name, weight):
     body = {}
     if canary_name != None:
         body["canary"] = canary_name
     if weight != None:
-        body["weight"] = weight 
-    r = requests.put('%s/api/apps/%s/canaries' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = body)
+        body["weight"] = weight
+    r = session.put('/api/apps/%s/canaries' % (quote(app_name.encode('utf-8'))), json = body)
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -35,10 +30,8 @@ def set(host, app_name, canary_name, weight):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def delete(host, app_name, canary_name):
-    r = requests.delete('%s/api/apps/%s/canaries/%s' % (host, quote(app_name.encode('utf-8')), quote(canary_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def delete(session, app_name, canary_name):
+    r = session.delete('/api/apps/%s/canaries/%s' % (quote(app_name.encode('utf-8')), quote(canary_name.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()

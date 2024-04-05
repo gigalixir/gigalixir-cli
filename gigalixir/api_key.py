@@ -1,12 +1,11 @@
-import requests
 from . import auth
 from . import netrc
 import json
 import click
 import logging
 
-def regenerate(host, password, yes, env):
-    r = requests.post('%s/api/api_keys/regenerate' % host, params={
+def regenerate(session, password, yes, env):
+    r = session.post('/api/api_keys/regenerate', params={
         'current_password': password
     })
     if r.status_code != 201:

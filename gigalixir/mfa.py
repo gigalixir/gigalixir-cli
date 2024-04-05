@@ -1,4 +1,3 @@
-import requests
 from . import auth
 from . import presenter
 import logging
@@ -6,11 +5,8 @@ import json
 import qrcode
 import click
 
-def activate(host, yes):
-    r = requests.post('%s/api/mfa/start' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
-    })
+def activate(session, yes):
+    r = session.post('/api/mfa/start', json = {})
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -30,14 +26,10 @@ def activate(host, yes):
 
         # prompt for verification code
         token = click.prompt('Multi-factor Authentication Token')
-        verify(host, token, yes)
+        verify(session, token, yes)
 
-def verify(host, token, yes):
-    r = requests.post('%s/api/mfa/verify' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
-        "mfa_token": token
-    })
+def verify(session, token, yes):
+    r = session.post('/api/mfa/verify', json = { "mfa_token": token })
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -54,12 +46,9 @@ def show_recovery_codes(recovery_codes, yes):
         presenter.echo_json(recovery_codes)
     else:
         logging.getLogger("gigalixir-cli").warn('Please save your recovery codes. To regenerate them, use `gigalixir account:mfa:recovery_codes:regenerate`.')
-        
-def deactivate(host):
-    r = requests.delete('%s/api/mfa' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
-    })
+
+def deactivate(session):
+    r = session.delete('/api/mfa', json = {})
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -69,11 +58,8 @@ def deactivate(host):
         message = data["message"]
         click.echo(message)
 
-def regenerate_recovery_codes(host, yes):
-    r = requests.post('%s/api/mfa/recovery_codes' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
-    })
+def regenerate_recovery_codes(session, yes):
+    r = session.post('/api/mfa/recovery_codes', json = {})
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()

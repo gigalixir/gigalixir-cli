@@ -1,4 +1,3 @@
-import requests
 from . import auth
 from . import netrc
 from . import presenter
@@ -10,10 +9,8 @@ import json
 from six.moves.urllib.parse import quote
 from time import sleep
 
-def create(host, email, password, accept_terms_of_service_and_privacy_policy):
-    r = requests.post('%s/api/free_users' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+def create(session, email, password, accept_terms_of_service_and_privacy_policy):
+    r = session.post('/api/free_users', json = {
         'email': email,
         'password': password,
     })
@@ -24,15 +21,13 @@ def create(host, email, password, accept_terms_of_service_and_privacy_policy):
     logging.getLogger("gigalixir-cli").info('Created account for %s. Confirmation email sent.' % email)
     logging.getLogger("gigalixir-cli").info('Please check your email and click confirm before continuing.')
 
-def oauth_create(host, env, provider):
-    r = requests.post('%s/api/oauth/%s' % (host, provider), headers = {
-        'Content-Type': 'application/json'
-    }, json = { 'signup': True })
+def oauth_create(session, env, provider):
+    r = session.post('/api/oauth/%s' % (provider), json = { 'signup': True })
 
-    oauth_process(host, provider, 'signup', r, False, env)
+    oauth_process(session, provider, 'signup', r, False, env)
 
 
-def upgrade(host, card_number, card_exp_month, card_exp_year, card_cvc, promo_code):
+def upgrade(session, card_number, card_exp_month, card_exp_year, card_cvc, promo_code):
     token = stripe.Token.create(
         card={
             "number": card_number,
@@ -46,17 +41,15 @@ def upgrade(host, card_number, card_exp_month, card_exp_year, card_cvc, promo_co
     if promo_code != None:
         body["promo_code"] = promo_code.upper()
 
-    r = requests.post('%s/api/upgrade' % host, headers = { 'Content-Type': 'application/json' }, json = body)
+    r = session.post('/api/upgrade', json = body)
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
     logging.getLogger("gigalixir-cli").info('Account upgraded.')
 
-def delete(host, email, password):
-    r = requests.delete('%s/api/users/destroy' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+def delete(session, email, password):
+    r = session.delete('/api/users/destroy', json = {
         'email': email,
         'current_password': password
     })
@@ -66,26 +59,22 @@ def delete(host, email, password):
         raise Exception(r.text)
     logging.getLogger("gigalixir-cli").info('Account destroyed.')
 
-def validate_email(host, email):
-    r = requests.get('%s/api/validate_email' % host, headers = {
-        'Content-Type': 'application/json',
-    }, params = {
+def validate_email(session, email):
+    r = session.get('/api/validate_email', params = {
         "email": email
     })
     if r.status_code != 200:
         raise Exception(r.text)
 
-def validate_password(host, password):
+def validate_password(session, password):
     if len(password) < 4:
         raise Exception("Password should be at least 4 characters.")
 
 def logout(env):
     netrc.clear_netrc(env)
 
-def change_password(host, current_password, new_password):
-    r = requests.patch('%s/api/users/change_password' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+def change_password(session, current_password, new_password):
+    r = session.patch('/api/users/change_password', json = {
         "current_password": current_password,
         "new_password": new_password
     })
@@ -96,33 +85,31 @@ def change_password(host, current_password, new_password):
     data = json.loads(r.text)["data"]
     presenter.echo_json(data)
 
-def login(host, email, password, yes, env, token):
+def login(session, email, password, yes, env, token):
     payload = {}
     if token:
         payload["mfa_token"] = token
 
-    r = requests.get('%s/api/login' % host, auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-        }, params=payload)
+    r = session.get('/api/login', auth = (quote(email.encode('utf-8')), quote(password.encode('utf-8'))), params=payload)
 
     if r.status_code != 200:
         if r.status_code == 401:
             raise Exception("Sorry, we could not authenticate you. If you need to reset your password, run `gigalixir account:password:reset --email=%s`." % email)
         elif r.status_code == 303:
             token = click.prompt('Multi-factor Authentication Token')
-            login(host, email, password, yes, env, token)
+            login(session, email, password, yes, env, token)
         else:
             raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
         complete_login(email, key, yes, env)
 
-def oauth_login(host, yes, env, provider):
-    r = requests.post('%s/api/oauth/%s' % (host, provider), headers = { 'Content-Type': 'application/json' })
+def oauth_login(session, yes, env, provider):
+    r = session.post('/api/oauth/%s' % (provider))
 
-    oauth_process(host, provider, 'login', r, yes, env)
+    oauth_process(session, provider, 'login', r, yes, env)
 
-def oauth_process(host, provider, action, r, yes, env):
+def oauth_process(session, provider, action, r, yes, env):
     if r.status_code != 201:
         raise Exception(r.text)
 
@@ -132,7 +119,7 @@ def oauth_process(host, provider, action, r, yes, env):
 
     delay_time = 4
     while True:
-        r = requests.get('%s/api/oauth/%s/%s' % (host, provider, session), headers = { 'Content-Type': 'application/json' })
+        r = session.get('/api/oauth/%s/%s' % (provider, session))
         if r.status_code == 204:
             if delay_time < 2:
                 raise Exception('OAuth process timed out')
@@ -150,8 +137,8 @@ def oauth_process(host, provider, action, r, yes, env):
             error = json.loads(r.text)["errors"][""]
             raise Exception('Oauth %s %s' % (action, error))
 
-def get_reset_password_token(host, email):
-    r = requests.put('%s/api/users/reset_password' % host, json = {"email": email})
+def get_reset_password_token(session, email):
+    r = session.put('/api/users/reset_password', json = {"email": email})
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -159,8 +146,8 @@ def get_reset_password_token(host, email):
     else:
         logging.getLogger("gigalixir-cli").info("Reset password link has been sent to your email.")
 
-def set_email(host, current_password, email):
-    r = requests.post('%s/api/users/email' % host, json = {"next_email": email, "current_password": current_password})
+def set_email(session, current_password, email):
+    r = session.post('/api/users/email', json = {"next_email": email, "current_password": current_password})
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -168,15 +155,15 @@ def set_email(host, current_password, email):
     else:
         logging.getLogger("gigalixir-cli").info("Confirmation email sent. Please check your email to continue.")
 
-def reset_password(host, token, password):
-    r = requests.post('%s/api/users/reset_password' % host, json = {"token": token, "password": password})
+def reset_password(session, token, password):
+    r = session.post('/api/users/reset_password', json = {"token": token, "password": password})
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
 
-def get_confirmation_token(host, email):
-    r = requests.put('%s/api/users/reconfirm_email' % host, json = {"email": email})
+def get_confirmation_token(session, email):
+    r = session.put('/api/users/reconfirm_email', json = {"email": email})
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -184,8 +171,8 @@ def get_confirmation_token(host, email):
     else:
         logging.getLogger("gigalixir-cli").info("Confirmation email sent.")
 
-def account(host):
-    r = requests.get('%s/api/users' % host)
+def account(session):
+    r = session.get('/api/users')
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()

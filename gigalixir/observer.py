@@ -5,7 +5,6 @@ import urllib
 import json
 import re
 import uuid
-import requests
 import sys
 import subprocess
 import time
@@ -17,10 +16,8 @@ def observer(ctx, app_name, erlang_cookie, ssh_opts, ssh_cmd):
     if not ctx.obj['router'].supports_multiplexing():
         raise Exception("The observer command is not supported on this platform.")
 
-    host = ctx.obj['host']
-    r = requests.get('%s/api/apps/%s/observer-commands' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+    session = ctx.obj['session']
+    r = session.get('/api/apps/%s/observer-commands' % (quote(app_name.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -30,9 +27,7 @@ def observer(ctx, app_name, erlang_cookie, ssh_opts, ssh_cmd):
         get_cookie_command = command["get_cookie"]
         get_node_name_command = command["get_node_name"]
 
-    r = requests.get('%s/api/apps/%s/ssh_ip' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+    r = session.get('/api/apps/%s/ssh_ip' % (quote(app_name.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -56,19 +51,19 @@ def observer(ctx, app_name, erlang_cookie, ssh_opts, ssh_cmd):
 
         logging.getLogger("gigalixir-cli").info("Fetching erlang cookie")
         if erlang_cookie is None:
-            ERLANG_COOKIE = sanitize_respone(gigalixir_app.distillery_eval(host, app_name, ssh_opts, ssh_cmd, get_cookie_command))
+            ERLANG_COOKIE = sanitize_respone(gigalixir_app.distillery_eval(session, app_name, ssh_opts, ssh_cmd, get_cookie_command))
         else:
             ERLANG_COOKIE = erlang_cookie
         logging.getLogger("gigalixir-cli").info("Using erlang cookie: %s" % ERLANG_COOKIE)
 
         logging.getLogger("gigalixir-cli").info("Fetching pod ip")
-        node_name = sanitize_respone(gigalixir_app.distillery_eval(host, app_name, ssh_opts, ssh_cmd, get_node_name_command))
+        node_name = sanitize_respone(gigalixir_app.distillery_eval(session, app_name, ssh_opts, ssh_cmd, get_node_name_command))
         # node_name is surrounded with single quotes
         (sname, MY_POD_IP) = node_name.split('@')
         logging.getLogger("gigalixir-cli").info("Using pod ip: %s" % MY_POD_IP)
         logging.getLogger("gigalixir-cli").info("Using node name: %s" % sname)
         logging.getLogger("gigalixir-cli").info("Fetching epmd port and app port.")
-        output = gigalixir_app.ssh_helper(host, app_name, ssh_opts, ssh_cmd, True, "--", "epmd", "-names")
+        output = gigalixir_app.ssh_helper(session, app_name, ssh_opts, ssh_cmd, True, "--", "epmd", "-names")
         EPMD_PORT=None
         APP_PORT=None
         for line in output.splitlines():

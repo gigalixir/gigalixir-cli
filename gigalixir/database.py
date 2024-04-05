@@ -1,4 +1,3 @@
-import requests
 import logging
 from . import auth
 from . import api_exception
@@ -10,10 +9,8 @@ from six.moves.urllib.parse import quote
 import os
 import errno
 
-def get(host, app_name):
-    r = requests.get('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def get(session, app_name):
+    r = session.get('/api/apps/%s/databases' % (quote(app_name.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -22,10 +19,8 @@ def get(host, app_name):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def get_read_replicas(host, app_name, database_id):
-    r = requests.get('%s/api/apps/%s/databases/%s/read_replicas' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def get_read_replicas(session, app_name, database_id):
+    r = session.get('/api/apps/%s/databases/%s/read_replicas' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -34,10 +29,8 @@ def get_read_replicas(host, app_name, database_id):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def psql(host, app_name):
-    r = requests.get('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def psql(session, app_name):
+    r = session.get('/api/apps/%s/databases' % (quote(app_name.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -60,7 +53,7 @@ def psql(host, app_name):
                 else:
                     raise
 
-def create(host, app_name, size, cloud=None, region=None):
+def create(session, app_name, size, cloud=None, region=None):
     body = {
         "size": size
     }
@@ -68,9 +61,7 @@ def create(host, app_name, size, cloud=None, region=None):
         body["cloud"] = cloud
     if region != None:
         body["region"] = region
-    r = requests.post('%s/api/apps/%s/databases' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = body)
+    r = session.post('/api/apps/%s/databases' % (quote(app_name.encode('utf-8'))), json = body)
     if r.status_code != 201:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -78,30 +69,26 @@ def create(host, app_name, size, cloud=None, region=None):
     logging.getLogger("gigalixir-cli").info("Creating new database.")
     logging.getLogger("gigalixir-cli").info("Please give us a few minutes to provision the new database.")
 
-def create_read_replica(host, app_name, database_id, size):
+def create_read_replica(session, app_name, database_id, size):
     body = {}
 
     if size:
         body['size'] = size
 
-    r = requests.post('%s/api/apps/%s/databases/%s/read_replicas' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = body)
+    r = session.post('/api/apps/%s/databases/%s/read_replicas' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), json = body)
     if r.status_code != 201:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
 
-def delete(host, app_name, database_id):
-    r = requests.delete('%s/api/apps/%s/databases/%s' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def delete(session, app_name, database_id):
+    r = session.delete('/api/apps/%s/databases/%s' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
 
-def scale(host, app_name, database_id, size, high_availability):
+def scale(session, app_name, database_id, size, high_availability):
     body = {}
 
     if high_availability in [ 'disabled', 'enabled' ]:
@@ -112,19 +99,15 @@ def scale(host, app_name, database_id, size, high_availability):
     if scale:
       body['size'] = size
 
-    r = requests.put('%s/api/apps/%s/databases/%s' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = body)
+    r = session.put('/api/apps/%s/databases/%s' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), json = body)
 
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
         raise Exception(r.text)
 
-def backups(host, app_name, database_id):
-    r = requests.get('%s/api/apps/%s/databases/%s/backups' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def backups(session, app_name, database_id):
+    r = session.get('/api/apps/%s/databases/%s/backups' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -133,10 +116,8 @@ def backups(host, app_name, database_id):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def restore(host, app_name, database_id, backup_id):
-    r = requests.post('%s/api/apps/%s/databases/%s/backups/%s/restore' % (host, quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8')), quote(backup_id.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def restore(session, app_name, database_id, backup_id):
+    r = session.post('/api/apps/%s/databases/%s/backups/%s/restore' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8')), quote(backup_id.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()

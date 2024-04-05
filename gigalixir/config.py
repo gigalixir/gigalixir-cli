@@ -1,4 +1,3 @@
-import requests
 from . import auth
 import urllib
 import json
@@ -6,10 +5,8 @@ import click
 from . import presenter
 from six.moves.urllib.parse import quote
 
-def get(host, app_name):
-    r = requests.get('%s/api/apps/%s/configs' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def get(session, app_name):
+    r = session.get('/api/apps/%s/configs' % (quote(app_name.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -18,10 +15,8 @@ def get(host, app_name):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def create_multiple(host, app_name, configs, dont_restart):
-    r = requests.post('%s/api/apps/%s/configs' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+def create_multiple(session, app_name, configs, dont_restart):
+    r = session.post('/api/apps/%s/configs' % (quote(app_name.encode('utf-8'))), json = {
         "configs": configs,
         "avoid_restart": dont_restart
     })
@@ -33,10 +28,8 @@ def create_multiple(host, app_name, configs, dont_restart):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def copy(host, src_app_name, dst_app_name):
-    r = requests.post('%s/api/apps/%s/configs/copy' % (host, quote(dst_app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+def copy(session, src_app_name, dst_app_name):
+    r = session.post('/api/apps/%s/configs/copy' % (quote(dst_app_name.encode('utf-8'))), json = {
         "from": src_app_name
     })
     if r.status_code != 200:
@@ -47,10 +40,8 @@ def copy(host, src_app_name, dst_app_name):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def delete(host, app_name, key):
-    r = requests.delete('%s/api/apps/%s/configs' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+def delete(session, app_name, key):
+    r = session.delete('/api/apps/%s/configs' % (quote(app_name.encode('utf-8'))), json = {
         "key": key,
     })
     if r.status_code != 200:
