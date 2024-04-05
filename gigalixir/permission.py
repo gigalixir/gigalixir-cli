@@ -1,4 +1,3 @@
-import requests
 from . import auth
 from . import presenter
 import urllib
@@ -6,10 +5,8 @@ import json
 import click
 from six.moves.urllib.parse import quote
 
-def get(host, app_name):
-    r = requests.get('%s/api/apps/%s/permissions' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    })
+def get(session, app_name):
+    r = session.get('/api/apps/%s/permissions' % (quote(app_name.encode('utf-8'))))
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
@@ -18,10 +15,8 @@ def get(host, app_name):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def create(host, app_name, email):
-    r = requests.post('%s/api/apps/%s/permissions' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+def create(session, app_name, email):
+    r = session.post('/api/apps/%s/permissions' % (quote(app_name.encode('utf-8'))), json = {
         "email": email,
     })
     if r.status_code != 201:
@@ -29,10 +24,8 @@ def create(host, app_name, email):
             raise auth.AuthException()
         raise Exception(r.text)
 
-def delete(host, app_name, email):
-    r = requests.delete('%s/api/apps/%s/permissions' % (host, quote(app_name.encode('utf-8'))), headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+def delete(session, app_name, email):
+    r = session.delete('/api/apps/%s/permissions' % (quote(app_name.encode('utf-8'))), json = {
         "email": email,
     })
     if r.status_code != 200:

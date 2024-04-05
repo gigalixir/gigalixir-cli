@@ -1,5 +1,4 @@
 import logging
-import requests
 import stripe
 from . import auth
 from . import presenter
@@ -7,10 +6,8 @@ import urllib
 import json
 import click
 
-def get(host):
-    r = requests.get('%s/api/payment_methods' % host, headers = {
-        'Content-Type': 'application/json',
-    })
+def get(session):
+    r = session.get('/api/payment_methods')
     if r.status_code == 404:
         logging.getLogger("gigalixir-cli").info("No payment method found.")
     elif r.status_code != 200:
@@ -21,7 +18,7 @@ def get(host):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def update(host, card_number, card_exp_month, card_exp_year, card_cvc):
+def update(session, card_number, card_exp_month, card_exp_year, card_cvc):
     token = stripe.Token.create(
         card={
             "number": card_number,
@@ -30,9 +27,7 @@ def update(host, card_number, card_exp_month, card_exp_year, card_cvc):
             "cvc": card_cvc,
         },
     )
-    r = requests.put('%s/api/payment_methods' % host, headers = {
-        'Content-Type': 'application/json',
-    }, json = {
+    r = session.put('/api/payment_methods', json = {
         "stripe_token": token["id"],
     })
     if r.status_code != 200:

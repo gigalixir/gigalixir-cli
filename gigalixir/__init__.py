@@ -24,8 +24,8 @@ from . import database as gigalixir_database
 from . import free_database as gigalixir_free_database
 from . import canary as gigalixir_canary
 from . import git
+from . import api_session as gigalixir_api_session
 import click
-import requests
 import getpass
 import stripe
 import subprocess
@@ -226,6 +226,7 @@ def cli(ctx, env):
     else:
         raise Exception("Invalid GIGALIXIR_ENV")
 
+    ctx.obj['session'] = gigalixir_api_session.ApiSession(host, pkg_resources.get_distribution("gigalixir").version)
     ctx.obj['host'] = host
     ctx.obj['env'] = env
 
@@ -288,7 +289,7 @@ def status(ctx, app_name):
     """
     Current app status.
     """
-    gigalixir_app.status(ctx.obj['host'], app_name)
+    gigalixir_app.status(ctx.obj['session'], app_name)
 
 @cli.command(name='pg:scale')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -302,7 +303,7 @@ def scale_database(ctx, app_name, database_id, size, high_availability):
     """
     Scale database. Find the database id by running `gigalixir pg`
     """
-    gigalixir_database.scale(ctx.obj['host'], app_name, database_id, size, high_availability)
+    gigalixir_database.scale(ctx.obj['session'], app_name, database_id, size, high_availability)
 
 @cli.command(name='ps:scale')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -317,7 +318,7 @@ def scale(ctx, app_name, replicas, size):
     """
     if not app_name:
         raise Exception("app_name is required")
-    gigalixir_app.scale(ctx.obj['host'], app_name, replicas, size)
+    gigalixir_app.scale(ctx.obj['session'], app_name, replicas, size)
 
 @cli.command(name='releases:rollback')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -329,7 +330,7 @@ def rollback(ctx, app_name, version):
     """
     Rollback to a previous release.
     """
-    gigalixir_app.rollback(ctx.obj['host'], app_name, version)
+    gigalixir_app.rollback(ctx.obj['session'], app_name, version)
 
 
 @cli.command(name='ps:remote_console')
@@ -343,7 +344,7 @@ def remote_console(ctx, app_name, ssh_opts, ssh_cmd):
     """
     Drop into a remote console on a live production node.
     """
-    gigalixir_app.remote_console(ctx.obj['host'], app_name, ssh_opts, ssh_cmd)
+    gigalixir_app.remote_console(ctx.obj['session'], app_name, ssh_opts, ssh_cmd)
 
 @cli.command(name='ps:run')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -357,7 +358,7 @@ def ps_run(ctx, app_name, ssh_opts, ssh_cmd, command):
     """
     Run a shell command on your running container.
     """
-    gigalixir_app.ps_run(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *command)
+    gigalixir_app.ps_run(ctx.obj['session'], app_name, ssh_opts, ssh_cmd, *command)
 
 @cli.command(name='ps:ssh')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -371,7 +372,7 @@ def ssh(ctx, app_name, ssh_opts, ssh_cmd, command):
     """
     Ssh into app. Be sure you added your ssh key using gigalixir create ssh_key. Configs are not loaded automatically.
     """
-    gigalixir_app.ssh(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *command)
+    gigalixir_app.ssh(ctx.obj['session'], app_name, ssh_opts, ssh_cmd, *command)
 
 @cli.command(name='ps:distillery')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -385,7 +386,7 @@ def distillery(ctx, app_name, ssh_opts, ssh_cmd, distillery_command):
     """
     Runs a distillery command to run on the remote container e.g. ping, remote_console. Be sure you've added your ssh key.
     """
-    gigalixir_app.distillery_command(ctx.obj['host'], app_name, ssh_opts, ssh_cmd, *distillery_command)
+    gigalixir_app.distillery_command(ctx.obj['session'], app_name, ssh_opts, ssh_cmd, *distillery_command)
 
 @cli.command(name='ps:restart')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -396,7 +397,7 @@ def restart(ctx, app_name):
     """
     Restart app.
     """
-    gigalixir_app.restart(ctx.obj['host'], app_name)
+    gigalixir_app.restart(ctx.obj['session'], app_name)
 
 
 # gigalixir run mix ecto.migrate
@@ -410,7 +411,7 @@ def run(ctx, app_name, command):
     """
     Run shell command as a job in a separate process. Useful for migrating databases before the app is running.
     """
-    gigalixir_app.run(ctx.obj['host'], app_name, command)
+    gigalixir_app.run(ctx.obj['session'], app_name, command)
 
 @cli.command(name='ps:migrate')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -424,7 +425,7 @@ def ps_migrate(ctx, app_name, migration_app_name, ssh_opts, ssh_cmd):
     """
     Run Ecto Migrations on a production node.
     """
-    gigalixir_app.migrate(ctx.obj['host'], app_name, migration_app_name, ssh_opts, ssh_cmd)
+    gigalixir_app.migrate(ctx.obj['session'], app_name, migration_app_name, ssh_opts, ssh_cmd)
 
 # @update.command()
 @cli.command(name='account:payment_method:set')
@@ -438,7 +439,7 @@ def set_payment_method(ctx, card_number, card_exp_month, card_exp_year, card_cvc
     """
     Set your payment method.
     """
-    gigalixir_payment_method.update(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc)
+    gigalixir_payment_method.update(ctx.obj['session'], card_number, card_exp_month, card_exp_year, card_cvc)
 
 @cli.command(name='account:upgrade')
 @click.option('--card_number', prompt=True)
@@ -452,7 +453,7 @@ def upgrade(ctx, card_number, card_exp_month, card_exp_year, card_cvc, promo_cod
     """
     Upgrade from free tier to standard tier.
     """
-    gigalixir_user.upgrade(ctx.obj['host'], card_number, card_exp_month, card_exp_year, card_cvc, promo_code)
+    gigalixir_user.upgrade(ctx.obj['session'], card_number, card_exp_month, card_exp_year, card_cvc, promo_code)
 
 @cli.command(name='account:destroy')
 @click.option('-y', '--yes', is_flag=True)
@@ -466,7 +467,7 @@ def destroy_account(ctx, yes, email, password):
     """
     logging.getLogger("gigalixir-cli").info("WARNING: Deleting an account can not be undone.")
     if yes or click.confirm('Are you sure you want to delete your account (%s)?' % email):
-        gigalixir_user.delete(ctx.obj['host'], email, password)
+        gigalixir_user.delete(ctx.obj['session'], email, password)
 
 # @reset.command()
 @cli.command(name='account:password:set')
@@ -478,7 +479,7 @@ def set_password(ctx, token, password):
     """
     Set password using reset password token. Deprecated. Use the web form instead.
     """
-    gigalixir_user.reset_password(ctx.obj['host'], token, password)
+    gigalixir_user.reset_password(ctx.obj['session'], token, password)
 
 # @update.command()
 @cli.command(name='account:password:change')
@@ -490,7 +491,7 @@ def change_password(ctx, current_password, new_password):
     """
     Change password.
     """
-    gigalixir_user.change_password(ctx.obj['host'], current_password, new_password)
+    gigalixir_user.change_password(ctx.obj['session'], current_password, new_password)
 
 @cli.command()
 @click.pass_context
@@ -499,7 +500,7 @@ def account(ctx):
     """
     Account information.
     """
-    gigalixir_user.account(ctx.obj['host'])
+    gigalixir_user.account(ctx.obj['session'])
 
 # @update.command()
 @cli.command(name='account:api_key:reset')
@@ -511,7 +512,7 @@ def reset_api_key(ctx, password, yes):
     """
     Regenerate a replacement api key.
     """
-    gigalixir_api_key.regenerate(ctx.obj['host'], password, yes, ctx.obj['env'])
+    gigalixir_api_key.regenerate(ctx.obj['session'], password, yes, ctx.obj['env'])
 
 @cli.command(name='account:mfa:activate')
 @click.option('-y', '--yes', is_flag=True)
@@ -521,7 +522,7 @@ def mfa_activate(ctx, yes):
     """
     Start the multi-factor authentication activation process.
     """
-    gigalixir_mfa.activate(ctx.obj['host'], yes)
+    gigalixir_mfa.activate(ctx.obj['session'], yes)
 
 
 @cli.command(name='account:mfa:deactivate')
@@ -533,7 +534,7 @@ def mfa_deactivate(ctx, yes):
     Deactivate multi-factor authentication.
     """
     if yes or click.confirm('Are you sure you want to deactivate multi-factor authentication?'):
-        gigalixir_mfa.deactivate(ctx.obj['host'])
+        gigalixir_mfa.deactivate(ctx.obj['session'])
 
 @cli.command(name='account:mfa:recovery_codes:regenerate')
 @click.option('-y', '--yes', is_flag=True)
@@ -543,7 +544,7 @@ def mfa_deactivate(ctx, yes):
     """
     Regenerate multi-factor authentication recovery codes.
     """
-    gigalixir_mfa.regenerate_recovery_codes(ctx.obj['host'], yes)
+    gigalixir_mfa.regenerate_recovery_codes(ctx.obj['session'], yes)
 
 @cli.command()
 @click.pass_context
@@ -565,7 +566,7 @@ def login(ctx, email, password, yes, mfa_token):
     """
     Login and receive an api key.
     """
-    gigalixir_user.login(ctx.obj['host'], email, password, yes, ctx.obj['env'], mfa_token)
+    gigalixir_user.login(ctx.obj['session'], email, password, yes, ctx.obj['env'], mfa_token)
 
 @cli.command(name='login:google')
 @click.option('-y', '--yes', is_flag=True)
@@ -575,7 +576,7 @@ def google_login(ctx, yes):
     """
     Login with Google and receive an api key.
     """
-    gigalixir_user.oauth_login(ctx.obj['host'], yes, ctx.obj['env'], 'google')
+    gigalixir_user.oauth_login(ctx.obj['session'], yes, ctx.obj['env'], 'google')
 
 # @get.command()
 @cli.command()
@@ -589,7 +590,7 @@ def logs(ctx, app_name, num, no_tail):
     """
     Stream logs from app.
     """
-    gigalixir_app.logs(ctx.obj['host'], app_name, num, no_tail)
+    gigalixir_app.logs(ctx.obj['session'], app_name, num, no_tail)
 
 # @get.command()
 @cli.command(name='account:payment_method')
@@ -599,7 +600,7 @@ def payment_method(ctx):
     """
     Get your payment method.
     """
-    gigalixir_payment_method.get(ctx.obj['host'])
+    gigalixir_payment_method.get(ctx.obj['session'])
 
 # @get.command()
 @cli.command(name='drains')
@@ -611,7 +612,7 @@ def log_drains(ctx, app_name):
     """
     Get your log drains.
     """
-    gigalixir_log_drain.get(ctx.obj['host'], app_name)
+    gigalixir_log_drain.get(ctx.obj['session'], app_name)
 
 
 # @get.command()
@@ -622,7 +623,7 @@ def ssh_keys(ctx):
     """
     Get your ssh keys.
     """
-    gigalixir_ssh_key.get(ctx.obj['host'])
+    gigalixir_ssh_key.get(ctx.obj['session'])
 
 @cli.command(name="apps:info")
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -633,7 +634,7 @@ def app_info(ctx, app_name):
     """
     Get app info
     """
-    gigalixir_app.info(ctx.obj['host'], app_name)
+    gigalixir_app.info(ctx.obj['session'], app_name)
 
 # @get.command()
 @cli.command()
@@ -643,7 +644,7 @@ def apps(ctx):
     """
     Get apps.
     """
-    gigalixir_app.get(ctx.obj['host'])
+    gigalixir_app.get(ctx.obj['session'])
 
 @cli.command(name='apps:activity')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -654,7 +655,7 @@ def app_activity(ctx, app_name):
     """
     Get activity for an app.
     """
-    gigalixir_app_activity.get(ctx.obj['host'], app_name)
+    gigalixir_app_activity.get(ctx.obj['session'], app_name)
 
 # @get.command()
 @cli.command()
@@ -666,7 +667,7 @@ def releases(ctx, app_name):
     """
     Get previous releases for app.
     """
-    gigalixir_release.get(ctx.obj['host'], app_name)
+    gigalixir_release.get(ctx.obj['session'], app_name)
 
 
 # @get.command()
@@ -679,7 +680,7 @@ def permissions(ctx, app_name):
     """
     Get permissions for app.
     """
-    gigalixir_permission.get(ctx.obj['host'], app_name)
+    gigalixir_permission.get(ctx.obj['session'], app_name)
 
 # @create.command()
 @cli.command(name='drains:add')
@@ -692,7 +693,7 @@ def add_log_drain(ctx, app_name, url):
     """
     Add a drain to send your logs to.
     """
-    gigalixir_log_drain.create(ctx.obj['host'], app_name, url)
+    gigalixir_log_drain.create(ctx.obj['session'], app_name, url)
 
 
 # @create.command()
@@ -705,7 +706,7 @@ def add_ssh_key(ctx, ssh_key):
     Add an ssh key. Make sure you use the actual key and not the filename as the argument. For example,
     don't use ~/.ssh/id_rsa.pub, use the contents of that file.
     """
-    gigalixir_ssh_key.create(ctx.obj['host'], ssh_key)
+    gigalixir_ssh_key.create(ctx.obj['session'], ssh_key)
 
 # @create.command()
 @cli.command(name='domains:add')
@@ -718,7 +719,7 @@ def add_domain(ctx, app_name, fully_qualified_domain_name):
     """
     Adds a custom domain name to your app.
     """
-    gigalixir_domain.create(ctx.obj['host'], app_name, fully_qualified_domain_name)
+    gigalixir_domain.create(ctx.obj['session'], app_name, fully_qualified_domain_name)
 
 @cli.command(name="config:copy")
 @click.option('-s', '--src_app_name', required=True)
@@ -734,7 +735,7 @@ def config_copy(ctx, src_app_name, dst_app_name, yes):
     """
     logging.getLogger("gigalixir-cli").info("WARNING: This will copy all configs from %s to %s. This might overwrite some configs in %s." % (src_app_name, dst_app_name, dst_app_name))
     if yes or click.confirm('Are you sure you want to continue?'):
-        gigalixir_config.copy(ctx.obj['host'], src_app_name, dst_app_name)
+        gigalixir_config.copy(ctx.obj['session'], src_app_name, dst_app_name)
 
 @cli.command(name="config:set")
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -760,7 +761,7 @@ def config_set(ctx, app_name, no_restart, assignments):
             print_help(ctx, "config:set")
             raise
 
-    gigalixir_config.create_multiple(ctx.obj['host'], app_name, configs, no_restart)
+    gigalixir_config.create_multiple(ctx.obj['session'], app_name, configs, no_restart)
 
 # @get.command()
 @cli.command(name='account:confirmation:resend')
@@ -771,7 +772,7 @@ def send_email_confirmation_token(ctx, email):
     """
     Regenerate a email confirmation token and send to email.
     """
-    gigalixir_user.get_confirmation_token(ctx.obj['host'], email)
+    gigalixir_user.get_confirmation_token(ctx.obj['session'], email)
 
 # @get.command()
 @cli.command(name='account:password:reset')
@@ -782,7 +783,7 @@ def send_reset_password_token(ctx, email):
     """
     Send reset password token to email.
     """
-    gigalixir_user.get_reset_password_token(ctx.obj['host'], email)
+    gigalixir_user.get_reset_password_token(ctx.obj['session'], email)
 
 # @get.command()
 @cli.command(name='account:email:set')
@@ -794,7 +795,7 @@ def send_reset_password_token(ctx, password, email):
     """
     Set account email
     """
-    gigalixir_user.set_email(ctx.obj['host'], password, email)
+    gigalixir_user.set_email(ctx.obj['session'], password, email)
 
 # @get.command()
 @cli.command(name='pg')
@@ -806,7 +807,7 @@ def databases(ctx, app_name):
     """
     Get databases for your app.
     """
-    gigalixir_database.get(ctx.obj['host'], app_name)
+    gigalixir_database.get(ctx.obj['session'], app_name)
 
 # @get.command()
 @cli.command(name='pg:read_replicas')
@@ -819,7 +820,7 @@ def read_replicas(ctx, app_name, database_id):
     """
     Get read replicas for your app and database.
     """
-    gigalixir_database.get_read_replicas(ctx.obj['host'], app_name, database_id)
+    gigalixir_database.get_read_replicas(ctx.obj['session'], app_name, database_id)
 
 @cli.command(name='pg:read_replicas:create')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -832,7 +833,7 @@ def create_read_replica(ctx, app_name, database_id, size):
     """
     Create a new read replica for a database.
     """
-    gigalixir_database.create_read_replica(ctx.obj['host'], app_name, database_id, size)
+    gigalixir_database.create_read_replica(ctx.obj['session'], app_name, database_id, size)
 
 
 
@@ -846,7 +847,7 @@ def domains(ctx, app_name):
     """
     Get custom domains for your app.
     """
-    gigalixir_domain.get(ctx.obj['host'], app_name)
+    gigalixir_domain.get(ctx.obj['session'], app_name)
 
 # @get.command()
 @cli.command()
@@ -858,7 +859,7 @@ def config(ctx, app_name):
     """
     Get app configuration/environment variables.
     """
-    gigalixir_config.get(ctx.obj['host'], app_name)
+    gigalixir_config.get(ctx.obj['session'], app_name)
 
 # @delete.command()
 @cli.command(name='drains:remove')
@@ -871,7 +872,7 @@ def delete_log_drain(ctx, app_name, drain_id):
     """
     Deletes a log drain. Find the drain_id from gigalixir log_drains.
     """
-    gigalixir_log_drain.delete(ctx.obj['host'], app_name, drain_id)
+    gigalixir_log_drain.delete(ctx.obj['session'], app_name, drain_id)
 
 # @delete.command()
 @cli.command(name='account:ssh_keys:remove')
@@ -882,7 +883,7 @@ def delete_ssh_key(ctx, key_id):
     """
     Deletes your ssh key. Find the key_id from gigalixir get_ssh_keys.
     """
-    gigalixir_ssh_key.delete(ctx.obj['host'], key_id)
+    gigalixir_ssh_key.delete(ctx.obj['session'], key_id)
 
 @cli.command(name='apps:destroy')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -896,7 +897,7 @@ def delete_app(ctx, app_name, yes):
     """
     logging.getLogger("gigalixir-cli").info("WARNING: Deleting an app can not be undone.")
     if yes or click.confirm('Do you want to delete your app (%s)?' % app_name):
-        gigalixir_app.delete(ctx.obj['host'], app_name)
+        gigalixir_app.delete(ctx.obj['session'], app_name)
 
 # @delete.command()
 @cli.command(name='access:remove')
@@ -909,7 +910,7 @@ def delete_permission(ctx, app_name, email):
     """
     Denies user access to app.
     """
-    gigalixir_permission.delete(ctx.obj['host'], app_name, email)
+    gigalixir_permission.delete(ctx.obj['session'], app_name, email)
 
 # @delete.command()
 @cli.command(name='pg:destroy')
@@ -927,7 +928,7 @@ def delete_database(ctx, app_name, yes, database_id):
     logging.getLogger("gigalixir-cli").info("WARNING: This can not be undone.")
     logging.getLogger("gigalixir-cli").info("WARNING: Please make sure you backup your data first.")
     if yes or click.confirm('Do you want to delete your database and all backups?'):
-        gigalixir_database.delete(ctx.obj['host'], app_name, database_id)
+        gigalixir_database.delete(ctx.obj['session'], app_name, database_id)
 
 # @delete.command()
 @cli.command(name='domains:remove')
@@ -940,7 +941,7 @@ def delete_domain(ctx, app_name, fully_qualified_domain_name):
     """
     Delete custom domain from your app.
     """
-    gigalixir_domain.delete(ctx.obj['host'], app_name, fully_qualified_domain_name)
+    gigalixir_domain.delete(ctx.obj['session'], app_name, fully_qualified_domain_name)
 
 # @delete.command()
 @cli.command(name='config:unset')
@@ -953,7 +954,7 @@ def delete_config(ctx, app_name, key):
     """
     Delete app configuration/environment variables.
     """
-    gigalixir_config.delete(ctx.obj['host'], app_name, key)
+    gigalixir_config.delete(ctx.obj['session'], app_name, key)
 
 # @create.command()
 @cli.command(name='access:add')
@@ -966,7 +967,7 @@ def add_permission(ctx, app_name, email):
     """
     Grants a user permission to deploy an app.
     """
-    gigalixir_permission.create(ctx.obj['host'], app_name, email)
+    gigalixir_permission.create(ctx.obj['session'], app_name, email)
 
 
 @cli.command(name='pg:psql')
@@ -978,7 +979,7 @@ def pg_psql(ctx, app_name):
     """
     Connect to the database using psql
     """
-    gigalixir_database.psql(ctx.obj['host'], app_name)
+    gigalixir_database.psql(ctx.obj['session'], app_name)
 
 @cli.command(name='pg:create')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -999,9 +1000,9 @@ def create_database(ctx, app_name, size, cloud, region, free, yes):
             raise Exception("Sorry, free tier databases only run on gcp in us-central1. Try creating a standard database instead.")
         else:
             if yes or click.confirm("A word of caution: Free tier databases are not suitable for production and migrating from a free db to a standard db is not trivial. Do you wish to continue?"):
-                gigalixir_free_database.create(ctx.obj['host'], app_name)
+                gigalixir_free_database.create(ctx.obj['session'], app_name)
     else:
-        gigalixir_database.create(ctx.obj['host'], app_name, size, cloud, region)
+        gigalixir_database.create(ctx.obj['session'], app_name, size, cloud, region)
 
 # @create.command()
 @cli.command(name='git:remote')
@@ -1012,7 +1013,7 @@ def set_git_remote(ctx, app_name):
     """
     Set the gigalixir git remote.
     """
-    gigalixir_app.set_git_remote(ctx.obj['host'], app_name)
+    gigalixir_app.set_git_remote(ctx.obj['session'], app_name)
 
 # @create.command()
 @cli.command(name='apps:create')
@@ -1026,7 +1027,7 @@ def create(ctx, name, cloud, region, stack):
     """
     Create a new app.
     """
-    gigalixir_app.create(ctx.obj['host'], name, cloud, region, stack)
+    gigalixir_app.create(ctx.obj['session'], name, cloud, region, stack)
 
 @cli.command(name='account:invoices')
 @click.pass_context
@@ -1035,7 +1036,7 @@ def invoices(ctx):
     """
     List all previous invoices.
     """
-    gigalixir_invoice.get(ctx.obj['host'])
+    gigalixir_invoice.get(ctx.obj['session'])
 
 @cli.command(name='account:usage')
 @click.pass_context
@@ -1044,7 +1045,7 @@ def current_period_usage(ctx):
     """
     See the usage so far this month.
     """
-    gigalixir_usage.get(ctx.obj['host'])
+    gigalixir_usage.get(ctx.obj['session'])
 
 @cli.command(name='account:usage:running')
 @click.pass_context
@@ -1053,7 +1054,7 @@ def current_running_usage(ctx):
     """
     See the current running charges.
     """
-    gigalixir_usage.run_rate(ctx.obj['host'])
+    gigalixir_usage.run_rate(ctx.obj['session'])
 
 # @create.command()
 @cli.command()
@@ -1074,13 +1075,13 @@ def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
 
     if email == None:
         email = click.prompt('Email')
-    gigalixir_user.validate_email(ctx.obj['host'], email)
+    gigalixir_user.validate_email(ctx.obj['session'], email)
 
     if password == None:
         password = click.prompt('Password', hide_input=True)
-    gigalixir_user.validate_password(ctx.obj['host'], password)
+    gigalixir_user.validate_password(ctx.obj['session'], password)
 
-    gigalixir_user.create(ctx.obj['host'], email, password, accept_terms_of_service_and_privacy_policy)
+    gigalixir_user.create(ctx.obj['session'], email, password, accept_terms_of_service_and_privacy_policy)
 
 @cli.command('signup:google')
 @click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
@@ -1096,7 +1097,7 @@ def google_signup(ctx, accept_terms_of_service_and_privacy_policy):
         if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
             raise Exception("You must accept the Terms of Service and Privacy Policy to continue.")
 
-    gigalixir_user.oauth_create(ctx.obj['host'], ctx.obj['env'], "google")
+    gigalixir_user.oauth_create(ctx.obj['session'], ctx.obj['env'], "google")
 
 @cli.command(name='ps:observer')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1140,7 +1141,7 @@ def pg_backups(ctx, app_name, database_id):
     """
     List available backups. Find the database id by running `gigalixir pg`
     """
-    gigalixir_database.backups(ctx.obj['host'], app_name, database_id)
+    gigalixir_database.backups(ctx.obj['session'], app_name, database_id)
 
 @cli.command(name='pg:backups:restore')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1154,7 +1155,7 @@ def pg_backups_restore(ctx, app_name, database_id, backup_id):
     Restore database from backup. Find the database id by running `gigalixir pg`
 
     """
-    gigalixir_database.restore(ctx.obj['host'], app_name, database_id, backup_id)
+    gigalixir_database.restore(ctx.obj['session'], app_name, database_id, backup_id)
 
 @cli.command(name='stack:set')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1166,7 +1167,7 @@ def set_stack(ctx, app_name, stack):
     """
     Set your app stack.
     """
-    gigalixir_app.set_stack(ctx.obj['host'], app_name, stack)
+    gigalixir_app.set_stack(ctx.obj['session'], app_name, stack)
 
 @cli.command(name='canary')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1177,7 +1178,7 @@ def canary(ctx, app_name):
     """
     Get canary
     """
-    gigalixir_canary.get(ctx.obj['host'], app_name)
+    gigalixir_canary.get(ctx.obj['session'], app_name)
 
 @cli.command(name='canary:set')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1190,7 +1191,7 @@ def set_canary(ctx, app_name, canary_name, weight):
     """
     Set a canary and weight for your app.
     """
-    gigalixir_canary.set(ctx.obj['host'], app_name, canary_name, weight)
+    gigalixir_canary.set(ctx.obj['session'], app_name, canary_name, weight)
 
 @cli.command(name='canary:unset')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1202,7 +1203,7 @@ def unset_canary(ctx, app_name, canary_name):
     """
     Unset a canary for your app.
     """
-    gigalixir_canary.delete(ctx.obj['host'], app_name, canary_name)
+    gigalixir_canary.delete(ctx.obj['session'], app_name, canary_name)
 
 @cli.command(name='maintenance:on')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1215,7 +1216,7 @@ def app_maintenance_on(ctx, app_name, yes):
     Enables maintenance mode for an app.  App will be unreachable until maintenance mode is turned off.
     """
     if yes or click.confirm('Do you want to put your app (%s) in maintenance mode?' % app_name):
-        gigalixir_app.maintenance(ctx.obj['host'], app_name, True)
+        gigalixir_app.maintenance(ctx.obj['session'], app_name, True)
 
 @cli.command(name='maintenance:off')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1228,7 +1229,7 @@ def app_maintenance_off(ctx, app_name, yes):
     Disables maintenance mode on an app.
     """
     if yes or click.confirm('Do you want to remove your app (%s) from maintenance mode?' % app_name):
-        gigalixir_app.maintenance(ctx.obj['host'], app_name, False)
+        gigalixir_app.maintenance(ctx.obj['session'], app_name, False)
 
 @cli.command(name='ps:kill')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
@@ -1242,4 +1243,4 @@ def ps_kill(ctx, app_name, pod, yes):
     Kills a pod.
     """
     if yes or click.confirm('Do you want to kill your pod (%s)?' % pod):
-      gigalixir_app.kill_pod(ctx.obj['host'], app_name, pod)
+      gigalixir_app.kill_pod(ctx.obj['session'], app_name, pod)
