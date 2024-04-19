@@ -114,12 +114,12 @@ def oauth_process(session, provider, action, r, yes, env):
         raise Exception(r.text)
 
     request_url = json.loads(r.text)["data"]["url"]
-    session = json.loads(r.text)["data"]["session"]
+    oauth_session = json.loads(r.text)["data"]["session"]
     print('To', action, 'browse to', request_url)
 
     delay_time = 4
     while True:
-        r = session.get('/api/oauth/%s/%s' % (provider, session))
+        r = session.get('/api/oauth/%s/%s' % (provider, oauth_session))
         if r.status_code == 204:
             if delay_time < 2:
                 raise Exception('OAuth process timed out')
