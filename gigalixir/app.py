@@ -120,7 +120,7 @@ def distillery_eval(session, app_name, ssh_opts, ssh_cmd, expression):
     # capture_output == True as this isn't interactive
     # and we want to return the result as a string rather than
     # print it out to the screen
-    return ssh_helper(session, app_name, ssh_opts, ssh_cmd, True, "gigalixir_run", "distillery_eval", "--", expression)
+    return ssh_helper(session, app_name, ssh_opts, ssh_cmd, True, "gigalixir_run", "distillery-eval", "--", expression)
 
 def distillery_command(session, app_name, ssh_opts, ssh_cmd, *args):
     ssh(session, app_name, ssh_opts, ssh_cmd, "gigalixir_run", "shell", "--", "bin/%s" % customer_app_name(session, app_name), *args)
