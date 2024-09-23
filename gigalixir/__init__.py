@@ -989,11 +989,12 @@ def pg_psql(ctx, app_name):
 @click.option('-c', '--cloud')
 @click.option('-r', '--region')
 @click.option('-f', '--free', is_flag=True)
+@click.option('-v', '--version', help='Major version (eg. POSTGRES_16). Not available for free databases.')
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
 @detect_app_name
-def create_database(ctx, app_name, size, cloud, region, free, yes):
+def create_database(ctx, app_name, size, cloud, region, free, version, yes):
     """
     Create a new database for app.
     """
@@ -1004,7 +1005,7 @@ def create_database(ctx, app_name, size, cloud, region, free, yes):
             if yes or click.confirm("A word of caution: Free tier databases are not suitable for production and migrating from a free db to a standard db is not trivial. Do you wish to continue?"):
                 gigalixir_free_database.create(ctx.obj['session'], app_name)
     else:
-        gigalixir_database.create(ctx.obj['session'], app_name, size, cloud, region)
+        gigalixir_database.create(ctx.obj['session'], app_name, size, cloud, region, version)
 
 # @create.command()
 @cli.command(name='git:remote')

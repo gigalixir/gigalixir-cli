@@ -53,14 +53,15 @@ def psql(session, app_name):
                 else:
                     raise
 
-def create(session, app_name, size, cloud=None, region=None):
-    body = {
-        "size": size
-    }
+def create(session, app_name, size, cloud=None, region=None, version=None):
+    body = { "size": size }
     if cloud != None:
         body["cloud"] = cloud
     if region != None:
         body["region"] = region
+    if version != None:
+        body["version"] = version
+
     r = session.post('/api/apps/%s/databases' % (quote(app_name.encode('utf-8'))), json = body)
     if r.status_code != 201:
         if r.status_code == 401:
