@@ -1155,9 +1155,21 @@ def pg_backups(ctx, app_name, database_id):
 def pg_backups_restore(ctx, app_name, database_id, backup_id):
     """
     Restore database from backup. Find the database id by running `gigalixir pg`
-
     """
     gigalixir_database.restore(ctx.obj['session'], app_name, database_id, backup_id)
+
+@cli.command(name='pg:upgrade')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-d', '--database_id', required=True)
+@click.argument('desired_version')
+@click.pass_context
+@report_errors
+@detect_app_name
+def pg_upgrade(ctx, app_name, database_id, desired_version):
+    """
+    Upgrade the major version of your database. Find the database id by running `gigalixir pg`
+    """
+    gigalixir_database.upgrade(ctx.obj['session'], app_name, database_id, desired_version)
 
 @cli.command(name='stack:set')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
