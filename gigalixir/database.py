@@ -53,14 +53,15 @@ def psql(session, app_name):
                 else:
                     raise
 
-def create(session, app_name, size, cloud=None, region=None):
-    body = {
-        "size": size
-    }
+def create(session, app_name, size, cloud=None, region=None, version=None):
+    body = { "size": size }
     if cloud != None:
         body["cloud"] = cloud
     if region != None:
         body["region"] = region
+    if version != None:
+        body["version"] = version
+
     r = session.post('/api/apps/%s/databases' % (quote(app_name.encode('utf-8'))), json = body)
     if r.status_code != 201:
         if r.status_code == 401:
@@ -118,6 +119,19 @@ def backups(session, app_name, database_id):
 
 def restore(session, app_name, database_id, backup_id):
     r = session.post('/api/apps/%s/databases/%s/backups/%s/restore' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8')), quote(backup_id.encode('utf-8'))))
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    else:
+        data = json.loads(r.text)["data"]
+        presenter.echo_json(data)
+
+def upgrade(session, app_name, database_id, desired_version):
+    body = {
+        "version": desired_version
+    }
+    r = session.post('/api/apps/%s/databases/%s/upgrade' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))), json = body)
     if r.status_code != 200:
         if r.status_code == 401:
             raise auth.AuthException()
