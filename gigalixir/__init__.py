@@ -39,7 +39,9 @@ import netrc
 import os
 import platform
 from functools import wraps
-import pkg_resources
+import importlib.metadata
+
+CLI_VERSION = importlib.metadata.version("gigalixir")
 
 def _show_usage_error(self, file=None):
     if file is None:
@@ -61,7 +63,7 @@ env = os.environ.get("GIGALIXIR_ENV", "prod")
 if env == "prod":
     rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'production',
                  enabled=True, allow_logging_basic_config=False,
-                 code_version=pkg_resources.get_distribution("gigalixir").version)
+                 code_version=CLI_VERSION)
 elif env == "dev":
     rollbar.init(ROLLBAR_POST_CLIENT_ITEM, 'development', enabled=False, allow_logging_basic_config=False)
 elif env == "test":
@@ -85,7 +87,7 @@ def report_errors(f):
         try:
             f(*args, **kwds)
         except:
-            version = pkg_resources.get_distribution("gigalixir").version
+            version = CLI_VERSION
             rollbar.report_exc_info(sys.exc_info(), payload_data={"version": version})
             logging.getLogger("gigalixir-cli").error(sys.exc_info()[1])
             sys.exit(1)
@@ -228,7 +230,7 @@ def cli(ctx, env):
     else:
         raise Exception("Invalid GIGALIXIR_ENV")
 
-    ctx.obj['session'] = gigalixir_api_session.ApiSession(host, pkg_resources.get_distribution("gigalixir").version)
+    ctx.obj['session'] = gigalixir_api_session.ApiSession(host, CLI_VERSION)
     ctx.obj['host'] = host
     ctx.obj['env'] = env
 
@@ -1123,7 +1125,7 @@ def version(ctx):
     """
     Show the CLI version.
     """
-    click.echo(pkg_resources.get_distribution("gigalixir").version)
+    click.echo(CLI_VERSION)
 
 
 @cli.command(name='open')
