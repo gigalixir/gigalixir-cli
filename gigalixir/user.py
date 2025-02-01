@@ -59,17 +59,6 @@ def delete(session, email, password):
         raise Exception(r.text)
     logging.getLogger("gigalixir-cli").info('Account destroyed.')
 
-def validate_email(session, email):
-    r = session.get('/api/validate_email', params = {
-        "email": email
-    })
-    if r.status_code != 200:
-        raise Exception(r.text)
-
-def validate_password(session, password):
-    if len(password) < 4:
-        raise Exception("Password should be at least 4 characters.")
-
 def logout(env):
     netrc.clear_netrc(env)
 
