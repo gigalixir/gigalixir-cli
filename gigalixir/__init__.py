@@ -222,7 +222,8 @@ def cli(ctx, env):
         host = "https://api.gigalixir.com"
     elif env == "dev":
         stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
-        host = "http://localhost:4000"
+        #host = "http://192.168.8.104:3200"
+        host = "http://192.168.0.162:3200"
     elif env == "test":
         stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
 
@@ -561,8 +562,8 @@ def logout(ctx):
     gigalixir_user.logout(ctx.obj['env'])
 
 @cli.command()
-@click.option('-e', '--email', prompt=True)
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
+@click.option('-e', '--email', prompt=False)
+@click.option('-p', '--password', prompt=False)
 @click.option('-t', '--mfa_token', prompt=False) # we handle prompting if needed, not always needed
 @click.pass_context
 @report_errors
@@ -570,6 +571,18 @@ def login(ctx, email, password, mfa_token):
     """
     Login and receive an api key.
     """
+    method = None
+    if not email and not password:
+        print("How would you like to log in?")
+        print("1. Email and password")
+        print("2. Google authentication")
+        while True:
+            value = click.prompt('Authentication', type=int)
+            if value == 1:
+                gigalixir_user.login(ctx.obj['session'], email, password, ctx.obj['env'], mfa_token)
+            elif value == 2:
+                gigalixir_user.oauth_login(ctx.obj['session'], ctx.obj['env'], 'google')
+
     gigalixir_user.login(ctx.obj['session'], email, password, ctx.obj['env'], mfa_token)
 
 @cli.command(name='login:google')

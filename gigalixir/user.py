@@ -69,6 +69,11 @@ def change_password(session, current_password, new_password):
     presenter.echo_json(data)
 
 def login(session, email, password, env, token):
+    if not email:
+        email = click.prompt('Email')
+    if not password:
+        password = click.prompt('Password', hide_input=True, confirmation_prompt=False)
+
     payload = {}
     if token:
         payload["mfa_token"] = token
