@@ -565,9 +565,10 @@ def logout(ctx):
 @click.option('-e', '--email', prompt=False)
 @click.option('-p', '--password', prompt=False)
 @click.option('-t', '--mfa_token', prompt=False) # we handle prompting if needed, not always needed
+@click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
-def login(ctx, email, password, mfa_token):
+def login(ctx, email, password, mfa_token, yes):
     """
     Login and receive an api key.
     """
@@ -586,9 +587,10 @@ def login(ctx, email, password, mfa_token):
     gigalixir_user.login(ctx.obj['session'], email, password, ctx.obj['env'], mfa_token)
 
 @cli.command(name='login:google')
+@click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
-def google_login(ctx):
+def google_login(ctx, yes):
     """
     Login with Google and receive an api key.
     """
