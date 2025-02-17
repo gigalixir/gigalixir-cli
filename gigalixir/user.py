@@ -21,12 +21,6 @@ def create(session, email, password, accept_terms_of_service_and_privacy_policy)
     logging.getLogger("gigalixir-cli").info('Created account for %s. Confirmation email sent.' % email)
     logging.getLogger("gigalixir-cli").info('Please check your email and click confirm before continuing.')
 
-def oauth_create(session, env, provider):
-    r = session.post('/api/oauth/%s' % (provider), json = { 'signup': True })
-
-    oauth_process(session, provider, 'signup', r, False, env)
-
-
 def upgrade(session, card_number, card_exp_month, card_exp_year, card_cvc, promo_code):
     token = stripe.Token.create(
         card={
@@ -74,7 +68,7 @@ def change_password(session, current_password, new_password):
     data = json.loads(r.text)["data"]
     presenter.echo_json(data)
 
-def login(session, email, password, yes, env, token):
+def login(session, email, password, env, token):
     payload = {}
     if token:
         payload["mfa_token"] = token
@@ -86,24 +80,29 @@ def login(session, email, password, yes, env, token):
             raise Exception("Sorry, we could not authenticate you. If you need to reset your password, run `gigalixir account:password:reset --email=%s`." % email)
         elif r.status_code == 303:
             token = click.prompt('Multi-factor Authentication Token')
-            login(session, email, password, yes, env, token)
+            login(session, email, password, env, token)
         else:
             raise Exception(r.text)
     else:
         key = json.loads(r.text)["data"]["key"]
-        complete_login(email, key, yes, env)
+        complete_login(email, key, env)
 
-def oauth_login(session, yes, env, provider):
+def oauth_login(session, env, provider):
     r = session.post('/api/oauth/%s' % (provider))
 
-    oauth_process(session, provider, 'login', r, yes, env)
-
-def oauth_process(session, provider, action, r, yes, env):
     if r.status_code != 201:
         raise Exception(r.text)
 
     request_url = json.loads(r.text)["data"]["url"]
     oauth_session = json.loads(r.text)["data"]["session"]
+
+    data = oauth_process(session, provider, 'login', request_url, oauth_session)
+
+    data["email"]
+    data["key"]
+    complete_login(email, key, env)
+
+def oauth_process(session, provider, action, request_url, oauth_session):
     print('To', action, 'browse to', request_url)
 
     delay_time = 4
@@ -117,10 +116,7 @@ def oauth_process(session, provider, action, r, yes, env):
                 delay_time -= 0.05
 
         elif r.status_code == 200:
-            email = json.loads(r.text)["data"]["email"]
-            key = json.loads(r.text)["data"]["key"]
-            complete_login(email, key, yes, env)
-            return
+            return json.loads(r.text)["data"]
 
         else:
             error = json.loads(r.text)["errors"][""]
@@ -170,17 +166,6 @@ def account(session):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def complete_login(email, key, yes, env):
-    if yes or click.confirm('Would you like us to save your api key to your ~/.netrc file?', default=True):
-        netrc.update_netrc(email, key, env)
-        logging.getLogger("gigalixir-cli").info('Logged in as %s.' % email)
-    else:
-        logging.getLogger("gigalixir-cli").warn('Please edit your ~/.netrc file manually. Many GIGALIXIR CLI commands may not work unless your ~/.netrc file contains your GIGALIXIR credentials.')
-        logging.getLogger("gigalixir-cli").info('Add the following:')
-        logging.getLogger("gigalixir-cli").info('')
-        logging.getLogger("gigalixir-cli").info('machine api.gigalixir.com')
-        logging.getLogger("gigalixir-cli").info('\tlogin %s' % email)
-        logging.getLogger("gigalixir-cli").info('\tpassword %s' % key)
-        logging.getLogger("gigalixir-cli").info('machine git.gigalixir.com')
-        logging.getLogger("gigalixir-cli").info('\tlogin %s' % email)
-        logging.getLogger("gigalixir-cli").info('\tpassword %s' % key)
+def complete_login(email, key, env):
+    netrc.update_netrc(email, key, env)
+    logging.getLogger("gigalixir-cli").info('Logged in as %s.' % email)
