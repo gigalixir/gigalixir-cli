@@ -14,6 +14,13 @@ rm dist/*
 python3 -m build
 ```
 
+## Install locally
+
+```
+pip install dist/gigalixir-X.Y.Z.tar.gz
+```
+
+
 ## Upload and tsting from pypitest
 
 ```
