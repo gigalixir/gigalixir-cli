@@ -5,26 +5,27 @@ from .routers.windows import WindowsRouter
 from .openers.linux import LinuxOpener
 from .openers.darwin import DarwinOpener
 from .openers.windows import WindowsOpener
-from . import observer as gigalixir_observer
-from . import user as gigalixir_user
-from . import mfa as gigalixir_mfa
+from . import api_key as gigalixir_api_key
+from . import api_session as gigalixir_api_session
+from . import app_activity as gigalixir_app_activity
 from . import app as gigalixir_app
+from . import canary as gigalixir_canary
 from . import config as gigalixir_config
+from . import database as gigalixir_database
+from . import domain as gigalixir_domain
+from . import free_database as gigalixir_free_database
+from . import invoice as gigalixir_invoice
+from . import log_drain as gigalixir_log_drain
+from . import mfa as gigalixir_mfa
+from . import observer as gigalixir_observer
+from . import payment_method as gigalixir_payment_method
 from . import permission as gigalixir_permission
 from . import release as gigalixir_release
-from . import app_activity as gigalixir_app_activity
-from . import api_key as gigalixir_api_key
+from . import signup as gigalixir_signup
 from . import ssh_key as gigalixir_ssh_key
-from . import log_drain as gigalixir_log_drain
-from . import payment_method as gigalixir_payment_method
-from . import domain as gigalixir_domain
-from . import invoice as gigalixir_invoice
 from . import usage as gigalixir_usage
-from . import database as gigalixir_database
-from . import free_database as gigalixir_free_database
-from . import canary as gigalixir_canary
+from . import user as gigalixir_user
 from . import git
-from . import api_session as gigalixir_api_session
 import click
 import getpass
 import stripe
@@ -560,17 +561,29 @@ def logout(ctx):
     gigalixir_user.logout(ctx.obj['env'])
 
 @cli.command()
-@click.option('-e', '--email', prompt=True)
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=False)
+@click.option('-e', '--email', prompt=False)
+@click.option('-p', '--password', prompt=False)
 @click.option('-t', '--mfa_token', prompt=False) # we handle prompting if needed, not always needed
 @click.option('-y', '--yes', is_flag=True)
 @click.pass_context
 @report_errors
-def login(ctx, email, password, yes, mfa_token):
+def login(ctx, email, password, mfa_token, yes):
     """
     Login and receive an api key.
     """
-    gigalixir_user.login(ctx.obj['session'], email, password, yes, ctx.obj['env'], mfa_token)
+    method = None
+    if not email and not password:
+        print("How would you like to log in?")
+        print("1. Email and password")
+        print("2. Google authentication")
+        while True:
+            value = click.prompt('Authentication', type=int)
+            if value == 1:
+                return gigalixir_user.login(ctx.obj['session'], email, password, ctx.obj['env'], mfa_token)
+            elif value == 2:
+                return gigalixir_user.oauth_login(ctx.obj['session'], ctx.obj['env'], 'google')
+
+    gigalixir_user.login(ctx.obj['session'], email, password, ctx.obj['env'], mfa_token)
 
 @cli.command(name='login:google')
 @click.option('-y', '--yes', is_flag=True)
@@ -580,7 +593,7 @@ def google_login(ctx, yes):
     """
     Login with Google and receive an api key.
     """
-    gigalixir_user.oauth_login(ctx.obj['session'], yes, ctx.obj['env'], 'google')
+    gigalixir_user.oauth_login(ctx.obj['session'], ctx.obj['env'], 'google')
 
 # @get.command()
 @cli.command()
@@ -1063,46 +1076,20 @@ def current_running_usage(ctx):
 
 # @create.command()
 @cli.command()
-@click.option('--email')
-@click.option('-p', '--password')
-@click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
 @click.pass_context
 @report_errors
-def signup(ctx, email, password, accept_terms_of_service_and_privacy_policy):
+def signup(ctx):
     """
     Sign up for a new account.
     """
-    if not accept_terms_of_service_and_privacy_policy:
-        logging.getLogger("gigalixir-cli").info("GIGALIXIR Terms of Service: https://www.gigalixir.com/terms")
-        logging.getLogger("gigalixir-cli").info("GIGALIXIR Privacy Policy: https://www.gigalixir.com/privacy")
-        if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
-            raise Exception("You must accept the Terms of Service and Privacy Policy to continue.")
+    gigalixir_signup.by_email(ctx)
 
-    if email == None:
-        email = click.prompt('Email')
-    gigalixir_user.validate_email(ctx.obj['session'], email)
-
-    if password == None:
-        password = click.prompt('Password', hide_input=True)
-    gigalixir_user.validate_password(ctx.obj['session'], password)
-
-    gigalixir_user.create(ctx.obj['session'], email, password, accept_terms_of_service_and_privacy_policy)
 
 @cli.command('signup:google')
-@click.option('-y', '--accept_terms_of_service_and_privacy_policy', is_flag=True)
 @click.pass_context
 @report_errors
-def google_signup(ctx, accept_terms_of_service_and_privacy_policy):
-    """
-    Sign up for a new account using your google login.
-    """
-    if not accept_terms_of_service_and_privacy_policy:
-        logging.getLogger("gigalixir-cli").info("GIGALIXIR Terms of Service: https://www.gigalixir.com/terms")
-        logging.getLogger("gigalixir-cli").info("GIGALIXIR Privacy Policy: https://www.gigalixir.com/privacy")
-        if not click.confirm('Do you accept the Terms of Service and Privacy Policy?'):
-            raise Exception("You must accept the Terms of Service and Privacy Policy to continue.")
-
-    gigalixir_user.oauth_create(ctx.obj['session'], ctx.obj['env'], "google")
+def google_signup(ctx):
+    gigalixir_signup.by_oauth(ctx, "google")
 
 @cli.command(name='ps:observer')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
