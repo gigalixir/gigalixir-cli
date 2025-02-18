@@ -9,18 +9,6 @@ import json
 from six.moves.urllib.parse import quote
 from time import sleep
 
-def create(session, email, password, accept_terms_of_service_and_privacy_policy):
-    r = session.post('/api/free_users', json = {
-        'email': email,
-        'password': password,
-    })
-    if r.status_code != 200:
-        if r.status_code == 401:
-            raise auth.AuthException()
-        raise Exception(r.text)
-    logging.getLogger("gigalixir-cli").info('Created account for %s. Confirmation email sent.' % email)
-    logging.getLogger("gigalixir-cli").info('Please check your email and click confirm before continuing.')
-
 def upgrade(session, card_number, card_exp_month, card_exp_year, card_cvc, promo_code):
     token = stripe.Token.create(
         card={
