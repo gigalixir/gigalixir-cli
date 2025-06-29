@@ -222,7 +222,7 @@ def cli(ctx, env):
         host = "https://api.gigalixir.com"
     elif env == "dev":
         stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
-        host = "http://localhost:4000"
+        host = "http://apiserver:3200"
     elif env == "test":
         stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
 

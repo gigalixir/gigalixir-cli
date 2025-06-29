@@ -111,6 +111,8 @@ def oauth_process(session, provider, action, request_url, oauth_session):
         elif r.status_code == 200:
             return json.loads(r.text)["data"]
 
+        # TODO: handle 202 response (vpn detected)
+
         else:
             error = json.loads(r.text)["errors"][""]
             raise Exception('Oauth %s %s' % (action, error))
