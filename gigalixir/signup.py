@@ -16,7 +16,9 @@ def by_email(ctx):
   print("Don't believe us? Read our privacy policy: https://gigalixir.com/privacy-policy")
   print("")
   email = click.prompt('Email')
-  uuid = set_email(session, email)
+  (vpn, uuid) = set_email(session, email)
+  if vpn:
+    handle_vpn(session, uuid)
 
   print("")
   print("Please check your email for the confirmation code we have sent you.")
@@ -36,7 +38,7 @@ def by_email(ctx):
 
   (promo, tier) = select_tier(session, uuid)
 
-  confirm_and_complete(session, uuid, email, tier, promo, env)
+  confirm_and_complete(session, uuid, email, tier, promo, env, vpn)
 
 def by_oauth(ctx, provider):
   env = ctx.obj['env']
@@ -46,13 +48,20 @@ def by_oauth(ctx, provider):
 
   (oauth_session, url, uuid) = start_oauth(session, provider)
 
-  email = gigalixir_user.oauth_process(session, provider, 'signup', url, oauth_session)['email']
+  # TODO: handle vpn detected (204 response)
+  data = gigalixir_user.oauth_process(session, provider, 'signup', url, oauth_session)
+  email = data['email']
   print("Thank you for your trust in us.")
-  print("")
 
+  vpn = False
+  if 'vpn_detected' in data and data['vpn_detected']:
+    vpn = True
+    handle_vpn(session, uuid)
+
+  print("")
   (promo, tier) = select_tier(session, uuid)
 
-  confirm_and_complete(session, uuid, email, tier, promo, env)
+  confirm_and_complete(session, uuid, email, tier, promo, env, vpn)
 
 
 def welcome_message():
@@ -76,10 +85,14 @@ def set_email(session, email):
   r = session.post('/api/signup', json = { 'email': email })
   if r.status_code == 429:
     raise Exception('Too many attempts. Please try again later.')
-  if r.status_code != 200:
-    raise Exception(r.text)
 
-  return r.json()['data']['uuid']
+  if r.status_code == 200:
+    return (False, r.json()['data']['uuid'])
+  elif r.status_code == 202:
+    return (True, r.json()['data']['uuid'])
+
+  raise Exception(r.text)
+
 
 def confirm(session, uuid, code):
   r = session.post('/api/signup', json = { 'confirmation_code': code, 'uuid': uuid })
@@ -109,11 +122,13 @@ def set_cc(session, uuid, stripe_token):
 
 def finalize(session, uuid, tier):
   r = session.post('/api/signup', json = { 'tier': tier, 'uuid': uuid })
-  if r.status_code != 200:
-    raise Exception(r.text)
+  if r.status_code == 200:
+    data = r.json()['data']
+    return (data['email'], data['key'])
+  elif r.status_code == 202:
+    return (None, None)
 
-  data = r.json()['data']
-  return (data['email'], data['key'])
+  raise Exception(r.text)
 
 
 ## input validations
@@ -221,7 +236,7 @@ def prompt_tier():
     elif value == 2:
       return "STANDARD"
 
-def confirm_and_complete(session, uuid, email, tier, promo, env):
+def confirm_and_complete(session, uuid, email, tier, promo, env, vpn):
   print("")
   print("You are about to signup for the %s tier." % tier)
   print("  Email: %s" % email)
@@ -238,5 +253,30 @@ def confirm_and_complete(session, uuid, email, tier, promo, env):
     raise Exception("Signup cancelled.")
   (email, key) = finalize(session, uuid, tier)
 
-  print("Welcome to Gigalixir!")
-  netrc.update_netrc(email, key, env)
+  if vpn:
+    print("")
+    print("Thank you for signing up.")
+    print("Your account is under review.")
+    print("We will notify you via email when the review is completed.")
+    print("Please allow up to 24 hours.")
+  else:
+    print("Welcome to Gigalixir!")
+    netrc.update_netrc(email, key, env)
+
+def handle_vpn(session, uuid):
+  print("")
+  print("We have detected that you are using a VPN. Please disable your VPN and try again.")
+  print("")
+  print("You can continue the signup process with a manual review.")
+  print("Manual reviews can take up to 24 hours.")
+  if not click.confirm('Do you wish to proceed with a manual review?', default=True):
+    raise Exception("Signup cancelled.")
+
+  print("")
+  print("Please provide our team with a brief description of your intended application use case.")
+  explanation = click.prompt('Description', type=str)
+
+  r = session.post('/api/signup', json = { 'explanation': explanation, 'uuid': uuid })
+
+  if r.status_code != 200:
+    raise Exception(r.text)
