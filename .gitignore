@@ -9,3 +9,6 @@ dist/
 secrets/
 tmp/
 build/
+Dockerfile
+Makefile
+docker-compose.yml
