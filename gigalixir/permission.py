@@ -15,9 +15,10 @@ def get(session, app_name):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
-def create(session, app_name, email):
+def create(session, app_name, email, role):
     r = session.post('/api/apps/%s/permissions' % (quote(app_name.encode('utf-8'))), json = {
         "email": email,
+        "role": role,
     })
     if r.status_code != 201:
         if r.status_code == 401:

@@ -976,6 +976,7 @@ def delete_config(ctx, app_name, key):
 # @create.command()
 @cli.command(name='access:add')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('--role', default="COLLABORATOR", help="Role of the user. Can be either 'COLLABORATOR' or 'VIEWER'.")
 @click.argument('email')
 @click.pass_context
 @report_errors
@@ -984,7 +985,7 @@ def add_permission(ctx, app_name, email):
     """
     Grants a user permission to deploy an app.
     """
-    gigalixir_permission.create(ctx.obj['session'], app_name, email)
+    gigalixir_permission.create(ctx.obj['session'], app_name, email, role)
 
 
 @cli.command(name='pg:psql')
