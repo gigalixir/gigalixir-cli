@@ -219,7 +219,7 @@ def cli(ctx, env):
 
     if env == "prod":
         stripe.api_key = 'pk_live_45dmSl66k4xLy4X4yfF3RVpd'
-        host = "https://api.gigalixir.com"
+        host = os.environ.get("GIGALIXIR_CLI__HOST", "https://api.gigalixir.com")
     elif env == "dev":
         stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
         host = "http://apiserver:3200"
