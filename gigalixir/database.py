@@ -127,6 +127,28 @@ def restore(session, app_name, database_id, backup_id):
         data = json.loads(r.text)["data"]
         presenter.echo_json(data)
 
+def restart(session, app_name, database_id):
+    r = session.put('/api/apps/%s/databases/%s/restart' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))))
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+
+def stop(session, app_name, database_id):
+    r = session.put('/api/apps/%s/databases/%s/stop' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))))
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+
+def start(session, app_name, database_id):
+    r = session.put('/api/apps/%s/databases/%s/start' % (quote(app_name.encode('utf-8')), quote(database_id.encode('utf-8'))))
+    if r.status_code != 200:
+        if r.status_code == 401:
+            raise auth.AuthException()
+        raise Exception(r.text)
+    logging.getLogger("gigalixir-cli").info("Starting database. Please allow a few minutes for it to become available.")
+
 def upgrade(session, app_name, database_id, desired_version):
     body = {
         "version": desired_version

@@ -679,6 +679,60 @@ def test_scale_database():
     expect(httpretty.last_request().body.decode()).to.equal('{"size": 8.0}')
 
 @httpretty.activate
+def test_restart_database():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id/restart', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['pg:restart', '-a', 'fake-app-name', '-d', 'fake-database-id', '-y'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_restart_database_confirm():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id/restart', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['pg:restart', '-a', 'fake-app-name', '-d', 'fake-database-id'], input="y\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_restart_database_deny():
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['pg:restart', '-a', 'fake-app-name', '-d', 'fake-database-id'], input="n\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.false
+
+@httpretty.activate
+def test_stop_database():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id/stop', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['pg:stop', '-a', 'fake-app-name', '-d', 'fake-database-id', '-y'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_stop_database_confirm():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id/stop', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['pg:stop', '-a', 'fake-app-name', '-d', 'fake-database-id'], input="y\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
+def test_stop_database_deny():
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['pg:stop', '-a', 'fake-app-name', '-d', 'fake-database-id'], input="n\n")
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.false
+
+@httpretty.activate
+def test_start_database():
+    httpretty.register_uri(httpretty.PUT, 'https://api.gigalixir.com/api/apps/fake-app-name/databases/fake-database-id/start', body='{}', content_type='application/json')
+    runner = CliRunner()
+    result = runner.invoke(gigalixir.cli, ['pg:start', '-a', 'fake-app-name', '-d', 'fake-database-id'])
+    assert result.exit_code == 0
+    expect(httpretty.has_request()).to.be.true
+
+@httpretty.activate
 def test_account():
     httpretty.register_uri(httpretty.GET, 'https://api.gigalixir.com/api/users', body='{"data":{}}', content_type='application/json')
     runner = CliRunner()
