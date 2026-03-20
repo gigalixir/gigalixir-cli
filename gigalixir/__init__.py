@@ -219,7 +219,7 @@ def cli(ctx, env):
 
     if env == "prod":
         stripe.api_key = 'pk_live_45dmSl66k4xLy4X4yfF3RVpd'
-        host = "https://api.gigalixir.com"
+        host = os.environ.get("GIGALIXIR_CLI__HOST", "https://api.gigalixir.com")
     elif env == "dev":
         stripe.api_key = 'pk_test_6tMDkFKTz4N0wIFQZHuzOUyW'
         host = "http://apiserver:3200"
@@ -1161,6 +1161,48 @@ def pg_upgrade(ctx, app_name, database_id, desired_version):
     Upgrade the major version of your database. Find the database id by running `gigalixir pg`
     """
     gigalixir_database.upgrade(ctx.obj['session'], app_name, database_id, desired_version)
+
+@cli.command(name='pg:restart')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-d', '--database_id', required=True)
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def pg_restart(ctx, app_name, database_id, yes):
+    """
+    Restart database. Find the database id by running `gigalixir pg`
+    """
+    logging.getLogger("gigalixir-cli").info("WARNING: Restarting your database will cause temporary downtime.")
+    if yes or click.confirm('Do you want to restart your database?'):
+        gigalixir_database.restart(ctx.obj['session'], app_name, database_id)
+
+@cli.command(name='pg:stop')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-d', '--database_id', required=True)
+@click.option('-y', '--yes', is_flag=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def pg_stop(ctx, app_name, database_id, yes):
+    """
+    Stop database. Find the database id by running `gigalixir pg`
+    """
+    logging.getLogger("gigalixir-cli").info("WARNING: Stopping your database will make it unavailable until you start it again.")
+    if yes or click.confirm('Do you want to stop your database?'):
+        gigalixir_database.stop(ctx.obj['session'], app_name, database_id)
+
+@cli.command(name='pg:start')
+@click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
+@click.option('-d', '--database_id', required=True)
+@click.pass_context
+@report_errors
+@detect_app_name
+def pg_start(ctx, app_name, database_id):
+    """
+    Start database. Find the database id by running `gigalixir pg`
+    """
+    gigalixir_database.start(ctx.obj['session'], app_name, database_id)
 
 @cli.command(name='stack:set')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
