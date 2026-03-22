@@ -1094,7 +1094,7 @@ def google_signup(ctx):
 
 @cli.command(name='ps:observer')
 @click.option('-a', '--app_name', envvar="GIGALIXIR_APP")
-@click.option('-c', '--cookie')
+@click.option('--cookie')
 @click.option('-o', '--ssh_opts', default="", help='Command-line options to pass to ssh.')
 @click.option('-c', '--ssh_cmd', default="ssh", help='Which ssh command to use.')
 @click.pass_context
