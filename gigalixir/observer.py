@@ -9,6 +9,7 @@ import sys
 import subprocess
 import time
 from .shell import cast, call
+from . import auth
 from . import app as gigalixir_app
 from six.moves.urllib.parse import quote
 
@@ -141,6 +142,11 @@ def ensure_port_free(port):
         pass
 
 def sanitize_respone(text):
+    # The output may contain multi-line warnings (e.g. Erlang/OTP version
+    # notices). The actual value is always the last non-empty line.
+    lines = [line for line in text.strip().splitlines() if line.strip()]
+    if lines:
+        text = lines[-1].strip()
     match = re.match(r"^(~c\"|')(.+)[\"']$", text)
     if match:
         return match.groups()[1]
